@@ -80,6 +80,17 @@ void ReaderParticleCloud::clearData()
     sphericalTensorData_.clear();
 }
 
+void ReaderParticleCloud::rereadBasics()
+{
+    clearData();
+    this->clear();
+    // this->readCloudUniformProperties();
+    IOPosition<ReaderParticleCloud> ioP(*this);
+    if(ioP.headerOk()) {
+        ioP.readData(*this,false);
+    }
+}
+
 template <typename T>
 tmp<Field<T> > filterFieldValues(
     const Field<T> &orig,

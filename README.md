@@ -6155,6 +6155,13 @@ The field name is now the name of the original field plus
 that field have to be provided
 
 
+#### `funkyDoCalc`-files with an entry `expressions` assumed to be new format
+
+If one of the dictionaries in the specification file for
+`funkyDoCalc` is named `expressions` it is assumed that the file
+is in the new format and calculations will probably fail
+
+
 ### Bug fixes
 
 
@@ -6169,6 +6176,12 @@ temporary field.
 
 When finding a cutting point in "infinity" then `magSqr`
 failed. Fixed
+
+
+#### `ReaderParticleCloud` could not read data if particle number changed
+
+These particles could not be read data from different time-steps
+if the number of particles differed between them. This has been fixed
 
 
 ### Internals (for developers)
@@ -6203,6 +6216,25 @@ sometimes should make the intention clearer
 
 
 ### Enhancements
+
+
+#### New file format for `funkyDoCalc`
+
+`funkyDoCalc` now has a new file format. If a dictionary
+`expressions` is found in the specification file then it is
+assumed that the file is in the new format. `expressions` are the
+contents of the previous format. Additional keys in the file now
+allow specifying things that previously only specified on the command line:
+
+-   noDimensionChecking
+-   foreignMeshesThatFollowTime
+
+
+#### `funkyDoCalc` allows writing data as a dictionary
+
+The option `-writeDict` writes all the results as a
+dictionary. It also includes a sub-dictionary with a copy of the
+specification file
 
 
 ### Examples

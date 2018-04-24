@@ -80,7 +80,8 @@ void writeData(
     const Time &time,
     const word &name,
     const bool globalWriteCsv,
-    const bool globalWriteDistributions
+    const bool globalWriteDistributions,
+    dictionary &outDict
 )
 {
     bool writeCsv=
@@ -238,6 +239,8 @@ void writeData(
         writeValue(data,val);
 
         Info << " " << accu << "=" << val;
+
+        outDict.add(NumericAccumulationNamedEnum::toString(accu),val);
     }
 
     if(writeDistributions) {
@@ -258,6 +261,15 @@ void writeData(
             toDir
             /
             name+"_weighted"
+        );
+
+        outDict.add(
+            "cumulativeDistribution",
+            calculator.distribution().cumulativeNormalised()
+        );
+        outDict.add(
+            "weightedCumulativeDistribution",
+            calculator.weightedDistribution().cumulativeNormalised()
         );
     }
     if(writeCsv) {
@@ -287,13 +299,25 @@ int main(int argc, char *argv[])
     argList::validOptions.insert("writeCsv","");
     argList::validOptions.insert("writeDistributions","");
     argList::validOptions.insert("noDimensionChecking","");
+    argList::validOptions.insert("writeDict","<name of the dict>");
 
 #   include "setRootCase.H"
 
     printSwakVersion();
 
     IFstream theFile(args.args()[1]);
-    dictionary theExpressions(theFile);
+    dictionary theDict(theFile);
+    bool newFormat=false;
+    if(theDict.isDict("expressions")) {
+        newFormat=true;
+    }
+    dictionary &theExpressions=
+        newFormat ?
+        theDict.subDict("expressions") :
+        theDict;
+
+    bool writeDict=args.options().found("writeDict");
+
     wordList foreignMeshesThatFollowTime(0);
 
     bool globalWriteCsv=args.options().found("writeCsv");
@@ -301,22 +325,53 @@ int main(int argc, char *argv[])
 
     dataDir=args.path()/fileName(args.args()[1]).name()+"_data";
 
-    if (!args.options().found("time") && !args.options().found("latestTime")) {
+    if (
+        !args.options().found("time")
+        &&
+        !args.options().found("latestTime")
+        &&
+        !args.options().found("noZero")
+    ) {
         FatalErrorIn("main()")
             << args.executable()
-                << ": time/latestTime option is required" << endl
-            << exit(FatalError);
+                << ": time/latestTime/noZero option is required" << endl
+                << exit(FatalError);
     }
 
-    if(args.options().found("noDimensionChecking")) {
+    if(
+        args.options().found("noDimensionChecking")
+        ||
+        (
+            newFormat
+            &&
+            theDict.lookupOrDefault<bool>("noDimensionChecking",false)
+        )
+    ) {
         dimensionSet::debug=0;
     }
+
     if(args.options().found("foreignMeshesThatFollowTime")) {
         string followMeshes(
             args.options()["foreignMeshesThatFollowTime"]
         );
         IStringStream followStream("("+followMeshes+")");
         foreignMeshesThatFollowTime=wordList(followStream);
+    }
+    if(
+        newFormat
+        &&
+        theDict.found("foreignMeshesThatFollowTime")
+    ) {
+        if(foreignMeshesThatFollowTime.size()>0) {
+            WarningIn("")
+                << "Ignoring foreignMeshesThatFollowTime "
+                    << foreignMeshesThatFollowTime
+                    << " that were specified on the command line"
+                    << endl;
+        }
+        foreignMeshesThatFollowTime=wordList(
+            theDict.lookup("foreignMeshesThatFollowTime")
+        );
     }
 
 #   include "createTime.H"
@@ -332,6 +387,8 @@ int main(int argc, char *argv[])
 
         CommonValueExpressionDriver::readForeignMeshInfo(dict);
     }
+
+    dictionary wholeData;
 
     forAll(timeDirs, timeI)
     {
@@ -363,6 +420,9 @@ int main(int argc, char *argv[])
             }
         }
 
+        dictionary timeData;
+        timeData.add("time",runTime.timeName());
+
         forAllConstIter(IDLList<entry>, theExpressions, iter)
         {
             const word name=iter().keyword();
@@ -387,22 +447,38 @@ int main(int argc, char *argv[])
                     dict)
             );
             word rType=driver->CommonValueExpressionDriver::getResultType();
+            dictionary outData;
 
             if(rType==pTraits<scalar>::typeName) {
-                writeData<scalar>(driver(),dict,runTime,
-                                  name,globalWriteCsv,globalWriteDistributions);
+                writeData<scalar>(
+                    driver(),dict,runTime,
+                    name,globalWriteCsv,globalWriteDistributions,
+                    outData
+                );
             } else if(rType==pTraits<vector>::typeName) {
-                writeData<vector>(driver(),dict,runTime,
-                                  name,globalWriteCsv,globalWriteDistributions);
+                writeData<vector>(
+                    driver(),dict,runTime,
+                    name,globalWriteCsv,globalWriteDistributions,
+                    outData
+                );
             } else if(rType==pTraits<tensor>::typeName) {
-                writeData<tensor>(driver(),dict,runTime,
-                                  name,globalWriteCsv,globalWriteDistributions);
+                writeData<tensor>(
+                    driver(),dict,runTime,
+                    name,globalWriteCsv,globalWriteDistributions,
+                    outData
+                );
             } else if(rType==pTraits<symmTensor>::typeName) {
-                writeData<symmTensor>(driver(),dict,runTime,
-                                  name,globalWriteCsv,globalWriteDistributions);
+                writeData<symmTensor>(
+                    driver(),dict,runTime,
+                    name,globalWriteCsv,globalWriteDistributions,
+                    outData
+                );
             } else if(rType==pTraits<sphericalTensor>::typeName) {
-                writeData<sphericalTensor>(driver(),dict,runTime,
-                                  name,globalWriteCsv,globalWriteDistributions);
+                writeData<sphericalTensor>(
+                    driver(),dict,runTime,
+                    name,globalWriteCsv,globalWriteDistributions,
+                    outData
+                );
             } else {
                 WarningIn(args.executable())
                     << "Don't know how to handle type " << rType
@@ -410,8 +486,19 @@ int main(int argc, char *argv[])
             }
 
             Info << endl;
+
+            if(writeDict) {
+                timeData.add(name,outData);
+            }
         }
         Info << endl;
+
+        if(writeDict) {
+            wholeData.add(
+                word("step"+name(timeI)),
+                timeData
+            );
+        }
     }
 
     if(csvFiles.size()>0) {
@@ -419,6 +506,15 @@ int main(int argc, char *argv[])
         csvFiles.clear();
     }
 
+    if(writeDict) {
+        fileName outFile(args.options()["writeDict"]);
+        Info << "Writing dictionary " << outFile << endl;
+        dictionary data;
+        data.add("spec",theDict);
+        data.add("data",wholeData);
+        OFstream stream(outFile);
+        data.write(stream,false);
+    }
     Info << "End\n" << endl;
 
     return 0;
