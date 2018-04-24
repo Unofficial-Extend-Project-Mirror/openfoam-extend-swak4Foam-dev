@@ -15,7 +15,6 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-// just for testing a problem with surfaceFields that become variables
 
 internalPressure {
     valueType internalField;

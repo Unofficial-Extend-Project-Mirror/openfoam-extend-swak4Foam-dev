@@ -6155,6 +6155,13 @@ The field name is now the name of the original field plus
 that field have to be provided
 
 
+#### `funkyDoCalc`-files with an entry `expressions` assumed to be new format
+
+If one of the dictionaries in the specification file for
+`funkyDoCalc` is named `expressions` it is assumed that the file
+is in the new format and calculations will probably fail
+
+
 ### Bug fixes
 
 
@@ -6209,6 +6216,18 @@ sometimes should make the intention clearer
 
 
 ### Enhancements
+
+
+#### New file format for `funkyDoCalc`
+
+`funkyDoCalc` now has a new file format. If a dictionary
+`expressions` is found in the specification file then it is
+assumed that the file is in the new format. `expressions` are the
+contents of the previous format. Additional keys in the file now
+allow specifying things that previously only specified on the command line:
+
+-   noDimensionChecking
+-   foreignMeshesThatFollowTime
 
 
 ### Examples

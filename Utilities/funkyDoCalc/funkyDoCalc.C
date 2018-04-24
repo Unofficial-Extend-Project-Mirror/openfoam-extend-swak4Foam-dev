@@ -293,7 +293,16 @@ int main(int argc, char *argv[])
     printSwakVersion();
 
     IFstream theFile(args.args()[1]);
-    dictionary theExpressions(theFile);
+    dictionary theDict(theFile);
+    bool newFormat=false;
+    if(theDict.isDict("expressions")) {
+        newFormat=true;
+    }
+    dictionary &theExpressions=
+        newFormat ?
+        theDict.subDict("expressions") :
+        theDict;
+
     wordList foreignMeshesThatFollowTime(0);
 
     bool globalWriteCsv=args.options().found("writeCsv");
@@ -301,22 +310,53 @@ int main(int argc, char *argv[])
 
     dataDir=args.path()/fileName(args.args()[1]).name()+"_data";
 
-    if (!args.options().found("time") && !args.options().found("latestTime")) {
+    if (
+        !args.options().found("time")
+        &&
+        !args.options().found("latestTime")
+        &&
+        !args.options().found("noZero")
+    ) {
         FatalErrorIn("main()")
             << args.executable()
-                << ": time/latestTime option is required" << endl
-            << exit(FatalError);
+                << ": time/latestTime/noZero option is required" << endl
+                << exit(FatalError);
     }
 
-    if(args.options().found("noDimensionChecking")) {
+    if(
+        args.options().found("noDimensionChecking")
+        ||
+        (
+            newFormat
+            &&
+            theDict.lookupOrDefault<bool>("noDimensionChecking",false)
+        )
+    ) {
         dimensionSet::debug=0;
     }
+
     if(args.options().found("foreignMeshesThatFollowTime")) {
         string followMeshes(
             args.options()["foreignMeshesThatFollowTime"]
         );
         IStringStream followStream("("+followMeshes+")");
         foreignMeshesThatFollowTime=wordList(followStream);
+    }
+    if(
+        newFormat
+        &&
+        theDict.found("foreignMeshesThatFollowTime")
+    ) {
+        if(foreignMeshesThatFollowTime.size()>0) {
+            WarningIn("")
+                << "Ignoring foreignMeshesThatFollowTime "
+                    << foreignMeshesThatFollowTime
+                    << " that were specified on the command line"
+                    << endl;
+        }
+        foreignMeshesThatFollowTime=wordList(
+            theDict.lookup("foreignMeshesThatFollowTime")
+        );
     }
 
 #   include "createTime.H"
