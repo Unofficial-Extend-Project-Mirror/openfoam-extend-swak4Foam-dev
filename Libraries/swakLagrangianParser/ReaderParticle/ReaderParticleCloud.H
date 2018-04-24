@@ -111,6 +111,8 @@ protected:
 
     void clearData();
 
+    void rereadBasics();
+
 public:
 
     //- Type of parcel the cloud was instantiated for

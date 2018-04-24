@@ -172,7 +172,7 @@ void CloudRepository::updateRepo()
     {
         //	(*it)->clear();
         //        Info << "Updating " << it.key() << endl;
-        (*it)->clearData();
+        (*it)->rereadBasics();
         ReaderParticle::readFields(*(*it));
     }
 

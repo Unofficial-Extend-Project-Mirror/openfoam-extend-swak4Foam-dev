@@ -6171,6 +6171,12 @@ When finding a cutting point in "infinity" then `magSqr`
 failed. Fixed
 
 
+#### `ReaderParticleCloud` could not read data if particle number changed
+
+These particles could not be read data from different time-steps
+if the number of particles differed between them. This has been fixed
+
+
 ### Internals (for developers)
 
 
