@@ -6191,6 +6191,17 @@ point in the $(x,y)$-plane) and calculates the angle in radiants
 between this vector and the x-axis
 
 
+#### Additional logical accumulators
+
+Three new logical accumulators have been added. They are all
+aliases or trivial extensions of the existing `or` and `and` but
+sometimes should make the intention clearer
+
+-   **all:** alias for `and`
+-   **any:** alias for `or`
+-   **none:** only `true` if everything is `false` (basically `not or`)
+
+
 ### Enhancements
 
 

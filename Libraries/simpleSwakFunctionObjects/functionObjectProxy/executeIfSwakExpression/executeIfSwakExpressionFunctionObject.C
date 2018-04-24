@@ -94,10 +94,15 @@ bool executeIfSwakExpressionFunctionObject::condition()
 
     switch(logicalAccumulation_) {
         case LogicalAccumulationNamedEnum::logAnd:
+        case LogicalAccumulationNamedEnum::logAll:
             result=driver_->getReduced(andOp<bool>(),true);
             break;
         case LogicalAccumulationNamedEnum::logOr:
+        case LogicalAccumulationNamedEnum::logAny:
             result=driver_->getReduced(orOp<bool>(),false);
+            break;
+        case LogicalAccumulationNamedEnum::logNone:
+            result=!driver_->getReduced(orOp<bool>(),false);
             break;
         default:
             FatalErrorIn("executeIfSwakExpressionFunctionObject::condition()")

@@ -1,5 +1,3 @@
-
-
 # Introduction
 
 This document gives an overview of the usage of `swak4Foam`. It
@@ -111,7 +109,7 @@ the `swakExpression`-function object) the used parser can by
 selected by name. These names and a description of the entity the
 parser works on are given in table \ref{tab:selectionNames}.
 
-<table id="org1946332" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org79a299d" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 1:</span> Selection names for the parsers</caption>
 
 <colgroup>
@@ -258,7 +256,7 @@ structure if necessary (for instance `toPoint(1)` to use the
 constant `1` on the vertexes of a patch). Table
 \ref{tab:structures} gives an overview of the structures.
 
-<table id="org3b25e2c" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="orgb793c51" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 2:</span> Structures for the different parsers</caption>
 
 <colgroup>
@@ -423,13 +421,13 @@ In addition there are two unary operators:
     the component after the expression (for instance `U.x` gives the
     x-component of the field `U`). Table \ref{tab:components} gives
     an overview of the components of the various types
-    
-    <table id="orgdb47f2a" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+    <table id="org7687ed0" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
     <caption class="t-above"><span class="table-number">Table 3:</span> Component names for the data types</caption>
-    
+
     <colgroup>
     <col  class="org-left" />
-    
+
     <col  class="org-left" />
     </colgroup>
     <thead>
@@ -438,37 +436,37 @@ In addition there are two unary operators:
     <th scope="col" class="org-left">Components</th>
     </tr>
     </thead>
-    
+
     <tbody>
     <tr>
     <td class="org-left">Vector</td>
     <td class="org-left">x y z</td>
     </tr>
-    
-    
+
+
     <tr>
     <td class="org-left">Tensor</td>
     <td class="org-left">xx xy xz yx yy yz zx zy zz x y z</td>
     </tr>
-    
-    
+
+
     <tr>
     <td class="org-left">Symmetrical tensor</td>
     <td class="org-left">xx xy xz yy yz zz</td>
     </tr>
-    
-    
+
+
     <tr>
     <td class="org-left">Spherical tensor</td>
     <td class="org-left">ii</td>
     </tr>
     </tbody>
     </table>
-    
+
     For the tensor types there is also the "component" `T` (with
     added `()` because it is a "function") that transposes the tensor
     (`A.T()` gives the transposed tensor for `A`)
-    
+
     `x`, `y` and `z` for tensors are the rows as vectors.
 
 
@@ -570,7 +568,7 @@ but help identify certain entities:
 -   **weight:** The "natural" weight according to table
     \ref{tab:naturalWeights} for the current parser
 
-<table id="org7eaa044" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org64a9236" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 4:</span> "Natural" weights for different parsers</caption>
 
 <colgroup>
@@ -665,7 +663,7 @@ sense for face zones. Calling this function will result in an
 error message). Table \ref{tab:parsershorthand} lists the short
 descriptions.
 
-<table id="org9d4b21e" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="orgedad9b9" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 5:</span> Shorthand for the parsers</caption>
 
 <colgroup>
@@ -722,7 +720,7 @@ descriptions.
 
     These functions give information about the mesh and are used
     without arguments:
-    
+
     -   **pos():** Position of the native structures of the parser (for
         instance cell centers for `internalField`) (F, P, S,
         FF, FP, C)
@@ -751,12 +749,12 @@ descriptions.
     -   **delta():** Cell center to face center vector (P, FP)
     -   **weights():** Patch weighting factors (P, FP)
     -   **normal():** Normal vectors (P, S, FP)
-    
+
     These functions are only available in the `internalField`-parser
     and identify cells, faces or points belonging to a certain
     group. Most of them take a name as an argument. The result is a
     boolean field:
-    
+
     -   **set(name):** `True` for all cells in the cell-set `name`. For
         `cloud` this returns `True` if a particle is in
         a cell that is the set
@@ -769,9 +767,9 @@ descriptions.
     -   **pzone(name):** `True` for all points in the point-zone `name`
     -   **onPatch(name):** `True` for all faces on the patch `name`
     -   **internalFace():** `True` for all faces which are **not** on a patch
-    
+
     This function is only implemented for the Subset-parser:
-    
+
     -   **flip():** For face-zones and face-Sets this gives the
         orientation of the face. \(1\) if the face is oriented
         in the "right" direction, \(-1\) if not. Used to get
@@ -780,7 +778,7 @@ descriptions.
 2.  Information about time
 
     Some special functions implemented in all parsers:
-    
+
     -   **oldTime(fieldName):** value of a field at the last time. Not
         available for `cloud`
     -   **deltaT():** Scalar field with the current time-step size
@@ -796,7 +794,7 @@ descriptions.
     expression of any type defined in a cell", an argument
     `faceScalar` means "only a scalar defined on a face is valid
     here"
-    
+
     -   **div(cellExpr):** Divergence of tensor and vector fields
     -   **div(faceScalar,cellExpr):** Divergence with a "face flux"
     -   **div(faceExpr):** Divergence of a value defined on faces
@@ -815,39 +813,39 @@ descriptions.
     -   **meshPhi(cellVector):** Additional flux by the mesh movement
     -   **meshPhi(cellScalar,cellVector):** Additional flux
     -   **flux(faceScalar,cellExpr):** Flux
-    
+
     These functions give the explicitly discretized form. For a more
     detailed explanation see the *Programmers Guide*.
-    
+
     The above functions are also implemented (if appropriate) in the
     `faInternalField`. Additionally these functions are implemented
     there:
-    
+
     -   **lnGrad(areaExpr):** Like `snGrad`
 
 4.  Functions that interpolate
 
     These functions interpolate fields between the native and the
     secondary structure of a parser
-    
+
     -   **interpolate(cellExpr):** Interpolates to the faces (F, FF)
     -   **interpolateToPoint(cellExpr):** Interpolates to points (F)
     -   **interpolateToCell(pointExpr):** Interpolates to the cells (F)
     -   **toPoint(faceExpr):** To the point values (P, S, FP)
     -   **toFace(pointExpr):** To the cell values (P, S, FP)
-    
+
     These functions are not strictly interpolations, but are used to
     calculate a cell value from a face value. They are
     described in detail in the *Programmers Guide*:
-    
+
     -   **integrate(faceExpr):** Integrate over the faces(F, FF)
     -   **surfSum(faceExpr):** Sum the values on the faces(F, FF)
     -   **faceAverage(faceExpr):** Average of the face values(F, FF)
     -   **reconstruct(faceScalar):** Reconstruct a vector field from the
         face fluxes (F)
-    
+
     These two functions are for quickly generating constant fields:
-    
+
     -   **surf(scalar):** Generate a constant face-field (no
         interpolation necessary) (F, FF)
     -   **point(scalar):** Generate a constant point-field (F)
@@ -856,24 +854,24 @@ descriptions.
 
     These functions take a field name and return a field from another
     place. They are only available in the patch parser:
-    
+
     -   **internalField(fieldName):** Get the value of the field on the
         neighbouring internal cells(P, FP)
     -   **neighbourField(fieldName):** For a coupled patch get the value
         of the internal field of the coupled patch (P, FP)
-    
+
     These functions are only available if the patch has been defined
     as a `mappedPatch` (`directMappedPatch` in OpenFOAM before 2.0)
     or a subclass in the `boundary`-file:
-    
+
     -   **mapped(fieldName):** For a mapped patch get the value of the
         field "on the other side" (P)
     -   **mappedInternal(fieldName):** Similar but get the value of the
         internal field "on the other side" (P)
-    
+
     This function is the only "differential operator" defined on
     patches:
-    
+
     -   **snGrad(fieldName):** Gradient of the field `name` in the
         surface normal direction (P, FP)
 
@@ -899,37 +897,37 @@ is found an error is raised:
     Field-Parser and will be discussed below
 2.  A timeline. This is an object where a scalar is specified as a
     function of time. The current simulation time is used.
-    
+
     For the specification see the discussion of the
     `timelines`-entry below
 3.  A lookup table. This works like a timeline but a scalar (that
     can be different in each "cell") has to be specified between
     `(` and `)`
-    
+
     For details see the discussion of `lookuptables` below
 4.  A 2D lookup table which works like a lookup table with 2
     variables
 5.  A field or a variable. Fields are `GeometricFields` that are
     usually declared and used by the OpenFOAM-solver. Depending on
     the application they are either
-    
+
     -   looked up in memory
     -   looked up on disc and read in (in this case they **may** be
         cached in memory)
-    
+
     Variables are intermediate values that have been assigned a
     name and are stored in memory (more on the declaration of those
     below.)
-    
+
     The usual lookup order rules are (but you shouldn't rely on
     them anyway and give variables etc names that do not "shadow"
     regular fields):
-    
+
     1.  Variable of same name and type is found before a field
     2.  Data types are searched in this order: scalar, vector,
         tensor, symmetrical tensor, spherical tensor
     3.  Native structure before secondary structure
-    
+
     Before looking for a field the `aliases` table is checked and
     if the current name is found there instead the *real name*
     defined for that alias is searched. This allows accessing
@@ -946,7 +944,7 @@ is found an error is raised:
     the values in the expression (if necessary it interpolates the
     field to the local mesh. All the usual problems associated with
     interpolation may occur).
-    
+
     This mechanism does **not** allow the specification of an
     arbitrary expression on the other mesh. That would be possible
     with a (yet unwritten) plugin-function.
@@ -966,10 +964,10 @@ is found an error is raised:
     can access its value. The variable can be set multiple times
     during a timestep. At the end of a timestep the value is lost (so
     the variable has to be set before it can be used).
-    
+
     There are two special flavors of variables that have to be
     specified beforehand and change the value that is read:
-    
+
     -   **stored variables:** these variables keep their value to the
         next timestep so they can be used **before** they are set. An
         initial value for that variable has to be provided.
@@ -977,7 +975,7 @@ is found an error is raised:
         then the value which that variable had at the time
         \(t-t_{offset}\) will be used. If that time is before the
         start-time then a default value is used.
-    
+
     If a variable sequence is evaluated multiple times during a
     timestep (for instance because there is a sub-iteration cycle in
     the solver and a boundary condition is evaluated multiple times)
@@ -987,11 +985,11 @@ is found an error is raised:
     possible to accumulate things like a mass-flow in a stored
     variable without bothering how many sub-iterations the
     non-orthogonal corrector did.
-    
+
     There are two additional flavors of variables for advanced
     usage. They only make sense for global variables and the types
     have to be specified before they are first used:
-    
+
     -   **StackExpressionResult:** this variable starts with a size of
         \(0\). If a value is assigned than the **uniform** value is
         appended to this variable (making it grow from a size of
@@ -1240,15 +1238,15 @@ specification syntax is the same:
         an error)
     -   **readerType:** Type of the reader. Currently only two types
         are supported:
-        
+
         -   **openFoam:** the regular OpenFOAM-format which
             is a list of value pairs: time
             and value
         -   **csv:** Comma separated values format. This format requires
             addition parameters.
-        
+
         The default value is `openFOAM`
-        
+
         The following options are only required for the `csv`-format
     -   **hasHeaderLine:** Whether the file has a header line that
         should be skipped before the actual data
@@ -1292,26 +1290,26 @@ and set names:
     specifications are separated by `;` (semicolons). **Note**: the
     last variable specification also has to be terminated by a
     semicolon!
-    
+
     The variables will be evaluated in the order they are
     declared. A variable can be assigned a value more than once.
-    
+
     The regular variable assignment is of the form
-    
+
         varName=expression;
-    
+
     which assigns the result of the `expression` to the variable
     `varName`. The evaluation of `expression` happens with the
     current parser and the whole (probably inhomogeneous) solution
     is saved for further evaluations.
-    
+
     But variables can also be evaluated on other entities and their
     value can be used in the *local* parser. This evaluation of
     *external expressions* is triggered by `{}` after the variable
     name like this:
-    
+
         varName{parserType'name/regionName}=expression
-    
+
     This means that `expression` is evaluated with the parser
     specified between `{}`. The form given above is the most general
     form. The specification of the `regionName` is only needed in
@@ -1322,11 +1320,11 @@ and set names:
     instance the patch name or the name of the cell set). If the
     `parserType` is `patch` then it can be omitted and the
     specification of the patch name is sufficient:
-    
+
         varName{patchName}=expression
-    
+
     evaluates the `expression` on patch `patchName`.
-    
+
     In the general case it is only possible to use external
     expressions if the expression yields a uniform value (for
     instance a sum) as a general way to interpolate from any entity
@@ -1334,7 +1332,7 @@ and set names:
     a predictable, logical way  is not possible. So if the
     expression yields a non-uniform value then a warning is issued
     and the average is used.
-    
+
     The only exception currently implemented is if the current patch
     is a `mapped` patch and the external expression is evaluated on
     the "partner patch". In this case the non-uniform result will be
@@ -1345,11 +1343,11 @@ and set names:
     The two optional values `storedVariables` and `delayedVariables`
     give swak a hint which variables should be treated special (for
     an explanation on how these variables work see above)
-    
+
     `storedVariables` is a list of dictionaries that specify which
     variables should be stored. The two entries in that dictionary
     are
-    
+
     -   **name:** the name of the variable. If a variable of that name
         is encountered during the evaluation of expressions or
         being assigned to then it is treated as a stored
@@ -1357,11 +1355,11 @@ and set names:
         timestep)
     -   **initialValue:** if the variable is accessed before it has been
         set, then this value is used
-    
+
     In addition swak writes an additional entry (which is used for
     restarting) if the variables are written out (for instance in a
     `groovyBC`):
-    
+
     -   **value:** the current value of the stored variable as a
         dictionary. Entries in that dictionary are (although
         they rarely have to be edited) are
@@ -1374,10 +1372,10 @@ and set names:
             value is stored
         -   **value:** list with the actual values (type according to the
             `valueType`)
-    
+
     The optional list `delayedVariables` holds the information about
     those. The dictionaries hold the following information:
-    
+
     -   **name:** the name of the delayed variable
     -   **delay:** how much the value is "delayed" between writing and
         reading
@@ -1386,9 +1384,9 @@ and set names:
     -   **storeInterval:** Interval in which values are actually stored
         (the used delayed values will be linearly
         interpolated between these values)
-    
+
     And again:
-    
+
     -   **value:** holds the current value for restarting purposes
 
 3.  Specification of global variables
@@ -1403,14 +1401,14 @@ and set names:
     If the case is a multi-region case then the mesh region for this
     parser can be specified. Otherwise the used region is
     context-dependent (usually the default mesh is used):
-    
+
     -   **region:** Name of the mesh to be used
 
 5.  Loading additional function plugins
 
     It is possible to load additional function plugin libraries
     through an optional entry:
-    
+
     -   **functionPlugins:** if present this is a list of words. To each
         of theses words the string `libswak` is prepended and
         `FunctionPlugin.so` is appended and a library of that name
@@ -1424,7 +1422,7 @@ Certain drivers/parsers have additional parameters.
 1.  Additional parameters of the field-parser
 
     This has only one additional parameter:
-    
+
     -   **dimensions:** physical dimensions of the result. Depending on
         the application this parameter may or may not be
         used. Optional (otherwise the result is
@@ -1433,16 +1431,16 @@ Certain drivers/parsers have additional parameters.
 2.  Additional parameter of the patch-driver
 
     The only additional parameter here is
-    
+
     -   **mappingInterpolation:** A sub-dictionary with the interpolation
         schemes to be used if this is a mapped patch and mapping
         with interpolation is used. Optional. If unset this is an
         empty dictionary
-    
+
     Also instances of this driver where it is not obvious from the
     context (for a `groovyBC` it is) a parameter to specify the name
     of the patch is needed:
-    
+
     -   **patchName:** the name of the patch the parser works on
 
 3.  Additional parameters for the subset drivers
@@ -1450,7 +1448,7 @@ Certain drivers/parsers have additional parameters.
     The additional (optional) parameters for this class of drivers is
     concerned with what is happening if a field is undefined on the
     native structure:
-    
+
     -   **autoInterpolate:** If this variable is `true` and for instance
         the parser works on faces and a field is **not** defined as a
         face-field but is defined as a volume-field then the driver
@@ -1465,21 +1463,21 @@ Certain drivers/parsers have additional parameters.
 
     To specify which set the driver is working on one parameter is
     needed:
-    
+
     -   **setName:** name of the cell or face-set
 
 5.  Additional parameter for `cellZone` and `faceZone` drivers
 
     To specify which zone the driver is working on one parameter is
     needed:
-    
+
     -   **zoneName:** name of the cell or face-zone
 
 6.  Additional parameters for sampled set and sampled surfaces
 
     These two drivers have two parameters that determine how field
     values are mapped to them:
-    
+
     -   **interpolate:** if this is `true` then the field values are
         interpolated to the sample. Otherwise the field
         is "only" sampled (the value of the nearest cell
@@ -1488,73 +1486,73 @@ Certain drivers/parsers have additional parameters.
         `interpolate` is `true`. This parameter determines how the
         interpolation should take place. There is no default value
         for this.
-    
+
     Also there are parameters for each of the parsers that are used
     to look up the surface or the set in a repository (a database
     that swak has for these structures).
-    
+
     -   **surfaceName:** name of the sampled surface the sampled driver
         should work on
     -   **setName:** name of the sampled set to work with
-    
+
     Adding sets and surfaces to the repositories can be done with
     appropriate function objects. If no surface with the name given
     by `surfaceName` is present then the specification of the
     surface is looked for:
-    
+
     -   **surface:** a sub-dictionary with the specification of the
         sampled surface (for details see the
         OpenFOAM-documentation). This surface is added to the
         repository under the name `surfaceName`
-    
+
     A missing set `setName` is treated in the same way: The
     specification is looked for
-    
+
     -   **set:** Specification of the sampled set
-    
+
     For sampled surfaces two optional entries exist:
-    
+
     -   **writeSurfaceOnConstruction:** if set to `true` the surface
         will be written when it is constructed at the current time
         in a subfolder `surfaceRepository`
     -   **autoWriteSurface:** if set to `true` the surface is written at
         every write-time in a subfolder `surfaceRepository`
-    
+
     If one of the above options is set then the following option has
     to be set:
-    
+
     -   **surfaceFormat:** format in which the surface should be written
-    
+
     Similar optional entries exist for sampled sets:
-    
+
     -   **writeSetOnConstruction:** if set to `true` the set
         will be written when it is constructed at the current time
         in a subfolder `setRepository`
     -   **autoWriteSet:** if set to `true` the set is written at
         every write-time in a subfolder `setRepository`
-    
+
     If one of the above options is set then the following option has
     to be set:
-    
+
     -   **setFormat:** format in which the set should be written
 
 7.  Additional parameters for the finite area (FAM) drivers
 
     The `faInternalField` driver adds the same parameter as the
     field-driver:
-    
+
     -   **dimensions:** physical dimensions of the result
-    
+
     The `faPatch` driver adds a parameter to determine the name of
     the patch:
-    
+
     -   **faPatchName:** the name of the patch
 
 8.  Additional parameter for the `cloud`-parser
 
     The additional parameter this parser needs is for the
     interpolation of fields from the fluid phase:
-    
+
     -   **interpolationSchemes:** a dictionary with the interpolation
         schemes that should be used to interpolate from the fluid
         phase values to the particle position. Only required if
@@ -1690,18 +1688,21 @@ to the name. The added accumulations are:
     entity. Usually the volume oder the area of it.
 
 
-<a id="orgf803d25"></a>
+<a id="org65798a7"></a>
 
 ### Logical accumulations
 
 Logical swak-expressions usually generate an arry with more than 1
 logical value. Then a `logicalAccumulation` is used to boil it
-down to one logical value. The possible values here are either
+down to one logical value. The possible values here are
 
 -   **or:** It is `true` if at least one of the logical values is
     `true`. Therefor it is only `false` if **all** logical values
     are `false`
 -   **and:** This is only `true` if **all** logical values are `true`
+-   **any:** an alias for `or`
+-   **all:** an alias for `and`
+-   **none:** only `true` if all logical values are `false`
 
 
 ## Parameters for the Python-interpreter wrapper
@@ -1765,10 +1766,10 @@ two cases:
     component (like `a.x` for vectors or `a.xx` for tensors). To
     overwrite these they have to be sliced: `a.x[:]=0` (`a.x=0` only
     changes the attribute)
-    
+
     For encapsulating the fields special class `OpenFOAMFieldArray`
     which is based on `numpy.ndarray` is used.
-    
+
     If a variable that is going to a global namespace is a
     `numpy`-array then it is translated by the following rules:
     vectors are transformed to `scalarField`. Arrays with 3 columns
@@ -1877,7 +1878,7 @@ The functions are (`name` is the name of the function object)
     dictionary key and the value is the actual library
     (for instance `np numpy;` imports the library
     `numpy` under the name `np`).
-    
+
     This option is necessary for certain libraries
     which cause a deadlock when imported in the usual
     Python-code
@@ -1958,15 +1959,15 @@ parameters:
     rules applies the machine moves to the specified state and
     all other rules are **not** tested. If none of the rules
     applies then the machine remains in the current state.
-    
+
     A rule is specified by a dictionary with these parameters:
-    
+
     -   **from:** a state name. The rule only is tested if the
         machine is in this state
     -   **condition:** a swak-expression. This is the condition that is
         tested. If it is `true` the machine switches to a new state
     -   **logicalAccumulation:** Boils down the array of logical values
-        to one logical decision. See [5.1.1](#orgf803d25) above
+        to one logical decision. See [5.1.1](#org65798a7) above
     -   **to:** name of the state the machine moves to if `condition` is
         `true` according to `logicalAccumulation`
     -   **description:** A descriptive text that is printed out at every
@@ -2019,4 +2020,3 @@ with `stateMachine`:
     -   number of steps since the last state change
     -   for each state the information how often the machine changed
         to that state
-

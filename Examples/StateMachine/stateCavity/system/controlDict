@@ -70,22 +70,22 @@ functions {
                 from start;
                 to one;
                 description "Move away from first state";
-                condition "true";
-                logicalAccumulation or;
+                condition "false";
+                logicalAccumulation none;
             }
             {
                 from one;
                 to two;
                 description "The time has come";
                 condition "theTime>=0.05 && theTime<0.3";
-                logicalAccumulation or;
+                logicalAccumulation any;
             }
             {
                 from two;
                 to buh;
                 description "Patch says no";
                 condition "stateMachine_isState(thirdMachine,noMove)";
-                logicalAccumulation or;
+                logicalAccumulation all;
             }
         );
     }
