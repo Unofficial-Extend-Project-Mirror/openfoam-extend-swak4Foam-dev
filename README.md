@@ -6230,4 +6230,11 @@ allow specifying things that previously only specified on the command line:
 -   foreignMeshesThatFollowTime
 
 
+#### `funkyDoCalc` allows writing data as a dictionary
+
+The option `-writeDict` writes all the results as a
+dictionary. It also includes a sub-dictionary with a copy of the
+specification file
+
+
 ### Examples
