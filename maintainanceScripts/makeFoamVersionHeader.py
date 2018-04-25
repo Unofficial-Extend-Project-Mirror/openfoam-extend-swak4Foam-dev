@@ -76,7 +76,7 @@ foamFork = ""
 #    WM_VERSION = OPENFOAM_PLUS=1612
 reCom = re.compile(r'OPENFOAM_PLUS\s*=\s*([\d.]+)')
 try:
-    for line in open(path.join(environ["WM_DIR"],'rules","General","general'), 'r'):
+    for line in open(path.join(environ['WM_DIR'],'rules','General','general'), 'r'):
         m = re.search(reCom, line)
         if m:
             foamFork  = "openfoamplus"
