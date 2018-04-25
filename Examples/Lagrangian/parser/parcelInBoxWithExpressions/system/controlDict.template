@@ -82,8 +82,8 @@ functions {
         $cloudPosition;
         expression "origId";
     }
-<!--(if foamFork=="openfoam" and foamVersion>=(5,))-->
-<!--(elif foamFork=="openfoamplus" and foamVersion>=(1712,))-->
+<!--(if foamFork=="com" and foamVersion>=(1712,))-->
+<!--(elif foamFork=="org" and foamVersion>=(5,))-->
 <!--(else)-->
     cloudSoftImpact {
         $cloudPosition;

@@ -71,8 +71,9 @@ else
     mv $versionFile.tmp $versionFile
 fi
 
-# Quick and dirty generation of a file that sets OPENFOAM_PLUS as this is not done anywhere eelse. Or so it seems
-sed -e 's/.*OPENFOAMPLUS \([0-9][0-9]*\)/OPENFOAM_PLUS=\1/' <$versionFile | grep  OPENFOAM_PLUS= >rules/foamVersion
+# Ensure consistent definition of OPENFOAM_COM without relying anything else.
+# This may be available from the regular wmake rules, but use our own convention
+sed -ne 's/.*SWAK_IS_COM \([0-9][0-9]*\)/OPENFOAM_COM=\1/p' < $versionFile > rules/foamVersion
 
 wmakeLnInclude simpleFunctionObjects
 

@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-<!--(if foamVersion>=(3,) and foamFork in ["openfoam","openfoamplus"])-->
+<!--(if foamVersion>=(3,) and foamFork in ["com","org"])-->
 wallFunction epsilonWallFunction;
 <!--(else)-->
 wallFunction compressible::epsilonWallFunction;
@@ -61,7 +61,7 @@ boundaryField
     }
     inlet
     {
-<!--(if foamVersion>=(3,) and foamFork in ["openfoam","openfoamplus"])-->
+<!--(if foamVersion>=(3,) and foamFork in ["com","org"])-->
         type            turbulentMixingLengthDissipationRateInlet;
 <!--(else)-->
         type            compressible::turbulentMixingLengthDissipationRateInlet;
