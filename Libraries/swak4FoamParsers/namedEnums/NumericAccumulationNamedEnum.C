@@ -92,7 +92,7 @@ NumericAccumulationNamedEnum::readAccumulations(
     const wordList &aNames,
     const fileName &name
 ) {
-    HashSet<NumericAccumulationNamedEnum::value> needsArgument;
+    HashSet<NumericAccumulationNamedEnum::value, Hash<label>> needsArgument;
     needsArgument.insert(numQuantile);
     needsArgument.insert(numRange);
     needsArgument.insert(numSmaller);
@@ -116,7 +116,7 @@ NumericAccumulationNamedEnum::readAccumulations(
         } else {
             aName=aNames[i].substr(0,numPos);
             value=readScalar(
-                IStringStream(aNames[i].substr(numPos,aNames[i].size()-numPos))()
+                IStringStream(aNames[i].substr(numPos))()
             );
             hasValue=true;
         }

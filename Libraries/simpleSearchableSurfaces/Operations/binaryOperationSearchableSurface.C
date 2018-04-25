@@ -586,7 +586,7 @@ void Foam::binaryOperationSearchableSurface::getRegion
     assert(region.size()==info.size());
 
     if(debug) {
-        HashTable<label,label> cnts;
+        HashTable<label,label, Hash<label>> cnts;
         forAll(region,i) {
             label reg=region[i];
             if(!cnts.found(reg)) {
