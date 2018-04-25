@@ -77,10 +77,17 @@ void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
             origMesh.polyMesh::instance(),
             origMesh.polyMesh::db()
         ),
+#if OPENFOAM_COM >= 1803
+        std::move(origMesh.points()),
+        std::move(origMesh.faces()),
+        std::move(origMesh.faceOwner()),
+        std::move(origMesh.faceNeighbour())
+#else
         Xfer<pointField>(origMesh.points()),
         Xfer<faceList>(origMesh.faces()),
         Xfer<labelList>(origMesh.faceOwner()),
         Xfer<labelList>(origMesh.faceNeighbour())
+#endif
     );
     {
         const polyBoundaryMesh &origBound=origMesh.boundaryMesh();
