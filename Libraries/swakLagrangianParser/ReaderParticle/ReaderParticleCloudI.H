@@ -44,7 +44,7 @@ template <typename T>
 void ReaderParticleCloud::addDataInternal(
     const word &name,
     const Field<T> &inData,
-    HashTable<Field<T>,word> &data,
+    HashTable<Field<T>> &data,
     bool overwrite
 ) {
     if(data.found(name) && !overwrite) {
@@ -190,12 +190,12 @@ const Field<T> &ReaderParticleCloud::getValues(
 
 template <typename T>
 void ReaderParticleCloud::writeData(
-    const HashTable<Field<T>,word> &data
+    const HashTable<Field<T>> &data
 ) const {
     const wordList toc(data.toc());
     forAll(toc,i)
     {
-	IOField<T> v(
+        IOField<T> v(
             this->fieldIOobject(
                 toc[i],
                 IOobject::NO_READ

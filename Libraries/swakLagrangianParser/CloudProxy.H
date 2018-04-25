@@ -75,10 +75,10 @@ class CloudProxy
     const cloud &cloud_;
 
     //- types of the available functions
-    HashTable<word,word> fieldTypes_;
+    HashTable<word> fieldTypes_;
 
     //- descriptions of the functions
-    HashTable<string,word> fieldDescriptions_;
+    HashTable<string> fieldDescriptions_;
 
     //- Disallow default bitwise assignment
     void operator=(const CloudProxy&);

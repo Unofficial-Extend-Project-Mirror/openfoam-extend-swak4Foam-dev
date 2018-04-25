@@ -440,7 +440,7 @@ bool reportAField(
     }
 
     if(doBoundary) {
-        HashSet<word> isConstraint(fvPatch::constraintTypes());
+        wordHashSet isConstraint(fvPatch::constraintTypes());
         const fvBoundaryMesh & bound=mesh.boundary();
         forAll(bound,patchI) {
             if(!isConstraint.found(bound[patchI].type())) {

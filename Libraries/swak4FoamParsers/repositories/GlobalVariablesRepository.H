@@ -67,7 +67,7 @@ class GlobalVariablesRepository
 public:
     class ResultTable
     :
-    public HashPtrTable<ExpressionResult,word>
+    public HashPtrTable<ExpressionResult>
     {
     public:
         ResultTable(const ResultTable &r);
@@ -77,7 +77,7 @@ public:
 private:
    // Private data
 
-    typedef HashTable<ResultTable,word> ResultTableTable;
+    typedef HashTable<ResultTable> ResultTableTable;
 
     ResultTableTable globalVariables_;
 

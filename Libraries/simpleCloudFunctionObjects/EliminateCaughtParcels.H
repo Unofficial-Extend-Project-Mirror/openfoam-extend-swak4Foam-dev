@@ -81,8 +81,8 @@ class EliminateCaughtParcels
     typedef typename CloudType::parcelType parcelType;
 
     //- Convenience typedef for hash hit-table
-    typedef HashTable<label, labelPair, typename labelPair::Hash<> > hitTableType;
-    typedef HashTable<vector, labelPair, typename labelPair::Hash<> > hitPositionTableType;
+    typedef HashTable<label, labelPair, typename labelPair::Hash<>> hitTableType;
+    typedef HashTable<vector, labelPair, typename labelPair::Hash<>> hitPositionTableType;
 
 
     //- Table of number of times a particle has hit a face

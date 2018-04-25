@@ -250,7 +250,7 @@ bool SetsRepository::writeData(Ostream &f) const
 
     f << sets_;
 
-    typedef HashTable<word,word> wordWord;
+    typedef HashTable<word> wordWord;
 
     forAllConstIter(wordWord,formatNames_,it) {
         const word &name=it.key();

@@ -78,19 +78,19 @@ class ReaderParticleCloud
         //- Disallow default bitwise assignment
         void operator=(const ReaderParticleCloud&);
 
-    HashTable<Field<label>,word> labelData_;
-    HashTable<Field<scalar>,word> scalarData_;
-    HashTable<Field<vector>,word> vectorData_;
-    HashTable<Field<tensor>,word> tensorData_;
-    HashTable<Field<symmTensor>,word> symmTensorData_;
-    HashTable<Field<sphericalTensor>,word> sphericalTensorData_;
-    //    HashTable<Field<bool>,word> boolData_;
+    HashTable<Field<label>> labelData_;
+    HashTable<Field<scalar>> scalarData_;
+    HashTable<Field<vector>> vectorData_;
+    HashTable<Field<tensor>> tensorData_;
+    HashTable<Field<symmTensor>> symmTensorData_;
+    HashTable<Field<sphericalTensor>> sphericalTensorData_;
+    //    HashTable<Field<bool>> boolData_;
 
     template <typename T>
     void addDataInternal(
         const word &name,
         const Field<T> &inData,
-        HashTable<Field<T>,word> &data,
+        HashTable<Field<T>> &data,
         bool overwrite=false
     );
 
@@ -106,7 +106,7 @@ protected:
 
     template <typename T>
     void writeData(
-        const HashTable<Field<T>,word> &data
+        const HashTable<Field<T>> &data
     ) const;
 
     void clearData();

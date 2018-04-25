@@ -217,7 +217,7 @@ bool SurfacesRepository::writeData(Ostream &f) const
 
     f << surfaces_;
 
-    typedef HashTable<word,word> wordWord;
+    typedef HashTable<word> wordWord;
 
     forAllConstIter(wordWord,formatNames_,it) {
         const word &name=it.key();

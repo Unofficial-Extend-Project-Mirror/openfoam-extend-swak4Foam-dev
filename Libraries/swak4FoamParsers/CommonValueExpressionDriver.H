@@ -126,7 +126,7 @@ class CommonValueExpressionDriver
     word otherMeshName_;
 
     //- list with aliases. Meant to workaround situations where fields have names that don't fit what swak accepts as a field name
-    HashTable<word,word> aliases_;
+    HashTable<word> aliases_;
 
 protected:
     //- get the string of the context in a form that is usable for an error message
@@ -151,12 +151,12 @@ protected:
     //- return the actual name for an alias
     const word &getAlias(const word &name) const;
 
-    const HashTable<word,word> &aliases() const
+    const HashTable<word> &aliases() const
         {
             return aliases_;
         }
 
-    void setAliases(const HashTable<word,word> &orig) {
+    void setAliases(const HashTable<word> &orig) {
         aliases_=orig;
     }
 
@@ -171,22 +171,22 @@ protected:
 private:
     ExpressionResult result_;
 
-    HashTable<ExpressionResult,word> variables_;
+    HashTable<ExpressionResult> variables_;
 
     List<StoredExpressionResult> storedVariables_;
 
-    HashTable<DelayedExpressionResult,word> delayedVariables_;
+    HashTable<DelayedExpressionResult> delayedVariables_;
 
     label specialVariablesIndex_;
 
     wordList globalVariableScopes_;
 
-    HashTable<interpolationTable<scalar>,word> lines_;
+    HashTable<interpolationTable<scalar>> lines_;
 
-    HashTable<interpolationTable<scalar>,word> lookup_;
+    HashTable<interpolationTable<scalar>> lookup_;
 
 #ifdef FOAM_HAS_INTERPOLATION2DTABLE
-    HashTable<interpolation2DTable<scalar>,word> lookup2D_;
+    HashTable<interpolation2DTable<scalar>> lookup2D_;
 #endif
 
     exprString content_;
@@ -426,7 +426,7 @@ protected:
     virtual void parseInternal(int startSymbol) = 0;
 
     //- only subclasses have write-access
-    //    inline  HashTable<ExpressionResult,word> &variables();
+    //    inline  HashTable<ExpressionResult> &variables();
     ExpressionResult &variable(const word &name);
 
     //- expand string list to include other lists reference with #
@@ -518,7 +518,7 @@ public:
 
     // Member Functions
 
-    //    inline const HashTable<ExpressionResult,word> &variables() const;
+    //    inline const HashTable<ExpressionResult> &variables() const;
     const ExpressionResult &variable(const word &name) const;
 
     bool hasVariable(const word &name) const;

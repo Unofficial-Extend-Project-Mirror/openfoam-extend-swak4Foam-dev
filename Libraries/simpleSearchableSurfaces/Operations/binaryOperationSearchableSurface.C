@@ -35,6 +35,7 @@ Contributors/Copyright:
 \*---------------------------------------------------------------------------*/
 
 #include "binaryOperationSearchableSurface.H"
+#include "Map.H"
 #include "SortableList.H"
 
 #include <cassert>
@@ -586,7 +587,7 @@ void Foam::binaryOperationSearchableSurface::getRegion
     assert(region.size()==info.size());
 
     if(debug) {
-        HashTable<label,label, Hash<label>> cnts;
+        Map<label> cnts;
         forAll(region,i) {
             label reg=region[i];
             if(!cnts.found(reg)) {

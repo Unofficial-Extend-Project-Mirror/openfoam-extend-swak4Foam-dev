@@ -75,9 +75,9 @@ class CloudMoveStatistics
     typedef typename CloudType::parcelType parcelType;
 
     //- Convenience typedef for hash hit-table
-    typedef HashTable<label, labelPair, typename labelPair::Hash<> > hitTableType;
+    typedef HashTable<label, labelPair, typename labelPair::Hash<>> hitTableType;
 
-    typedef HashTable<label, word> patchHitTableType;
+    typedef HashTable<label> patchHitTableType;
 
     //- Table of number of times a particle has hit a face
     hitTableType faceHitCounter_;

@@ -113,7 +113,7 @@ class CloudValueExpressionDriver
     void writeProxyInfo();
 
     // used to make sure that the same cloud info is printed only once
-    static HashTable<string,word> cloudInfos_;
+    static HashTable<string> cloudInfos_;
 
 protected:
 
