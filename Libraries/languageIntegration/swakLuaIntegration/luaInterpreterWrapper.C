@@ -50,6 +50,8 @@ Contributors/Copyright:
 #include "addToRunTimeSelectionTable.H"
 // #include <fcntl.h>
 
+#include "functions4Lua.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -110,6 +112,9 @@ luaInterpreterWrapper::luaInterpreterWrapper
     luaState_=luaL_newstate();
     luaL_openlibs(luaState_);
     Pbug << "Interpreter state: " << getHex(luaState_) << endl;
+
+    // extending the Lua-interpreter
+    addOpenFOAMFunctions(luaState_);
 
     if(
         (
