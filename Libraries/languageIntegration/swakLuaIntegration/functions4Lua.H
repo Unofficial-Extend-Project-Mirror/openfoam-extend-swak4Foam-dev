@@ -46,7 +46,8 @@ namespace Foam {
 
     void addOpenFOAMFunctions(lua_State *luaState);
 
-    void addScalarField(lua_State *luaState,const word &name, Field<scalar> *data);
+    template<class T>
+    void addFieldToLua(lua_State *luaState,const word &name, Field<T> *data);
 
 }
 #endif

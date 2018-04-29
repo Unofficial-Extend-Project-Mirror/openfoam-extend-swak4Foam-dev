@@ -46,12 +46,6 @@ void* operator new(size_t size, lua_State* L, const char* metatableName)
 
 namespace Foam {
 
-    // static int l_sin (lua_State *L) {
-    //     double d = lua_tonumber(L, 1);  /* get argument */
-    //     lua_pushnumber(L, sin(d));  /* push result */
-    //     return 1;  /* number of results */
-    // }
-
     template<class T>
     class FieldWrap {
         Field<T> *otherData_;
@@ -86,32 +80,16 @@ namespace Foam {
         "swak4Foam.scalarArray";
 
     template<class T>
-    static FieldWrap<T> *toField (lua_State *L, int index)
-    {
-        FieldWrap<T> *data = (FieldWrap<T> *)lua_touserdata(L, index);
-        if (data == NULL) {
-            luaL_typerror(L, index, FieldWrap<T>::metaTable);
-        }
-        return data;
-    }
-
-    template<class T>
-    static FieldWrap<T> *checkField (lua_State *L, int index)
+    static FieldWrap<T> *checkField(lua_State *L, int index)
     {
         FieldWrap<T> *data;
         luaL_checktype(L, index, LUA_TUSERDATA);
         data = (FieldWrap<T> *)luaL_checkudata(L, index, FieldWrap<T>::metaTable);
-        if (data == NULL) {
-            luaL_typerror(L, index, pTraits<T>::typeName+"Array");
-        }
         return data;
     }
 
     template<class T>
     static int newField(lua_State *L) {
-        //        FieldWrap<T> *fw=(FieldWrap<T>*)lua_touserdata(L,1);
-        //        luaL_argcheck(L, fw != NULL, 1, "'FieldWrap' expected");
-        //        lua_pushinteger(L, (*fw)().size());
         int n = label(luaL_checkinteger(L, 1));
         FieldWrap<T> *fw=new(L,FieldWrap<T>::metaTable) FieldWrap<T>(n);
 
@@ -120,23 +98,21 @@ namespace Foam {
 
     template<class T>
     static int delField(lua_State *L) {
-        //        Info << "Deleting" << endl;
-        static_cast<FieldWrap<T>*>(lua_touserdata(L, 1))->~FieldWrap<T>();
+        FieldWrap<T> *fw=checkField<T>(L,1);
+        fw->~FieldWrap<T>();
         return 0;
     }
 
     template<class T>
     static int fieldSize(lua_State *L) {
-        FieldWrap<T> *fw=(FieldWrap<T>*)lua_touserdata(L,1);
-        luaL_argcheck(L, fw != NULL, 1, "'FieldWrap' expected");
+        FieldWrap<T> *fw=checkField<T>(L,1);
         lua_pushinteger(L, (*fw)().size());
         return 1;
     }
 
     template<class T>
-    static int getElement(lua_State *L) {
-        FieldWrap<T> *fw=(FieldWrap<T>*)lua_touserdata(L,1);
-        luaL_argcheck(L, fw != NULL, 1, "'FieldWrap' expected");
+    static int getFieldElement(lua_State *L) {
+        FieldWrap<T> *fw=checkField<T>(L,1);
         int index = (int)luaL_checkinteger(L, 2) - 1;
         luaL_argcheck(
             L, 0 <= index && index < (*fw)().size(), 2,
@@ -148,9 +124,8 @@ namespace Foam {
     }
 
     template<class T>
-    static int setElement(lua_State *L) {
-        FieldWrap<T> *fw=(FieldWrap<T>*)lua_touserdata(L,1);
-        luaL_argcheck(L, fw != NULL, 1, "'FieldWrap' expected");
+    static int setFieldElement(lua_State *L) {
+        FieldWrap<T> *fw=checkField<T>(L,1);
         int index = (int)luaL_checkinteger(L, 2) - 1;
         luaL_argcheck(
             L, 0 <= index && index < (*fw)().size(), 2,
@@ -163,8 +138,19 @@ namespace Foam {
         return 1;
     }
 
+    template<class T>
+    static int fieldToString(lua_State *L) {
+        FieldWrap<T> *fw=checkField<T>(L,1);
+        lua_pushfstring(
+            L,
+            "swak4Foam.%sField with %d elements",
+            pTraits<T>::typeName,
+            (*fw)().size()
+        );
+        return 1;
+    }
+
     static const struct luaL_Reg swaklib [] = {
-        // {"sin",l_sin},
         {"newScalarField", newField<scalar>},
         {NULL, NULL}  /* sentinel */
     };
@@ -172,8 +158,9 @@ namespace Foam {
     static const struct luaL_Reg scalarArray_table [] = {
         {"__gc"        , delField<scalar> },
         {"__len"       , fieldSize<scalar> },
-        {"__index"     , getElement<scalar> },
-        {"__newindex"  , setElement<scalar> },
+        {"__index"     , getFieldElement<scalar> },
+        {"__newindex"  , setFieldElement<scalar> },
+        {"__tostring"  , fieldToString<scalar> },
         {NULL, NULL}  /* sentinel */
     };
 
@@ -185,15 +172,15 @@ namespace Foam {
         luaL_newlib(luaState,swaklib);
 
         lua_setglobal(luaState, "swak4foam");
+
+        // static Field<scalar> sField(10);
+        // addFieldToLua<scalar>(luaState, "testScalar", &sField);
     }
 
-    // void addScalarField(lua_State *luaState,const word &name, Field<scalar> *data) {
-    //     FieldWrap<scalar>* s=(FieldWrap<scalar>*)lua_newuserdata(luaState,sizeof(FieldWrap<scalar>));
-    //     s->data_=data;
+    template<class T>
+    void addFieldToLua(lua_State *luaState,const word &name, Field<T> *data) {
+        FieldWrap<T> *fw=new(luaState,FieldWrap<T>::metaTable) FieldWrap<T>(data);
 
-    //     luaL_getmetatable(luaState, FieldWrap<T>::metaTable);
-    //     lua_setmetatable(luaState, -2);
-
-    //     lua_setglobal(luaState, name.c_str());
-    // }
+        lua_setglobal(luaState, name.c_str());
+    }
 }
