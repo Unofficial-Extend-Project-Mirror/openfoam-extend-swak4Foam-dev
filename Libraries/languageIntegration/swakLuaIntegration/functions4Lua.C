@@ -36,6 +36,10 @@ Contributors/Copyright:
 #include <cmath>
 
 #include "vector.H"
+#include "tensor.H"
+#include "symmTensor.H"
+#include "sphericalTensor.H"
+
 #include "OStringStream.H"
 #include "word.H"
 
@@ -57,12 +61,12 @@ namespace Foam {
         VectorSpaceWrap(T* ptr)
             : ptr_(ptr)
             {}
-        T* operator()() { return ptr_; }
+        T& operator()() { return *ptr_; }
         static const char *metaTable;
     };
 
     template<class T>
-    static T *checkVectorSpace(lua_State *L, int index)
+    static T &checkVectorSpace(lua_State *L, int index)
     {
         luaL_checktype(L, index, LUA_TUSERDATA);
         VectorSpaceWrap<T>* data=static_cast<VectorSpaceWrap<T>*>(
@@ -73,16 +77,16 @@ namespace Foam {
 
     template<class T>
     static int vectorSpaceToString(lua_State *L) {
-        T* vs=checkVectorSpace<T>(L, 1);
+        T& vs=checkVectorSpace<T>(L, 1);
         OStringStream os;
-        os << pTraits<T>::typeName << (*vs);
+        os << pTraits<T>::typeName << vs;
         lua_pushstring(L,os.str().c_str());
         return 1;
     }
 
     template<class T>
     static int getVectorSpaceElement(lua_State *L) {
-        T* vs=checkVectorSpace<T>(L, 1);
+        T& vs=checkVectorSpace<T>(L, 1);
         const char *cname = luaL_checkstring(L, 2);
         word name(cname);
         int index=-1;
@@ -98,14 +102,14 @@ namespace Foam {
             2,
             "unknown component name");
 
-        lua_pushnumber(L, (*vs)[index]);
+        lua_pushnumber(L, vs[index]);
 
         return 1;
     }
 
     template<class T>
     static int setVectorSpaceElement(lua_State *L) {
-        T* vs=checkVectorSpace<T>(L, 1);
+        T& vs=checkVectorSpace<T>(L, 1);
         const char *cname = luaL_checkstring(L, 2);
         word name(cname);
         int index=-1;
@@ -123,20 +127,26 @@ namespace Foam {
 
         luaL_checkany(L,3);
         scalar v=luaL_checknumber(L,3);
-        (*vs)[index]=v;
+        vs[index]=v;
 
         return 1;
     }
 
-    static const struct luaL_Reg vector_table[] = {
-        {"__tostring"   , vectorSpaceToString<vector> },
-        {"__index"      , getVectorSpaceElement<vector> },
-        {"__newindex"   , setVectorSpaceElement<vector> },
-        {NULL, NULL}  /* sentinel */
-    };
+#define VectorSpaceInstance(T)                        \
+    static const struct luaL_Reg T ## _table[] = {            \
+        {"__tostring"   , vectorSpaceToString<T> },           \
+        {"__index"      , getVectorSpaceElement<T> },         \
+        {"__newindex"   , setVectorSpaceElement<T> },         \
+        {NULL, NULL}  /* sentinel */                          \
+    };                                                        \
+                                                              \
+    template<>                                                          \
+    const char *VectorSpaceWrap<T>::metaTable="swak4foam." #T;
 
-    template<>
-    const char *VectorSpaceWrap<vector>::metaTable="swak4foam.vector";
+    VectorSpaceInstance(vector)
+    VectorSpaceInstance(tensor)
+    VectorSpaceInstance(sphericalTensor)
+    VectorSpaceInstance(symmTensor)
 
     template<class T>
     void addVectorspaceToLua(lua_State *luaState,const word &name,T *data) {
@@ -269,14 +279,20 @@ namespace Foam {
         {NULL, NULL}  /* sentinel */
     };
 
+#define addVectorSpaceMeta(T)   \
+    luaL_newmetatable(luaState, VectorSpaceWrap<T>::metaTable); \
+    luaL_setfuncs(luaState, T ## _table, 0);                   \
+    lua_pop(luaState, 1);
+
     void addOpenFOAMFunctions(lua_State *luaState) {
         luaL_newmetatable(luaState, FieldWrap<scalar>::metaTable);
         luaL_setfuncs(luaState, scalarArray_table, 0);
         lua_pop(luaState, 1);
 
-        luaL_newmetatable(luaState, VectorSpaceWrap<vector>::metaTable);
-        luaL_setfuncs(luaState, vector_table, 0);
-        lua_pop(luaState, 1);
+        addVectorSpaceMeta(vector);
+        addVectorSpaceMeta(tensor);
+        addVectorSpaceMeta(symmTensor);
+        addVectorSpaceMeta(sphericalTensor);
 
         luaL_newlib(luaState,swaklib);
 
@@ -285,8 +301,8 @@ namespace Foam {
         // static Field<scalar> sField(10);
         // addFieldToLua<scalar>(luaState, "testScalar", &sField);
 
-        static vector nix(1,2,3);
-        addVectorspaceToLua(luaState,"nix",&nix);
+        // static tensor nix;
+        // addVectorspaceToLua(luaState,"nix",&nix);
     }
 
     template<class T>
