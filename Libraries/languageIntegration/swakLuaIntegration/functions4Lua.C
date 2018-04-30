@@ -35,6 +35,10 @@ Contributors/Copyright:
 
 #include <cmath>
 
+#include "vector.H"
+#include "OStringStream.H"
+#include "word.H"
+
 void* operator new(size_t size, lua_State* L, const char* metatableName)
 {
     void* ptr = lua_newuserdata(L, size);
@@ -45,6 +49,107 @@ void* operator new(size_t size, lua_State* L, const char* metatableName)
 }
 
 namespace Foam {
+
+    template<class T>
+    class VectorSpaceWrap {
+        T* ptr_;
+    public:
+        VectorSpaceWrap(T* ptr)
+            : ptr_(ptr)
+            {}
+        T* operator()() { return ptr_; }
+        static const char *metaTable;
+    };
+
+    template<class T>
+    static T *checkVectorSpace(lua_State *L, int index)
+    {
+        luaL_checktype(L, index, LUA_TUSERDATA);
+        VectorSpaceWrap<T>* data=static_cast<VectorSpaceWrap<T>*>(
+            luaL_checkudata(L, index, VectorSpaceWrap<T>::metaTable)
+        );
+        return (*data)();
+    }
+
+    template<class T>
+    static int vectorSpaceToString(lua_State *L) {
+        T* vs=checkVectorSpace<T>(L, 1);
+        OStringStream os;
+        os << pTraits<T>::typeName << (*vs);
+        lua_pushstring(L,os.str().c_str());
+        return 1;
+    }
+
+    template<class T>
+    static int getVectorSpaceElement(lua_State *L) {
+        T* vs=checkVectorSpace<T>(L, 1);
+        const char *cname = luaL_checkstring(L, 2);
+        word name(cname);
+        int index=-1;
+        for(label i=0;i<pTraits<T>::nComponents;i++) {
+            if(word(T::componentNames[i])==name) {
+                index=i;
+                break;
+            }
+        }
+        luaL_argcheck(
+            L,
+            index>=0 && index<pTraits<T>::nComponents,
+            2,
+            "unknown component name");
+
+        lua_pushnumber(L, (*vs)[index]);
+
+        return 1;
+    }
+
+    template<class T>
+    static int setVectorSpaceElement(lua_State *L) {
+        T* vs=checkVectorSpace<T>(L, 1);
+        const char *cname = luaL_checkstring(L, 2);
+        word name(cname);
+        int index=-1;
+        for(label i=0;i<pTraits<T>::nComponents;i++) {
+            if(word(T::componentNames[i])==name) {
+                index=i;
+                break;
+            }
+        }
+        luaL_argcheck(
+            L,
+            index>=0 && index<pTraits<T>::nComponents,
+            2,
+            "unknown component name");
+
+        luaL_checkany(L,3);
+        scalar v=luaL_checknumber(L,3);
+        (*vs)[index]=v;
+
+        return 1;
+    }
+
+    static const struct luaL_Reg vector_table[] = {
+        {"__tostring"   , vectorSpaceToString<vector> },
+        {"__index"      , getVectorSpaceElement<vector> },
+        {"__newindex"   , setVectorSpaceElement<vector> },
+        {NULL, NULL}  /* sentinel */
+    };
+
+    template<>
+    const char *VectorSpaceWrap<vector>::metaTable="swak4foam.vector";
+
+    template<class T>
+    void addVectorspaceToLua(lua_State *luaState,const word &name,T *data) {
+        VectorSpaceWrap<T>* ptr = static_cast<VectorSpaceWrap<T>*>(
+            lua_newuserdata(
+                luaState,
+                sizeof(VectorSpaceWrap<T>)
+            )
+        );
+        (*ptr)=data;
+        luaL_setmetatable(luaState, VectorSpaceWrap<T>::metaTable);
+        lua_setglobal(luaState, name.c_str());
+    }
 
     template<class T>
     class FieldWrap {
@@ -169,12 +274,19 @@ namespace Foam {
         luaL_setfuncs(luaState, scalarArray_table, 0);
         lua_pop(luaState, 1);
 
+        luaL_newmetatable(luaState, VectorSpaceWrap<vector>::metaTable);
+        luaL_setfuncs(luaState, vector_table, 0);
+        lua_pop(luaState, 1);
+
         luaL_newlib(luaState,swaklib);
 
         lua_setglobal(luaState, "swak4foam");
 
         // static Field<scalar> sField(10);
         // addFieldToLua<scalar>(luaState, "testScalar", &sField);
+
+        static vector nix(1,2,3);
+        addVectorspaceToLua(luaState,"nix",&nix);
     }
 
     template<class T>
