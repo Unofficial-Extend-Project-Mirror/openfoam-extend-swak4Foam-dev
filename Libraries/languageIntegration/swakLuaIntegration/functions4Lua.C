@@ -149,7 +149,7 @@ namespace Foam {
     VectorSpaceInstance(symmTensor)
 
     template<class T>
-    void addVectorspaceToLua(lua_State *luaState,const word &name,T *data) {
+    void newVectorspaceToStack(lua_State *luaState,T *data) {
         VectorSpaceWrap<T>* ptr = static_cast<VectorSpaceWrap<T>*>(
             lua_newuserdata(
                 luaState,
@@ -158,6 +158,11 @@ namespace Foam {
         );
         (*ptr)=data;
         luaL_setmetatable(luaState, VectorSpaceWrap<T>::metaTable);
+    }
+
+    template<class T>
+    void addVectorspaceToLua(lua_State *luaState,const word &name,T *data) {
+        newVectorspaceToStack(luaState, data);
         lua_setglobal(luaState, name.c_str());
     }
 
@@ -190,23 +195,22 @@ namespace Foam {
         static const char *metaTable;
     };
 
-    template<>
-    const char *FieldWrap<scalar>::metaTable=
-        "swak4Foam.scalarArray";
-
     template<class T>
     static FieldWrap<T> *checkField(lua_State *L, int index)
     {
         FieldWrap<T> *data;
         luaL_checktype(L, index, LUA_TUSERDATA);
-        data = (FieldWrap<T> *)luaL_checkudata(L, index, FieldWrap<T>::metaTable);
+        data = static_cast<FieldWrap<T> *>(
+            luaL_checkudata(L, index, FieldWrap<T>::metaTable)
+        );
         return data;
     }
 
     template<class T>
     static int newField(lua_State *L) {
         int n = label(luaL_checkinteger(L, 1));
-        FieldWrap<T> *fw=new(L,FieldWrap<T>::metaTable) FieldWrap<T>(n);
+
+        new(L,FieldWrap<T>::metaTable) FieldWrap<T>(n);
 
         return 1;
     }
@@ -228,7 +232,20 @@ namespace Foam {
     template<class T>
     static int getFieldElement(lua_State *L) {
         FieldWrap<T> *fw=checkField<T>(L,1);
-        int index = (int)luaL_checkinteger(L, 2) - 1;
+        int index = luaL_checkinteger(L, 2) - 1;
+        luaL_argcheck(
+            L, 0 <= index && index < (*fw)().size(), 2,
+            "index out of range");
+
+        newVectorspaceToStack(L, &((*fw)()[index]));
+
+        return 1;
+    }
+
+    template<>
+    int getFieldElement<scalar>(lua_State *L) {
+        FieldWrap<scalar> *fw=checkField<scalar>(L,1);
+        int index = luaL_checkinteger(L, 2) - 1;
         luaL_argcheck(
             L, 0 <= index && index < (*fw)().size(), 2,
             "index out of range");
@@ -241,13 +258,28 @@ namespace Foam {
     template<class T>
     static int setFieldElement(lua_State *L) {
         FieldWrap<T> *fw=checkField<T>(L,1);
-        int index = (int)luaL_checkinteger(L, 2) - 1;
+        int index = luaL_checkinteger(L, 2) - 1;
         luaL_argcheck(
             L, 0 <= index && index < (*fw)().size(), 2,
             "index out of range");
 
         luaL_checkany(L,3);
-        T v=luaL_checknumber(L,3);
+        T& v=checkVectorSpace<T>(L,3);
+        (*fw)()[index]=v;
+
+        return 1;
+    }
+
+    template<>
+    int setFieldElement<scalar>(lua_State *L) {
+        FieldWrap<scalar> *fw=checkField<scalar>(L,1);
+        int index = luaL_checkinteger(L, 2) - 1;
+        luaL_argcheck(
+            L, 0 <= index && index < (*fw)().size(), 2,
+            "index out of range");
+
+        luaL_checkany(L,3);
+        scalar v=luaL_checknumber(L,3);
         (*fw)()[index]=v;
 
         return 1;
@@ -267,17 +299,36 @@ namespace Foam {
 
     static const struct luaL_Reg swaklib [] = {
         {"newScalarField", newField<scalar>},
+        {"newVectorField", newField<vector>},
+        {"newTensorField", newField<tensor>},
+        {"newSymmTensorField", newField<symmTensor>},
+        {"newSphericalTensorField", newField<sphericalTensor>},
         {NULL, NULL}  /* sentinel */
     };
 
-    static const struct luaL_Reg scalarArray_table [] = {
-        {"__gc"        , delField<scalar> },
-        {"__len"       , fieldSize<scalar> },
-        {"__index"     , getFieldElement<scalar> },
-        {"__newindex"  , setFieldElement<scalar> },
-        {"__tostring"  , fieldToString<scalar> },
-        {NULL, NULL}  /* sentinel */
-    };
+#define declareArrayMetaTable(T) \
+    static const struct luaL_Reg T ## Array_table [] = { \
+        {"__gc"        , delField<T> },              \
+        {"__len"       , fieldSize<T> },             \
+        {"__index"     , getFieldElement<T> },       \
+        {"__newindex"  , setFieldElement<T> },       \
+        {"__tostring"  , fieldToString<T> },         \
+        {NULL, NULL}  /* sentinel */                      \
+    };                                                    \
+    template<>                                            \
+    const char *FieldWrap<T>::metaTable=             \
+        "swak4Foam." #T "Array";
+
+#define addArrayMetaTable(T)    \
+    luaL_newmetatable(luaState, FieldWrap<T>::metaTable); \
+    luaL_setfuncs(luaState, T ## Array_table, 0);             \
+    lua_pop(luaState, 1);
+
+    declareArrayMetaTable(scalar);
+    declareArrayMetaTable(vector);
+    declareArrayMetaTable(tensor);
+    declareArrayMetaTable(symmTensor);
+    declareArrayMetaTable(sphericalTensor);
 
 #define addVectorSpaceMeta(T)   \
     luaL_newmetatable(luaState, VectorSpaceWrap<T>::metaTable); \
@@ -285,9 +336,11 @@ namespace Foam {
     lua_pop(luaState, 1);
 
     void addOpenFOAMFunctions(lua_State *luaState) {
-        luaL_newmetatable(luaState, FieldWrap<scalar>::metaTable);
-        luaL_setfuncs(luaState, scalarArray_table, 0);
-        lua_pop(luaState, 1);
+        addArrayMetaTable(scalar);
+        addArrayMetaTable(vector);
+        addArrayMetaTable(tensor);
+        addArrayMetaTable(symmTensor);
+        addArrayMetaTable(sphericalTensor);
 
         addVectorSpaceMeta(vector);
         addVectorSpaceMeta(tensor);
