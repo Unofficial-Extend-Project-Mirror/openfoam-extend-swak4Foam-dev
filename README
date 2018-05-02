@@ -3962,6 +3962,11 @@ S_{expl} + S_{impl} T
 **** =ReaderParticleCloud= could not read data if particle number changed
      These particles could not be read data from different time-steps
      if the number of particles differed between them. This has been fixed
+**** =funkyDoCalc= does not write data files correctly for parallel cases
+     In parallel cases the same data was written to each
+     =processor=-directory when writing CSV-files or
+     distributions. This has been fixed so that the data is written
+     similarly to single-CPU-cases
 *** Internals (for developers)
 *** Infrastructure
 *** Documentation

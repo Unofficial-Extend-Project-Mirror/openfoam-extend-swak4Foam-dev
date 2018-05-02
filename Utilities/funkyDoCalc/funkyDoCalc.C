@@ -104,6 +104,8 @@ void writeData(
     if(
         ( writeCsv || writeDistributions)
         &&
+        Pstream::master()
+        &&
         !exists(dataDir)
     ) {
         //        Info << "Creating data directory " << dataDir << endl;
@@ -243,7 +245,11 @@ void writeData(
         outDict.add(NumericAccumulationNamedEnum::toString(accu),val);
     }
 
-    if(writeDistributions) {
+    if(
+        writeDistributions
+        &&
+        Pstream::master()
+    ) {
         Info << " - write distribution";
 
         fileName toDir=dataDir
@@ -272,7 +278,11 @@ void writeData(
             calculator.weightedDistribution().cumulativeNormalised()
         );
     }
-    if(writeCsv) {
+    if(
+        writeCsv
+        &&
+        Pstream::master()
+    ) {
         if(firstTime) {
             *csvFiles[name] << header.str().c_str() << endl;
         }
@@ -323,7 +333,11 @@ int main(int argc, char *argv[])
     bool globalWriteCsv=args.options().found("writeCsv");
     bool globalWriteDistributions=args.options().found("writeDistributions");
 
-    dataDir=args.path()/fileName(args.args()[1]).name()+"_data";
+    if(Pstream::parRun()) {
+        dataDir=args.path()/".."/fileName(args.args()[1]).name()+"_data";
+    } else {
+        dataDir=args.path()/fileName(args.args()[1]).name()+"_data";
+    }
 
     if (
         !args.options().found("time")
@@ -506,7 +520,11 @@ int main(int argc, char *argv[])
         csvFiles.clear();
     }
 
-    if(writeDict) {
+    if(
+        writeDict
+        &&
+        Pstream::master()
+    ) {
         fileName outFile(args.options()["writeDict"]);
         Info << "Writing dictionary " << outFile << endl;
         dictionary data;
