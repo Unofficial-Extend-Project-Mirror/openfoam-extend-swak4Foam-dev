@@ -3996,4 +3996,15 @@ S_{expl} + S_{impl} T
      The option =-writeDict= writes all the results as a
      dictionary. It also includes a sub-dictionary with a copy of the
      specification file
+**** =funkyDoCalc= executes function objects
+     With the =-allowFunctionObjects= the regular function objects
+     from the =constrolDict= are now executed.
+
+     If the new file format is used and there is an entry =functions=
+     then the function objects specified there are executed (this
+     allows setting up additional fields etc)
+
+     *BUG*: using separate function objects causes a segmentation
+      fault after the run finished. Probably because the function
+      objects are inconsitently destroyed
 *** Examples

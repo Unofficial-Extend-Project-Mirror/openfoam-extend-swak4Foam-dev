@@ -310,6 +310,7 @@ int main(int argc, char *argv[])
     argList::validOptions.insert("writeDistributions","");
     argList::validOptions.insert("noDimensionChecking","");
     argList::validOptions.insert("writeDict","<name of the dict>");
+    argList::validOptions.insert("allowFunctionObjects","");
 
 #   include "setRootCase.H"
 
@@ -402,6 +403,26 @@ int main(int argc, char *argv[])
         CommonValueExpressionDriver::readForeignMeshInfo(dict);
     }
 
+    autoPtr<functionObjectList> funcs;
+    if(newFormat) {
+        if(theDict.found("functions")) {
+            funcs.set(
+                new functionObjectList(
+                    runTime,
+                    theDict,
+                    true
+                )
+            );
+        }
+    }
+
+    if(funcs.valid()) {
+        funcs().start();
+    }
+    if(args.options().found("allowFunctionObjects")) {
+        runTime.functionObjects().start();
+    }
+
     dictionary wholeData;
 
     forAll(timeDirs, timeI)
@@ -432,6 +453,13 @@ int main(int argc, char *argv[])
                         << exit(FatalError);
 
             }
+        }
+
+        if(funcs.valid()) {
+            funcs().execute();
+        }
+        if(args.options().found("allowFunctionObjects")) {
+            runTime.functionObjects().execute();
         }
 
         dictionary timeData;
@@ -513,6 +541,13 @@ int main(int argc, char *argv[])
                 timeData
             );
         }
+    }
+
+    if(funcs.valid()) {
+        funcs().end();
+    }
+    if(args.options().found("allowFunctionObjects")) {
+        runTime.functionObjects().end();
     }
 
     if(csvFiles.size()>0) {
