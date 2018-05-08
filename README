@@ -3992,6 +3992,10 @@ S_{expl} + S_{impl} T
      allow specifying things that previously only specified on the command line:
      - noDimensionChecking
      - foreignMeshesThatFollowTime
+
+     A list =libs= also allows specifying a list of libraries to
+     load. This allows adding boundary conditions that would otherwise
+     make the execution fail
 **** =funkyDoCalc= allows writing data as a dictionary
      The option =-writeDict= writes all the results as a
      dictionary. It also includes a sub-dictionary with a copy of the

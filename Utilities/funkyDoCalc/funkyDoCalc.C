@@ -322,6 +322,29 @@ int main(int argc, char *argv[])
     if(theDict.isDict("expressions")) {
         newFormat=true;
     }
+
+    if(
+        newFormat
+        &&
+        theDict.found("libs")
+    ) {
+        Info << "\nLoading additional libs" << endl;
+
+        wordList libs(theDict["libs"]);
+
+        forAll(libs,i) {
+            const word &theLib=libs[i];
+            Info << "  Loading " << theLib << endl;
+
+#ifdef FOAM_DLLIBRARY_USES_STATIC_METHODS
+            dlLibraryTable::open(theLib);
+#else
+            table.open(theLib);
+#endif
+        }
+        Info << endl;
+    }
+
     dictionary &theExpressions=
         newFormat ?
         theDict.subDict("expressions") :
