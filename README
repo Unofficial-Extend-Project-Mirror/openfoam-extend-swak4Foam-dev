@@ -50,7 +50,7 @@
      - release generation script.
      - Automatic =swakConfiguration=
    - Mark Olesen ::
-     - port to OpenFOAM+ v1612
+     - port to OpenFOAM+ since v1612
      - improvements to scripts
    - Philippose Rajan ::
      - Bugfix for segmentation faults in parallel
