@@ -77,11 +77,11 @@ class loadTopoSetsFunctionObject
 
     //- load sets of a specific type
     template<class TopoSetType>
-    void loadAllSets(HashSet<word> &names);
+    void loadAllSets(wordHashSet &names);
 
     //- write sets of a specific type
     template<class TopoSetType>
-    void writeAllSets(HashSet<word> &names);
+    void writeAllSets(wordHashSet &names);
 
     //- Load sets even if they are already in memory
     bool forceLoading_;
@@ -98,9 +98,9 @@ class loadTopoSetsFunctionObject
     //- should we write?
     bool writeSets_;
 
-    HashSet<word> cellSetNames_;
-    HashSet<word> faceSetNames_;
-    HashSet<word> pointSetNames_;
+    wordHashSet cellSetNames_;
+    wordHashSet faceSetNames_;
+    wordHashSet pointSetNames_;
 
 public:
 

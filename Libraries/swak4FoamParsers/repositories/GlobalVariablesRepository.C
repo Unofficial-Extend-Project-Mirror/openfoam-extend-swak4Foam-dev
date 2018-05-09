@@ -315,7 +315,7 @@ ExpressionResult& GlobalVariablesRepository::addValue(
 
 GlobalVariablesRepository::ResultTable::ResultTable(const ResultTable &r)
     :
-    HashPtrTable<ExpressionResult,word>()
+    HashPtrTable<ExpressionResult>()
 {
     for(const_iterator iter=r.begin();iter!=r.end();iter++) {
         this->insert(iter.key(),(**iter).clone().ptr());
@@ -324,13 +324,13 @@ GlobalVariablesRepository::ResultTable::ResultTable(const ResultTable &r)
 
 GlobalVariablesRepository::ResultTable::ResultTable(Istream &in)
     :
-    HashPtrTable<ExpressionResult,word>(in)
+    HashPtrTable<ExpressionResult>(in)
 {
 }
 
 GlobalVariablesRepository::ResultTable::ResultTable()
     :
-    HashPtrTable<ExpressionResult,word>()
+    HashPtrTable<ExpressionResult>()
 {
 }
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //

@@ -75,7 +75,7 @@ class TraceParticles
     typedef typename CloudType::parcelType parcelType;
 
     //- Convenience typedef for hash hit-table
-    typedef HashTable<label, labelPair, typename labelPair::Hash<> > idTableType;
+    typedef HashTable<label, labelPair, typename labelPair::Hash<>> idTableType;
 
     //- Table with id for tracing
     idTableType ids_;

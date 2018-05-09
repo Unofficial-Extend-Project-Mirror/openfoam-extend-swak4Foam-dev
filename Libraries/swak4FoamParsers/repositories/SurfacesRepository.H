@@ -67,10 +67,10 @@ class SurfacesRepository
     // Private data
 
     //- the actual surfaces
-    HashPtrTable<sampledSurface,word> surfaces_;
+    HashPtrTable<sampledSurface> surfaces_;
 
     //- names of the formats to be written
-    HashTable<word,word> formatNames_;
+    HashTable<word> formatNames_;
 
     // Constructors
 

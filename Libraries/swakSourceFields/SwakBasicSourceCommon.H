@@ -72,7 +72,7 @@ protected:
 
     List<exprString> expressions_;
 
-    HashTable<dimensionSet,label> dimensions_;
+    HashTable<dimensionSet,label, Hash<label>> dimensions_;
 
     bool verbose_;
 

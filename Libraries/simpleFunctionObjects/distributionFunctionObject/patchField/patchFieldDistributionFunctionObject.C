@@ -74,7 +74,7 @@ patchFieldDistributionFunctionObject::patchFieldDistributionFunctionObject
     const fvMesh &mesh=refCast<const fvMesh>(obr_);
 
     wordReList newPatches(dict.lookup("patchNames"));
-    HashSet<word> patchNamesNew;
+    wordHashSet patchNamesNew;
     wordList allPatches(mesh.boundaryMesh().names());
     forAll(newPatches,i) {
         labelList IDs=findStrings(newPatches[i],allPatches);

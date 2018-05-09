@@ -71,7 +71,7 @@ bool patchFunctionObject::start()
 {
     wordList oldPatchNames(patchNames_);
     wordReList newPatches(dict_.lookup("patches"));
-    HashSet<word> patchNamesNew;
+    wordHashSet patchNamesNew;
     bool allowCoupled(dict_.lookupOrDefault<bool>("allowCoupled",false));
 
     const fvMesh &mesh=refCast<const fvMesh>(obr_);

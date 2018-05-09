@@ -3939,6 +3939,9 @@ S_{expl} + S_{impl} T
      Some adaptions were required to make this compile
 **** OpenFOAM+ v1712
      Minor adaptions were required to make this compile by Mark Olesen
+**** OpenFOAM+ v1806
+     Adaptions supplied by Mark Olesen. Not yet tested on the real
+     thing as it is not released yet
 **** foam-extend 4.1
      This is a work in progress based on the =nextRelease=-branch as
      there is no release yet
@@ -3969,6 +3972,11 @@ S_{expl} + S_{impl} T
      similarly to single-CPU-cases
 *** Internals (for developers)
 *** Infrastructure
+**** Renaming of the Forks
+     The three main supported forks are now renamed in the =#ifdef=
+     - EXTEND :: stays the same
+     - ORG :: formerly known as =OPENFOAM=. The CFDDirect/Foundation fork
+     - COM :: formerly =PLUS=. The Version maintained by ESI/OpenCFD
 *** Documentation
 *** New features
 **** =atan2= added to parsers

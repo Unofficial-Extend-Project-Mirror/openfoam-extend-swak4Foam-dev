@@ -944,7 +944,7 @@ Ostream &CommonValueExpressionDriver::writeCommon(Ostream &os,bool debug) const
         List<DelayedExpressionResult> writeDelays(delayedVariables_.size());
 
         label cnt=0;
-        typedef HashTable<DelayedExpressionResult,word> tableType;
+        typedef HashTable<DelayedExpressionResult> tableType;
         forAllConstIter(tableType,delayedVariables_,iter)
         {
             writeDelays[cnt]=iter();
@@ -1335,7 +1335,7 @@ void CommonValueExpressionDriver::updateSpecialVariables(bool force)
         specialVariablesIndex_=mesh().time().timeIndex();
     }
 
-    typedef HashTable<DelayedExpressionResult,word> tableType;
+    typedef HashTable<DelayedExpressionResult> tableType;
     forAllIter(tableType,delayedVariables_,iter)
     {
         Pbug << "Updating delayed variable " << iter().name() << endl;
@@ -1371,7 +1371,7 @@ void CommonValueExpressionDriver::clearVariables()
 
     addVariables(variableStrings_,false);
 
-    typedef HashTable<DelayedExpressionResult,word> tableType;
+    typedef HashTable<DelayedExpressionResult> tableType;
     forAllIter(tableType,delayedVariables_,iter)
     {
         iter().storeValue(mesh().time().value());
