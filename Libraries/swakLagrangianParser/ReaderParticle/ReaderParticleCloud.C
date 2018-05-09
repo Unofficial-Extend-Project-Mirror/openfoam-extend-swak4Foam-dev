@@ -85,7 +85,12 @@ void ReaderParticleCloud::rereadBasics()
     clearData();
     this->clear();
     // this->readCloudUniformProperties();
-    IOPosition<ReaderParticleCloud> ioP(*this);
+#ifdef  FOAM_IOPOSITION_IS_TEMPLATE_OF_PARTICLE
+    IOPosition<ReaderParticleCloud::particleType>
+#else
+    IOPosition<ReaderParticleCloud>
+#endif
+        ioP(*this);
     if(ioP.headerOk()) {
 #ifdef FOAM_IOPOSITION_NEEDS_STREAM_IN_READDATA
         Istream& is=ioP.readStream(word(""));

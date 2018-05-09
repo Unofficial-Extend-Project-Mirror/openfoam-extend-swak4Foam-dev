@@ -127,6 +127,9 @@ namespace Foam {
 #define FOAM_IOPOSITION_NEEDS_STREAM_IN_READDATA
 #endif
 
+#if defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#define FOAM_IOPOSITION_IS_TEMPLATE_OF_PARTICLE
+#endif
 
 #include "DebugOStream.H"
 
