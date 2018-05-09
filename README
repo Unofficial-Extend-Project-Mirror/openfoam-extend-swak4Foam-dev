@@ -54,6 +54,8 @@
      - improvements to scripts
    - Philippose Rajan ::
      - Bugfix for segmentation faults in parallel
+   - Matti Rauter ::
+     - Spell-checking the compilation scripts
    If anyone is forgotten: let me know
 
    According to the commits in the =mercurial=-repository (and
@@ -3970,6 +3972,10 @@ S_{expl} + S_{impl} T
      =processor=-directory when writing CSV-files or
      distributions. This has been fixed so that the data is written
      similarly to single-CPU-cases
+**** Horrible spelling mistake in the =Allwmake=
+     Reported by Matti Rauter at
+     https://twitter.com/igt_matti/status/989870314241880067
+     Fixed
 *** Internals (for developers)
 *** Infrastructure
 **** Renaming of the Forks
