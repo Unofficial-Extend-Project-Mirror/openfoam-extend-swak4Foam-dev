@@ -528,6 +528,10 @@ Contributors/Copyright:
 #define FOAM_REGIOOBJECT_WRITEOBJECT_WITH_VALID
 #endif
 
+#if (OPENFOAM_COM >= 1803)
+#define FOAM_LIST_HAS_MOVABLE_CONSTRUCT
+#endif
+
 #include "swakVersion.H"
 #include "DebugOStream.H"
 
