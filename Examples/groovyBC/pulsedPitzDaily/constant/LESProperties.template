@@ -14,7 +14,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-<!--(if foamVersion>=(3,) and foamFork in ["com","org"])-->
+<!--(if foamVersion>=(3,) and foamFork in ["openfoam","openfoamplus"])-->
 LESModel        dynamicKEqn;
 <!--(else)-->
 LESModel            oneEqEddy;

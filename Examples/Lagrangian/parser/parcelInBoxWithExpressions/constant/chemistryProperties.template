@@ -45,7 +45,7 @@ EulerImplicitCoeffs
 
 odeCoeffs
 {
-<!--(if foamVersion>=(2,3) and foamFork in ["com","org"])-->
+<!--(if foamVersion>=(2,3) and foamFork in ["openfoam","openfoamplus"])-->
     solver          seulex;
 <!--(else)-->
     solver          RK;

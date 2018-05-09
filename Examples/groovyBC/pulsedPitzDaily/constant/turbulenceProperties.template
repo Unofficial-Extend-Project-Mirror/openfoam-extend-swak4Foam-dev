@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-<!--(if foamVersion>=(3,) and foamFork in ["com","org"])-->
+<!--(if foamVersion>=(3,) and foamFork in ["openfoam","openfoamplus"])-->
 simulationType  LES;
 <!--(else)-->
 simulationType  LESModel;
