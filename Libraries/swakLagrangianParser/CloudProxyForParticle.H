@@ -209,7 +209,7 @@ protected:
             }
     };
 
-    HashPtrTable<ParticleMethodWrapper<scalar>> scalarFunctions_;
+    HashPtrTable<ParticleMethodWrapper<scalar> > scalarFunctions_;
 
     void addScalarFunction(
         const word &name,
@@ -217,7 +217,7 @@ protected:
         ParticleMethodWrapper<scalar> *ptr
     );
 
-    HashPtrTable<ParticleMethodWrapper<bool>> boolFunctions_;
+    HashPtrTable<ParticleMethodWrapper<bool> > boolFunctions_;
 
     void addBoolFunction(
         const word &name,
@@ -225,7 +225,7 @@ protected:
         ParticleMethodWrapper<bool> *ptr
     );
 
-    HashPtrTable<ParticleMethodWrapper<vector>> vectorFunctions_;
+    HashPtrTable<ParticleMethodWrapper<vector> > vectorFunctions_;
 
     void addVectorFunction(
         const word &name,
@@ -233,7 +233,7 @@ protected:
         ParticleMethodWrapper<vector> *ptr
     );
 
-    HashPtrTable<ParticleMethodWrapper<tensor>> tensorFunctions_;
+    HashPtrTable<ParticleMethodWrapper<tensor> > tensorFunctions_;
 
     void addTensorFunction(
         const word &name,
@@ -241,7 +241,7 @@ protected:
         ParticleMethodWrapper<tensor> *ptr
     );
 
-    HashPtrTable<ParticleMethodWrapper<symmTensor>> symmTensorFunctions_;
+    HashPtrTable<ParticleMethodWrapper<symmTensor> > symmTensorFunctions_;
 
     void addSymmTensorFunction(
         const word &name,
@@ -249,7 +249,7 @@ protected:
         ParticleMethodWrapper<symmTensor> *ptr
     );
 
-    HashPtrTable<ParticleMethodWrapper<sphericalTensor>> sphTensorFunctions_;
+    HashPtrTable<ParticleMethodWrapper<sphericalTensor> > sphTensorFunctions_;
 
     void addSphericalTensorFunction(
         const word &name,

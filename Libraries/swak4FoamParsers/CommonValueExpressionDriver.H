@@ -181,12 +181,12 @@ private:
 
     wordList globalVariableScopes_;
 
-    HashTable<interpolationTable<scalar>> lines_;
+    HashTable<interpolationTable<scalar> > lines_;
 
-    HashTable<interpolationTable<scalar>> lookup_;
+    HashTable<interpolationTable<scalar> > lookup_;
 
 #ifdef FOAM_HAS_INTERPOLATION2DTABLE
-    HashTable<interpolation2DTable<scalar>> lookup2D_;
+    HashTable<interpolation2DTable<scalar> > lookup2D_;
 #endif
 
     exprString content_;

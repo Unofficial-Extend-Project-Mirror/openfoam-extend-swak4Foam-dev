@@ -30,7 +30,11 @@ boundary
         neighbourPolyPatch outlet;
     }
     bound {
+<!--(if foamFork=="extend")-->
+        type symmetryPlane;
+<!--(else)-->
         type symmetry;
+<!--(end)-->
         ownerPolyPatch top;
         neighbourPolyPatch bound;
     }
