@@ -67,12 +67,12 @@ class SetsRepository
     // Private data
 
     //- the actual sets
-    HashPtrTable<sampledSet,word> sets_;
+    HashPtrTable<sampledSet> sets_;
 
     //- names of the formats to be written
-    HashTable<word,word> formatNames_;
+    HashTable<word> formatNames_;
 
-    HashPtrTable<meshSearch,word> meshSearches_;
+    HashPtrTable<meshSearch> meshSearches_;
 
     // Constructors
 

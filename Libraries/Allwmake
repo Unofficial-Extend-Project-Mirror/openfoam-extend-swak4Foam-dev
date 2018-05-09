@@ -1,6 +1,6 @@
 #! /bin/bash
 
-BISONPATH=`which bison`
+BISONPATH=$(which bison)
 NOBISON=$?
 
 if [[ $NOBISON != 0 ]]; then
@@ -11,9 +11,11 @@ if [[ $NOBISON != 0 ]]; then
     echo "BTW: it was listed as a requirement in the README. You read that, didn't you?"
     echo
     exit 42
+else
+    echo "Bison: $BISONPATH"
 fi
 
-FLEXPATH=`which flex`
+FLEXPATH=$(which flex)
 NOFLEX=$?
 
 if [[ $NOFLEX != 0 ]]; then
@@ -23,9 +25,11 @@ if [[ $NOFLEX != 0 ]]; then
     echo "BTW: it was listed as a requirement in the README. You read that, didn't you?"
     echo
     exit 42
+else
+    echo "Flex: $FLEXPATH"
 fi
 
-BISONVER=`bison -V | head -n 1| tr ' ' '\n' | tail -n 1`
+BISONVER=$(bison -V | head -n 1| tr ' ' '\n' | tail -n 1)
 
 echo "Bison is version $BISONVER"
 
@@ -35,8 +39,8 @@ if [[ $BISONVER < 3 ]]; then
     exit 42
 fi
 
-FLEXVER=`flex -V | head -n 1| tr ' ' '\n' | tail -n 1`
-MINORVER=`echo $FLEXVER | tr '.' '\n' | tail -n 1`
+FLEXVER=$(flex -V | head -n 1| tr ' ' '\n' | tail -n 1)
+MINORVER=$(echo $FLEXVER | tr '.' '\n' | tail -n 1)
 
 echo "Flex is version $FLEXVER (Minor version: $MINORVER)"
 
@@ -57,7 +61,7 @@ versionFile=swak4FoamParsers/foamVersion4swak.H
 ../maintainanceScripts/makeFoamVersionHeader.py $WM_PROJECT_VERSION >$versionFile.tmp
 
 if [ -e $versionFile ]; then
-    nrDiff=`diff $versionFile.tmp $versionFile | wc -l | tr -d " "`
+    nrDiff=$(diff $versionFile.tmp $versionFile | wc -l | tr -d " ")
     if [[ $nrDiff > 0 ]]; then
 	echo "$versionFile changed"
 	mv $versionFile.tmp $versionFile
@@ -71,8 +75,9 @@ else
     mv $versionFile.tmp $versionFile
 fi
 
-# Quick and dirty generation of a file that sets OPENFOAM_PLUS as this is not done anywhere eelse. Or so it seems
-sed -e 's/.*OPENFOAMPLUS \([0-9][0-9]*\)/OPENFOAM_PLUS=\1/' <$versionFile | grep  OPENFOAM_PLUS= >rules/foamVersion
+# Ensure consistent definition of OPENFOAM_COM without relying anything else.
+# This may be available from the regular wmake rules, but use our own convention
+sed -ne 's/.*SWAK_IS_COM \([0-9][0-9]*\)/OPENFOAM_COM=\1/p' < $versionFile > rules/foamVersion
 
 wmakeLnInclude simpleFunctionObjects
 

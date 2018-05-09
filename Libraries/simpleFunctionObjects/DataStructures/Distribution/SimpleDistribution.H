@@ -202,6 +202,25 @@ public:
 
     label maxNrBins() const;
 
+    //- Return the normalised distribution (probability density)
+    //  and bins
+    List< List<Pair<scalar> > > normalised() const
+        { return Distribution<Type>::normalised(); }
+
+    //- Return the distribution of the total bin weights
+    List< List < Pair<scalar> > > raw() const
+        { return Distribution<Type>::raw(); }
+
+    //- Return the cumulative normalised distribution and
+    //  integration locations (at end of bins)
+    List< List<Pair<scalar> > > cumulativeNormalised() const
+        { return Distribution<Type>::cumulativeNormalised(); }
+
+    //- Return the cumulative total bin weights and integration
+    //  locations (at end of bins)
+    List< List<Pair<scalar> > > cumulativeRaw() const
+        { return Distribution<Type>::cumulativeRaw(); }
+
     //- Write the distribution to file: only key and raw.
     //  Produces a separate file for each component.
     void writeRaw(const fileName& filePrefix) const;

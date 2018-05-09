@@ -166,13 +166,13 @@ void CloudRepository::updateRepo()
 {
     clouds_.clear();
 
-    typedef HashPtrTable<ReaderParticleCloud,word> updateTable;
+    typedef HashPtrTable<ReaderParticleCloud> updateTable;
 
     forAllIter(updateTable,updateableClouds_,it)
     {
         //	(*it)->clear();
         //        Info << "Updating " << it.key() << endl;
-        (*it)->clearData();
+        (*it)->rereadBasics();
         ReaderParticle::readFields(*(*it));
     }
 

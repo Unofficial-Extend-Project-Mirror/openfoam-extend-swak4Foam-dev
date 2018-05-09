@@ -66,13 +66,13 @@ class MeshesRepository
 {
     // Private data
 
-    HashPtrTable<Time,word> times_;
+    HashPtrTable<Time> times_;
 
-    HashPtrTable<fvMesh,word> meshes_;
+    HashPtrTable<fvMesh> meshes_;
 
-    HashPtrTable<meshToMesh,word> meshInterpolations_;
+    HashPtrTable<meshToMesh> meshInterpolations_;
 
-    HashTable<meshToMeshOrder,word> interpolationOrder_;
+    HashTable<meshToMeshOrder> interpolationOrder_;
 
     // Constructors
 

@@ -57,7 +57,7 @@ CloudProxyForReactingMultiphaseParcelNoComposition<CloudType>::CloudProxyForReac
 {
     typedef CloudProxyForReactingMultiphaseParcelNoComposition<CloudType> baseType;
 
-#if OPENFOAM_PLUS >= 1712
+#if OPENFOAM_COM >= 1712
     // Not working
 #else
     this->addScalarFunction(

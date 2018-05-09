@@ -3939,6 +3939,9 @@ S_{expl} + S_{impl} T
      Some adaptions were required to make this compile
 **** OpenFOAM+ v1712
      Minor adaptions were required to make this compile by Mark Olesen
+**** OpenFOAM+ v1806
+     Adaptions supplied by Mark Olesen. Not yet tested on the real
+     thing as it is not released yet
 **** foam-extend 4.1
      This is a work in progress based on the =nextRelease=-branch as
      there is no release yet
@@ -3947,6 +3950,10 @@ S_{expl} + S_{impl} T
      The field name is now the name of the original field plus
      =Potential=. This means that in =fvSchemes= discretizations for
      that field have to be provided
+**** =funkyDoCalc=-files with an entry =expressions= assumed to be new format
+     If one of the dictionaries in the specification file for
+     =funkyDoCalc= is named =expressions= it is assumed that the file
+     is in the new format and calculations will probably fail
 *** Bug fixes
 **** =initPotentialFlow= not working in =foam-extend=
      Here the function object failed with a "copy to
@@ -3955,8 +3962,21 @@ S_{expl} + S_{impl} T
 **** Floating point exception in =unitCylinder= in =simpleSearchableSurfaces=
      When finding a cutting point in "infinity" then =magSqr=
      failed. Fixed
+**** =ReaderParticleCloud= could not read data if particle number changed
+     These particles could not be read data from different time-steps
+     if the number of particles differed between them. This has been fixed
+**** =funkyDoCalc= does not write data files correctly for parallel cases
+     In parallel cases the same data was written to each
+     =processor=-directory when writing CSV-files or
+     distributions. This has been fixed so that the data is written
+     similarly to single-CPU-cases
 *** Internals (for developers)
 *** Infrastructure
+**** Renaming of the Forks
+     The three main supported forks are now renamed in the =#ifdef=
+     - EXTEND :: stays the same
+     - ORG :: formerly known as =OPENFOAM=. The CFDDirect/Foundation fork
+     - COM :: formerly =PLUS=. The Version maintained by ESI/OpenCFD
 *** Documentation
 *** New features
 **** =atan2= added to parsers
@@ -3964,5 +3984,39 @@ S_{expl} + S_{impl} T
      takes 2 values of which one must be non-zero (they represent a
      point in the $(x,y)$-plane) and calculates the angle in radiants
      between this vector and the x-axis
+**** Additional logical accumulators
+     Three new logical accumulators have been added. They are all
+     aliases or trivial extensions of the existing =or= and =and= but
+     sometimes should make the intention clearer
+     - all :: alias for =and=
+     - any :: alias for =or=
+     - none :: only =true= if everything is =false= (basically =not or=)
 *** Enhancements
+**** New file format for =funkyDoCalc=
+     =funkyDoCalc= now has a new file format. If a dictionary
+     =expressions= is found in the specification file then it is
+     assumed that the file is in the new format. =expressions= are the
+     contents of the previous format. Additional keys in the file now
+     allow specifying things that previously only specified on the command line:
+     - noDimensionChecking
+     - foreignMeshesThatFollowTime
+
+     A list =libs= also allows specifying a list of libraries to
+     load. This allows adding boundary conditions that would otherwise
+     make the execution fail
+**** =funkyDoCalc= allows writing data as a dictionary
+     The option =-writeDict= writes all the results as a
+     dictionary. It also includes a sub-dictionary with a copy of the
+     specification file
+**** =funkyDoCalc= executes function objects
+     With the =-allowFunctionObjects= the regular function objects
+     from the =constrolDict= are now executed.
+
+     If the new file format is used and there is an entry =functions=
+     then the function objects specified there are executed (this
+     allows setting up additional fields etc)
+
+     *BUG*: using separate function objects causes a segmentation
+      fault after the run finished. Probably because the function
+      objects are inconsitently destroyed
 *** Examples

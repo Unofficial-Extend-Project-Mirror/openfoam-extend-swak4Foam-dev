@@ -56,7 +56,7 @@ defineTypeNameAndDebug(CloudValueExpressionDriver, 0);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CloudValueExpressionDriver, dictionary, cloud);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CloudValueExpressionDriver, idName, cloud);
 
-HashTable<string,word> CloudValueExpressionDriver::cloudInfos_;
+HashTable<string> CloudValueExpressionDriver::cloudInfos_;
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //

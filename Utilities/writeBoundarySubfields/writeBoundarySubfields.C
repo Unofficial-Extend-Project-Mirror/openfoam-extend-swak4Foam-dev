@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
         subfieldSpec=word(args.options()["subfields"]);
     }
 
-    typedef HashTable<word,word> specType;
+    typedef HashTable<word> specType;
     specType subfields;
     {
         string::size_type pnt=0;

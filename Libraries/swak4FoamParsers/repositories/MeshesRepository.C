@@ -96,7 +96,7 @@ fvMesh &MeshesRepository::addMesh(
         Pout << "Location: " << usedN << " Region " << region << endl;
     }
 
-    typedef  HashPtrTable<Time,word> tableIterator;
+    typedef HashPtrTable<Time> tableIterator;
 
     forAllIter(
         tableIterator,
