@@ -4016,7 +4016,11 @@ S_{expl} + S_{impl} T
      then the function objects specified there are executed (this
      allows setting up additional fields etc)
 
-     *BUG*: using separate function objects causes a segmentation
-      fault after the run finished. Probably because the function
-      objects are inconsitently destroyed
+     A list =preloadFields= allows preloading fields that might be
+     needed by the function objects
+
+     *BUG*: using separate function
+     objects causes a segmentation fault after the run
+     finished. Probably because the function objects are inconsitently
+     destroyed
 *** Examples
