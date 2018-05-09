@@ -3939,6 +3939,9 @@ S_{expl} + S_{impl} T
      Some adaptions were required to make this compile
 **** OpenFOAM+ v1712
      Minor adaptions were required to make this compile by Mark Olesen
+**** OpenFOAM+ v1806
+     Adaptions supplied by Mark Olesen. Not yet tested on the real
+     thing as it is not released yet
 **** foam-extend 4.1
      This is a work in progress based on the =nextRelease=-branch as
      there is no release yet
