@@ -122,6 +122,11 @@ namespace Foam {
 #define FOAM_BARYCENTRIC_PARTICLES
 #endif
 
+#if (OPENFOAM_COM >= 1712)                                          \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(5,0,0))
+#define FOAM_IOPOSITION_NEEDS_STREAM_IN_READDATA
+#endif
+
 
 #include "DebugOStream.H"
 
