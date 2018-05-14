@@ -514,6 +514,11 @@ Contributors/Copyright:
 #define FOAM_CXX_COMPILER_ALLOWS_NON_POD_IN_UNION
 #endif
 
+#if __cplusplus < 201103L
+#define FOAM_CXX_COMPILER_HAS_NO_NULLPTR
+#define nullptr NULL
+#endif
+
 #if (OPENFOAM_COM >= 1706)
 #define FOAM_RANDOM_CLASS_NEW_INTERFACE
 #endif
