@@ -79,6 +79,11 @@ fi
 # This may be available from the regular wmake rules, but use our own convention
 sed -ne 's/.*SWAK_IS_COM \([0-9][0-9]*\)/OPENFOAM_COM=\1/p' < $versionFile > rules/foamVersion
 
+echo
+echo "Please include the output above when reporting a problem in the compilation. It helps diagnosing the problem"
+echo
+echo
+
 wmakeLnInclude simpleFunctionObjects
 
 wmake libso swak4FoamParsers

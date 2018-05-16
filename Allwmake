@@ -1,5 +1,6 @@
 #! /bin/bash
 
+echo "Current OpenFOAM version is $WM_PROJECT_VERSION."
 if [ -e foamVersionThisIsCompiledFor ]; then
     prevVersion=$(<foamVersionThisIsCompiledFor)
     echo "Previously compiled for OpenFOAM ($prevVersion)"
@@ -59,13 +60,19 @@ if [ -z $SWAK_DO_NOT_GENERATE_NEW_VERSION_FILE ]; then
 else
     echo "Not generating new version file because SWAK_DO_NOT_GENERATE_NEW_VERSION_FILE is set"
 fi
+mercurialVersion=$(hg id)
+if [ $? != 0 ]; then
+    echo "Could not get version of the sources"
+else
+    echo "hg info: $mercurialVersion"
+fi
 
 (cd Libraries; wmake all )
 
 if [ $? != 0 ]; then
     echo
     echo "Requirements for Library not satisfied. I see no sense in going on"
-    echo "Check the README before you go on to ask. And search: Most likely your problem occured to 5 other people before and has been solved on the MessageBoard"
+    echo "Check the README before you go on to ask. And search: Most likely your problem occurred to 5 other people before and has been solved on the MessageBoard"
     exit 42
 fi
 

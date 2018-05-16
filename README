@@ -50,10 +50,12 @@
      - release generation script.
      - Automatic =swakConfiguration=
    - Mark Olesen ::
-     - port to OpenFOAM+ v1612
+     - port to OpenFOAM+ since v1612
      - improvements to scripts
    - Philippose Rajan ::
      - Bugfix for segmentation faults in parallel
+   - Matti Rauter ::
+     - Spell-checking the compilation scripts
    If anyone is forgotten: let me know
 
    According to the commits in the =mercurial=-repository (and
@@ -3970,6 +3972,10 @@ S_{expl} + S_{impl} T
      =processor=-directory when writing CSV-files or
      distributions. This has been fixed so that the data is written
      similarly to single-CPU-cases
+**** Horrible spelling mistake in the =Allwmake=
+     Reported by Matti Rauter at
+     https://twitter.com/igt_matti/status/989870314241880067
+     Fixed
 *** Internals (for developers)
 *** Infrastructure
 **** Renaming of the Forks
@@ -3977,6 +3983,9 @@ S_{expl} + S_{impl} T
      - EXTEND :: stays the same
      - ORG :: formerly known as =OPENFOAM=. The CFDDirect/Foundation fork
      - COM :: formerly =PLUS=. The Version maintained by ESI/OpenCFD
+**** Additional output of =Allwmake=
+     The current OpenFOAM-version and the version of the sources is
+     printed in the beginning. This should help diagnosing problems
 *** Documentation
 *** New features
 **** =atan2= added to parsers
