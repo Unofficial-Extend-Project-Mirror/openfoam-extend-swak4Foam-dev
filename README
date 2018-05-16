@@ -3983,6 +3983,9 @@ S_{expl} + S_{impl} T
      - EXTEND :: stays the same
      - ORG :: formerly known as =OPENFOAM=. The CFDDirect/Foundation fork
      - COM :: formerly =PLUS=. The Version maintained by ESI/OpenCFD
+**** Additional output of =Allwmake=
+     The current OpenFOAM-version and the version of the sources is
+     printed in the beginning. This should help diagnosing problems
 *** Documentation
 *** New features
 **** =atan2= added to parsers
