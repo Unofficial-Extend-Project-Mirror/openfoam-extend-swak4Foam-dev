@@ -46,6 +46,9 @@ Contributors/Copyright:
 namespace Foam
 {
 
+    typedef EvolveCloudFunctionObject<solidParticleCloud> solidEvolveCloudFunctionObject;
+    defineTemplateTypeNameAndDebug(solidEvolveCloudFunctionObject, 0);
+
     // Specialization because solidParticleCloud has no evolve
 template<>
 bool EvolveCloudFunctionObject<solidParticleCloud>::execute(bool forceWrite)

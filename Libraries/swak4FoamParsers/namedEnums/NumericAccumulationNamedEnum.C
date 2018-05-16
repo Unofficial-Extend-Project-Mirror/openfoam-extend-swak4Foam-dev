@@ -92,7 +92,7 @@ NumericAccumulationNamedEnum::readAccumulations(
     const wordList &aNames,
     const fileName &name
 ) {
-    HashSet<NumericAccumulationNamedEnum::value, Hash<label>> needsArgument;
+    HashSet<NumericAccumulationNamedEnum::value, Hash<label> > needsArgument;
     needsArgument.insert(numQuantile);
     needsArgument.insert(numRange);
     needsArgument.insert(numSmaller);
