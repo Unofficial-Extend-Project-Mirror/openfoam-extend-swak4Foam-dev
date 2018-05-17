@@ -282,6 +282,36 @@ functions {
         interactiveAfterException true;
         referenceToGlobal false;
     }
+    checkRandom {
+        type swakExpression;
+        valueType patch;
+        patchName fixedWalls;
+        accumulations (
+            min
+            average
+            max
+        );
+        verbose yes;
+        expression "randomVector";
+        globalScopes (
+            variablesFromLua
+        );
+    }
+    luaGetNonUniformSetGlobalsNative {
+        $luaGetNonUniformSetGlobals;
+        referenceToGlobal yes;
+        executeCode "randomVector=swak4foam.newVectorField(#facePos);for i=1,#facePos do randomVector[i].x=math.random();randomVector[i].y=math.random();randomVector[i].z=math.random(); end ;randomField=swak4foam.newScalarField(#faceArea);for i=1,#faceArea do randomField[i]=math.random(); end ; normalVector={x=1,y=2,z=3};normalScalar=42";
+        writeCode "print('Write Native')";
+        luaToSwakNamespace variablesFromLuaNative;
+        startCode $executeCode;
+        //        interactiveAfterExecute true;
+    }
+    checkRandomNative {
+        $checkRandom;
+        globalScopes (
+            variablesFromLuaNative
+        );
+    }
     luaDeltaT {
         type setDeltaTWithLua;
         parallelMasterOnly true;

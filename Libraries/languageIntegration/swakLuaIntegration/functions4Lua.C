@@ -365,11 +365,29 @@ namespace Foam {
         lua_setglobal(luaState, name.c_str());
     }
 
+    template<class T>
+    bool isLuaFieldWrap(lua_State *luaState,int index) {
+        luaL_checktype(luaState, index, LUA_TUSERDATA);
+        void *fw=luaL_testudata(luaState, index, FieldWrap<T>::metaTable);
+        return fw!=NULL;
+    }
+
+    template<class T>
+    Field<T> &getLuaField(lua_State *luaState,int index) {
+        FieldWrap<T> *fw=checkField<T>(luaState,index);
+        return (*fw)();
+    }
+
 #define makeFunctionInstances(T) \
     template                                                            \
     void addFieldToLua<T>(                                              \
         lua_State *luaState,const word &name, Field<T> *data            \
-    );
+    );                                                                  \
+    template                                                            \
+    bool isLuaFieldWrap<T>(lua_State *luaState,int index);              \
+    template                                                            \
+    Field<T> &getLuaField<T>(lua_State *luaState,int index);
+
 
     makeFunctionInstances(scalar);
     makeFunctionInstances(vector);

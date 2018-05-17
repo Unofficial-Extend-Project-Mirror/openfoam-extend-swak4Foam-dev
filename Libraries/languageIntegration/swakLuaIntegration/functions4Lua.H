@@ -51,5 +51,10 @@ namespace Foam {
     template<class T>
     void addFieldToLua(lua_State *luaState,const word &name, Field<T> *data);
 
+    template<class T>
+    bool isLuaFieldWrap(lua_State *luaState,int index);
+
+    template<class T>
+    Field<T> &getLuaField(lua_State *luaState,int index);
 }
 #endif

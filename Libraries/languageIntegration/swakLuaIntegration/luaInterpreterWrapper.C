@@ -1111,6 +1111,29 @@ void luaInterpreterWrapper::setGlobals()
                 }
                 lua_pop(luaState_,1);
                 break;
+            case LUA_TUSERDATA:
+                if(isLuaFieldWrap<scalar>(luaState_, -1)) {
+                    eResult.setResult(getLuaField<scalar>(luaState_, -1));
+                    lua_pop(luaState_,1);
+                } else if(isLuaFieldWrap<vector>(luaState_, -1)) {
+                    eResult.setResult(getLuaField<vector>(luaState_, -1));
+                    lua_pop(luaState_,1);
+                } else if(isLuaFieldWrap<tensor>(luaState_, -1)) {
+                    eResult.setResult(getLuaField<tensor>(luaState_, -1));
+                    lua_pop(luaState_,1);
+                } else if(isLuaFieldWrap<symmTensor>(luaState_, -1)) {
+                    eResult.setResult(getLuaField<symmTensor>(luaState_, -1));
+                    lua_pop(luaState_,1);
+                } else if(isLuaFieldWrap<sphericalTensor>(luaState_, -1)) {
+                    eResult.setResult(getLuaField<sphericalTensor>(luaState_, -1));
+                    lua_pop(luaState_,1);
+                } else {
+                    WarningIn("luaInterpreterWrapper::setGlobals()")
+                        << name << " is an unsupported Lua-user-type "
+                            << endl;
+                    lua_pop(luaState_,1);
+                }
+                break;
             default:
                 WarningIn("luaInterpreterWrapper::setGlobals()")
                     << name << " is of unsupported Lua-type "
