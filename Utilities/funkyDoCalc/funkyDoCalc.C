@@ -293,6 +293,8 @@ void writeData(
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
 
+#include "preloadFieldsFunction.H"
+
 int main(int argc, char *argv[])
 {
 
@@ -343,6 +345,16 @@ int main(int argc, char *argv[])
 #endif
         }
         Info << endl;
+    }
+
+    wordList preloadFields;
+    if(
+        newFormat
+        &&
+        theDict.found("preloadFields")
+    ) {
+        Info << "\nReading list of fields to preload at every time" << endl;
+        preloadFields=wordList(theDict["preloadFields"]);
     }
 
     dictionary &theExpressions=
@@ -439,8 +451,33 @@ int main(int argc, char *argv[])
         }
     }
 
-    if(funcs.valid()) {
-        funcs().start();
+    {
+        PRELOAD_FIELDS_LISTS;
+
+        if(preloadFields.size()>0) {
+            DynamicList<fvMesh*> allMeshes;
+            allMeshes.append(&mesh);
+            forAll(foreignMeshesThatFollowTime,i) {
+                const word &name=foreignMeshesThatFollowTime[i];
+                if(MeshesRepository::getRepository().hasMesh(name)) {
+                    allMeshes.append(
+                        &MeshesRepository::getRepository().getMesh(
+                            name
+                        )
+                    );
+                }
+            }
+            allMeshes.shrink();
+
+            DO_PRELOAD_FIELDS(allMeshes,preloadFields);
+        }
+
+        if(funcs.valid()) {
+            funcs().start();
+        }
+        if(args.options().found("allowFunctionObjects")) {
+            runTime.functionObjects().start();
+        }
     }
     if(args.options().found("allowFunctionObjects")) {
         runTime.functionObjects().start();
@@ -457,6 +494,8 @@ int main(int argc, char *argv[])
         RepositoryBase::updateRepos();
 
         mesh.readUpdate();
+
+        PRELOAD_FIELDS_LISTS;
 
         forAll(foreignMeshesThatFollowTime,i) {
             const word &name=foreignMeshesThatFollowTime[i];
@@ -476,6 +515,24 @@ int main(int argc, char *argv[])
                         << exit(FatalError);
 
             }
+        }
+
+        if(preloadFields.size()>0) {
+            DynamicList<fvMesh*> allMeshes;
+            allMeshes.append(&mesh);
+            forAll(foreignMeshesThatFollowTime,i) {
+                const word &name=foreignMeshesThatFollowTime[i];
+                if(MeshesRepository::getRepository().hasMesh(name)) {
+                    allMeshes.append(
+                        &MeshesRepository::getRepository().getMesh(
+                            name
+                        )
+                    );
+                }
+            }
+            allMeshes.shrink();
+
+            DO_PRELOAD_FIELDS(allMeshes,preloadFields);
         }
 
         if(funcs.valid()) {
@@ -566,11 +623,32 @@ int main(int argc, char *argv[])
         }
     }
 
-    if(funcs.valid()) {
-        funcs().end();
-    }
-    if(args.options().found("allowFunctionObjects")) {
-        runTime.functionObjects().end();
+    {
+        PRELOAD_FIELDS_LISTS;
+
+        if(preloadFields.size()>0) {
+            DynamicList<fvMesh*> allMeshes;
+            allMeshes.append(&mesh);
+            forAll(foreignMeshesThatFollowTime,i) {
+                const word &name=foreignMeshesThatFollowTime[i];
+                if(MeshesRepository::getRepository().hasMesh(name)) {
+                    allMeshes.append(
+                        &MeshesRepository::getRepository().getMesh(
+                            name
+                        )
+                    );
+                }
+            }
+            allMeshes.shrink();
+
+            DO_PRELOAD_FIELDS(allMeshes,preloadFields);
+        }
+        if(funcs.valid()) {
+            funcs().end();
+        }
+        if(args.options().found("allowFunctionObjects")) {
+            runTime.functionObjects().end();
+        }
     }
 
     if(csvFiles.size()>0) {

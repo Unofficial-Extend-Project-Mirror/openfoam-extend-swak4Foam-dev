@@ -670,49 +670,7 @@ void doAnExpression
     }
 }
 
-template<class FieldType>
-void preLoadFieldsFunction(
-    const DynamicList<fvMesh*> &meshes,
-    const wordList &fieldNames,
-    PtrList<FieldType> &fieldList
-)
-{
-    forAll(meshes,m) {
-        const fvMesh &mesh=*(meshes[m]);
-
-        forAll(fieldNames,i) {
-            const word &name=fieldNames[i];
-
-            IOobject fieldHeader
-                (
-                    name,
-                    mesh.time().timeName(),
-                    mesh,
-                    IOobject::MUST_READ,
-                    IOobject::AUTO_WRITE
-                );
-
-            if
-            (
-#ifdef FOAM_HAS_TYPE_HEADER_OK
-                fieldHeader.typeHeaderOk<FieldType>(true)
-#else
-                fieldHeader.headerOk()
-                && fieldHeader.headerClassName() == pTraits<FieldType>::typeName
-#endif
-            )
-            {
-                Info << " Preloading " << name << " of type "
-                    << pTraits<FieldType>::typeName
-                    << " for mesh " << mesh.name() << endl;
-
-                label sz=fieldList.size();
-                fieldList.setSize(sz+1);
-                fieldList.set(sz, new FieldType(fieldHeader, mesh));
-            }
-        }
-    }
-}
+#include "preloadFieldsFunction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
@@ -992,17 +950,7 @@ int main(int argc, char *argv[])
             IStringStream valuePatchesStream("("+valuePatchesString+")");
             wordList valuePatches(valuePatchesStream);
 
-            PtrList<volScalarField> vsf;
-            PtrList<volVectorField> vvf;
-            PtrList<volTensorField> vtf;
-            PtrList<volSymmTensorField> vyf;
-            PtrList<volSphericalTensorField> vhf;
-
-            PtrList<surfaceScalarField> ssf;
-            PtrList<surfaceVectorField> svf;
-            PtrList<surfaceTensorField> stf;
-            PtrList<surfaceSymmTensorField> syf;
-            PtrList<surfaceSphericalTensorField> shf;
+            PRELOAD_FIELDS_LISTS;
 
             if(args.options().found("preloadFields")) {
                 IStringStream preloadStream(
@@ -1011,17 +959,7 @@ int main(int argc, char *argv[])
 
                 wordList preLoadFields(preloadStream);
 
-                preLoadFieldsFunction(allMeshes,preLoadFields,vsf);
-                preLoadFieldsFunction(allMeshes,preLoadFields,vvf);
-                preLoadFieldsFunction(allMeshes,preLoadFields,vtf);
-                preLoadFieldsFunction(allMeshes,preLoadFields,vyf);
-                preLoadFieldsFunction(allMeshes,preLoadFields,vhf);
-
-                preLoadFieldsFunction(allMeshes,preLoadFields,ssf);
-                preLoadFieldsFunction(allMeshes,preLoadFields,svf);
-                preLoadFieldsFunction(allMeshes,preLoadFields,stf);
-                preLoadFieldsFunction(allMeshes,preLoadFields,syf);
-                preLoadFieldsFunction(allMeshes,preLoadFields,shf);
+                DO_PRELOAD_FIELDS(allMeshes,preLoadFields);
             }
 
             dictionary dummyDict;
@@ -1094,32 +1032,12 @@ int main(int argc, char *argv[])
 
                 Info << "\n\nPart: " << parts[partI].keyword() << endl;
 
-                PtrList<volScalarField> vsf;
-                PtrList<volVectorField> vvf;
-                PtrList<volTensorField> vtf;
-                PtrList<volSymmTensorField> vyf;
-                PtrList<volSphericalTensorField> vhf;
-
-                PtrList<surfaceScalarField> ssf;
-                PtrList<surfaceVectorField> svf;
-                PtrList<surfaceTensorField> stf;
-                PtrList<surfaceSymmTensorField> syf;
-                PtrList<surfaceSphericalTensorField> shf;
+                PRELOAD_FIELDS_LISTS;
 
                 if(part.found("preloadFields")) {
                     wordList preLoadFields(part.lookup("preloadFields"));
 
-                    preLoadFieldsFunction(allMeshes,preLoadFields,vsf);
-                    preLoadFieldsFunction(allMeshes,preLoadFields,vvf);
-                    preLoadFieldsFunction(allMeshes,preLoadFields,vtf);
-                    preLoadFieldsFunction(allMeshes,preLoadFields,vyf);
-                    preLoadFieldsFunction(allMeshes,preLoadFields,vhf);
-
-                    preLoadFieldsFunction(allMeshes,preLoadFields,ssf);
-                    preLoadFieldsFunction(allMeshes,preLoadFields,svf);
-                    preLoadFieldsFunction(allMeshes,preLoadFields,stf);
-                    preLoadFieldsFunction(allMeshes,preLoadFields,syf);
-                    preLoadFieldsFunction(allMeshes,preLoadFields,shf);
+                    DO_PRELOAD_FIELDS(allMeshes,preLoadFields);
                 }
 
                 word field=part["field"];
