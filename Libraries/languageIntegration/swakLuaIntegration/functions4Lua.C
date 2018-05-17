@@ -364,4 +364,16 @@ namespace Foam {
 
         lua_setglobal(luaState, name.c_str());
     }
+
+#define makeFunctionInstances(T) \
+    template                                                            \
+    void addFieldToLua<T>(                                              \
+        lua_State *luaState,const word &name, Field<T> *data            \
+    );
+
+    makeFunctionInstances(scalar);
+    makeFunctionInstances(vector);
+    makeFunctionInstances(tensor);
+    makeFunctionInstances(symmTensor);
+    makeFunctionInstances(sphericalTensor);
 }

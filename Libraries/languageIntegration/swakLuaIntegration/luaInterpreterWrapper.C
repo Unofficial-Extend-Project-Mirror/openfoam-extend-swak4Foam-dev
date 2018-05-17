@@ -557,40 +557,82 @@ void luaInterpreterWrapper::getGlobals()
                 }
             } else {
                 Dbug << var << " is an array" << endl;
+                bool byReference=readBool(dict().lookup("referenceToGlobal"));
+
                 if(value.valueType()==pTraits<scalar>::typeName) {
-                    const Field<scalar> f(const_cast<ExpressionResult&>(
-                        value
-                    ).getResult<scalar>(true));
-                    lua_newtable(luaState_);
-                    forAll(f,i) {
-                        lua_pushnumber(luaState_,f[i]);
-                        lua_seti(luaState_,-2,i+1);
+                    if(byReference){
+                        addFieldToLua(
+                            luaState_,
+                            var,
+                            &value.getRef<scalar>()
+                        );
+                    } else {
+                        const Field<scalar> f(const_cast<ExpressionResult&>(
+                            value
+                        ).getResult<scalar>(true));
+                        lua_newtable(luaState_);
+                        forAll(f,i) {
+                            lua_pushnumber(luaState_,f[i]);
+                            lua_seti(luaState_,-2,i+1);
+                        }
+                        lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
                     }
-                    lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
                 } else if(value.valueType()==pTraits<vector>::typeName) {
-                    const Field<vector> f(const_cast<ExpressionResult&>(
-                        value
-                    ).getResult<vector>(true));
-                    vectorSpaceArrayToStack(f);
-                    lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+                    if(byReference){
+                        addFieldToLua(
+                            luaState_,
+                            var,
+                            &value.getRef<vector>()
+                        );
+                    } else {
+                        const Field<vector> f(const_cast<ExpressionResult&>(
+                            value
+                        ).getResult<vector>(true));
+                        vectorSpaceArrayToStack(f);
+                        lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+                    }
                 } else if(value.valueType()==pTraits<tensor>::typeName) {
-                    const Field<tensor> f(const_cast<ExpressionResult&>(
-                        value
-                    ).getResult<tensor>(true));
-                    vectorSpaceArrayToStack(f);
-                    lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+                    if(byReference){
+                        addFieldToLua(
+                            luaState_,
+                            var,
+                            &value.getRef<tensor>()
+                        );
+                    } else {
+                        const Field<tensor> f(const_cast<ExpressionResult&>(
+                            value
+                        ).getResult<tensor>(true));
+                        vectorSpaceArrayToStack(f);
+                        lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+                    }
                 } else if(value.valueType()==pTraits<symmTensor>::typeName) {
-                    const Field<symmTensor> f(const_cast<ExpressionResult&>(
-                        value
-                    ).getResult<symmTensor>(true));
-                    vectorSpaceArrayToStack(f);
-                    lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+                    if(byReference){
+                        addFieldToLua(
+                            luaState_,
+                            var,
+                            &value.getRef<symmTensor>()
+                        );
+                    } else {
+                        const Field<symmTensor> f(const_cast<ExpressionResult&>(
+                            value
+                        ).getResult<symmTensor>(true));
+                        vectorSpaceArrayToStack(f);
+                        lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+                    }
                 } else if(value.valueType()==pTraits<sphericalTensor>::typeName) {
-                    const Field<sphericalTensor> f(const_cast<ExpressionResult&>(
-                        value
-                    ).getResult<sphericalTensor>(true));
-                    vectorSpaceArrayToStack(f);
-                    lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+                    if(byReference){
+                        addFieldToLua(
+                            luaState_,
+                            var,
+                            &value.getRef<sphericalTensor>()
+                        );
+                    } else {
+                        const Field<sphericalTensor> f(const_cast<ExpressionResult&>(
+                            value
+                        ).getResult<sphericalTensor>(true));
+                        vectorSpaceArrayToStack(f);
+                        lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+                    }
                 } else {
                     WarningIn("luaInterpreterWrapper::getGlobals()")
                         << "Array variable " << var << " in "

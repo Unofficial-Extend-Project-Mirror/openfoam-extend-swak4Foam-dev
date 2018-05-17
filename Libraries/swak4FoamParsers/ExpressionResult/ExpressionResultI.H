@@ -258,7 +258,6 @@ namespace Foam {
                     << "error message should never appear)"
                     << endl
                     << exit(FatalError);
-
         }
 
         result=tmp<Field<Type> > (
@@ -273,6 +272,31 @@ namespace Foam {
         }
 
         return result;
+    }
+
+    template<class Type>
+    inline Field<Type> &ExpressionResult::getRef() const
+    {
+        Pbug << "getRef()" << endl;
+
+        if(valType_!=pTraits<Type>::typeName) {
+            FatalErrorIn("tmp<Field<Type> > ExpressionResult::getRef()")
+                << "The expected return type " << pTraits<Type>::typeName
+                    << " is different from the stored result type "
+                    << valType_ << "\n" << endl
+                    << exit(FatalError);
+        }
+
+        if(valPtr_==NULL) {
+            FatalErrorIn("ExpressionResult::getRef()")
+                << "Trying to build a tmp from a NULL-pointer. "
+                    << "This will not work (in reality this "
+                    << "error message should never appear)"
+                    << endl
+                    << exit(FatalError);
+        }
+
+        return *(static_cast<Field<Type>*>(valPtr_));
     }
 
     template<class Type>

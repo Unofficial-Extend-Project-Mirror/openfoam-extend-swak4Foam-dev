@@ -231,6 +231,12 @@ functions {
             total
             vecSum
         );
+        referenceToGlobal no;
+    }
+    luaGetNonUniformGetGlobalsReference {
+        $luaGetNonUniformGetGlobals;
+        referenceToGlobal yes;
+        //        interactiveAfterExecute yes;
     }
     checkMultiValue {
         type swakExpression;
@@ -274,6 +280,7 @@ functions {
         );
         //        interactiveAfterExecute true;
         interactiveAfterException true;
+        referenceToGlobal false;
     }
     luaDeltaT {
         type setDeltaTWithLua;

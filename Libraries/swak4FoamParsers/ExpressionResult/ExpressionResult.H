@@ -1,4 +1,4 @@
-#/*---------------------------------------------------------------------------*\
+/*---------------------------------------------------------------------------*\
  ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
@@ -252,6 +252,9 @@ public:
 
     template<class Type>
     inline tmp<Field<Type> > getResult(bool keep=false);
+
+    template<class Type>
+    inline Field<Type> &getRef() const;
 
     // couldn't get specialisation with Field<Type> to work. Maybe later. Maybe forbidden
     template<class Type>

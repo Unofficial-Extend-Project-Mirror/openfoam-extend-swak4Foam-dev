@@ -44,8 +44,10 @@ extern "C" {
 
 namespace Foam {
 
+    // add functions and data types to the Lua interpreter
     void addOpenFOAMFunctions(lua_State *luaState);
 
+    // add a field to the Lua dataspace. It references the real data
     template<class T>
     void addFieldToLua(lua_State *luaState,const word &name, Field<T> *data);
 
