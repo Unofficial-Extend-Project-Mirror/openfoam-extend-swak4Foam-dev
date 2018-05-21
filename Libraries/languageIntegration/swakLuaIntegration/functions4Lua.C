@@ -43,6 +43,13 @@ Contributors/Copyright:
 #include "OStringStream.H"
 #include "word.H"
 
+#include "swak.H"
+
+#ifdef FOAM_DEV_ADDITIONAL_TENSOR_TYPES
+#include "diagTensor.H"
+#include "symmTensor4thOrder.H"
+#endif
+
 void* operator new(size_t size, lua_State* L, const char* metatableName)
 {
     void* ptr = lua_newuserdata(L, size);
@@ -147,6 +154,10 @@ namespace Foam {
     VectorSpaceInstance(tensor)
     VectorSpaceInstance(sphericalTensor)
     VectorSpaceInstance(symmTensor)
+#ifdef FOAM_DEV_ADDITIONAL_TENSOR_TYPES
+    VectorSpaceInstance(diagTensor)
+    VectorSpaceInstance(symmTensor4thOrder)
+#endif
 
     template<class T>
     void newVectorspaceToStack(lua_State *luaState,T *data) {
@@ -303,6 +314,10 @@ namespace Foam {
         {"newTensorField", newField<tensor>},
         {"newSymmTensorField", newField<symmTensor>},
         {"newSphericalTensorField", newField<sphericalTensor>},
+#ifdef FOAM_DEV_ADDITIONAL_TENSOR_TYPES
+        {"newDiagTensorField", newField<diagTensor>},
+        {"newSymmTensor4thOrderField", newField<symmTensor4thOrder>},
+#endif
         {NULL, NULL}  /* sentinel */
     };
 
@@ -329,6 +344,10 @@ namespace Foam {
     declareArrayMetaTable(tensor);
     declareArrayMetaTable(symmTensor);
     declareArrayMetaTable(sphericalTensor);
+#ifdef FOAM_DEV_ADDITIONAL_TENSOR_TYPES
+    declareArrayMetaTable(diagTensor);
+    declareArrayMetaTable(symmTensor4thOrder);
+#endif
 
 #define addVectorSpaceMeta(T)   \
     luaL_newmetatable(luaState, VectorSpaceWrap<T>::metaTable); \
@@ -341,11 +360,19 @@ namespace Foam {
         addArrayMetaTable(tensor);
         addArrayMetaTable(symmTensor);
         addArrayMetaTable(sphericalTensor);
+#ifdef FOAM_DEV_ADDITIONAL_TENSOR_TYPES
+        addArrayMetaTable(diagTensor);
+        addArrayMetaTable(symmTensor4thOrder);
+#endif
 
         addVectorSpaceMeta(vector);
         addVectorSpaceMeta(tensor);
         addVectorSpaceMeta(symmTensor);
         addVectorSpaceMeta(sphericalTensor);
+#ifdef FOAM_DEV_ADDITIONAL_TENSOR_TYPES
+        addVectorSpaceMeta(diagTensor);
+        addVectorSpaceMeta(symmTensor4thOrder);
+#endif
 
         luaL_newlib(luaState,swaklib);
 
@@ -394,4 +421,9 @@ namespace Foam {
     makeFunctionInstances(tensor);
     makeFunctionInstances(symmTensor);
     makeFunctionInstances(sphericalTensor);
+#ifdef FOAM_DEV_ADDITIONAL_TENSOR_TYPES
+    makeFunctionInstances(diagTensor);
+    makeFunctionInstances(symmTensor4thOrder);
+#endif
+
 }
