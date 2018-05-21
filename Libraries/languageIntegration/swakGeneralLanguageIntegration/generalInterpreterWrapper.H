@@ -49,10 +49,14 @@ Contributors/Copyright:
 
 #include "RawFoamDictionaryParserDriver.H"
 
+#include "CommonValueExpressionDriver.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+
+    class CommonValueExpressionDriver;
 
 /*---------------------------------------------------------------------------*\
                            Class generalInterpreterWrapper Declaration
@@ -135,8 +139,10 @@ protected:
     //- used for debugging of the parser
     int debugLevelParser_;
 
+    //- get global variables to the interpreter
     virtual void getGlobals() = 0;
 
+    //- put interpreter variables into the global namespaces
     virtual void setGlobals() = 0;
 
     void dictionariesToInterpreterStructs();
@@ -300,6 +306,29 @@ public:
     const dictionary &dict() {
         return dict_;
     }
+
+    //- get variables from an expression driver and put them into the interpreter
+    virtual void getVariablesFromDriver(
+        CommonValueExpressionDriver &driver,
+        const wordList &names
+    );
+
+    //- get variables from the interpreter and put them into an expression driver
+    virtual void setVariablesInDriver(
+        CommonValueExpressionDriver &driver,
+        const wordList &names
+    );
+
+    //- Setting a reference to a field under a specific name ... if the interpreter supports it
+    virtual void setReference(const word &name,Field<scalar> &value);
+    virtual void setReference(const word &name,Field<vector> &value);
+    virtual void setReference(const word &name,Field<tensor> &value);
+    virtual void setReference(const word &name,Field<symmTensor> &value);
+    virtual void setReference(const word &name,Field<sphericalTensor> &value);
+#ifdef FOAM_DEV_ADDITIONAL_TENSOR_TYPES
+    virtual void setReference(const word &name,Field<symmTensor4thOrder> &value);
+    virtual void setReference(const word &name,Field<diagTensor> &value);
+#endif
 
     declareRunTimeSelectionTable
     (

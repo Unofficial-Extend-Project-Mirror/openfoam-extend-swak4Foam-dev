@@ -217,6 +217,16 @@ public:
         dictionary &dict
     );
 
+    void setReference(const word &name,Field<scalar> &value);
+    void setReference(const word &name,Field<vector> &value);
+    void setReference(const word &name,Field<tensor> &value);
+    void setReference(const word &name,Field<symmTensor> &value);
+    void setReference(const word &name,Field<sphericalTensor> &value);
+#ifdef FOAM_DEV_ADDITIONAL_TENSOR_TYPES
+    void setReference(const word &name,Field<diagTensor> &value);
+    void setReference(const word &name,Field<symmTensor4thOrder> &value);
+#endif
+
     //- Runtime type information
     TypeName("luaInterpreterWrapper");
 

@@ -1183,6 +1183,63 @@ bool luaInterpreterWrapper::wrapUpDictionary(const word &name) {
     return true;
 }
 
+void luaInterpreterWrapper::setReference(const word &name,Field<scalar> &value) {
+    addFieldToLua(
+        luaState_,
+        name,
+        &value
+    );
+}
+
+void luaInterpreterWrapper::setReference(const word &name,Field<vector> &value) {
+    addFieldToLua(
+        luaState_,
+        name,
+        &value
+    );
+}
+
+void luaInterpreterWrapper::setReference(const word &name,Field<tensor> &value) {
+    addFieldToLua(
+        luaState_,
+        name,
+        &value
+    );
+}
+
+void luaInterpreterWrapper::setReference(const word &name,Field<symmTensor> &value) {
+    addFieldToLua(
+        luaState_,
+        name,
+        &value
+    );
+}
+
+void luaInterpreterWrapper::setReference(const word &name,Field<sphericalTensor> &value) {
+    addFieldToLua(
+        luaState_,
+        name,
+        &value
+    );
+}
+
+#ifdef FOAM_DEV_ADDITIONAL_TENSOR_TYPES
+void luaInterpreterWrapper::setReference(const word &name,Field<diagTensor> &value) {
+    addFieldToLua(
+        luaState_,
+        name,
+        &value
+    );
+}
+
+void luaInterpreterWrapper::setReference(const word &name,Field<symmTensor4thOrder> &value) {
+    addFieldToLua(
+        luaState_,
+        name,
+        &value
+    );
+}
+#endif
 
 } // namespace Foam
 

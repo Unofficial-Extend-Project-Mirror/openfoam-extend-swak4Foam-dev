@@ -732,6 +732,77 @@ bool generalInterpreterWrapper::executeCodeCaptureOutput(
     return success;
 }
 
+void generalInterpreterWrapper::getVariablesFromDriver(
+    CommonValueExpressionDriver &driver,
+    const wordList &names
+) {
+    FatalErrorIn("generalInterpreterWrapper::getVariablesFromDriver")
+        << "Not implemented for " << InterpreterName()
+            << endl
+            << exit(FatalError);
+}
+
+void generalInterpreterWrapper::setVariablesInDriver(
+    CommonValueExpressionDriver &driver,
+    const wordList &names
+) {
+    FatalErrorIn("generalInterpreterWrapper::setVariablesInDriver")
+        << "Not implemented for " << InterpreterName()
+            << endl
+            << exit(FatalError);
+}
+
+void generalInterpreterWrapper::setReference(const word &name,Field<scalar> &value) {
+    FatalErrorIn("generalInterpreterWrapper::setReference<scalar>")
+        << "Not implemented for " << InterpreterName()
+            << endl
+            << exit(FatalError);
+}
+
+void generalInterpreterWrapper::setReference(const word &name,Field<vector> &value) {
+    FatalErrorIn("generalInterpreterWrapper::setReference<vector>")
+        << "Not implemented for " << InterpreterName()
+            << endl
+            << exit(FatalError);
+}
+
+void generalInterpreterWrapper::setReference(const word &name,Field<tensor> &value) {
+    FatalErrorIn("generalInterpreterWrapper::setReference<tensor>")
+        << "Not implemented for " << InterpreterName()
+            << endl
+            << exit(FatalError);
+}
+
+void generalInterpreterWrapper::setReference(const word &name,Field<symmTensor> &value) {
+    FatalErrorIn("generalInterpreterWrapper::setReference<symmTensor>")
+        << "Not implemented for " << InterpreterName()
+            << endl
+            << exit(FatalError);
+}
+
+void generalInterpreterWrapper::setReference(const word &name,Field<sphericalTensor> &value) {
+    FatalErrorIn("generalInterpreterWrapper::setReference<sphericalTensor>")
+        << "Not implemented for " << InterpreterName()
+            << endl
+            << exit(FatalError);
+}
+
+#ifdef FOAM_DEV_ADDITIONAL_TENSOR_TYPES
+void generalInterpreterWrapper::setReference(const word &name,Field<diagTensor> &value) {
+    FatalErrorIn("generalInterpreterWrapper::setReference<diagTensor>")
+        << "Not implemented for " << InterpreterName()
+            << endl
+            << exit(FatalError);
+}
+
+void generalInterpreterWrapper::setReference(const word &name,Field<symmTensor4thOrder> &value) {
+    FatalErrorIn("generalInterpreterWrapper::setReference<symmTensor4thOrder>")
+        << "Not implemented for " << InterpreterName()
+            << endl
+            << exit(FatalError);
+}
+
+#endif
 
 } // namespace Foam
 

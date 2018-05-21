@@ -1,6 +1,8 @@
 include $(OBJECTS_DIR)/../../../../rules/versionOptions
 
 EXE_INC = \
+        -I$(FOAM_SRC)/finiteVolume/lnInclude \
+        -I$(FOAM_SRC)/sampling/lnInclude \
         $(FOAM_DEV_OPTION) \
 	$(SWAK_LUA_INCLUDE) \
         -I../swakGeneralLanguageIntegration/lnInclude \
