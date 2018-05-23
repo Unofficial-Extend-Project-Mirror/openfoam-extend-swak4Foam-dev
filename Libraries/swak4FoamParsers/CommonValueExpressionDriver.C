@@ -508,14 +508,19 @@ CommonValueExpressionDriver::~CommonValueExpressionDriver()
 List<exprString> CommonValueExpressionDriver::readVariableStrings(
     const dictionary &dict,
     const word &name,
-    const label recursionDepth
+    const label recursionDepth,
+    bool mustExist
 )
 {
     Sbug << "::readVariableStrings " << name
         << " depth " << recursionDepth << endl;
 
     if(!dict.found(name)) {
-        return List<exprString>();
+        if(mustExist) {
+            return List<exprString>(dict.lookup(name));
+        } else {
+            return List<exprString>();
+        }
     }
 
     if(recursionDepth>maxVariableRecursionDepth_) {

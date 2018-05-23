@@ -108,13 +108,17 @@ swakScriptableFvPatchField<Type>::swakScriptableFvPatchField
     initVariables_(
         driver_.readVariableStrings(
             dict,
-            "initVariables"
+            "initVariables",
+            0,
+            true
         )
     ),
     evaluateVariables_(
         driver_.readVariableStrings(
             dict,
-            "evaluateVariables"
+            "evaluateVariables",
+            0,
+            true
         )
     )
 {

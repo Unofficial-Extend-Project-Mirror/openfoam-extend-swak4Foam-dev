@@ -556,7 +556,8 @@ public:
     static List<exprString> readVariableStrings(
         const dictionary &dict,
         const word &name="variables",
-        const label recursionDepth=0
+        const label recursionDepth=0,
+        bool mustExist=false
     );
 
     //- read an expression string and also do substitution
