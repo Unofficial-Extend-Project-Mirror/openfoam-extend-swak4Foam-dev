@@ -46,6 +46,7 @@ boundaryField
             TValue
             position
             lookIn
+            slipVel
         );
         variables (
             "position=pos();"
@@ -56,7 +57,9 @@ boundaryField
         evaluateVariables (
             "TInner=internalField(T);"
             "TValue=T;"
+            "slipVel=mag(U);"
         );
+        interactiveAfterException true;
     }
 
     inlet
