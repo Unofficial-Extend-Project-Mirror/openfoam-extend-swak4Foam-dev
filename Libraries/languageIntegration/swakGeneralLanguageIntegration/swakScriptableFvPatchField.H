@@ -76,7 +76,16 @@ protected:
 
     string writeCode_;
 
-    void evaluateScript(const string &script);
+    wordList variablesToUse_;
+
+    List<exprString> initVariables_;
+
+    List<exprString> evaluateVariables_;
+
+    void evaluateScript(
+        const string &script,
+        const List<exprString> &variables
+    );
 
 public:
 

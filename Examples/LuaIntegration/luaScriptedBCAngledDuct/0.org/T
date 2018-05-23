@@ -41,6 +41,22 @@ boundaryField
         initBCFile "$FOAM_CASE/system/initBC.lua";
         evaluateBCFile "$FOAM_CASE/system/evaluateBC.lua";
         writeBCFile "$FOAM_CASE/system/writeBC.lua";
+        variablesToUse (
+            TInner
+            TValue
+            position
+            lookIn
+        );
+        variables (
+            "position=pos();"
+        );
+        initVariables (
+            "lookIn=normal();"
+        );
+        evaluateVariables (
+            "TInner=internalField(T);"
+            "TValue=T;"
+        );
     }
 
     inlet

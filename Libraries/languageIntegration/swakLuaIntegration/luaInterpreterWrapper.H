@@ -176,6 +176,18 @@ protected:
 
     void extractTopToDict(dictionary &dict);
 
+    void resultToLuaVariable(
+        const word &var,
+        const word &namespaceName,
+        const ExpressionResult &value,
+        bool noDict=false,
+        bool forceNative=true
+    );
+
+    bool luaVariableToResult(
+        const word &var,
+        ExpressionResult &eResult
+    );
 public:
 
     //- Execute code and return a value
@@ -215,6 +227,15 @@ public:
     bool extractDictionary(
         const word &name,
         dictionary &dict
+    );
+
+    void getVariablesFromDriver(
+        CommonValueExpressionDriver &driver,
+        const wordList &names
+    );
+    void setVariablesInGlobal(
+        const word &globalNamespace,
+        const wordList &names
     );
 
     void setReference(const word &name,Field<scalar> &value);

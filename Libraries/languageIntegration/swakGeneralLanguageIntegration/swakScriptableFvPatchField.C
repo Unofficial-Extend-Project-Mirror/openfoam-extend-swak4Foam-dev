@@ -101,6 +101,21 @@ swakScriptableFvPatchField<Type>::swakScriptableFvPatchField
     ),
     writeCode_(
         interpreter_->readCode("writeBC")
+    ),
+    variablesToUse_(
+        dict.lookup("variablesToUse")
+    ),
+    initVariables_(
+        driver_.readVariableStrings(
+            dict,
+            "initVariables"
+        )
+    ),
+    evaluateVariables_(
+        driver_.readVariableStrings(
+            dict,
+            "evaluateVariables"
+        )
     )
 {
     if(debug) {
@@ -159,7 +174,10 @@ swakScriptableFvPatchField<Type>::swakScriptableFvPatchField
         this->valueFraction() = 1;
     }
 
-    evaluateScript(initCode_);
+    evaluateScript(
+        initCode_,
+        initVariables_
+    );
 
     // emulate mixedFvPatchField<Type>::evaluate, but avoid calling "our" updateCoeffs
     if (!this->updated())
@@ -219,6 +237,15 @@ swakScriptableFvPatchField<Type>::swakScriptableFvPatchField
     ),
     writeCode_(
         ptf.writeCode_
+    ),
+    variablesToUse_(
+        ptf.variablesToUse_
+    ),
+    initVariables_(
+        ptf.initVariables_
+    ),
+    evaluateVariables_(
+        ptf.evaluateVariables_
     )
 {
     if(debug) {
@@ -246,9 +273,10 @@ void swakScriptableFvPatchField<Type>::updateCoeffs()
         Info << "swakScriptableFvPatchField<Type>::updateCoeffs - updating" << endl;
     }
 
-    driver_.clearVariables();
-
-    evaluateScript(evaluateCode_);
+    evaluateScript(
+        evaluateCode_,
+        evaluateVariables_
+    );
 
     mixedFvPatchField<Type>::updateCoeffs();
 }
@@ -264,15 +292,38 @@ void swakScriptableFvPatchField<Type>::write(Ostream& os) const
 
     driver_.writeCommon(os,debug);
 
+    List<exprString> dummyVariables;
+
     const_cast<swakScriptableFvPatchField<Type>*>(
         this
-    )->evaluateScript(writeCode_);
+    )->evaluateScript(
+        writeCode_,
+        dummyVariables
+    );
 }
 
 template<class Type>
-void swakScriptableFvPatchField<Type>::evaluateScript(const string &script)
-{
+void swakScriptableFvPatchField<Type>::evaluateScript(
+    const string &script,
+    const List<exprString> &variables
+) {
     Dbug << "Evaluating " << script << endl;
+
+    driver_.addVariables(
+        variables,
+        true
+    );
+
+    DynamicList<word> vars;
+    forAll(variablesToUse_,i) {
+        if(driver_.hasVariable(variablesToUse_[i])){
+            vars.append(variablesToUse_[i]);
+        }
+    }
+    interpreter_->getVariablesFromDriver(
+        driver_,
+        vars
+    );
 
     interpreter_->setReference("refValue",this->refValue());
     interpreter_->setReference("refGrad",this->refGrad());

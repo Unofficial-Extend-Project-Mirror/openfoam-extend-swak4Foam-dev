@@ -742,11 +742,11 @@ void generalInterpreterWrapper::getVariablesFromDriver(
             << exit(FatalError);
 }
 
-void generalInterpreterWrapper::setVariablesInDriver(
-    CommonValueExpressionDriver &driver,
+void generalInterpreterWrapper::setVariablesInGlobal(
+    const word &globalNamespace,
     const wordList &names
 ) {
-    FatalErrorIn("generalInterpreterWrapper::setVariablesInDriver")
+    FatalErrorIn("generalInterpreterWrapper::setVariablesInGlobal")
         << "Not implemented for " << InterpreterName()
             << endl
             << exit(FatalError);

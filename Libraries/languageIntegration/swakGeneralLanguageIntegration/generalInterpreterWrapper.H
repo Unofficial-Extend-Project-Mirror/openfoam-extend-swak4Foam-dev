@@ -314,8 +314,8 @@ public:
     );
 
     //- get variables from the interpreter and put them into an expression driver
-    virtual void setVariablesInDriver(
-        CommonValueExpressionDriver &driver,
+    virtual void setVariablesInGlobal(
+        const word &globalNamespace,
         const wordList &names
     );
 

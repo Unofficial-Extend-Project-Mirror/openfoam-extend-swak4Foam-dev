@@ -494,6 +494,153 @@ bool luaInterpreterWrapper::isVectorSpace()
     return true;
 }
 
+void luaInterpreterWrapper::resultToLuaVariable(
+    const word &var,
+    const word &namespaceName,
+    const ExpressionResult &value,
+    bool noDict,
+    bool forceNative
+) {
+    if(value.isSingleValue()) {
+        ExpressionResult val=value.getUniform(
+            1,
+            !warnOnNonUniform_,
+            !Pstream::parRun() || !parallelMasterOnly_
+        );
+
+        Dbug << var << " is a single value" << endl;
+        if(val.valueType()==pTraits<scalar>::typeName) {
+            lua_pushnumber(luaState_,val.getResult<scalar>()()[0]);
+            lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+        } else if(val.valueType()==pTraits<vector>::typeName) {
+            vectorSpaceToStack(val.getResult<vector>()()[0]);
+            lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+        } else if(val.valueType()==pTraits<tensor>::typeName) {
+            vectorSpaceToStack(val.getResult<tensor>()()[0]);
+            lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+        } else if(val.valueType()==pTraits<symmTensor>::typeName) {
+            vectorSpaceToStack(val.getResult<symmTensor>()()[0]);
+            lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+        } else if(val.valueType()==pTraits<sphericalTensor>::typeName) {
+            vectorSpaceToStack(val.getResult<sphericalTensor>()()[0]);
+            lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+        } else {
+            WarningIn("luaInterpreterWrapper::getGlobals()")
+                << "Single variable " << var << " in "
+                    << namespaceName
+                    << " is of unsupported type "
+                    << val.valueType()
+                    << endl;
+        }
+    } else {
+        Dbug << var << " is an array" << endl;
+        bool byReference=forceNative;
+        if(!noDict) {
+            byReference=readBool(dict().lookup("referenceToGlobal"));
+        }
+
+        if(value.valueType()==pTraits<scalar>::typeName) {
+            if(byReference){
+                addFieldToLua(
+                    luaState_,
+                    var,
+                    &value.getRef<scalar>()
+                );
+            } else {
+                const Field<scalar> f(const_cast<ExpressionResult&>(
+                    value
+                ).getResult<scalar>(true));
+                lua_newtable(luaState_);
+                forAll(f,i) {
+                    lua_pushnumber(luaState_,f[i]);
+                    lua_seti(luaState_,-2,i+1);
+                }
+                lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+            }
+        } else if(value.valueType()==pTraits<vector>::typeName) {
+            if(byReference){
+                addFieldToLua(
+                    luaState_,
+                    var,
+                    &value.getRef<vector>()
+                );
+            } else {
+                const Field<vector> f(const_cast<ExpressionResult&>(
+                    value
+                ).getResult<vector>(true));
+                vectorSpaceArrayToStack(f);
+                lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+            }
+        } else if(value.valueType()==pTraits<tensor>::typeName) {
+            if(byReference){
+                addFieldToLua(
+                    luaState_,
+                    var,
+                    &value.getRef<tensor>()
+                );
+            } else {
+                const Field<tensor> f(const_cast<ExpressionResult&>(
+                    value
+                ).getResult<tensor>(true));
+                vectorSpaceArrayToStack(f);
+                lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+            }
+        } else if(value.valueType()==pTraits<symmTensor>::typeName) {
+            if(byReference){
+                addFieldToLua(
+                    luaState_,
+                    var,
+                    &value.getRef<symmTensor>()
+                );
+            } else {
+                const Field<symmTensor> f(const_cast<ExpressionResult&>(
+                    value
+                ).getResult<symmTensor>(true));
+                vectorSpaceArrayToStack(f);
+                lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+            }
+        } else if(value.valueType()==pTraits<sphericalTensor>::typeName) {
+            if(byReference){
+                addFieldToLua(
+                    luaState_,
+                    var,
+                    &value.getRef<sphericalTensor>()
+                );
+            } else {
+                const Field<sphericalTensor> f(const_cast<ExpressionResult&>(
+                    value
+                ).getResult<sphericalTensor>(true));
+                vectorSpaceArrayToStack(f);
+                lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
+            }
+        } else {
+            WarningIn("luaInterpreterWrapper::getGlobals()")
+                << "Array variable " << var << " in "
+                    << namespaceName
+                    << " is of unsupported type "
+                    << value.valueType()
+                    << endl;
+        }
+    }
+}
+
+void luaInterpreterWrapper::getVariablesFromDriver(
+    CommonValueExpressionDriver &driver,
+    const wordList &names
+) {
+    forAll(names,i) {
+        const word &var=names[i];
+        const ExpressionResult &value=const_cast<const CommonValueExpressionDriver&>(driver).variable(var);
+
+        resultToLuaVariable(
+            var,
+            "variables",
+            value,
+            true
+        );
+    }
+}
+
 void luaInterpreterWrapper::getGlobals()
 {
     assertParallel("getGlobals");
@@ -524,124 +671,12 @@ void luaInterpreterWrapper::getGlobals()
 
             Pbug << "Variable: " << var << endl;
 
-            if(value.isSingleValue()) {
-                ExpressionResult val=value.getUniform(
-                    1,
-                    !warnOnNonUniform_,
-                    !Pstream::parRun() || !parallelMasterOnly_
-                );
+            resultToLuaVariable(
+                var,
+                swakToInterpreterNamespaces_[nameI],
+                value
+            );
 
-                Dbug << var << " is a single value" << endl;
-                if(val.valueType()==pTraits<scalar>::typeName) {
-                    lua_pushnumber(luaState_,val.getResult<scalar>()()[0]);
-                    lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
-                } else if(val.valueType()==pTraits<vector>::typeName) {
-                    vectorSpaceToStack(val.getResult<vector>()()[0]);
-                    lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
-                } else if(val.valueType()==pTraits<tensor>::typeName) {
-                    vectorSpaceToStack(val.getResult<tensor>()()[0]);
-                    lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
-                } else if(val.valueType()==pTraits<symmTensor>::typeName) {
-                    vectorSpaceToStack(val.getResult<symmTensor>()()[0]);
-                    lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
-                } else if(val.valueType()==pTraits<sphericalTensor>::typeName) {
-                    vectorSpaceToStack(val.getResult<sphericalTensor>()()[0]);
-                    lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
-                } else {
-                    WarningIn("luaInterpreterWrapper::getGlobals()")
-                        << "Single variable " << var << " in "
-                            << swakToInterpreterNamespaces_[nameI]
-                            << " is of unsupported type "
-                            << val.valueType()
-                            << endl;
-                }
-            } else {
-                Dbug << var << " is an array" << endl;
-                bool byReference=readBool(dict().lookup("referenceToGlobal"));
-
-                if(value.valueType()==pTraits<scalar>::typeName) {
-                    if(byReference){
-                        addFieldToLua(
-                            luaState_,
-                            var,
-                            &value.getRef<scalar>()
-                        );
-                    } else {
-                        const Field<scalar> f(const_cast<ExpressionResult&>(
-                            value
-                        ).getResult<scalar>(true));
-                        lua_newtable(luaState_);
-                        forAll(f,i) {
-                            lua_pushnumber(luaState_,f[i]);
-                            lua_seti(luaState_,-2,i+1);
-                        }
-                        lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
-                    }
-                } else if(value.valueType()==pTraits<vector>::typeName) {
-                    if(byReference){
-                        addFieldToLua(
-                            luaState_,
-                            var,
-                            &value.getRef<vector>()
-                        );
-                    } else {
-                        const Field<vector> f(const_cast<ExpressionResult&>(
-                            value
-                        ).getResult<vector>(true));
-                        vectorSpaceArrayToStack(f);
-                        lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
-                    }
-                } else if(value.valueType()==pTraits<tensor>::typeName) {
-                    if(byReference){
-                        addFieldToLua(
-                            luaState_,
-                            var,
-                            &value.getRef<tensor>()
-                        );
-                    } else {
-                        const Field<tensor> f(const_cast<ExpressionResult&>(
-                            value
-                        ).getResult<tensor>(true));
-                        vectorSpaceArrayToStack(f);
-                        lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
-                    }
-                } else if(value.valueType()==pTraits<symmTensor>::typeName) {
-                    if(byReference){
-                        addFieldToLua(
-                            luaState_,
-                            var,
-                            &value.getRef<symmTensor>()
-                        );
-                    } else {
-                        const Field<symmTensor> f(const_cast<ExpressionResult&>(
-                            value
-                        ).getResult<symmTensor>(true));
-                        vectorSpaceArrayToStack(f);
-                        lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
-                    }
-                } else if(value.valueType()==pTraits<sphericalTensor>::typeName) {
-                    if(byReference){
-                        addFieldToLua(
-                            luaState_,
-                            var,
-                            &value.getRef<sphericalTensor>()
-                        );
-                    } else {
-                        const Field<sphericalTensor> f(const_cast<ExpressionResult&>(
-                            value
-                        ).getResult<sphericalTensor>(true));
-                        vectorSpaceArrayToStack(f);
-                        lua_setglobal(luaState_,const_cast<char*>(var.c_str()));
-                    }
-                } else {
-                    WarningIn("luaInterpreterWrapper::getGlobals()")
-                        << "Array variable " << var << " in "
-                            << swakToInterpreterNamespaces_[nameI]
-                            << " is of unsupported type "
-                            << value.valueType()
-                            << endl;
-                }
-            }
 
             Pbug << "Variable done" << endl;
         }
@@ -966,6 +1001,171 @@ bool luaInterpreterWrapper::extractDictionary(
     return true;
 }
 
+bool luaInterpreterWrapper::luaVariableToResult(
+    const word &name,
+    ExpressionResult &eResult
+) {
+    int type=lua_getglobal(luaState_,name.c_str());
+    Dbug << "Type is " << type << " -> "
+        << lua_typename(luaState_,type) << endl;
+
+    switch(type) {
+        case LUA_TNIL:
+            WarningIn("luaInterpreterWrapper::setGlobals()")
+                << "No symbol " << name << " in Lua namespace"
+                    << endl;
+            lua_pop(luaState_,1);
+            return false;
+            break;
+        case LUA_TNUMBER:
+        case LUA_TBOOLEAN:
+            eResult.setSingleValue(
+                lua_tonumber(luaState_,-1)
+            );
+            lua_pop(luaState_,1);
+            break;
+        case LUA_TTABLE:
+            if(isVectorSpace<vector>()) {
+                eResult.setSingleValue(
+                    stackToVectorSpace<vector>()
+                );
+            } else if(isVectorSpace<tensor>()) {
+                eResult.setSingleValue(
+                    stackToVectorSpace<tensor>()
+                );
+            } else if(isVectorSpace<symmTensor>()) {
+                eResult.setSingleValue(
+                    stackToVectorSpace<symmTensor>()
+                );
+            } else if(isVectorSpace<sphericalTensor>()) {
+                eResult.setSingleValue(
+                    stackToVectorSpace<sphericalTensor>()
+                );
+            } else {
+                int type=lua_geti(
+                    luaState_,
+                    -1,
+                    1
+                );
+                lua_pop(luaState_,1);
+                if(
+                    type==LUA_TNUMBER
+                    ||
+                    type==LUA_TBOOLEAN
+                    ||
+                    type==LUA_TTABLE
+                ) {
+                    label length=0;
+                    bool goOn=true;
+                    while(goOn) {
+                        int ntype=lua_geti(
+                            luaState_,
+                            -1,
+                            length+1
+                        );
+                        lua_pop(luaState_,1);
+                        if(ntype!=LUA_TNIL) {
+                            length+=1;
+                        } else {
+                            goOn=false;
+                        }
+                    }
+                    Pbug << name << " is array of length " << length << endl;
+                    if(
+                        type==LUA_TNUMBER
+                        ||
+                        type==LUA_TBOOLEAN
+                    ) {
+                        scalarField f(length);
+                        forAll(f,i) {
+                            lua_geti(
+                                luaState_,
+                                -1,
+                                i+1
+                            );
+                            f[i]=lua_tonumber(luaState_,-1);
+                            lua_pop(luaState_,1);
+                        }
+                        eResult.setResult(f);
+                    } else {
+                        lua_geti(
+                            luaState_,
+                            -1,
+                            1
+                        );
+                        if(isVectorSpace<vector>()) {
+                            lua_pop(luaState_,1);
+                            eResult.setResult(
+                                stackToVectorSpaceArray<vector>(length).ptr()
+                            );
+                        } else if(isVectorSpace<tensor>()) {
+                            lua_pop(luaState_,1);
+                            eResult.setResult(
+                                stackToVectorSpaceArray<tensor>(length).ptr()
+                            );
+                        } else if(isVectorSpace<symmTensor>()) {
+                            lua_pop(luaState_,1);
+                            eResult.setResult(
+                                stackToVectorSpaceArray<symmTensor>(length).ptr()
+                            );
+                        } else if(isVectorSpace<sphericalTensor>()) {
+                            lua_pop(luaState_,1);
+                            eResult.setResult(
+                                stackToVectorSpaceArray<sphericalTensor>(length).ptr()
+                            );
+                        } else {
+                            lua_pop(luaState_,1);
+                            WarningIn("luaInterpreterWrapper::setGlobals()")
+                                << name << " is an unrecognized array-type"
+                                    << endl;
+                            lua_pop(luaState_,1);
+                            return false;
+                        }
+                    }
+                } else {
+                    WarningIn("luaInterpreterWrapper::setGlobals()")
+                        << name << " is an unrecognized table-type"
+                            << endl;
+                    lua_pop(luaState_,1);
+                    return false;
+                }
+            }
+            lua_pop(luaState_,1);
+            break;
+        case LUA_TUSERDATA:
+            if(isLuaFieldWrap<scalar>(luaState_, -1)) {
+                eResult.setResult(getLuaField<scalar>(luaState_, -1));
+                lua_pop(luaState_,1);
+            } else if(isLuaFieldWrap<vector>(luaState_, -1)) {
+                eResult.setResult(getLuaField<vector>(luaState_, -1));
+                lua_pop(luaState_,1);
+            } else if(isLuaFieldWrap<tensor>(luaState_, -1)) {
+                eResult.setResult(getLuaField<tensor>(luaState_, -1));
+                lua_pop(luaState_,1);
+            } else if(isLuaFieldWrap<symmTensor>(luaState_, -1)) {
+                eResult.setResult(getLuaField<symmTensor>(luaState_, -1));
+                lua_pop(luaState_,1);
+            } else if(isLuaFieldWrap<sphericalTensor>(luaState_, -1)) {
+                eResult.setResult(getLuaField<sphericalTensor>(luaState_, -1));
+                lua_pop(luaState_,1);
+            } else {
+                WarningIn("luaInterpreterWrapper::setGlobals()")
+                    << name << " is an unsupported Lua-user-type "
+                        << endl;
+                lua_pop(luaState_,1);
+            }
+            break;
+        default:
+            WarningIn("luaInterpreterWrapper::setGlobals()")
+                << name << " is of unsupported Lua-type "
+                    << lua_typename(luaState_,type)
+                    << endl;
+            lua_pop(luaState_,1);
+            return false;
+    }
+    return true;
+}
+
 void luaInterpreterWrapper::setGlobals()
 {
     assertParallel("setGlobals");
@@ -984,174 +1184,36 @@ void luaInterpreterWrapper::setGlobals()
 
         ExpressionResult eResult;
 
-        int type=lua_getglobal(luaState_,name.c_str());
-        Dbug << "Type is " << type << " -> "
-            << lua_typename(luaState_,type) << endl;
-
-        switch(type) {
-            case LUA_TNIL:
-                WarningIn("luaInterpreterWrapper::setGlobals()")
-                    << "No symbol " << name << " in Lua namespace"
-                        << endl;
-                lua_pop(luaState_,1);
-                continue;
-                break;
-            case LUA_TNUMBER:
-            case LUA_TBOOLEAN:
-                eResult.setSingleValue(
-                    lua_tonumber(luaState_,-1)
-                );
-                lua_pop(luaState_,1);
-                break;
-            case LUA_TTABLE:
-                if(isVectorSpace<vector>()) {
-                    eResult.setSingleValue(
-                        stackToVectorSpace<vector>()
-                    );
-                } else if(isVectorSpace<tensor>()) {
-                    eResult.setSingleValue(
-                        stackToVectorSpace<tensor>()
-                    );
-                } else if(isVectorSpace<symmTensor>()) {
-                    eResult.setSingleValue(
-                        stackToVectorSpace<symmTensor>()
-                    );
-                } else if(isVectorSpace<sphericalTensor>()) {
-                    eResult.setSingleValue(
-                        stackToVectorSpace<sphericalTensor>()
-                    );
-                } else {
-                    int type=lua_geti(
-                        luaState_,
-                        -1,
-                        1
-                    );
-                    lua_pop(luaState_,1);
-                    if(
-                        type==LUA_TNUMBER
-                        ||
-                        type==LUA_TBOOLEAN
-                        ||
-                        type==LUA_TTABLE
-                    ) {
-                        label length=0;
-                        bool goOn=true;
-                        while(goOn) {
-                            int ntype=lua_geti(
-                                luaState_,
-                                -1,
-                                length+1
-                            );
-                            lua_pop(luaState_,1);
-                            if(ntype!=LUA_TNIL) {
-                                length+=1;
-                            } else {
-                                goOn=false;
-                            }
-                        }
-                        Pbug << name << " is array of length " << length << endl;
-                        if(
-                            type==LUA_TNUMBER
-                            ||
-                            type==LUA_TBOOLEAN
-                        ) {
-                            scalarField f(length);
-                            forAll(f,i) {
-                                lua_geti(
-                                    luaState_,
-                                    -1,
-                                    i+1
-                                );
-                                f[i]=lua_tonumber(luaState_,-1);
-                                lua_pop(luaState_,1);
-                            }
-                            eResult.setResult(f);
-                        } else {
-                            lua_geti(
-                                luaState_,
-                                -1,
-                                1
-                            );
-                            if(isVectorSpace<vector>()) {
-                                lua_pop(luaState_,1);
-                                eResult.setResult(
-                                    stackToVectorSpaceArray<vector>(length).ptr()
-                                );
-                            } else if(isVectorSpace<tensor>()) {
-                                lua_pop(luaState_,1);
-                                eResult.setResult(
-                                    stackToVectorSpaceArray<tensor>(length).ptr()
-                                );
-                            } else if(isVectorSpace<symmTensor>()) {
-                                lua_pop(luaState_,1);
-                                eResult.setResult(
-                                    stackToVectorSpaceArray<symmTensor>(length).ptr()
-                                );
-                            } else if(isVectorSpace<sphericalTensor>()) {
-                                lua_pop(luaState_,1);
-                                eResult.setResult(
-                                    stackToVectorSpaceArray<sphericalTensor>(length).ptr()
-                                );
-                            } else {
-                                lua_pop(luaState_,1);
-                                WarningIn("luaInterpreterWrapper::setGlobals()")
-                                    << name << " is an unrecognized array-type"
-                                        << endl;
-                                lua_pop(luaState_,1);
-                                continue;
-                            }
-                        }
-                    } else {
-                        WarningIn("luaInterpreterWrapper::setGlobals()")
-                            << name << " is an unrecognized table-type"
-                                << endl;
-                        lua_pop(luaState_,1);
-                        continue;
-                    }
-                }
-                lua_pop(luaState_,1);
-                break;
-            case LUA_TUSERDATA:
-                if(isLuaFieldWrap<scalar>(luaState_, -1)) {
-                    eResult.setResult(getLuaField<scalar>(luaState_, -1));
-                    lua_pop(luaState_,1);
-                } else if(isLuaFieldWrap<vector>(luaState_, -1)) {
-                    eResult.setResult(getLuaField<vector>(luaState_, -1));
-                    lua_pop(luaState_,1);
-                } else if(isLuaFieldWrap<tensor>(luaState_, -1)) {
-                    eResult.setResult(getLuaField<tensor>(luaState_, -1));
-                    lua_pop(luaState_,1);
-                } else if(isLuaFieldWrap<symmTensor>(luaState_, -1)) {
-                    eResult.setResult(getLuaField<symmTensor>(luaState_, -1));
-                    lua_pop(luaState_,1);
-                } else if(isLuaFieldWrap<sphericalTensor>(luaState_, -1)) {
-                    eResult.setResult(getLuaField<sphericalTensor>(luaState_, -1));
-                    lua_pop(luaState_,1);
-                } else {
-                    WarningIn("luaInterpreterWrapper::setGlobals()")
-                        << name << " is an unsupported Lua-user-type "
-                            << endl;
-                    lua_pop(luaState_,1);
-                }
-                break;
-            default:
-                WarningIn("luaInterpreterWrapper::setGlobals()")
-                    << name << " is of unsupported Lua-type "
-                        << lua_typename(luaState_,type)
-                        << endl;
-                lua_pop(luaState_,1);
-                continue;
+        if(luaVariableToResult(name,eResult)) {
+            Dbug << "Adding " << name << " to "<< interpreterToSwakNamespace_ << endl;
+            ExpressionResult &res=GlobalVariablesRepository::getGlobalVariables(
+                obr()
+            ).addValue(
+                name,
+                interpreterToSwakNamespace_,
+                eResult
+            );
+            res.noReset();
         }
+    }
+}
 
-        Dbug << "Adding " << name << " to "<< interpreterToSwakNamespace_ << endl;
-        ExpressionResult &res=GlobalVariablesRepository::getGlobalVariables(
-            obr()
-        ).addValue(
-            name,
-            interpreterToSwakNamespace_,
-            eResult
-        );
-        res.noReset();
+void luaInterpreterWrapper::setVariablesInGlobal(
+    const word &namespaceName,
+    const wordList &names
+) {
+    forAll(names,nameI) {
+        const word &var=names[nameI];
+        ExpressionResult val;
+        if(luaVariableToResult(var, val)) {
+            ExpressionResult &res=GlobalVariablesRepository::getGlobalVariables(
+                obr()
+            ).addValue(
+                var,
+                namespaceName,
+                val
+            );
+        }
     }
 }
 
