@@ -980,6 +980,38 @@ void luaInterpreterWrapper::extractTopToDict(dictionary &dict) {
                     }
                 }
                 break;
+            case LUA_TUSERDATA:
+                if(isLuaFieldWrap<scalar>(luaState_, -1)) {
+                    dict.set(
+                        name,
+                        getLuaField<scalar>(luaState_, -1)
+                    );
+                } else if(isLuaFieldWrap<vector>(luaState_, -1)) {
+                    dict.set(
+                        name,
+                        getLuaField<vector>(luaState_, -1)
+                    );
+                } else if(isLuaFieldWrap<tensor>(luaState_, -1)) {
+                    dict.set(
+                        name,
+                        getLuaField<tensor>(luaState_, -1)
+                    );
+                } else if(isLuaFieldWrap<symmTensor>(luaState_, -1)) {
+                    dict.set(
+                        name,
+                        getLuaField<symmTensor>(luaState_, -1)
+                    );
+                } else if(isLuaFieldWrap<sphericalTensor>(luaState_, -1)) {
+                    dict.set(
+                        name,
+                        getLuaField<sphericalTensor>(luaState_, -1)
+                    );
+                } else {
+                    WarningIn("luaInterpreterWrapper::extractTopToDict()")
+                        << name << " is an unsupported Lua-user-type "
+                            << endl;
+                }
+                break;
             default:
                 WarningIn("luaInterpreterWrapper::extractTopToDict()")
                     << name << " is of unsupported Lua-type "
