@@ -1,6 +1,6 @@
 print("Lua Init")
 
-if faceStates.refT and faceStates.state then
+if faceStates and faceStates.refT and faceStates.state then
    print("Reading states")
    referenceT=faceStates.refT
    stateFace=faceStates.state

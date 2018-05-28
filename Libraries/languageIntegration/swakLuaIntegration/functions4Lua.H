@@ -49,7 +49,11 @@ namespace Foam {
 
     // add a field to the Lua dataspace. It references the real data
     template<class T>
-    void addFieldToLua(lua_State *luaState,const word &name, Field<T> *data);
+    void addFieldToLua(lua_State *luaState,const word &name, Field<T> *data,label index=0);
+
+    // add a field to the Lua dataspace. Creates a copy of the data
+    template<class T>
+    void addFieldToLua(lua_State *luaState,const word &name, const List<T> &data,label index=0);
 
     template<class T>
     bool isLuaFieldWrap(lua_State *luaState,int index);

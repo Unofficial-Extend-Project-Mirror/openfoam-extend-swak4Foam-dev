@@ -80,7 +80,8 @@ luaInterpreterWrapper::luaInterpreterWrapper
     ),
     luaState_(NULL),
     useLuaPrompt_(dict.lookupOrDefault<bool>("useLuaPrompt",true)),
-    hasLuaPrompt_(false)
+    hasLuaPrompt_(false),
+    parseToWrappedField_(dict.lookupOrDefault<bool>("parseToWrappedField",true))
 {
     if(generalInterpreterWrapper::debug>debug) {
         debug=1;
@@ -148,6 +149,8 @@ void luaInterpreterWrapper::write(Ostream &os) const
 
     os.writeKeyword("useLuaPrompt")
         << useLuaPrompt_ << token::END_STATEMENT << nl;
+    os.writeKeyword("parseToWrappedField")
+        << parseToWrappedField_ << token::END_STATEMENT << nl;
 }
 
 void luaInterpreterWrapper::initLuaPrompt() {

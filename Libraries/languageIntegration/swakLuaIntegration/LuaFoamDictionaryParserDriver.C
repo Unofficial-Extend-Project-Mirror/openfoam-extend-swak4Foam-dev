@@ -34,6 +34,8 @@ Contributors/Copyright:
 #include "LuaFoamDictionaryParserDriver.H"
 #include <cassert>
 
+#include "functions4Lua.H"
+
 namespace Foam {
     LuaFoamDictionaryParserDriver::LuaFoamDictionaryParserDriver(
         luaInterpreterWrapper &parent,
@@ -91,12 +93,16 @@ namespace Foam {
 
     void LuaFoamDictionaryParserDriver::add(const word& name,const scalarList &value)
     {
-        lua_newtable(lua());
-        forAll(value,i) {
-            lua_pushnumber(lua(),value[i]);
-            lua_seti(lua(),-2,i+1);
+        if(parent_.parseToWrappedField()) {
+            addFieldToLua(lua(),name,value,-2);
+        } else {
+            lua_newtable(lua());
+            forAll(value,i) {
+                lua_pushnumber(lua(),value[i]);
+                lua_seti(lua(),-2,i+1);
+            }
+            lua_setfield(lua(),-2,name.c_str());
         }
-        lua_setfield(lua(),-2,name.c_str());
     }
 
     void LuaFoamDictionaryParserDriver::add(const word& name,const boolList &value)

@@ -96,6 +96,8 @@ class luaInterpreterWrapper
 
     bool hasLuaPrompt_;
 
+    bool parseToWrappedField_;
+
     void initLuaPrompt();
 
     void initInteractiveSpecial();
@@ -135,6 +137,9 @@ class luaInterpreterWrapper
     );
 
 protected:
+
+    bool parseToWrappedField() const
+        { return parseToWrappedField_;}
 
     lua_State *luaState() {
         return luaState_;

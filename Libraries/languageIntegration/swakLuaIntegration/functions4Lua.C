@@ -386,10 +386,24 @@ namespace Foam {
     }
 
     template<class T>
-    void addFieldToLua(lua_State *luaState,const word &name, Field<T> *data) {
+    void addFieldToLua(lua_State *luaState,const word &name, Field<T> *data,label index) {
         FieldWrap<T> *fw=new(luaState,FieldWrap<T>::metaTable) FieldWrap<T>(data);
 
-        lua_setglobal(luaState, name.c_str());
+        if(index==0) {
+            lua_setglobal(luaState, name.c_str());
+        } else {
+            lua_setfield(luaState, index, name.c_str());
+        }
+    }
+    template<class T>
+    void addFieldToLua(lua_State *luaState,const word &name, const List<T> &data,label index) {
+        FieldWrap<T> *fw=new(luaState,FieldWrap<T>::metaTable) FieldWrap<T>(data.size());
+        (*fw)()=data;
+        if(index==0) {
+            lua_setglobal(luaState, name.c_str());
+        } else {
+            lua_setfield(luaState, index, name.c_str());
+        }
     }
 
     template<class T>
@@ -408,7 +422,11 @@ namespace Foam {
 #define makeFunctionInstances(T) \
     template                                                            \
     void addFieldToLua<T>(                                              \
-        lua_State *luaState,const word &name, Field<T> *data            \
+        lua_State *luaState,const word &name, Field<T> *data, label index \
+    );                                                                  \
+    template                                                            \
+    void addFieldToLua<T>(                                              \
+        lua_State *luaState,const word &name, const List<T> &data, label index \
     );                                                                  \
     template                                                            \
     bool isLuaFieldWrap<T>(lua_State *luaState,int index);              \
