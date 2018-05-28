@@ -9,3 +9,7 @@ stateFace=swak4foam.newScalarField(#refValue)
 for i=1,#referenceT do
    stateFace[i]=1
 end
+faceStates={
+   refT=referenceT,
+   state=stateFace
+}

@@ -264,6 +264,8 @@ public:
 
     virtual ~luaInterpreterWrapper();
 
+    void write(Ostream &os) const;
+
     friend LuaFoamDictionaryParserDriver;
 
 };

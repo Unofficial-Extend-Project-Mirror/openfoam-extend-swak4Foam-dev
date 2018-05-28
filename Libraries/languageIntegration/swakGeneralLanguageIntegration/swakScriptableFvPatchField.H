@@ -78,6 +78,8 @@ protected:
 
     wordList variablesToUse_;
 
+    wordList writtenDataStructs_;
+
     List<exprString> initVariables_;
 
     List<exprString> evaluateVariables_;

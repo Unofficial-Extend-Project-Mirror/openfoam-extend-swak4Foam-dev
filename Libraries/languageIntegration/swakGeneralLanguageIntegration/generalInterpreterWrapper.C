@@ -158,6 +158,46 @@ generalInterpreterWrapper::generalInterpreterWrapper
     Pbug << "End constructor" << endl;
  }
 
+void generalInterpreterWrapper::write(Ostream &os) const
+{
+    os.writeKeyword("languageWrapperType")
+        << this->interpreterName() << token::END_STATEMENT << nl;
+    os.writeKeyword("tolerateExceptions")
+        << tolerateExceptions_ << token::END_STATEMENT << nl;
+    os.writeKeyword("warnOnNonUniform")
+        << warnOnNonUniform_ << token::END_STATEMENT << nl;
+    os.writeKeyword("isParallelized")
+        << isParallelized_ << token::END_STATEMENT << nl;
+    os.writeKeyword(word("swakTo"+InterpreterName()+"Namespaces"))
+        << swakToInterpreterNamespaces_ << token::END_STATEMENT << nl;
+    os.writeKeyword(word(this->interpreterName()+"ToSwakNamespace"))
+        << interpreterToSwakNamespace_ << token::END_STATEMENT << nl;
+    os.writeKeyword(word(this->interpreterName()+"ToSwakVariables"))
+        << interpreterToSwakVariables_ << token::END_STATEMENT << nl;
+    os.writeKeyword(word("dictionaryTo"+this->InterpreterName()))
+        << dictionariesIntoMemory_ << token::END_STATEMENT << nl;
+    os.writeKeyword(word(this->interpreterName()+"ToDictionary"))
+        << memoryIntoDictionaries_ << token::END_STATEMENT << nl;
+    os.writeKeyword("interactiveAfterExecute")
+        << interactiveAfterExecute_ << token::END_STATEMENT << nl;
+    os.writeKeyword("interactiveAfterException")
+        << interactiveAfterException_ << token::END_STATEMENT << nl;
+    os.writeKeyword("debugLevelParser")
+        << debugLevelParser_ << token::END_STATEMENT << nl;
+    os.writeKeyword("debugInterpreterWrapper")
+#ifdef FOAM_HAS_LOCAL_DEBUGSWITCHES
+        << debug()
+#else
+        << debug
+#endif
+         << token::END_STATEMENT << nl;
+    word errorMode(interpreterName()+"DictionaryParserErrorMode");
+    if(dict_.found(errorMode)) {
+        os.writeKeyword(errorMode)
+            << word(dict_[errorMode]) << token::END_STATEMENT << nl;
+    }
+}
+
 void generalInterpreterWrapper::checkConflicts()
 {
     if(
@@ -407,6 +447,49 @@ string generalInterpreterWrapper::readCode(
     return result;
 }
 
+void generalInterpreterWrapper::writeCode(
+    const word &prefix,
+    Ostream &os,
+    bool mustRead
+) const {
+    if(
+        dict_.found(prefix+"Code")
+        &&
+        dict_.found(prefix+"File")
+    ) {
+        FatalErrorIn("generalInterpreterWrapper::getCode")
+            << "Either specify " << prefix+"Code" << " or "
+                << prefix+"File in " << dict_.name()
+                << " but not both" << endl
+                << exit(FatalError);
+    }
+    if(
+        mustRead
+        &&
+        (
+            !dict_.found(prefix+"Code")
+            &&
+            !dict_.found(prefix+"File")
+        )
+    ) {
+        FatalErrorIn("generalInterpreterWrapper::getCode")
+            << "Neither " << prefix+"Code" << " nor "
+                << prefix+"File" << " specified in " << dict_.name() << endl
+                << exit(FatalError);
+    }
+    if(dict_.found(prefix+"Code")) {
+        os.writeKeyword(word(prefix+"Code"))
+            << string(dict_.lookup(prefix+"Code")) << token::END_STATEMENT << nl;
+    } else {
+        if(dict_.found(prefix+"File")) {
+            os.writeKeyword(word(prefix+"File"))
+                << fileName(dict_.lookup(prefix+"File")) << token::END_STATEMENT << nl;
+        } else {
+            assert(mustRead==false);
+        }
+    }
+}
+
 void generalInterpreterWrapper::readCode(
     const dictionary &dict,
     const word &prefix,
@@ -420,7 +503,8 @@ void generalInterpreterWrapper::readCode(
     ) {
         FatalErrorIn("generalInterpreterWrapper::readCode")
             << "Either specify " << prefix+"Code" << " or "
-                << prefix+"File" << " but not both" << endl
+                << prefix+"File in " << dict_.name()
+                << " but not both" << endl
                 << exit(FatalError);
     }
     if(
@@ -644,7 +728,7 @@ void generalInterpreterWrapper::interpreterStructsToDictionaries() {
 }
 
 
-const word generalInterpreterWrapper::InterpreterName() {
+const word generalInterpreterWrapper::InterpreterName() const {
     word result=interpreterName_;
     result[0]=toupper(result[0]);
     return result;

@@ -79,7 +79,7 @@ class generalInterpreterWrapper
 
     const objectRegistry& obr_;
 
-    const dictionary& dict_;
+    const dictionary dict_;
 
     autoPtr<RawFoamDictionaryParserDriver> parser_;
 
@@ -272,6 +272,13 @@ public:
         bool mustRead=true
     );
 
+    //- get an entry with code from the data and write it to the stream
+    void writeCode(
+        const word &prefix,
+        Ostream &os,
+        bool mustRead=true
+    ) const;
+
     //- transform contents of a OpenFOAM-dictionary and insert into local namespace
     bool insertDictionary(
         const word &name,
@@ -293,11 +300,11 @@ public:
     //- Runtime type information
     TypeName("generalInterpreterWrapper");
 
-    const word &interpreterName() {
+    const word &interpreterName() const {
         return interpreterName_;
     }
 
-    const word InterpreterName();
+    const word InterpreterName() const;
 
     const objectRegistry &obr() {
         return obr_;
@@ -306,6 +313,9 @@ public:
     const dictionary &dict() {
         return dict_;
     }
+
+    //- write data to reconstruct the settings of this interpreter
+    virtual void write(Ostream &os) const;
 
     //- get variables from an expression driver and put them into the interpreter
     virtual void getVariablesFromDriver(

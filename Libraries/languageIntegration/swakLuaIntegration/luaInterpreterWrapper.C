@@ -134,6 +134,22 @@ luaInterpreterWrapper::luaInterpreterWrapper
         << lua_gettop(luaState_) << endl ;
  }
 
+void luaInterpreterWrapper::write(Ostream &os) const
+{
+    generalInterpreterWrapper::write(os);
+
+    os.writeKeyword("debugLuaWrapper")
+#ifdef FOAM_HAS_LOCAL_DEBUGSWITCHES
+        << debug()
+#else
+        << debug
+#endif
+        << token::END_STATEMENT << nl;
+
+    os.writeKeyword("useLuaPrompt")
+        << useLuaPrompt_ << token::END_STATEMENT << nl;
+}
+
 void luaInterpreterWrapper::initLuaPrompt() {
     Dbug << "Importing luaprompt library: Size of Lua-stack "
         << lua_gettop(luaState_) << endl;

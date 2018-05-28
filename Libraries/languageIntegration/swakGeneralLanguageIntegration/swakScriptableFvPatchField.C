@@ -105,6 +105,9 @@ swakScriptableFvPatchField<Type>::swakScriptableFvPatchField
     variablesToUse_(
         dict.lookup("variablesToUse")
     ),
+    writtenDataStructs_(
+        dict.lookup("writtenDataStructs")
+    ),
     initVariables_(
         driver_.readVariableStrings(
             dict,
@@ -178,6 +181,21 @@ swakScriptableFvPatchField<Type>::swakScriptableFvPatchField
         this->valueFraction() = 1;
     }
 
+    if(writtenDataStructs_.size()>0) {
+        const dictionary &data=dict.subDict(interpreter_->interpreterName()+"Data");
+        forAll(writtenDataStructs_,i) {
+            const word &name=writtenDataStructs_[i];
+            if(data.found(name)) {
+                interpreter_->insertDictionary(
+                    name,
+                    data.subDict(name)
+                );
+            } else {
+                Info << "No entry " << name << " found in "
+                    << data.name() << endl;
+            }
+        }
+    }
     evaluateScript(
         initCode_,
         initVariables_
@@ -245,6 +263,9 @@ swakScriptableFvPatchField<Type>::swakScriptableFvPatchField
     variablesToUse_(
         ptf.variablesToUse_
     ),
+    writtenDataStructs_(
+        ptf.writtenDataStructs_
+    ),
     initVariables_(
         ptf.initVariables_
     ),
@@ -304,6 +325,46 @@ void swakScriptableFvPatchField<Type>::write(Ostream& os) const
         writeCode_,
         dummyVariables
     );
+
+    if(writtenDataStructs_.size()>0) {
+        dictionary data;
+        forAll(writtenDataStructs_,i) {
+            const word &name=writtenDataStructs_[i];
+            dictionary subData;
+            const_cast<swakScriptableFvPatchField<Type>&>(
+                *this
+            ).interpreter_->extractDictionary(
+                name,
+                subData
+            );
+            data.add(name,subData);
+        }
+        os.writeKeyword(word(interpreter_->interpreterName()+"Data"))
+            << data << nl;
+    }
+
+    interpreter_->write(os);
+
+    interpreter_->writeCode(
+        word("initBC"),
+        os
+    );
+    interpreter_->writeCode(
+        word("evaluateBC"),
+        os
+    );
+    interpreter_->writeCode(
+        word("writeBC"),
+        os
+    );
+    os.writeKeyword("variablesToUse")
+        << variablesToUse_ << token::END_STATEMENT << nl;
+    os.writeKeyword("writtenDataStructs")
+        << writtenDataStructs_ << token::END_STATEMENT << nl;
+    os.writeKeyword("initVariables")
+        << initVariables_ << token::END_STATEMENT << nl;
+    os.writeKeyword("evaluateVariables")
+        << evaluateVariables_ << token::END_STATEMENT << nl;
 }
 
 template<class Type>

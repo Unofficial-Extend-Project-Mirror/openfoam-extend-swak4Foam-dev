@@ -48,6 +48,11 @@ boundaryField
             lookIn
             slipVel
         );
+        writtenDataStructs (
+            faceStates
+        );
+        luaData {}
+        luaDictionaryParserErrorMode fail;
         variables (
             "position=pos();"
         );
