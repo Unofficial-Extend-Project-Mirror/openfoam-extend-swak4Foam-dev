@@ -79,9 +79,16 @@ luaInterpreterWrapper::luaInterpreterWrapper
         "lua"
     ),
     luaState_(NULL),
-    useLuaPrompt_(dict.lookupOrDefault<bool>("useLuaPrompt",true)),
+    useLuaPrompt_(
+        dict.lookupOrDefault<bool>("useLuaPrompt",true)
+    ),
     hasLuaPrompt_(false),
-    parseToWrappedField_(dict.lookupOrDefault<bool>("parseToWrappedField",true))
+    parseToWrappedField_(
+        dict.lookupOrDefault<bool>("parseToWrappedField",true)
+    ),
+    wrapBoolLabelAsScalar_(
+        dict.lookupOrDefault<bool>("wrapBoolLabelAsScalar",true)
+    )
 {
     if(generalInterpreterWrapper::debug>debug) {
         debug=1;
@@ -151,6 +158,8 @@ void luaInterpreterWrapper::write(Ostream &os) const
         << useLuaPrompt_ << token::END_STATEMENT << nl;
     os.writeKeyword("parseToWrappedField")
         << parseToWrappedField_ << token::END_STATEMENT << nl;
+    os.writeKeyword("wrapBoolLabelAsScalar")
+        << wrapBoolLabelAsScalar_ << token::END_STATEMENT << nl;
 }
 
 void luaInterpreterWrapper::initLuaPrompt() {

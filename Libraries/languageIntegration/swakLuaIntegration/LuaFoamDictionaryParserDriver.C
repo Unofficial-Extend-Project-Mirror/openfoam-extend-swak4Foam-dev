@@ -83,12 +83,24 @@ namespace Foam {
 
     void LuaFoamDictionaryParserDriver::add(const word& name,const labelList &value)
     {
-        lua_newtable(lua());
-        forAll(value,i) {
-            lua_pushinteger(lua(),value[i]);
-            lua_seti(lua(),-2,i+1);
+        if(
+            parent_.parseToWrappedField()
+            &&
+            parent_.wrapBoolLabelAsScalar()
+        ) {
+            scalarList svalue(value.size());
+            forAll(svalue,i) {
+                svalue[i]=value[i];
+            }
+            addFieldToLua(lua(),name,svalue,-2);
+        } else {
+            lua_newtable(lua());
+            forAll(value,i) {
+                lua_pushinteger(lua(),value[i]);
+                lua_seti(lua(),-2,i+1);
+            }
+            lua_setfield(lua(),-2,name.c_str());
         }
-        lua_setfield(lua(),-2,name.c_str());
     }
 
     void LuaFoamDictionaryParserDriver::add(const word& name,const scalarList &value)
@@ -107,12 +119,24 @@ namespace Foam {
 
     void LuaFoamDictionaryParserDriver::add(const word& name,const boolList &value)
     {
-        lua_newtable(lua());
-        forAll(value,i) {
-            lua_pushboolean(lua(),value[i]);
-            lua_seti(lua(),-2,i+1);
+        if(
+            parent_.parseToWrappedField()
+            &&
+            parent_.wrapBoolLabelAsScalar()
+        ) {
+            scalarList svalue(value.size());
+            forAll(svalue,i) {
+                svalue[i]=value[i];
+            }
+            addFieldToLua(lua(),name,svalue,-2);
+        } else {
+            lua_newtable(lua());
+            forAll(value,i) {
+                lua_pushboolean(lua(),value[i]);
+                lua_seti(lua(),-2,i+1);
+            }
+            lua_setfield(lua(),-2,name.c_str());
         }
-        lua_setfield(lua(),-2,name.c_str());
     }
 
     void LuaFoamDictionaryParserDriver::add(const word& name,const wordList &value)

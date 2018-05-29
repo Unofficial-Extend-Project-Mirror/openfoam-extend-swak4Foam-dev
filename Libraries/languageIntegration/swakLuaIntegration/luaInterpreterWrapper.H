@@ -98,6 +98,8 @@ class luaInterpreterWrapper
 
     bool parseToWrappedField_;
 
+    bool wrapBoolLabelAsScalar_;
+
     void initLuaPrompt();
 
     void initInteractiveSpecial();
@@ -140,6 +142,9 @@ protected:
 
     bool parseToWrappedField() const
         { return parseToWrappedField_;}
+
+    bool wrapBoolLabelAsScalar() const
+        { return wrapBoolLabelAsScalar_;}
 
     lua_State *luaState() {
         return luaState_;
