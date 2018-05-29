@@ -196,6 +196,10 @@ swakScriptableFvPatchField<Type>::swakScriptableFvPatchField
             }
         }
     }
+
+    interpreter_->initEnvironment(this->patch().boundaryMesh().mesh().time());
+    interpreter_->setRunTime(this->patch().boundaryMesh().mesh().time());
+
     evaluateScript(
         initCode_,
         initVariables_
@@ -298,6 +302,8 @@ void swakScriptableFvPatchField<Type>::updateCoeffs()
         Info << "swakScriptableFvPatchField<Type>::updateCoeffs - updating" << endl;
     }
 
+    interpreter_->setRunTime(this->patch().boundaryMesh().mesh().time());
+
     evaluateScript(
         evaluateCode_,
         evaluateVariables_
@@ -318,6 +324,10 @@ void swakScriptableFvPatchField<Type>::write(Ostream& os) const
     driver_.writeCommon(os,debug);
 
     List<exprString> dummyVariables;
+
+    const_cast<swakScriptableFvPatchField<Type>*>(
+        this
+    )->interpreter_->setRunTime(this->patch().boundaryMesh().mesh().time());
 
     const_cast<swakScriptableFvPatchField<Type>*>(
         this
