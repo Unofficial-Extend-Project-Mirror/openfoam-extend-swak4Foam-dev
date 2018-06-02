@@ -1336,6 +1336,77 @@ bool python3InterpreterWrapper::wrapUpDictionary(const word &name) {
     return true;
 }
 
+template<class T>
+void makeFieldReference(const word &name,Field<T> &val) {
+    OStringStream cmd;
+
+    // OF-streams don't output pointers correctly
+    std::ostringstream makeDec;
+    makeDec << val.cdata();
+
+    cmd << name << "=OpenFOAMFieldArray(";
+    cmd << "address=" << word(makeDec.str()) << ",";
+    cmd << "typestr='<f" << label(sizeof(scalar)) << "',";
+    cmd << "size=" << val.size();
+    label nr=-1;
+    if(pTraits<T>::typeName==pTraits<scalar>::typeName) {
+        nr=1;
+    } else {
+        nr=pTraits<T>::nComponents;
+        cmd << ",names=[";
+        for(label i=0;i<nr;i++) {
+            if(i!=0) {
+                cmd << ",";
+            }
+            cmd << "'" << pTraits<T>::componentNames[i] << "'";
+        }
+        cmd << "]";
+    }
+    if(nr>1) {
+        cmd << ",nr=" << nr;
+    }
+    cmd << ")";
+
+    PyRun_SimpleString(cmd.str().c_str());
+}
+
+void python3InterpreterWrapper::setReference(const word &name,Field<scalar> &value)
+{
+    makeFieldReference(name, value);
+}
+
+void python3InterpreterWrapper::setReference(const word &name,Field<vector> &value)
+{
+    makeFieldReference(name, value);
+}
+
+void python3InterpreterWrapper::setReference(const word &name,Field<tensor> &value)
+{
+    makeFieldReference(name, value);
+}
+
+void python3InterpreterWrapper::setReference(const word &name,Field<symmTensor> &value)
+{
+    makeFieldReference(name, value);
+}
+
+void python3InterpreterWrapper::setReference(const word &name,Field<sphericalTensor> &value)
+{
+    makeFieldReference(name, value);
+}
+
+#ifdef FOAM_DEV_ADDITIONAL_TENSOR_TYPES
+void python3InterpreterWrapper::setReference(const word &name,Field<symmTensor4thOrder> &value)
+{
+    makeFieldReference(name, value);
+}
+
+void python3InterpreterWrapper::setReference(const word &name,Field<diagTensor> &value)
+{
+    makeFieldReference(name, value);
+}
+#endif
+
 autoPtr<RawFoamDictionaryParserDriver> python3InterpreterWrapper::getParserInternal(
     RawFoamDictionaryParserDriver::ErrorMode mode
 ) {

@@ -64,6 +64,7 @@
   | other/counterFlowFlame2DInitialized                         | \checkmark | \sad       | \partial   | \checkmark |
   | other/simpleBendedPipe                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | other/topoSetDamBreak                                       | \checkmark | \checkmark | \checkmark | \checkmark |
+  | Python3Integration/flowStatePitzDaily                       |            | \checkmark |            |            |
   | SimpleSurface/littleVolcano                                 | \checkmark |            | \checkmark |            |
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
