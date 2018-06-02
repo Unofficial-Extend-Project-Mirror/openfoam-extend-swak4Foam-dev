@@ -54,6 +54,8 @@
   | Lagrangian/LanguageIntegration/angledDuctWithPython3Inject  |            | \checkmark |            |            |
   | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/parser/simplifiedSiwek                           | \sad       | \sad       |            | \checkmark |
+  | LuaIntegration/flowStatePitzDaily                           |            | \checkmark |            |            |
+  | LuaIntegration/luaScriptedBCAngledDuct                      |            | \checkmark |            |            |
   | LuaIntegration/raiseRelaxationPitzDaily                     | \checkmark | \dagger    |            |            |
   | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    | \checkmark | \checkmark |
   | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark | \dagger    | \checkmark | \checkmark |

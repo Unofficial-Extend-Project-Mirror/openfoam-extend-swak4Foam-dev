@@ -117,6 +117,12 @@ generalInterpreterWrapper::generalInterpreterWrapper
     ),
     debugLevelParser_(
         dict.lookupOrDefault<int>("debugLevelParser",0)
+    ),
+    referenceSpec_(
+        dict.lookupOrDefault<List<dictionary> >(
+            "referenceVariables",
+            List<dictionary>()
+        )
     )
 {
     Pbug << "Starting constructor" << endl;
@@ -196,6 +202,8 @@ void generalInterpreterWrapper::write(Ostream &os) const
         os.writeKeyword(errorMode)
             << word(dict_[errorMode]) << token::END_STATEMENT << nl;
     }
+    os.writeKeyword("referenceVariables")
+        << referenceSpec_  << token::END_STATEMENT << nl;
 }
 
 void generalInterpreterWrapper::checkConflicts()
@@ -734,6 +742,228 @@ const word generalInterpreterWrapper::InterpreterName() const {
     return result;
 }
 
+// this would be better written by a hierarchy of classes with run-time
+// selection. But I'm to lazy. Don't blame me unless you rewrite it
+void generalInterpreterWrapper::setReferences()
+{
+    Pbug << "generalInterpreterWrapper::setReferences()" << endl;
+
+    forAll(referenceSpec_,specI) {
+        const dictionary &spec=referenceSpec_[specI];
+        const word name(spec["name"]);
+        const word type(spec["type"]);
+        if(
+            type!="internalField"
+            &&
+            type!="patchField"
+        ) {
+            FatalErrorIn("generalInterpreterWrapper::setReferences()")
+                << "Unsupported type " << type << "in "
+                    << spec.name() << nl
+                    << "Currently supported types:" << nl
+                    << " - internalField" << nl
+                    << " - patchField" << nl
+                    << endl
+                    << exit(FatalError);
+        }
+        const word regionName(
+            spec.lookupOrDefault<word>(
+                "region",
+                polyMesh::defaultRegion
+            )
+        );
+
+        const objectRegistry &obr=
+            obr_.time().lookupObject<objectRegistry>(regionName);
+        const polyMesh &region=dynamic_cast<const polyMesh &>(obr);
+
+        if(type=="internalField") {
+            word fieldName(spec["fieldName"]);
+            if(region.foundObject<volScalarField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<volScalarField&>(
+                        region.lookupObject<volScalarField>(fieldName)
+                    ).internalField()
+                );
+            } else if(region.foundObject<volVectorField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<volVectorField&>(
+                        region.lookupObject<volVectorField>(fieldName)
+                    ).internalField()
+                );
+            } else if(region.foundObject<volTensorField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<volTensorField&>(
+                        region.lookupObject<volTensorField>(fieldName)
+                    ).internalField()
+                );
+            } else if(region.foundObject<volSymmTensorField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<volSymmTensorField&>(
+                        region.lookupObject<volSymmTensorField>(fieldName)
+                    ).internalField()
+                );
+            } else if(region.foundObject<volSphericalTensorField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<volSphericalTensorField&>(
+                        region.lookupObject<volSphericalTensorField>(fieldName)
+                    ).internalField()
+                );
+            } else if(region.foundObject<surfaceScalarField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<surfaceScalarField&>(
+                        region.lookupObject<surfaceScalarField>(fieldName)
+                    ).internalField()
+                );
+            } else if(region.foundObject<surfaceVectorField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<surfaceVectorField&>(
+                        region.lookupObject<surfaceVectorField>(fieldName)
+                    ).internalField()
+                );
+            } else if(region.foundObject<surfaceTensorField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<surfaceTensorField&>(
+                        region.lookupObject<surfaceTensorField>(fieldName)
+                    ).internalField()
+                );
+            } else if(region.foundObject<surfaceSymmTensorField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<surfaceSymmTensorField&>(
+                        region.lookupObject<surfaceSymmTensorField>(fieldName)
+                    ).internalField()
+                );
+            } else if(region.foundObject<surfaceSphericalTensorField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<surfaceSphericalTensorField&>(
+                        region.lookupObject<surfaceSphericalTensorField>(fieldName)
+                    ).internalField()
+                );
+            } else {
+                FatalErrorIn("generalInterpreterWrapper::setReferences()")
+                    << "Could not find a field " << fieldName
+                        << " in " << spec.name()
+                        << endl
+                        << exit(FatalError);
+            }
+        } else if(type=="patchField") {
+            word fieldName(spec["fieldName"]);
+            word patchName(spec["patchName"]);
+
+            label patchI=region.boundaryMesh().findPatchID(
+                patchName
+            );
+            if(patchI<0) {
+                FatalErrorIn("generalInterpreterWrapper::setReferences()")
+                    << "Unknown patch " << patchName
+                        << endl
+                        << exit(FatalError);
+            }
+            if(region.foundObject<volScalarField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<volScalarField&>(
+                        region.lookupObject<volScalarField>(fieldName)
+                    ).boundaryField()[patchI]
+                );
+             } else if(region.foundObject<volVectorField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<volVectorField&>(
+                        region.lookupObject<volVectorField>(fieldName)
+                    ).boundaryField()[patchI]
+                );
+            } else if(region.foundObject<volTensorField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<volTensorField&>(
+                        region.lookupObject<volTensorField>(fieldName)
+                    ).boundaryField()[patchI]
+                );
+            } else if(region.foundObject<volSymmTensorField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<volSymmTensorField&>(
+                        region.lookupObject<volSymmTensorField>(fieldName)
+                    ).boundaryField()[patchI]
+                );
+            } else if(region.foundObject<volSphericalTensorField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<volSphericalTensorField&>(
+                        region.lookupObject<volSphericalTensorField>(fieldName)
+                    ).boundaryField()[patchI]
+                );
+            } else if(region.foundObject<surfaceScalarField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<surfaceScalarField&>(
+                        region.lookupObject<surfaceScalarField>(fieldName)
+                    ).boundaryField()[patchI]
+                );
+            } else if(region.foundObject<surfaceVectorField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<surfaceVectorField&>(
+                        region.lookupObject<surfaceVectorField>(fieldName)
+                    ).boundaryField()[patchI]
+                );
+            } else if(region.foundObject<surfaceTensorField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<surfaceTensorField&>(
+                        region.lookupObject<surfaceTensorField>(fieldName)
+                    ).boundaryField()[patchI]
+                );
+            } else if(region.foundObject<surfaceSymmTensorField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<surfaceSymmTensorField&>(
+                        region.lookupObject<surfaceSymmTensorField>(fieldName)
+                    ).boundaryField()[patchI]
+                );
+            } else if(region.foundObject<surfaceSphericalTensorField>(fieldName)) {
+                setReference(
+                    name,
+                    const_cast<surfaceSphericalTensorField&>(
+                        region.lookupObject<surfaceSphericalTensorField>(fieldName)
+                    ).boundaryField()[patchI]
+                );
+           } else {
+                FatalErrorIn("generalInterpreterWrapper::setReferences()")
+                    << "Could not find a field " << fieldName
+                        << " in " << spec.name()
+                        << endl
+                        << exit(FatalError);
+            }
+        } else {
+            // We should never get here
+            notImplemented("generalInterpreterWrapper::setReferences() "+type);
+        }
+    }
+}
+
+void generalInterpreterWrapper::setUpEnvironment()
+{
+    Pbug << "generalInterpreterWrapper::setUpEnvironment()" << endl;
+
+    setInterpreter();
+
+    getGlobals();
+
+    setReferences();
+}
+
 bool generalInterpreterWrapper::executeCode(
     const string &code,
     bool putVariables,
@@ -750,9 +980,7 @@ bool generalInterpreterWrapper::executeCode(
     bool success=false;
 
     if(!parallelNoRun()) {
-        setInterpreter();
-
-        getGlobals();
+        setUpEnvironment();
 
         Pbug << "Execute" << endl;
         success=executeCodeInternal(code);
@@ -787,9 +1015,7 @@ bool generalInterpreterWrapper::executeCodeCaptureOutput(
     bool success=false;
 
     if(!parallelNoRun()) {
-        setInterpreter();
-
-        getGlobals();
+        setUpEnvironment();
 
         success=executeCodeCaptureOutputInternal(
             code,

@@ -139,6 +139,9 @@ protected:
     //- used for debugging of the parser
     int debugLevelParser_;
 
+    //- specification of references
+    const List<dictionary> referenceSpec_;
+
     //- get global variables to the interpreter
     virtual void getGlobals() = 0;
 
@@ -201,11 +204,17 @@ protected:
 
     static void checkConflicts();
 
+    //- set up the interpreter and variables
+    void setUpEnvironment();
+
+    //- set references to internal fields
+    void setReferences();
+
 public:
     class ValidWord {
     public:
         bool operator()(const string &s) {
-            forAll(s,i) {
+            for(unsigned int i=0;i<s.size();i++) {
                 if(!word::valid(s[i])) {
                     return false;
                 }
