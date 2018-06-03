@@ -887,6 +887,134 @@ void python3InterpreterWrapper::doAfterExecution(
     }
 }
 
+void python3InterpreterWrapper::resultToPythonVariable(
+    const word &var,
+    const word &namespaceName,
+    const ExpressionResult &value
+) {
+    PyObject *m = PyImport_AddModule("__main__");
+
+    if(
+        !useNumpy_
+        ||
+        value.isSingleValue()
+    ) {
+        Pbug << "Single value. No numpy" << endl;
+
+        ExpressionResult val=value.getUniform(
+            1,
+            !warnOnNonUniform_,
+            !Pstream::parRun() || !parallelMasterOnly_
+        );
+
+        Pbug << "Value: " << val;
+
+        if(val.valueType()==pTraits<scalar>::typeName) {
+            PyObject_SetAttrString
+                (
+                    m,
+                    const_cast<char*>(var.c_str()),
+                    PyFloat_FromDouble(
+                        val.getResult<scalar>()()[0]
+                    )
+                );
+        } else if(val.valueType()==pTraits<vector>::typeName) {
+            const vector v=val.getResult<vector>()()[0];
+            PyObject_SetAttrString
+                (
+                    m,
+                    const_cast<char*>(var.c_str()),
+                    Py_BuildValue(
+                        "ddd",
+                        double(v.x()),
+                        double(v.y()),
+                        double(v.z())
+                    )
+                );
+        } else if(val.valueType()==pTraits<symmTensor>::typeName) {
+            const symmTensor v=val.getResult<symmTensor>()()[0];
+            PyObject_SetAttrString
+                (
+                    m,
+                    const_cast<char*>(var.c_str()),
+                    Py_BuildValue(
+                        "dddddd",
+                        double(v.xx()),
+                        double(v.xy()),
+                        double(v.xz()),
+                        double(v.yy()),
+                        double(v.yz()),
+                        double(v.zz())
+                    )
+                );
+        } else if(val.valueType()==pTraits<tensor>::typeName) {
+            const tensor v=val.getResult<tensor>()()[0];
+            PyObject_SetAttrString
+                (
+                    m,
+                    const_cast<char*>(var.c_str()),
+                    Py_BuildValue(
+                        "ddddddddd",
+                        double(v.xx()),
+                        double(v.xy()),
+                        double(v.xz()),
+                        double(v.yx()),
+                        double(v.yy()),
+                        double(v.yz()),
+                        double(v.zx()),
+                        double(v.zy()),
+                        double(v.zz())
+                    )
+                );
+        } else {
+            FatalErrorIn("python3InterpreterWrapper::getGlobals()")
+                << "The variable " << var << " in " << namespaceName
+                    << " has the unsupported type "
+                    << val.valueType() << endl
+                    << exit(FatalError);
+        }
+    } else {
+        const ExpressionResult &val=value;
+
+        Pbug << "Building a numpy-Array for global " << var
+            << " at address " << val.getAddressAsDecimal()
+            << " with size " << val.size()
+            << " and type " << val.valueType()
+            << endl;
+
+        OStringStream cmd;
+        cmd << var << "=OpenFOAMFieldArray(";
+        cmd << "address=" << val.getAddressAsDecimal() << ",";
+        cmd << "typestr='<f" << label(sizeof(scalar)) << "',";
+        cmd << "size=" << val.size();
+        label nr=-1;
+        if(val.valueType()==pTraits<scalar>::typeName) {
+            nr=1;
+        } else if(val.valueType()==pTraits<vector>::typeName) {
+            nr=3;
+            cmd << ",names=['x','y','z']";
+        } else if(val.valueType()==pTraits<tensor>::typeName) {
+            nr=9;
+            cmd << ",names=['xx','xy','xz','yx','yy','yz','zx','zy','zz']";
+        } else if(val.valueType()==pTraits<symmTensor>::typeName) {
+            nr=6;
+            cmd << ",names=['xx','xy','xz','yy','yz','zz']";
+        } else if(val.valueType()==pTraits<sphericalTensor>::typeName) {
+            nr=1;
+        }
+        if(nr>1) {
+            cmd << ",nr=" << nr;
+        }
+        cmd << ")";
+
+        Pbug << "Python: " << cmd.str() << endl;
+
+        int result=PyRun_SimpleString(cmd.str().c_str());
+        Pbug << "Result: " << result << endl;
+    }
+    Pbug << "Variable done" << endl;
+}
+
 void python3InterpreterWrapper::getGlobals()
 {
     assertParallel("getGlobals");
@@ -897,8 +1025,6 @@ void python3InterpreterWrapper::getGlobals()
 
     Pbug << "Getting global variables from namespaces "
         << swakToInterpreterNamespaces_ << endl;
-
-    PyObject *m = PyImport_AddModule("__main__");
 
     forAll(swakToInterpreterNamespaces_,nameI) {
         Pbug << "Namespace: " << swakToInterpreterNamespaces_[nameI] << endl;
@@ -919,124 +1045,11 @@ void python3InterpreterWrapper::getGlobals()
 
             Pbug << "Variable: " << var << endl;
 
-            if(
-                !useNumpy_
-                ||
-                value.isSingleValue()
-            ) {
-                Pbug << "Single value. No numpy" << endl;
-
-                ExpressionResult val=value.getUniform(
-                    1,
-                    !warnOnNonUniform_,
-                    !Pstream::parRun() || !parallelMasterOnly_
-                );
-
-                Pbug << "Value: " << val;
-
-                if(val.valueType()==pTraits<scalar>::typeName) {
-                    PyObject_SetAttrString
-                        (
-                            m,
-                            const_cast<char*>(var.c_str()),
-                            PyFloat_FromDouble(
-                                val.getResult<scalar>()()[0]
-                            )
-                        );
-                } else if(val.valueType()==pTraits<vector>::typeName) {
-                    const vector v=val.getResult<vector>()()[0];
-                    PyObject_SetAttrString
-                        (
-                            m,
-                            const_cast<char*>(var.c_str()),
-                            Py_BuildValue(
-                                "ddd",
-                                double(v.x()),
-                                double(v.y()),
-                                double(v.z())
-                            )
-                        );
-                } else if(val.valueType()==pTraits<symmTensor>::typeName) {
-                    const symmTensor v=val.getResult<symmTensor>()()[0];
-                    PyObject_SetAttrString
-                        (
-                            m,
-                            const_cast<char*>(var.c_str()),
-                            Py_BuildValue(
-                                "dddddd",
-                                double(v.xx()),
-                                double(v.xy()),
-                                double(v.xz()),
-                                double(v.yy()),
-                                double(v.yz()),
-                                double(v.zz())
-                            )
-                        );
-                } else if(val.valueType()==pTraits<tensor>::typeName) {
-                    const tensor v=val.getResult<tensor>()()[0];
-                    PyObject_SetAttrString
-                        (
-                            m,
-                            const_cast<char*>(var.c_str()),
-                            Py_BuildValue(
-                                "ddddddddd",
-                                double(v.xx()),
-                                double(v.xy()),
-                                double(v.xz()),
-                                double(v.yx()),
-                                double(v.yy()),
-                                double(v.yz()),
-                                double(v.zx()),
-                                double(v.zy()),
-                                double(v.zz())
-                            )
-                        );
-                } else {
-                    FatalErrorIn("python3InterpreterWrapper::getGlobals()")
-                        << "The variable " << var << " has the unsupported type "
-                            << val.valueType() << endl
-                            << exit(FatalError);
-                }
-            } else {
-                const ExpressionResult &val=value;
-
-                Pbug << "Building a numpy-Array for global " << var
-                    << " at address " << val.getAddressAsDecimal()
-                    << " with size " << val.size()
-                    << " and type " << val.valueType()
-                    << endl;
-
-                OStringStream cmd;
-                cmd << var << "=OpenFOAMFieldArray(";
-                cmd << "address=" << val.getAddressAsDecimal() << ",";
-                cmd << "typestr='<f" << label(sizeof(scalar)) << "',";
-                cmd << "size=" << val.size();
-                label nr=-1;
-                if(val.valueType()==pTraits<scalar>::typeName) {
-                    nr=1;
-                } else if(val.valueType()==pTraits<vector>::typeName) {
-                    nr=3;
-                    cmd << ",names=['x','y','z']";
-                } else if(val.valueType()==pTraits<tensor>::typeName) {
-                    nr=9;
-                    cmd << ",names=['xx','xy','xz','yx','yy','yz','zx','zy','zz']";
-                } else if(val.valueType()==pTraits<symmTensor>::typeName) {
-                    nr=6;
-                    cmd << ",names=['xx','xy','xz','yy','yz','zz']";
-                } else if(val.valueType()==pTraits<sphericalTensor>::typeName) {
-                    nr=1;
-                }
-                if(nr>1) {
-                    cmd << ",nr=" << nr;
-                }
-                cmd << ")";
-
-                Pbug << "Python: " << cmd.str() << endl;
-
-                int result=PyRun_SimpleString(cmd.str().c_str());
-                Pbug << "Result: " << result << endl;
-            }
-            Pbug << "Variable done" << endl;
+            resultToPythonVariable(
+                var,
+                swakToInterpreterNamespaces_[nameI],
+                value
+            );
         }
         Pbug << "Namespace done" << endl;
     }
@@ -1406,6 +1419,22 @@ void python3InterpreterWrapper::setReference(const word &name,Field<diagTensor> 
     makeFieldReference(name, value);
 }
 #endif
+
+void python3InterpreterWrapper::getVariablesFromDriver(
+    CommonValueExpressionDriver &driver,
+    const wordList &names
+) {
+    forAll(names,i) {
+        const word &var=names[i];
+        const ExpressionResult &value=const_cast<const CommonValueExpressionDriver&>(driver).variable(var);
+
+        resultToPythonVariable(
+            var,
+            "variables",
+            value
+        );
+    }
+}
 
 autoPtr<RawFoamDictionaryParserDriver> python3InterpreterWrapper::getParserInternal(
     RawFoamDictionaryParserDriver::ErrorMode mode

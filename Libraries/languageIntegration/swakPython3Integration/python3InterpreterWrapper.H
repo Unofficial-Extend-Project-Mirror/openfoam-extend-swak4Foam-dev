@@ -104,6 +104,11 @@ class python3InterpreterWrapper
 
     void getGlobals();
 
+    void getVariablesFromDriver(
+        CommonValueExpressionDriver &driver,
+        const wordList &names
+    );
+
     void setGlobals();
 
     void initIPython();
@@ -169,6 +174,12 @@ protected:
     bool useNumpy() {
         return useNumpy_;
     }
+
+    void resultToPythonVariable(
+        const word &var,
+        const word &namespaceName,
+        const ExpressionResult &value
+    );
 
 public:
 
