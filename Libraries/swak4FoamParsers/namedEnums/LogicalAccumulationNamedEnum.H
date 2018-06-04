@@ -59,11 +59,14 @@ public:
 
     enum value {
         logAnd,
-        logOr
+        logOr,
+        logAll,
+        logAny,
+        logNone
     };
 
     //- String representation of order enums
-    static const NamedEnum<value, 2> names;
+    static const NamedEnum<value, 5> names;
 
 };
 

@@ -39,14 +39,17 @@ template<>
 const char* NamedEnum
 <
     LogicalAccumulationNamedEnum::value,
-    2
+    5
 >::names[] =
 {
     "and",
-    "or"
+    "or",
+    "all",
+    "any",
+    "none"
 };
 
-const NamedEnum<LogicalAccumulationNamedEnum::value, 2>
+const NamedEnum<LogicalAccumulationNamedEnum::value, 5>
     LogicalAccumulationNamedEnum::names;
 
 

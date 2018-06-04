@@ -1214,11 +1214,14 @@ hide circle
 *** Logical accumulations
     Logical swak-expressions usually generate an arry with more than 1
     logical value. Then a =logicalAccumulation= is used to boil it
-    down to one logical value. The possible values here are either
+    down to one logical value. The possible values here are
     - or :: It is =true= if at least one of the logical values is
          =true=. Therefor it is only =false= if *all* logical values
          are =false=
     - and :: This is only =true= if *all* logical values are =true=
+    - any :: an alias for =or=
+    - all :: an alias for =and=
+    - none :: only =true= if all logical values are =false=
 ** Script language integration
 *** General
 **** General behavior

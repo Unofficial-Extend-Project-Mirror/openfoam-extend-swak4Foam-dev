@@ -42,6 +42,9 @@ namespace Foam
 {
     defineTypeNameAndDebug(EvolveKinematicCloudFunctionObject, 0);
 
+    typedef EvolveCloudFunctionObject<basicKinematicCloud> kinematicEvolveCloudFunctionObject;
+    defineTemplateTypeNameAndDebug(kinematicEvolveCloudFunctionObject, 0);
+
     addNamedToRunTimeSelectionTable
     (
         functionObject,

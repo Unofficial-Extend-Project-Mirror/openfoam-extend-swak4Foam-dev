@@ -191,7 +191,7 @@ sampledSurface &SurfacesRepository::getSurface(
                 (
                     this->path(),
                     name+"_geometry_AtCreation",
-#if OPENFOAM_PLUS >= 1612
+#if OPENFOAM_COM >= 1612
                     meshedSurfRef(surf.points(), surf.faces())
 #else
                     surf.points(), surf.faces()
@@ -212,7 +212,7 @@ bool SurfacesRepository::writeData(Ostream &f) const
 
     f << surfaces_;
 
-    typedef HashTable<word,word> wordWord;
+    typedef HashTable<word> wordWord;
 
     forAllConstIter(wordWord,formatNames_,it) {
         const word &name=it.key();
@@ -228,7 +228,7 @@ bool SurfacesRepository::writeData(Ostream &f) const
         (
             f.name().path(),
             name+"_geometry",
-#if OPENFOAM_PLUS >= 1612
+#if OPENFOAM_COM >= 1612
             meshedSurfRef(surf.points(), surf.faces())
 #else
             surf.points(), surf.faces()

@@ -66,7 +66,7 @@ class LagrangianCloudSourcePluginFunction
 
     word cloudName_;
 
-    HashSet<word> supportedTypes_;
+    wordHashSet supportedTypes_;
 
 protected:
     //    typedef CloudType cloudType;
@@ -81,7 +81,7 @@ protected:
 
     const word &cloudName() const { return cloudName_; }
 
-    const HashSet<word> &supportedTypes() const
+    const wordHashSet &supportedTypes() const
         { return supportedTypes_; }
 
 public:

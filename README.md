@@ -6243,6 +6243,12 @@ When finding a cutting point in "infinity" then `magSqr`
 failed. Fixed
 
 
+#### `ReaderParticleCloud` could not read data if particle number changed
+
+These particles could not be read data from different time-steps
+if the number of particles differed between them. This has been fixed
+
+
 ### Internals (for developers)
 
 
@@ -6311,7 +6317,37 @@ point in the $(x,y)$-plane) and calculates the angle in radiants
 between this vector and the x-axis
 
 
+#### Additional logical accumulators
+
+Three new logical accumulators have been added. They are all
+aliases or trivial extensions of the existing `or` and `and` but
+sometimes should make the intention clearer
+
+-   **all:** alias for `and`
+-   **any:** alias for `or`
+-   **none:** only `true` if everything is `false` (basically `not or`)
+
+
 ### Enhancements
+
+
+#### New file format for `funkyDoCalc`
+
+`funkyDoCalc` now has a new file format. If a dictionary
+`expressions` is found in the specification file then it is
+assumed that the file is in the new format. `expressions` are the
+contents of the previous format. Additional keys in the file now
+allow specifying things that previously only specified on the command line:
+
+-   noDimensionChecking
+-   foreignMeshesThatFollowTime
+
+
+#### `funkyDoCalc` allows writing data as a dictionary
+
+The option `-writeDict` writes all the results as a
+dictionary. It also includes a sub-dictionary with a copy of the
+specification file
 
 
 ### Examples

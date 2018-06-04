@@ -59,6 +59,8 @@ Foam::solvePDECommonFiniteArea::solvePDECommonFiniteArea
         loadFromFiles
     )
 {
+    Dbug << " Constructor" << endl;
+
     if (!isA<polyMesh>(obr))
     {
         active_=false;
@@ -76,8 +78,10 @@ Foam::areaScalarField &Foam::solvePDECommonFiniteArea::theField()
     // either the field was created by someone else ... then it should be
     // in the registry. Or we created it.
     if(theField_.valid()) {
+        Dbug << fieldName_ << " theField is owned" << endl;
         return theField_();
     } else {
+        Dbug << fieldName_ << " theField is not owned" << endl;
         return const_cast<areaScalarField&>(
             obr_.lookupObject<areaScalarField>(
                 fieldName_
@@ -88,7 +92,11 @@ Foam::areaScalarField &Foam::solvePDECommonFiniteArea::theField()
 
 void Foam::solvePDECommonFiniteArea::read(const dictionary& dict)
 {
+    Dbug << " - read" << endl;
+
     solvePDECommon::read(dict);
+
+    Dbug << " - read - after common" << endl;
 
     if(active_) {
         const fvMesh& mesh = refCast<const fvMesh>(obr_);
@@ -115,7 +123,10 @@ void Foam::solvePDECommonFiniteArea::read(const dictionary& dict)
         );
 
         if(!theField_.valid()) {
+            Dbug << " ::read - no valid field" << endl;
+
             if(obr_.foundObject<areaScalarField>(fieldName_)) {
+                Dbug << " ::read " << fieldName_ << " in memory" << endl;
                 if(!dict.found("useFieldFromMemory")) {
                     FatalErrorIn("Foam::solvePDECommonFiniteArea::read(const dictionary& dict)")
                         << "Field " << fieldName_ << " alread in memory. "
@@ -123,7 +134,6 @@ void Foam::solvePDECommonFiniteArea::read(const dictionary& dict)
                             << "use different name"
                             << endl
                             << exit(FatalError);
-
                 }
                 bool useFieldFromMemory=readBool(
                     dict.lookup("useFieldFromMemory")
@@ -136,6 +146,8 @@ void Foam::solvePDECommonFiniteArea::read(const dictionary& dict)
                             << exit(FatalError);
                 }
             } else {
+                Dbug << " ::read " << fieldName_ << " reading from disk at "
+                    << mesh.time().timeName() << endl;
                 theField_.set(
                     new areaScalarField(
                         IOobject (

@@ -52,6 +52,8 @@ namespace Foam
     );
 
     defineTemplateTypeNameAndDebug(EvolveReactingCloudFunctionObject<constThermoReactingCloud>, 0);
+    typedef EvolveCloudFunctionObject<constThermoReactingCloud> constThermoReactingEvolveCloudFunctionObject;
+    defineTemplateTypeNameAndDebug(constThermoReactingEvolveCloudFunctionObject, 0);
 
     addNamedTemplateToRunTimeSelectionTable
     (
@@ -63,6 +65,8 @@ namespace Foam
     );
 
     defineTemplateTypeNameAndDebug(EvolveReactingCloudFunctionObject<thermoReactingCloud>, 0);
+    typedef EvolveCloudFunctionObject<thermoReactingCloud> thermoReactingEvolveCloudFunctionObject;
+    defineTemplateTypeNameAndDebug(thermoReactingEvolveCloudFunctionObject, 0);
 
     addNamedTemplateToRunTimeSelectionTable
     (
@@ -74,8 +78,12 @@ namespace Foam
     );
 
     defineTemplateTypeNameAndDebug(EvolveReactingCloudFunctionObject<icoPoly8ThermoReactingCloud>, 0);
+    typedef EvolveCloudFunctionObject<icoPoly8ThermoReactingCloud> icoPoly8ThermoReactingEvolveCloudFunctionObject;
+    defineTemplateTypeNameAndDebug(icoPoly8ThermoReactingEvolveCloudFunctionObject, 0);
 #else
     defineTypeNameAndDebug(EvolveReactingCloudFunctionObject, 0);
+    typedef EvolveCloudFunctionObject<basicReactingCloud> reactingEvolveCloudFunctionObject;
+    defineTemplateTypeNameAndDebug(reactingEvolveCloudFunctionObject, 0);
 
     addNamedToRunTimeSelectionTable
     (

@@ -65,8 +65,8 @@ Foam::EliminateOutsideParticles<CloudType>::EliminateOutsideParticles
 )
 :
     CloudFunctionObject<CloudType>(dict, owner, modelName, typeName),
-    eliminatedPrePtr_(NULL),
-    eliminatedPostPtr_(NULL),
+    eliminatedPrePtr_(nullptr),
+    eliminatedPostPtr_(nullptr),
     eliminatePre_(
         readBool(dict.lookup("eliminatePre"))
     ),

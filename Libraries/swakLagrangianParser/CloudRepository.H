@@ -63,10 +63,10 @@ class CloudRepository
     // Private data
 
     //- the actual sets
-    HashPtrTable<cloud,word> clouds_;
+    HashPtrTable<cloud> clouds_;
 
     //- Clouds that can be updated
-    HashPtrTable<ReaderParticleCloud,word> updateableClouds_;
+    HashPtrTable<ReaderParticleCloud> updateableClouds_;
 
    // Constructors
 

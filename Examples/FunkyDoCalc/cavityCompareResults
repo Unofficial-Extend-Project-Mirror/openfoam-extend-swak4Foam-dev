@@ -1,0 +1,98 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+libs (
+    "libswakVelocityFunctionPlugin.so"
+    "libswakFunctionObjects.so"
+);
+
+preloadFields (
+    phi
+    p
+    U
+);
+
+functions {
+    streamFunction {
+        type expressionField;
+        fieldName streamF;
+        autowrite true;
+        expression "interpolateToCell(streamFunction(phi))";
+    }
+    writeStream {
+        functionObjectLibs ("libsimpleFunctionObjects.so");
+        type writeFieldsOften;
+        fieldNames ( streamF );
+        after 0;
+        writeControl timeStep;
+        writeIntervall 1;
+    }
+    sampleMidLine {
+        type sets;
+        libs            ("libsampling.so");
+
+        interpolationScheme cellPointFace;
+
+        setFormat raw;
+
+        sets
+            (
+                midY
+                {
+                    type            midPoint;
+                    axis            y;
+                    start           (0.050001 0   0.005);
+                    end             (0.050001 0.1 0.005);
+                }
+            );
+        fields (
+            p
+            U
+        );
+    }
+}
+
+expressions {
+    pressureValues {
+        valueType internalField;
+        expression "p";
+        accumulations (
+            min
+            weightedQuantile0.05
+            weightedAverage
+            weightedQuantile0.95
+            max
+        );
+    }
+    velocityValues {
+        $pressureValues;
+        expression "U";
+    }
+    flowCenter {
+        valueType internalField;
+        accumulations (
+            average
+        );
+        expression "minPosition(streamFunction(phi))";
+    }
+    reflowPos {
+        $flowCenter;
+        expression "minPosition(U.x)";
+    }
+}
+
+// ************************************************************************* //

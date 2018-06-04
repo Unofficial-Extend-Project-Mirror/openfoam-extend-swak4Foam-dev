@@ -69,7 +69,7 @@ class stateMachineFvSolutionFvSchemesFunctionObject
     //- Disallow default bitwise assignment
     void operator=(const stateMachineFvSolutionFvSchemesFunctionObject&);
 
-    typedef HashTable<word,word> StateToMap;
+    typedef HashTable<word> StateToMap;
 
     const word solutionStateMachineName_;
     const StateToMap stateToSolutionMapping_;

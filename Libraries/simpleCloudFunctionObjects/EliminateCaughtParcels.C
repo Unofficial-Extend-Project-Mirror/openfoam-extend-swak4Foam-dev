@@ -69,7 +69,7 @@ Foam::EliminateCaughtParcels<CloudType>::EliminateCaughtParcels
         readScalar(dict.lookup("minDistanceMove"))
     ),
     toEliminate_(),
-    eliminatedPtr_(NULL),
+    eliminatedPtr_(nullptr),
     out_(
         this->outputDir(),
         this->owner().time()

@@ -62,7 +62,7 @@ class StateMachineRepository
 private:
    // Private data
 
-    typedef HashPtrTable<StateMachine,word> MachineTable;
+    typedef HashPtrTable<StateMachine> MachineTable;
     MachineTable allMachines_;
 
     dictionary readFromRestart_;

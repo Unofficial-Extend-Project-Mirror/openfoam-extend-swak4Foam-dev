@@ -42,6 +42,9 @@ namespace Foam
 {
     defineTypeNameAndDebug(EvolveThermoCloudFunctionObject, 0);
 
+    typedef EvolveCloudFunctionObject<swakFluidThermoCloudType> thermoEvolveCloudFunctionObject;
+    defineTemplateTypeNameAndDebug(thermoEvolveCloudFunctionObject, 0);
+
     addNamedToRunTimeSelectionTable
     (
         functionObject,

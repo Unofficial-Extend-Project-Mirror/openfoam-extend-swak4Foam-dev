@@ -87,7 +87,7 @@ provokeSignalFunctionObject::provokeSignalFunctionObject
     raiseOnThisProc_(false)
 {
     if(Pstream::parRun()) {
-        HashSet<label> allProcs(
+        labelHashSet allProcs(
             labelList(
                 dict.lookup("processorsToRaiseSignal")
             )

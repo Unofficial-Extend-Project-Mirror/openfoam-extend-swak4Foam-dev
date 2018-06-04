@@ -110,13 +110,13 @@ void loadTopoSetsFunctionObject::loadSets()
 }
 
 template<class TopoSetType>
-void loadTopoSetsFunctionObject::writeAllSets(HashSet<word> &names)
+void loadTopoSetsFunctionObject::writeAllSets(wordHashSet &names)
 {
     const polyMesh &mesh=dynamic_cast<const polyMesh&>(
         this->obr()
     );
 
-    forAllConstIter(HashSet<word>,names,iter) {
+    forAllConstIter(wordHashSet,names,iter) {
         const word &name=iter.key();
         Info << "Writing " << TopoSetType::typeName << " " << name << endl;
 
@@ -134,7 +134,7 @@ void loadTopoSetsFunctionObject::writeAllSets(HashSet<word> &names)
 }
 
 template<class TopoSetType>
-void loadTopoSetsFunctionObject::loadAllSets(HashSet<word> &names)
+void loadTopoSetsFunctionObject::loadAllSets(wordHashSet &names)
 {
     Info << "Loading sets of type " << TopoSetType::typeName << " from "
         << this->obr().name() << endl;

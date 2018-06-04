@@ -126,6 +126,7 @@ public:
         const dictionary&
     );
 
+    TypeName("EvolveCloudFunctionObject");
 
     // Member Functions
 
@@ -178,7 +179,6 @@ public:
         );
     }
 #endif
-
 };
 
 

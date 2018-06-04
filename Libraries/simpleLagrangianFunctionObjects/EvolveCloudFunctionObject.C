@@ -71,6 +71,8 @@ EvolveCloudFunctionObject<CloudType>::EvolveCloudFunctionObject
     ,lastTimeStepExecute_(-1)
 #endif
 {
+    Dbug << "EvolveCloudFunctionObject<CloudType>::EvolveCloudFunctionObject" << endl;
+
     if(dict_.found("g")) {
         dimensionedVector newG(dict_.lookup("g"));
         g_.dimensions().reset(newG.dimensions());
@@ -109,6 +111,8 @@ const FieldType &EvolveCloudFunctionObject<CloudType>::getField(const word &fiel
 template<class CloudType>
 bool EvolveCloudFunctionObject<CloudType>::execute(bool forceWrite)
 {
+    Dbug << "EvolveCloudFunctionObject<CloudType>::execute" << endl;
+
 #ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
     if(!cloud_.valid()) {
         this->start();
@@ -141,6 +145,8 @@ bool EvolveCloudFunctionObject<CloudType>::execute(bool forceWrite)
 template<class CloudType>
 bool EvolveCloudFunctionObject<CloudType>::read(const dictionary& dict)
 {
+    Dbug << "EvolveCloudFunctionObject<CloudType>::read" << endl;
+
     if(!cloud_.valid()) {
         this->start();
     }

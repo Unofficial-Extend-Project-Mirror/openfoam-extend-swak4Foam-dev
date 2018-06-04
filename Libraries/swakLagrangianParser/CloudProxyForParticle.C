@@ -244,7 +244,7 @@ void CloudProxyForParticle<CloudType>::addSphericalTensorFunction(
 )
 {
     addField<sphericalTensor>(name,description);
-    sphericalTensorFunctions_.set(
+    sphTensorFunctions_.set(
         name,
         ptr
     );
@@ -365,10 +365,10 @@ tmp<Field<sphericalTensor> > CloudProxyForParticle<CloudType>::getSphericalTenso
     const word &name
 ) const
 {
-    if(sphericalTensorFunctions_.found(name)) {
+    if(sphTensorFunctions_.found(name)) {
         Dbug << "Found " << name << " in sphericalTensor table" << endl;
         return mapToParticles<sphericalTensor>(
-            *sphericalTensorFunctions_[name]
+            *sphTensorFunctions_[name]
         );
     }
 
