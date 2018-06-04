@@ -453,7 +453,7 @@ Contributors/Copyright:
 #define FOAM_HAS_LONG_DOUBLE_SCALAR
 #endif
 
-#ifdef FOAM_VERSION4SWAK_IS_EXTEND
+#if defined(FOAM_VERSION4SWAK_IS_EXTEND) && FOAM_VERSION4SWAK<VERSION_NR(4,0,9)
 #define FOAM_TOKEN_CLASS_HAS_FATAL_ERROR
 #endif
 
@@ -519,7 +519,9 @@ Contributors/Copyright:
 
 #if __cplusplus < 201103L
 #define FOAM_CXX_COMPILER_HAS_NO_NULLPTR
+#ifndef nullptr
 #define nullptr NULL
+#endif
 #endif
 
 #if (OPENFOAM_COM >= 1706)

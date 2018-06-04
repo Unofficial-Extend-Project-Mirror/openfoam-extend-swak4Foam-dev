@@ -49,13 +49,13 @@
   | Lagrangian/functionObject/angledDuctWithBalls               | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/functionObject/hotStream                         | \sad       | \checkmark | \sad       | \sad       |
   | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark | \checkmark | \checkmark |
-  | Lagrangian/LanguageIntegration/angledDuctWithLuaInject      |            | \checkmark |            | \checkmark |
-  | Lagrangian/LanguageIntegration/angledDuctWithPython2Inject  |            | \checkmark |            |            |
-  | Lagrangian/LanguageIntegration/angledDuctWithPython3Inject  |            | \checkmark |            |            |
+  | Lagrangian/LanguageIntegration/angledDuctWithLuaInject      |            |            |            | \checkmark |
+  | Lagrangian/LanguageIntegration/angledDuctWithPython2Inject  |            |            |            |            |
+  | Lagrangian/LanguageIntegration/angledDuctWithPython3Inject  |            |            |            |            |
   | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/parser/simplifiedSiwek                           | \sad       | \sad       |            | \checkmark |
-  | LuaIntegration/flowStatePitzDaily                           |            | \checkmark |            |            |
-  | LuaIntegration/luaScriptedBCAngledDuct                      |            | \checkmark |            |            |
+  | LuaIntegration/flowStatePitzDaily                           |            |            |            |            |
+  | LuaIntegration/luaScriptedBCAngledDuct                      |            |            |            |            |
   | LuaIntegration/raiseRelaxationPitzDaily                     | \checkmark | \dagger    |            |            |
   | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    | \checkmark | \checkmark |
   | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark | \dagger    | \checkmark | \checkmark |
@@ -64,15 +64,15 @@
   | other/counterFlowFlame2DInitialized                         | \checkmark | \sad       | \partial   | \checkmark |
   | other/simpleBendedPipe                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | other/topoSetDamBreak                                       | \checkmark | \checkmark | \checkmark | \checkmark |
-  | Python3Integration/flowStatePitzDaily                       |            | \checkmark |            |            |
-  | Python3Integration/python3ScriptedBCAngledDuct              |            | \checkmark |            |            |
+  | Python3Integration/flowStatePitzDaily                       |            |            |            |            |
+  | Python3Integration/python3ScriptedBCAngledDuct              |            |            |            |            |
   | SimpleSurface/littleVolcano                                 | \checkmark |            | \checkmark |            |
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
-  | tests/languageIntegration/luaIntegration                    | \checkmark | \checkmark | \checkmark | \checkmark |
-  | tests/languageIntegration/pythonIntegration                 | \checkmark | \checkmark | \checkmark | \checkmark |
-  | tests/languageIntegration/python3Integration                | \checkmark | \checkmark | \checkmark | \checkmark |
+  | tests/languageIntegration/luaIntegration                    | \checkmark |            | \checkmark | \checkmark |
+  | tests/languageIntegration/pythonIntegration                 | \checkmark |            | \checkmark | \checkmark |
+  | tests/languageIntegration/python3Integration                | \checkmark |            | \checkmark | \checkmark |
   | tests/SearchableSurfaces/objectsTest                        | \checkmark |            | \checkmark |            |
   | tests/SearchableSurfaces/operationsTest                     | \checkmark |            | \checkmark |            |
   | tests/SearchableSurfaces/operationsTestRotated              | \partial   |            | \partial   |            |

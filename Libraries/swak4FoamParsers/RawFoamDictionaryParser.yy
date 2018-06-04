@@ -47,13 +47,13 @@ Contributors/Copyright:
 
 %code requires
 {
-    #include "string.H"
+    #include "swak.H"
+    #include "swakString.H"
     #include "scalar.H"
     #include "word.H"
     #include "label.H"
     #include <sstream>
     #include "OStringStream.H"
-    #include "swak.H"
 
     namespace Foam {
         class RawFoamDictionaryParserDriver;
