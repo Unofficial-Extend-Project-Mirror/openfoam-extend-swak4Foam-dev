@@ -28,7 +28,7 @@ then
     wmake libso swakPythonIntegration
 else
     echo
-    echo "SWAK_PYTHON2_INCLUDE not defined .... no Python-Integration. Most people are fine without it"
+    echo "SWAK_PYTHON2_INCLUDE not defined .... no Python2-Integration. Most people are fine without it"
     echo
 fi
 
@@ -49,7 +49,7 @@ then
     wmake libso swakPython3Integration
 else
     echo
-    echo "SWAK_PYTHON3_INCLUDE not defined .... no Python-Integration. Most people are fine without it"
+    echo "SWAK_PYTHON3_INCLUDE not defined .... no Python3-Integration. Most people are fine without it"
     echo
 fi
 

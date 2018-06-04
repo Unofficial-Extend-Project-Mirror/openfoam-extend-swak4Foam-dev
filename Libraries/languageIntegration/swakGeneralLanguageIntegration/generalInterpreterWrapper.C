@@ -782,72 +782,122 @@ void generalInterpreterWrapper::setReferences()
             if(region.foundObject<volScalarField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<volScalarField&>(
-                        region.lookupObject<volScalarField>(fieldName)
-                    ).internalField()
+                    const_cast<Field<scalar>&>(
+                        region.lookupObject<volScalarField>(
+                            fieldName
+                        ).internalField()
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+                        .field()
+#endif
+                    )
                 );
             } else if(region.foundObject<volVectorField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<volVectorField&>(
-                        region.lookupObject<volVectorField>(fieldName)
-                    ).internalField()
+                    const_cast<Field<vector>&>(
+                        region.lookupObject<volVectorField>(
+                            fieldName
+                        ).internalField()
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+                        .field()
+#endif
+                    )
                 );
             } else if(region.foundObject<volTensorField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<volTensorField&>(
-                        region.lookupObject<volTensorField>(fieldName)
-                    ).internalField()
+                    const_cast<Field<tensor>&>(
+                        region.lookupObject<volTensorField>(
+                            fieldName
+                        ).internalField()
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+                        .field()
+#endif
+                    )
                 );
             } else if(region.foundObject<volSymmTensorField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<volSymmTensorField&>(
-                        region.lookupObject<volSymmTensorField>(fieldName)
-                    ).internalField()
+                    const_cast<Field<symmTensor>&>(
+                        region.lookupObject<volSymmTensorField>(
+                            fieldName
+                        ).internalField()
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+                        .field()
+#endif
+                    )
                 );
             } else if(region.foundObject<volSphericalTensorField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<volSphericalTensorField&>(
-                        region.lookupObject<volSphericalTensorField>(fieldName)
-                    ).internalField()
+                    const_cast<Field<sphericalTensor>&>(
+                        region.lookupObject<volSphericalTensorField>(
+                            fieldName
+                        ).internalField()
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+                        .field()
+#endif
+                    )
                 );
             } else if(region.foundObject<surfaceScalarField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<surfaceScalarField&>(
-                        region.lookupObject<surfaceScalarField>(fieldName)
-                    ).internalField()
+                    const_cast<Field<scalar>&>(
+                        region.lookupObject<surfaceScalarField>(
+                            fieldName
+                        ).internalField()
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+                        .field()
+#endif
+                    )
                 );
             } else if(region.foundObject<surfaceVectorField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<surfaceVectorField&>(
-                        region.lookupObject<surfaceVectorField>(fieldName)
-                    ).internalField()
+                    const_cast<Field<vector>&>(
+                        region.lookupObject<surfaceVectorField>(
+                            fieldName
+                        ).internalField()
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+                        .field()
+#endif
+                    )
                 );
             } else if(region.foundObject<surfaceTensorField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<surfaceTensorField&>(
-                        region.lookupObject<surfaceTensorField>(fieldName)
-                    ).internalField()
+                    const_cast<Field<tensor>&>(
+                        region.lookupObject<surfaceTensorField>(
+                            fieldName
+                        ).internalField()
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+                        .field()
+#endif
+                    )
                 );
             } else if(region.foundObject<surfaceSymmTensorField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<surfaceSymmTensorField&>(
-                        region.lookupObject<surfaceSymmTensorField>(fieldName)
-                    ).internalField()
+                    const_cast<Field<symmTensor>&>(
+                        region.lookupObject<surfaceSymmTensorField>(
+                            fieldName
+                        ).internalField()
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+                        .field()
+#endif
+                    )
                 );
             } else if(region.foundObject<surfaceSphericalTensorField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<surfaceSphericalTensorField&>(
-                        region.lookupObject<surfaceSphericalTensorField>(fieldName)
-                    ).internalField()
+                    const_cast<Field<sphericalTensor>&>(
+                        region.lookupObject<surfaceSphericalTensorField>(
+                            fieldName
+                        ).internalField()
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+                        .field()
+#endif
+                    )
                 );
             } else {
                 FatalErrorIn("generalInterpreterWrapper::setReferences()")
@@ -872,72 +922,92 @@ void generalInterpreterWrapper::setReferences()
             if(region.foundObject<volScalarField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<volScalarField&>(
-                        region.lookupObject<volScalarField>(fieldName)
-                    ).boundaryField()[patchI]
+                    const_cast<fvPatchField<scalar>&>(
+                        region.lookupObject<volScalarField>(
+                            fieldName
+                        ).boundaryField()[patchI]
+                    )
                 );
              } else if(region.foundObject<volVectorField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<volVectorField&>(
-                        region.lookupObject<volVectorField>(fieldName)
-                    ).boundaryField()[patchI]
+                    const_cast<fvPatchField<vector>&>(
+                        region.lookupObject<volVectorField>(
+                            fieldName
+                        ).boundaryField()[patchI]
+                    )
                 );
             } else if(region.foundObject<volTensorField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<volTensorField&>(
-                        region.lookupObject<volTensorField>(fieldName)
-                    ).boundaryField()[patchI]
+                    const_cast<fvPatchField<tensor>&>(
+                        region.lookupObject<volTensorField>(
+                            fieldName
+                        ).boundaryField()[patchI]
+                    )
                 );
             } else if(region.foundObject<volSymmTensorField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<volSymmTensorField&>(
-                        region.lookupObject<volSymmTensorField>(fieldName)
-                    ).boundaryField()[patchI]
+                    const_cast<fvPatchField<symmTensor>&>(
+                        region.lookupObject<volSymmTensorField>(
+                            fieldName
+                        ).boundaryField()[patchI]
+                    )
                 );
             } else if(region.foundObject<volSphericalTensorField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<volSphericalTensorField&>(
-                        region.lookupObject<volSphericalTensorField>(fieldName)
-                    ).boundaryField()[patchI]
+                    const_cast<fvPatchField<sphericalTensor>&>(
+                        region.lookupObject<volSphericalTensorField>(
+                            fieldName
+                        ).boundaryField()[patchI]
+                    )
                 );
             } else if(region.foundObject<surfaceScalarField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<surfaceScalarField&>(
-                        region.lookupObject<surfaceScalarField>(fieldName)
-                    ).boundaryField()[patchI]
+                    const_cast<fvsPatchField<scalar>&>(
+                        region.lookupObject<surfaceScalarField>(
+                            fieldName
+                        ).boundaryField()[patchI]
+                    )
                 );
             } else if(region.foundObject<surfaceVectorField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<surfaceVectorField&>(
-                        region.lookupObject<surfaceVectorField>(fieldName)
-                    ).boundaryField()[patchI]
+                    const_cast<fvsPatchField<vector>&>(
+                        region.lookupObject<surfaceVectorField>(
+                            fieldName
+                        ).boundaryField()[patchI]
+                    )
                 );
             } else if(region.foundObject<surfaceTensorField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<surfaceTensorField&>(
-                        region.lookupObject<surfaceTensorField>(fieldName)
-                    ).boundaryField()[patchI]
+                    const_cast<fvsPatchField<tensor>&>(
+                        region.lookupObject<surfaceTensorField>(
+                            fieldName
+                        ).boundaryField()[patchI]
+                    )
                 );
             } else if(region.foundObject<surfaceSymmTensorField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<surfaceSymmTensorField&>(
-                        region.lookupObject<surfaceSymmTensorField>(fieldName)
-                    ).boundaryField()[patchI]
+                    const_cast<fvsPatchField<symmTensor>&>(
+                        region.lookupObject<surfaceSymmTensorField>(
+                            fieldName
+                        ).boundaryField()[patchI]
+                    )
                 );
             } else if(region.foundObject<surfaceSphericalTensorField>(fieldName)) {
                 setReference(
                     name,
-                    const_cast<surfaceSphericalTensorField&>(
-                        region.lookupObject<surfaceSphericalTensorField>(fieldName)
-                    ).boundaryField()[patchI]
+                    const_cast<fvsPatchField<sphericalTensor>&>(
+                        region.lookupObject<surfaceSphericalTensorField>(
+                            fieldName
+                        ).boundaryField()[patchI]
+                    )
                 );
            } else {
                 FatalErrorIn("generalInterpreterWrapper::setReferences()")
