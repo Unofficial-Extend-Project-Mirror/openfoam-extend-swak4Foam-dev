@@ -60,7 +60,11 @@ void preLoadFieldsFunction(
             if
             (
 #ifdef FOAM_HAS_TYPE_HEADER_OK
-                fieldHeader.typeHeaderOk<FieldType>(true,true,false)
+                fieldHeader.typeHeaderOk<FieldType>(true
+#ifdef FOAM_TYPE_HEADER_OK_HAS_EXTRA_PARAMTERS
+                                                    ,true,false
+#endif
+                                                    )
 #else
                 fieldHeader.headerOk()
                 && fieldHeader.headerClassName() == pTraits<FieldType>::typeName

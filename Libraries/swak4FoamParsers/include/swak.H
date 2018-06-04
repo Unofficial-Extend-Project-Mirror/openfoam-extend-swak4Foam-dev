@@ -459,6 +459,9 @@ Contributors/Copyright:
 #if (OPENFOAM_COM >= 1606) \
     || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(5,0,0))
 #define FOAM_HAS_TYPE_HEADER_OK
+#if (OPENFOAM_COM >= 1712)
+#define FOAM_TYPE_HEADER_OK_HAS_EXTRA_PARAMTERS
+#endif
 #endif
 
 #if (OPENFOAM_COM >= 1606) \
