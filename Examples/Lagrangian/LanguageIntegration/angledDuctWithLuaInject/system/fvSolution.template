@@ -58,7 +58,14 @@ PIMPLE
     rhoMin          rhoMin [ 1 -3 0 0 0 ] 0.5;
     rhoMax          rhoMax [ 1 -3 0 0 0 ] 2.0;
 
+<!--(if foamFork!="extend")-->
+    pMin 1000;
+<!--(else)-->
     pMin            pMin [ 1 -1 -2 0 0 0 0 ] 1000;
+<!--(end)-->
+
+    pMinFactor 0.9;
+    pMaxFactor 1.5;
 
     residualControl
     {
