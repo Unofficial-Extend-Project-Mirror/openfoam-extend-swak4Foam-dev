@@ -31,7 +31,7 @@ SourceFiles
     CloudProxyForReactingMultiphaseParcel.C
 
 Contributors/Copyright:
-    2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

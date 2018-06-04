@@ -23,7 +23,7 @@ License
     along with swak4Foam.  If not, see <http://www.gnu.org/licenses/>.
 
 Description
-    Functions that extend Lua to handle OpenFOAM-stuff "in-place"
+    Functions that extend Lua to handle swak4Foam-stuff "in-place"
 
 Contributors/Copyright:
     2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>

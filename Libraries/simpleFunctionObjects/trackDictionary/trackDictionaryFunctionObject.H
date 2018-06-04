@@ -111,7 +111,7 @@ SourceFiles
 
 Contributors/Copyright:
     2008-2009 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
-    2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

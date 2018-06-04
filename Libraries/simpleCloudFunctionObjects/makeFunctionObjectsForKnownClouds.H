@@ -26,7 +26,7 @@ Description
     Make instances of a function object for all known intermediate cloud types
 
 Contributors/Copyright:
-    2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/

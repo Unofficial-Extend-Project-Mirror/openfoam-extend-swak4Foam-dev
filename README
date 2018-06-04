@@ -58,10 +58,11 @@
      - Spell-checking the compilation scripts
    If anyone is forgotten: let me know
 
-   According to the commits in the =mercurial=-repository (and
-   the repositories of the projects from which swak emerged)
-   contributors are (ordered by the year of their first contribution):
-   - 2006-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+   According to the commits in the =mercurial=-repository (and the
+   repositories of the projects from which swak emerged) contributors
+   are (ordered by the year of their first contribution. EMail is the
+   latest under which this author submitted):
+   - 2006-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
    - 2008 Hannes Kroeger (hannes@kroegeronline.net)
    - 2008-2009, 2012 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
    - 2010 Marianne Mataln <mmataln@ice-sf.at>
@@ -74,7 +75,7 @@
    - 2014 David Huckaby <e.david.huckaby@netl.doe.gov>
    - 2015 Domink Christ <d.christ@wikki.co.uk>
    - 2015 Alexey Matveichev <alexey.matveichev@gmail.com>
-   - 2016-2017 Mark Olesen <mark@opencfd>
+   - 2016-2018 Mark Olesen <Mark.Olesen@esi-group.com>
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation

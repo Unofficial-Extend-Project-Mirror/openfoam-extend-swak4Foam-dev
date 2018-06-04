@@ -33,7 +33,7 @@ SourceFiles
     swakRegistryProxySurface.C
 
 Contributors/Copyright:
-    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2016 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$

@@ -23,7 +23,7 @@ License
     along with swak4Foam.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2011, 2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013, 2015-2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2012 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id$

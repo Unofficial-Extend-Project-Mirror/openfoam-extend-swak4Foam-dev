@@ -37,7 +37,7 @@ SourceFiles
     CorrectParticleCell.C
 
 Contributors/Copyright:
-    2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/

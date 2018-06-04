@@ -34,7 +34,7 @@ SourceFiles
     readAndWriteDictionaryFunctionObject.C
 
 Contributors/Copyright:
-    2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2017-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

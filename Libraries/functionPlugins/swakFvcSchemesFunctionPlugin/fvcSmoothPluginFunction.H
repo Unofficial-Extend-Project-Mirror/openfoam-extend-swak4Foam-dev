@@ -32,7 +32,7 @@ SourceFiles
     fvcSmoothPluginfunction.C
 
 Contributors/Copyright:
-    2015-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2015-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

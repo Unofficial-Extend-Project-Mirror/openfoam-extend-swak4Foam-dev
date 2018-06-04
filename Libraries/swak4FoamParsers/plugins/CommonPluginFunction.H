@@ -34,7 +34,7 @@ SourceFiles
     CommonPluginFunctionIO.C
 
 Contributors/Copyright:
-    2012-2013, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

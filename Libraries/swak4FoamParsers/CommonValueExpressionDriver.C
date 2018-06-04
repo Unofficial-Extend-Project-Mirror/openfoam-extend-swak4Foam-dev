@@ -24,10 +24,10 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2012 Bruno Santos <wyldckat@gmail.com>
     2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
-    2017 Mark Olesen <Mark.Olesen@esi-group.com>
+    2017-2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

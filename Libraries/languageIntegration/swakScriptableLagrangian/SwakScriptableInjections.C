@@ -23,7 +23,7 @@ License
     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2017-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/

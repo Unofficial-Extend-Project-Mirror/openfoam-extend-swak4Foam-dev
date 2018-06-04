@@ -33,7 +33,7 @@ SourceFiles
     CloudValueExpressionDriver.C
 
 Contributors/Copyright:
-    2010, 2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010, 2012-2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

@@ -35,7 +35,7 @@ SourceFiles
     DistributionIO.C
 
 Contributors/Copyright:
-    2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2014, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
