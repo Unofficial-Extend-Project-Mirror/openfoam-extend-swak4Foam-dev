@@ -929,13 +929,13 @@ void luaInterpreterWrapper::extractTopToDict(dictionary &dict) {
                         Dbug << name << " is an array" << endl;
                         switch(itype) {
                             case LUA_TNUMBER:
-                                addListFromStackToDict<scalar,LuaToScalar>(
+                                addListFromStackToDict<scalar,LuaToScalar,ValidOk>(
                                     dict,
                                     name
                                 );
                                 break;
                             case LUA_TBOOLEAN:
-                                addListFromStackToDict<bool,LuaToBool>(
+                                addListFromStackToDict<bool,LuaToBool,ValidOk>(
                                     dict,
                                     name
                                 );
@@ -947,7 +947,7 @@ void luaInterpreterWrapper::extractTopToDict(dictionary &dict) {
                                         name
                                     );
                                     if(!ok) {
-                                        addListFromStackToDict<string,LuaToString>(
+                                        addListFromStackToDict<string,LuaToString,ValidOk>(
                                             dict,
                                             name
                                         );
@@ -955,7 +955,7 @@ void luaInterpreterWrapper::extractTopToDict(dictionary &dict) {
                                 }
                                 break;
                             case LUA_TTABLE:
-                                if(isListListOnStack<bool,LuaToBool>(LUA_TBOOLEAN)) {
+                                if(isListListOnStack<bool,LuaToBool,ValidOk>(LUA_TBOOLEAN)) {
                                     addListListFromStackToDict<bool, LuaToBool>(
                                         dict,
                                         name
@@ -967,14 +967,14 @@ void luaInterpreterWrapper::extractTopToDict(dictionary &dict) {
                                         dict,
                                         name
                                     );
-                                } else if(isListListOnStack<string,LuaToString>(
+                                } else if(isListListOnStack<string,LuaToString,ValidOk>(
                                     LUA_TSTRING
                                 )) {
                                     addListListFromStackToDict<string, LuaToString>(
                                         dict,
                                         name
                                     );
-                                } else if(isListListOnStack<scalar,LuaToScalar>()) {
+                                } else if(isListListOnStack<scalar,LuaToScalar,ValidOk>()) {
                                     addListListFromStackToDict<scalar, LuaToScalar>(
                                         dict,
                                         name

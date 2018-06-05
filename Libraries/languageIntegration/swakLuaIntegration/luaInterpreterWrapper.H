@@ -123,13 +123,13 @@ class luaInterpreterWrapper
 
     class ValidOk;
 
-    template<class T,class F,class V=ValidOk>
+    template<class T,class F,class V>
     bool addListFromStackToDict(
         dictionary &dict,
         const word &name
     );
 
-    template<class T,class F,class V=ValidOk>
+    template<class T,class F,class V>
     bool isListListOnStack(int lType=LUA_TNIL);
 
     template<class T,class F>
