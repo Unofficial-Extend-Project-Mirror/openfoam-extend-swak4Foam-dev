@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
-| \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.0                                |
-|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -42,17 +42,16 @@ boundaryField
     }
     inlet
     {
-        type            flowRateInletVelocity;
-        flowRate        0.1;
-        value           uniform (0 0 0);
+        type            fixedValue; //lowRateInletVelocity;
+        massFlowRate    constant 0.1;
+        value           uniform (1 0 0);
     }
     outlet
     {
-        type            fluxCorrectedVelocity; //inletOutlet;
+        type            zeroGradient; //fluxCorrectedVelocity; //inletOutlet;
         value           uniform (0 0 0);
         inletValue      uniform (0 0 0);
     }
 }
-
 
 // ************************************************************************* //

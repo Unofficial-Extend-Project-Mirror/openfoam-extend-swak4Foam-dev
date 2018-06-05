@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
-| \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.0                                |
-|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -31,7 +31,8 @@ divSchemes
     default         none;
     div(phi,U)      Gauss upwind;
     div(phid,p)     Gauss upwind;
-    div(phiU,p)     Gauss linear;
+    div(phiU,p)     Gauss upwind;
+    div(phi,K)      Gauss linear;
     div(phi,h)      Gauss upwind;
     div(phi,k)      Gauss upwind;
     div(phi,epsilon) Gauss upwind;
@@ -41,6 +42,7 @@ divSchemes
     div(R)          Gauss linear;
     div(U)          Gauss linear;
     div((muEff*dev2(T(grad(U))))) Gauss linear;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
 }
 
 laplacianSchemes
@@ -49,11 +51,15 @@ laplacianSchemes
     laplacian(muEff,U) Gauss linear corrected;
     laplacian(mut,U) Gauss linear corrected;
     laplacian(DkEff,k) Gauss linear corrected;
+    laplacian((rho*DkEff),k) Gauss linear corrected;
     laplacian(DepsilonEff,epsilon) Gauss linear corrected;
+    laplacian((rho*DepsilonEff),epsilon) Gauss linear corrected;
     laplacian(DREff,R) Gauss linear corrected;
     laplacian(DomegaEff,omega) Gauss linear corrected;
     laplacian((rho*(1|A(U))),p) Gauss linear corrected;
     laplacian(alphaEff,h) Gauss linear corrected;
+    laplacian(rhorAUf,p) Gauss linear corrected;
+    laplacian((rho*nuEff),U) Gauss linear corrected;
 }
 
 interpolationSchemes
@@ -64,6 +70,12 @@ interpolationSchemes
 snGradSchemes
 {
     default         corrected;
+}
+
+fluxRequired
+{
+    default         no;
+    p               ;
 }
 
 

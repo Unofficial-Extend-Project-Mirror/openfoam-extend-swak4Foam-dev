@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
-| \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.0                                |
-|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -15,6 +15,12 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+<!--(if foamVersion>=(3,) and foamFork in ["openfoam","openfoamplus"])-->
+wallFunction kqRWallFunction;
+<!--(else)-->
+wallFunction compressible::kqRWallFunction;
+<!--(end)-->
+
 dimensions      [0 2 -2 0 0 0 0];
 
 internalField   uniform 1;
@@ -23,22 +29,22 @@ boundaryField
 {
     front
     {
-        type            compressible::kqRWallFunction;
+        type            $wallFunction;
         value           uniform 1;
     }
     back
     {
-        type            compressible::kqRWallFunction;
+        type            $wallFunction;
         value           uniform 1;
     }
     wall
     {
-        type            compressible::kqRWallFunction;
+        type            $wallFunction;
         value           uniform 1;
     }
     porosityWall
     {
-        type            compressible::kqRWallFunction;
+        type            $wallFunction;
         value           uniform 1;
     }
     inlet
