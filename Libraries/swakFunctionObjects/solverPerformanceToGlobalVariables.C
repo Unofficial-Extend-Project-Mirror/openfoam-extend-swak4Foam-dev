@@ -95,14 +95,23 @@ void Foam::solverPerformanceToGlobalVariables::addFieldToData(const word &name)
         return;
     }
 
+#ifdef FOAM_SOLVERPERFORMANCE_NITERATIONS_NO_VECTOR
+    setValue(name+"_nIterations_first",dimensioned<scalar>("nix",dimless,perf[0].nIterations()));
+    setValue(name+"_nIterations_last", dimensioned<scalar>("nix",dimless,perf[perf.size()-1].nIterations()));
+#else
     setValue(name+"_nIterations_first",dimensioned<T>("nix",dimless,perf[0].nIterations()));
     setValue(name+"_nIterations_last", dimensioned<T>("nix",dimless,perf[perf.size()-1].nIterations()));
+#endif
     setValue(name+"_initialResidual_first",dimensioned<T>("nix",dimless,perf[0].initialResidual()));
     setValue(name+"_initialResidual_last", dimensioned<T>("nix",dimless,perf[perf.size()-1].initialResidual()));
     setValue(name+"_finalResidual_first",dimensioned<T>("nix",dimless,perf[0].finalResidual()));
     setValue(name+"_finalResidual_last", dimensioned<T>("nix",dimless,perf[perf.size()-1].finalResidual()));
 
+#ifdef FOAM_SOLVERPERFORMANCE_NITERATIONS_NO_VECTOR
+    Field<scalar> nIterations(perf.size());
+#else
     Field<T> nIterations(perf.size());
+#endif
     Field<T> initialResidual(perf.size());
     Field<T> finalResidual(perf.size());
 
