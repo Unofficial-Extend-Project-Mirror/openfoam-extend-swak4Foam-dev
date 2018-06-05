@@ -49,7 +49,7 @@
   | Lagrangian/functionObject/angledDuctWithBalls               | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/functionObject/hotStream                         | \sad       | \checkmark | \sad       | \sad       |
   | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark | \checkmark | \checkmark |
-  | Lagrangian/LanguageIntegration/angledDuctWithLuaInject      |            | \checkmark |            | \checkmark |
+  | Lagrangian/LanguageIntegration/angledDuctWithLuaInject      |            | \checkmark |            |            |
   | Lagrangian/LanguageIntegration/angledDuctWithPython2Inject  |            | \checkmark |            |            |
   | Lagrangian/LanguageIntegration/angledDuctWithPython3Inject  |            | \checkmark |            |            |
   | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark | \checkmark | \checkmark |

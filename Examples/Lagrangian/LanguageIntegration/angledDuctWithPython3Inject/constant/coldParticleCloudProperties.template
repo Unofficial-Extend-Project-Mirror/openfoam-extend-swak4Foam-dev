@@ -98,7 +98,7 @@ subModels {
     {
         gravity         off;
         sphereDrag;
-<!--(if (foamFork=="openfoamplus" and foamVersion>=(1706,)) or (foamFork=="openfoam" and foamVersion>=(5,)))-->
+<!--(if (foamFork=="openfoamplus" and foamVersion>=(1706,)) or (foamFork=="openfoam" and foamVersion>=(2,3,)))-->
 <!--(else)-->
         virtualMass     off;
         pressureGradient off;
