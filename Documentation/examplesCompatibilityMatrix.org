@@ -54,7 +54,7 @@
   | Lagrangian/LanguageIntegration/angledDuctWithPython3Inject  |            | \checkmark |            |            |
   | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/parser/simplifiedSiwek                           | \sad       | \sad       |            | \checkmark |
-  | LuaIntegration/flowStatePitzDaily                           |            | \checkmark |            |            |
+  | LuaIntegration/flowStatePitzDaily                           | \checkmark | \checkmark |            |            |
   | LuaIntegration/luaScriptedBCAngledDuct                      |            | \checkmark |            |            |
   | LuaIntegration/raiseRelaxationPitzDaily                     | \checkmark | \dagger    |            |            |
   | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    | \checkmark | \checkmark |
@@ -64,7 +64,7 @@
   | other/counterFlowFlame2DInitialized                         | \checkmark | \sad       | \partial   | \checkmark |
   | other/simpleBendedPipe                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | other/topoSetDamBreak                                       | \checkmark | \checkmark | \checkmark | \checkmark |
-  | Python3Integration/flowStatePitzDaily                       |            | \checkmark |            |            |
+  | Python3Integration/flowStatePitzDaily                       | \checkmark | \checkmark |            |            |
   | Python3Integration/python3ScriptedBCAngledDuct              |            | \checkmark |            |            |
   | SimpleSurface/littleVolcano                                 | \checkmark |            | \checkmark |            |
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |

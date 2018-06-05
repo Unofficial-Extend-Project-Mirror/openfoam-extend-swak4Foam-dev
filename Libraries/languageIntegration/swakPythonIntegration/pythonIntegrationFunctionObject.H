@@ -41,7 +41,7 @@ Contributors/Copyright:
 #ifndef pythonIntegrationFunctionObject_H
 #define pythonIntegrationFunctionObject_H
 
-#include "functionObject.H"
+#include "simpleFunctionObject.H"
 #include "dictionary.H"
 #include "OFstream.H"
 #include "HashPtrTable.H"
@@ -64,7 +64,7 @@ namespace Foam
 
 class pythonIntegrationFunctionObject
 :
-    public functionObject,
+    public simpleFunctionObject,
     public pythonInterpreterWrapper
 {
     // Private Member Functions
@@ -119,26 +119,7 @@ public:
     virtual bool start();
 
     //- execute is called at each ++ or += of the time-loop
-    virtual bool execute(bool);
-
-#ifdef FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
-    bool execute()
-        {
-            return execute(false);
-        }
-#else
-#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
-    virtual bool execute()
-        {
-            return execute(false);
-        }
-
-    virtual bool write()
-        {
-            return execute(true);
-        }
-#endif
-#endif
+    virtual void writeSimple();
 
     //- Read and set the function object if it's data has changed
     virtual bool read(const dictionary& dict);

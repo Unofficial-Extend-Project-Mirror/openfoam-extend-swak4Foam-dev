@@ -23,37 +23,14 @@ solvers
         tolerance        1e-06;
         relTol           0.01;
     }
-    U
+    "(U|k|epsilon|R|nuTilda)"
     {
+<!--(if foamFork=="extend")-->
         solver           BiCGStab;
-        preconditioner   DILU;
-        tolerance        1e-05;
-        relTol           0.1;
-    }
-    k
-    {
-        solver           BiCGStab;
-        preconditioner   DILU;
-        tolerance        1e-05;
-        relTol           0.1;
-    }
-    epsilon
-    {
-        solver           BiCGStab;
-        preconditioner   DILU;
-        tolerance        1e-05;
-        relTol           0.1;
-    }
-    R
-    {
-        solver           BiCGStab;
-        preconditioner   DILU;
-        tolerance        1e-05;
-        relTol           0.1;
-    }
-    nuTilda
-    {
-        solver           BiCGStab;
+<!--(else)-->
+        solver           smoothSolver;
+        smoother         symGaussSeidel;
+<!--(end)-->
         preconditioner   DILU;
         tolerance        1e-05;
         relTol           0.1;

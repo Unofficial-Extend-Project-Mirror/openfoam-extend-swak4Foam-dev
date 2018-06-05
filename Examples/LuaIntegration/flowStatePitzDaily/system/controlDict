@@ -72,6 +72,7 @@ functions {
         type luaIntegration;
         startFile "$FOAM_CASE/system/start.lua";
         executeFile "$FOAM_CASE/system/execute.lua";
+        writeFile "$FOAM_CASE/system/write.lua";
         endCode "print('Never been here')";
         //        tolerateExceptions true;
         parallelMasterOnly false;

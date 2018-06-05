@@ -33,7 +33,11 @@ boundaryField
     }
     upperWall
     {
+<!--(if foamFork=="extend")-->
         type            nutWallFunction;
+<!--(else)-->
+        type            nutkWallFunction;
+<!--(end)-->
         Cmu             0.09;
         kappa           0.41;
         E               9.8;
@@ -41,7 +45,11 @@ boundaryField
     }
     lowerWall
     {
+<!--(if foamFork=="extend")-->
         type            nutWallFunction;
+<!--(else)-->
+        type            nutkWallFunction;
+<!--(end)-->
         Cmu             0.09;
         kappa           0.41;
         E               9.8;

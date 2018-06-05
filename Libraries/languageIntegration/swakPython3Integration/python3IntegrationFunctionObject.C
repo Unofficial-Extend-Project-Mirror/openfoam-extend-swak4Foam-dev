@@ -61,8 +61,10 @@ python3IntegrationFunctionObject::python3IntegrationFunctionObject
     const dictionary& dict
 )
 :
-    functionObject(
-        name
+    simpleFunctionObject(
+        name,
+        t,
+        dict
     ),
     python3InterpreterWrapper(
         t.db(),
@@ -107,6 +109,8 @@ bool python3IntegrationFunctionObject::start()
 {
     Pbug << "start" << endl;
 
+    simpleFunctionObject::start();
+
     if(!parallelNoRun()) {
         setRunTime();
     }
@@ -114,9 +118,9 @@ bool python3IntegrationFunctionObject::start()
     return executeCode(startCode_,true);
 }
 
-bool python3IntegrationFunctionObject::execute(bool)
+void python3IntegrationFunctionObject::writeSimple()
 {
-    Pbug << "execute" << endl;
+    Pbug << "writeSimple" << endl;
 
     if(!parallelNoRun()) {
         setRunTime();
@@ -127,8 +131,6 @@ bool python3IntegrationFunctionObject::execute(bool)
     if(this->time_.outputTime()) {
         executeCode(writeCode_,true);
     }
-
-    return true;
 }
 
 bool python3IntegrationFunctionObject::end()

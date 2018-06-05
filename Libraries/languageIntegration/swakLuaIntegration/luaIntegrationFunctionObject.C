@@ -61,8 +61,10 @@ luaIntegrationFunctionObject::luaIntegrationFunctionObject
     const dictionary& dict
 )
 :
-    functionObject(
-        name
+    simpleFunctionObject(
+        name,
+        t,
+        dict
     ),
     luaInterpreterWrapper(
         t.db(),
@@ -105,6 +107,8 @@ bool luaIntegrationFunctionObject::start()
 {
     Pbug << "start" << endl;
 
+    simpleFunctionObject::start();
+
     if(!parallelNoRun()) {
         setRunTime();
     }
@@ -119,9 +123,9 @@ bool luaIntegrationFunctionObject::start()
 
 }
 
-bool luaIntegrationFunctionObject::execute(bool)
+void luaIntegrationFunctionObject::writeSimple()
 {
-    Pbug << "execute" << endl;
+    Pbug << "writeSimple" << endl;
 
     if(!parallelNoRun()) {
         setRunTime();
@@ -136,8 +140,6 @@ bool luaIntegrationFunctionObject::execute(bool)
     }
 
     interpreterStructsToDictionaries();
-
-    return true;
 }
 
 bool luaIntegrationFunctionObject::end()
