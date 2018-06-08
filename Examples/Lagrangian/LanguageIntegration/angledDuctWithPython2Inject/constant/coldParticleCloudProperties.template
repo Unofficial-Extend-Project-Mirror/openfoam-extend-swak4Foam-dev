@@ -205,26 +205,9 @@ subModels {
     {
         first
         {
-            type            patchInjection;
-            patchName       inlet;
-            patch $patchName;
-            U0              ( 1 0 0 );
-            flowRateProfile constant  0.1;
-            massTotal        1.0e-12;
-            SOI              0;
-            parcelBasisType mass;
-            duration 10;
-            parcelsPerSecond 500;
-            sizeDistribution
-            {
-                type fixedValue;
-                fixedValueDistribution
-                {
-                    value 1e-6;
-                }
-            }
+            $SwakScriptableInjectionCoeffs;
+            type SwakScriptableInjection;
         }
-
     }
 
     PostProcessingModel PatchPostProcessing;
