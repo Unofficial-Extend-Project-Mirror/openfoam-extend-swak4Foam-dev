@@ -1,0 +1,83 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      epsilon;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+<!--(if foamVersion>=(3,) and foamFork in ["openfoam","openfoamplus"])-->
+wallFunction epsilonWallFunction;
+<!--(else)-->
+wallFunction compressible::epsilonWallFunction;
+<!--(end)-->
+
+dimensions      [0 2 -3 0 0 0 0];
+
+internalField   uniform 200;
+
+boundaryField
+{
+    front
+    {
+        type            $wallFunction;
+        value           uniform 200;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
+    }
+    back
+    {
+        type            $wallFunction;
+        value           uniform 200;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
+    }
+    wall
+    {
+        type            $wallFunction;
+        value           uniform 200;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
+    }
+    porosityWall
+    {
+        type            $wallFunction;
+        value           uniform 200;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
+    }
+    inlet
+    {
+<!--(if foamVersion>=(3,) and foamFork in ["openfoam","openfoamplus"])-->
+        type            turbulentMixingLengthDissipationRateInlet;
+<!--(else)-->
+        type            compressible::turbulentMixingLengthDissipationRateInlet;
+<!--(end)-->
+        mixingLength    0.005;
+        phi             phi;
+        k               k;
+        value           uniform 200;
+    }
+    outlet
+    {
+        type            inletOutlet;
+        inletValue      uniform 200;
+        value           uniform 200;
+    }
+}
+
+
+// ************************************************************************* //

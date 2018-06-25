@@ -1,5 +1,49 @@
-export SWAK_PYTHON_INCLUDE="$(python-config --cflags)"
-export SWAK_PYTHON_LINK="$(python-config --ldflags)"
+# -*- shell-script -*-
+
+for p2 in 7 6
+do
+    WHICHPATH=$(which 2>/dev/null python2.$p2-config)
+    if [[ $? == 0 ]]; then
+        export SWAK_PYTHON2_INCLUDE="$(python2.$p2-config --cflags)"
+        export SWAK_PYTHON2_LINK="$(python2.$p2-config --ldflags)"
+        echo "Using python2.$p2 at $WHICHPATH for python2"
+        break
+    fi
+done
+
+for p3 in 9 8 7 6 5 4 3
+do
+    WHICHPATH=$(which 2>/dev/null python3.$p3-config)
+    if [[ $? == 0 ]]; then
+        export SWAK_PYTHON3_INCLUDE="$(python3.$p3-config --cflags)"
+        export SWAK_PYTHON3_LINK="$(python3.$p3-config --ldflags)"
+        echo "Using python3.$p3 at $WHICHPATH for python3"
+        break
+    fi
+done
+
+swakDir=$(pwd)
+requirementsDir=$swakDir/privateRequirements
+
+if [ -e $requirementsDir/include/lua.h ];
+then
+    echo "Using our own Lua at $requirementsDir"
+    export SWAK_LUA_INCLUDE=-I$requirementsDir/include
+    export SWAK_LUA_LINK="-L$requirementsDir/lib -llua"
+else
+    HASLUA=$(pkg-config --exists lua)
+    if [[ $? == 0 ]]; then
+        LUAVERSION=$(pkg-config --modversion lua)
+        if [[ "$LUAVERSION" < "5.3" ]]
+        then
+            echo "Lua version $LUAVERSION too small. At least 5.3 required"
+        else
+            echo "Using lua"
+            export SWAK_LUA_INCLUDE=$(pkg-config --cflags lua)
+            export SWAK_LUA_LINK=$(pkg-config --libs lua)
+        fi
+    fi
+fi
 
 # List separated by : with directories to user plugins
 # export SWAK_USER_PLUGINS=../Examples/UserPlugins/swakTestFunctionPlugins

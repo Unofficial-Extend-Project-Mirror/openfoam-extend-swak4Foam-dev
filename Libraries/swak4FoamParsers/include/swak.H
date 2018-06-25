@@ -1,31 +1,26 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
@@ -38,9 +33,9 @@ Description
 SourceFiles
 
 Contributors/Copyright:
-    2012-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2015-2016 Bruno Santos <wyldckat@gmail.com>
-    2016 Mark Olesen <Mark.Olesen@esi-group.com>
+    2016-2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -272,8 +267,7 @@ Contributors/Copyright:
 #endif
 
 #if (OPENFOAM_COM >= 1612) \
-    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(3,0)) \
-    || (defined(FOAM_VERSION4SWAK_IS_EXTEND) && FOAM_VERSION4SWAK>VERSION_NR(4,0,0))
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
 #define FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
 #endif
 
@@ -434,6 +428,11 @@ Contributors/Copyright:
 #define FOAM_LDUMATRIX_SOLVERPERFORMANCE
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_COM) && OPENFOAM_COM < 1612)      \
+        || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK<VERSION_NR(5,0,0))
+#define FOAM_SOLVERPERFORMANCE_NITERATIONS_NO_VECTOR
+#endif
+
 #if FOAM_VERSION4SWAK >= VERSION_NR(4,0,0) && defined(FOAM_VERSION4SWAK_IS_EXTEND)
 #define FOAM_FVSCHEMES_HAS_SETFLUXREQUIRED
 #endif
@@ -454,9 +453,20 @@ Contributors/Copyright:
 #define FOAM_HAS_TOLERANCE_SWITCHES
 #endif
 
+#ifdef FOAM_VERSION4SWAK_IS_EXTEND
+#define FOAM_HAS_LONG_DOUBLE_SCALAR
+#endif
+
+#if defined(FOAM_VERSION4SWAK_IS_EXTEND) && FOAM_VERSION4SWAK<VERSION_NR(4,0,9)
+#define FOAM_TOKEN_CLASS_HAS_FATAL_ERROR
+#endif
+
 #if (OPENFOAM_COM >= 1606) \
     || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(5,0,0))
 #define FOAM_HAS_TYPE_HEADER_OK
+#if (OPENFOAM_COM >= 1712)
+#define FOAM_TYPE_HEADER_OK_HAS_EXTRA_PARAMTERS
+#endif
 #endif
 
 #if (OPENFOAM_COM >= 1606) \
@@ -516,7 +526,9 @@ Contributors/Copyright:
 
 #if __cplusplus < 201103L
 #define FOAM_CXX_COMPILER_HAS_NO_NULLPTR
+#ifndef nullptr
 #define nullptr NULL
+#endif
 #endif
 
 #if (OPENFOAM_COM >= 1706)
