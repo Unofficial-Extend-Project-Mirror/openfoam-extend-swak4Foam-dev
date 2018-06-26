@@ -46,6 +46,7 @@
   | groovyBC/movingConeDistorted                                | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/pulsedPitzDaily                                    | \checkmark | \sad       | \checkmark | \checkmark |
   | groovyBC/wobbler                                            | \checkmark | \checkmark | \checkmark | \checkmark |
+  | ImmersedBC/pitzDailyImmersed                                | \dagger    | \checkmark | \dagger    | \dagger    |
   | Lagrangian/functionObject/angledDuctWithBalls               | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/functionObject/hotStream                         | \sad       | \checkmark | \sad       | \sad       |
   | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark | \checkmark | \checkmark |
