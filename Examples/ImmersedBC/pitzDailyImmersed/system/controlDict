@@ -19,6 +19,7 @@ libs
     "libimmersedBoundary.so"
     "liblduSolvers.so"
     "libsimpleSwakFunctionObjects.so"
+    "libgroovyBC.so"
 );
 
 application     simpleFoam;
@@ -136,6 +137,12 @@ functions
             quantile0.5
             quantile0.9
             quantile0.99
+        );
+    }
+    calcStress {
+        type readAndUpdateFields;
+        fields (
+            stress
         );
     }
 );
