@@ -549,6 +549,11 @@ Contributors/Copyright:
 #define FOAM_LIST_HAS_MOVABLE_CONSTRUCT
 #endif
 
+#if FOAM_VERSION4SWAK >= VERSION_NR(4,1,0) && defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#define FOAM_HAS_IMMERSED_BOUNDARY_CONDITION
+#endif
+
+
 #include "swakVersion.H"
 #include "DebugOStream.H"
 
