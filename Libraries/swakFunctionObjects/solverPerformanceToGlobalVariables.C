@@ -1,35 +1,30 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2013, 2015 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id:  $
@@ -61,7 +56,8 @@ Foam::solverPerformanceToGlobalVariables::solverPerformanceToGlobalVariables
 )
     :
     obr_(obr),
-    fieldNames_(dict.lookup("fieldNames")),
+    scalarFieldNames_(dict.lookup("fieldNames")),
+    vectorFieldNames_(dict.lookupOrDefault("vectorFieldNames",wordList())),
     toGlobalNamespace_(dict.lookup("toGlobalNamespace")),
     noReset_(dict.lookupOrDefault<bool>("noReset",false))
 {
@@ -82,33 +78,42 @@ Foam::solverPerformanceToGlobalVariables::solverPerformanceToGlobalVariables
 Foam::solverPerformanceToGlobalVariables::~solverPerformanceToGlobalVariables()
 {}
 
+template<class T>
 void Foam::solverPerformanceToGlobalVariables::addFieldToData(const word &name)
 {
     Dbug << "Getting solver performance for " << name << endl;
 
     const data &theData=dynamicCast<const fvMesh&>(obr_);
     //    Info << theData.solverPerformanceDict() << endl;
-    List<solverPerformance> perf(
+    List<SolverPerformance<T> > perf(
         theData.solverPerformanceDict()[name]
     );
 
-    setValue(name+"_nrOfPerformances",perf.size());
-
+    setValue(name+"_nrOfPerformances",scalar(perf.size()));
     if(perf.size()==0) {
         Dbug << "No performances. Nothing stored" << endl;
         return;
     }
 
-    setValue(name+"_nIterations_first",perf[0].nIterations());
-    setValue(name+"_nIterations_last", perf[perf.size()-1].nIterations());
-    setValue(name+"_initialResidual_first",perf[0].initialResidual());
-    setValue(name+"_initialResidual_last", perf[perf.size()-1].initialResidual());
-    setValue(name+"_finalResidual_first",perf[0].finalResidual());
-    setValue(name+"_finalResidual_last", perf[perf.size()-1].finalResidual());
+#ifdef FOAM_SOLVERPERFORMANCE_NITERATIONS_NO_VECTOR
+    setValue(name+"_nIterations_first",dimensioned<scalar>("nix",dimless,perf[0].nIterations()));
+    setValue(name+"_nIterations_last", dimensioned<scalar>("nix",dimless,perf[perf.size()-1].nIterations()));
+#else
+    setValue(name+"_nIterations_first",dimensioned<T>("nix",dimless,perf[0].nIterations()));
+    setValue(name+"_nIterations_last", dimensioned<T>("nix",dimless,perf[perf.size()-1].nIterations()));
+#endif
+    setValue(name+"_initialResidual_first",dimensioned<T>("nix",dimless,perf[0].initialResidual()));
+    setValue(name+"_initialResidual_last", dimensioned<T>("nix",dimless,perf[perf.size()-1].initialResidual()));
+    setValue(name+"_finalResidual_first",dimensioned<T>("nix",dimless,perf[0].finalResidual()));
+    setValue(name+"_finalResidual_last", dimensioned<T>("nix",dimless,perf[perf.size()-1].finalResidual()));
 
-    scalarField nIterations(perf.size());
-    scalarField initialResidual(perf.size());
-    scalarField finalResidual(perf.size());
+#ifdef FOAM_SOLVERPERFORMANCE_NITERATIONS_NO_VECTOR
+    Field<scalar> nIterations(perf.size());
+#else
+    Field<T> nIterations(perf.size());
+#endif
+    Field<T> initialResidual(perf.size());
+    Field<T> finalResidual(perf.size());
 
     for(int i=0;i<perf.size();i++) {
         nIterations[i]=perf[i].nIterations();
@@ -121,9 +126,10 @@ void Foam::solverPerformanceToGlobalVariables::addFieldToData(const word &name)
     setValue(name+"_finalResidual",finalResidual);
 }
 
+template<class T>
 void Foam::solverPerformanceToGlobalVariables::setValue(
     const word &name,
-    scalar value
+    T value
 ) {
     Dbug << "Setting " << name << " to " << value << endl;
 
@@ -140,9 +146,10 @@ void Foam::solverPerformanceToGlobalVariables::setValue(
     }
 }
 
+template<class T>
 void Foam::solverPerformanceToGlobalVariables::setValue(
     const word &name,
-    const scalarField &value
+    const Field<T> &value
 ) {
     Dbug << "Setting " << name << " to " << value << endl;
 
@@ -161,8 +168,11 @@ void Foam::solverPerformanceToGlobalVariables::setValue(
 
 void Foam::solverPerformanceToGlobalVariables::executeAndWriteToGlobal()
 {
-    forAll(fieldNames_,i) {
-        addFieldToData(fieldNames_[i]);
+    forAll(scalarFieldNames_,i) {
+        addFieldToData<scalar>(scalarFieldNames_[i]);
+    }
+    forAll(vectorFieldNames_,i) {
+        addFieldToData<vector>(vectorFieldNames_[i]);
     }
 }
 

@@ -31,6 +31,7 @@ misc/listMeshData/listMeshDataFunctionObject.C
 misc/readGravitation/readGravitationFunctionObject.C
 misc/readAndUpdateFields/readAndUpdateFields.C
 misc/readAndUpdateFields/readAndUpdateFieldsFunctionObject.C
+misc/readAndWriteDictionary/readAndWriteDictionaryFunctionObject.C
 misc/writeOldTimesOnSignal/writeOldTimesOnSignal.C
 misc/provokeSignal/provokeSignalFunctionObject.C
 misc/loadTopoSets/loadTopoSetsFunctionObject.C

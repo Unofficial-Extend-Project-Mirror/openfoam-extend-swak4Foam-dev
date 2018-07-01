@@ -1,0 +1,84 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 293;
+
+boundaryField
+{
+
+    front
+    {
+        type            zeroGradient;
+    }
+    back
+    {
+        type            zeroGradient;
+    }
+    wall
+    {
+        type            zeroGradient;
+    }
+    porosityWall
+    {
+        type            swakScriptable;
+        value $internalField;
+        languageWrapperType python3;
+        initBCFile "$FOAM_CASE/system/initBC.py";
+        evaluateBCFile "$FOAM_CASE/system/evaluateBC.py";
+        writeBCFile "$FOAM_CASE/system/writeBC.py";
+        variablesToUse (
+            TInner
+            TValue
+            position
+            lookIn
+            slipVel
+        );
+        writtenDataStructs (
+            faceStates
+        );
+        python3Data {}
+        python3DictionaryParserErrorMode fail;
+        variables (
+            "position=pos();"
+        );
+        initVariables (
+            "lookIn=normal();"
+        );
+        evaluateVariables (
+            "TInner=internalField(T);"
+            "TValue=T;"
+            "slipVel=mag(U);"
+        );
+        interactiveAfterException true;
+    }
+
+    inlet
+    {
+        type            fixedValue;
+        value           $internalField;
+    }
+    outlet
+    {
+        type            inletOutlet;
+        value           $internalField;
+        inletValue      $internalField;
+    }
+}
+
+
+// ************************************************************************* //

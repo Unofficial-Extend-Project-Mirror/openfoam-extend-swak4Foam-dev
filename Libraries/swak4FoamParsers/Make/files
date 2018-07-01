@@ -40,6 +40,9 @@ ExpressionResult/StoredStackExpressionResult.C
 setsAndSurfaces/swakRegistryProxySurface.C
 setsAndSurfaces/swakRegistryProxySet.C
 
+RawFoamDictionaryParser.yy
+RawFoamDictionaryParserDriver.C
+
 makeSwakDataEntry.C
 FieldValueExpressionParser.yy
 PatchValueExpressionParser.yy

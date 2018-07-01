@@ -22,5 +22,5 @@ Last-Update: <YYYY-MM-DD>
 --- /dev/null
 +++ swak4foam-%(ofpkg)s-%(vers)s/swakConfiguration
 @@ -0,0 +1,2 @@
-+export SWAK_PYTHON_INCLUDE="-I/usr/include/python%(pythonver)s"
-+export SWAK_PYTHON_LINK="-lpython%(pythonver)s"
++export SWAK_PYTHON2_INCLUDE="-I/usr/include/python%(pythonver)s"
++export SWAK_PYTHON2_LINK="-lpython%(pythonver)s"

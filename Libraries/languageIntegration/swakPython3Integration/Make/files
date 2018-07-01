@@ -1,0 +1,7 @@
+Python3FoamDictionaryParserDriver.C
+
+python3InterpreterWrapper.C
+python3IntegrationFunctionObject.C
+makeFunctionObjects.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswakPython3Integration$(SWAK_PYTHON3_INTEGRATION_SUFFIX)

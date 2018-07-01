@@ -1,0 +1,99 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      decomposeParDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+numberOfSubdomains 4;
+
+method          simple;
+;
+
+simpleCoeffs
+{
+    n               ( 1 2 3 );
+    nPre            1 ( 3 2 1);
+    nUni            3 { 1 };
+    delta           0.001;
+}
+
+hierarchicalCoeffs
+{
+    n               ( 1 1 1 );
+    delta           0.001;
+    order           xyz;
+}
+
+metisCoeffs
+{
+    processorWeights ( 2 1.2 1.5 1 3.1415 );
+}
+
+manualCoeffs
+{
+    dataFile        "";
+}
+
+distributed     no;
+
+aWord buh;
+
+roots           ( );
+
+boolList ( on off true no yes false );
+
+onlyYes ( yes yes yes);
+onlyYes2 3 { true };
+
+mixedList ( 1 2.3 2);
+
+labelListList ((1 2 3) (4 5) (6 7 8 9));
+
+scalarListList ((2.4 5) (3));
+
+mixedScalarListList ((1 2 3) (4 5.5 6) (7 8 9));
+
+uniformScalarListList ( 3 {1.} (1 1 1) (1 1 1));
+
+emptyListList (());
+
+wordWordWord ((ho ja) (hi fo fo));
+
+stringList ("nix" "sicher kein Wort");
+
+stringsOfString (("nix da" "geh") ("he") () ("gg"));
+
+wordList ( boo ya tribe);
+
+wordListSame ( bo bo bo);
+
+retry $distributed;   // expected error
+
+sequence 2 3; // expected error
+
+// "nix.+" test;
+
+a 2;
+
+nu              nu [0 2 -1 0 0 0 0] 1e-05;
+
+CrossPowerLawCoeffs
+{
+    nu0             nu0 [0 2 -1 0 0 0 0] 1e-06;
+    nuInf           nuInf [0 2 -1 0 0 0 0] 1e-06;
+    m               m [0 0 1 0 0 0 0] 1;
+    n               n [0 0 0 0 0 0 0] 1;
+}
+
+// ************************************************************************* //

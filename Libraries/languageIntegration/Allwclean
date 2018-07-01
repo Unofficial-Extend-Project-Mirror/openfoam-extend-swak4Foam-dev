@@ -1,0 +1,11 @@
+#! /bin/sh
+
+wclean swakGeneralLanguageIntegration
+
+wclean swakPythonIntegration
+
+wclean swakPython3Integration
+
+wclean swakLuaIntegration
+
+wclean swakScriptableLagrangian
