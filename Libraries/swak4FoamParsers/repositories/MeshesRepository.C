@@ -340,7 +340,7 @@ meshToMeshOrder MeshesRepository::getInterpolationOrder(
         return interpolationOrder_[name];
     } else {
 #ifdef FOAM_NEW_MESH2MESH
-        return meshToMesh::imCellVolumeWeight;
+        return meshToMesh::interpolationMethod::imCellVolumeWeight;
 #else
         return meshToMesh::INTERPOLATE;
 #endif

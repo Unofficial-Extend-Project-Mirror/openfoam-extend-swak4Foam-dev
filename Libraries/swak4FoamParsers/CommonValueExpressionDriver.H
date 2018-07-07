@@ -710,7 +710,7 @@ public:
         const word &fieldName,
         meshToMeshOrder theOrder=
 #ifdef FOAM_NEW_MESH2MESH
-        meshToMesh::imCellVolumeWeight
+        meshToMesh::interpolationMethod::imCellVolumeWeight
 #else
         meshToMesh::INTERPOLATE
 #endif
