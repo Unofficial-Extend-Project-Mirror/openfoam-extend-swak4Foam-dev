@@ -148,10 +148,59 @@ bool Foam::swakRegistryProxySurface::update()
 }
 
 
+// Foam::tmp<Foam::scalarField>
+// Foam::swakRegistryProxySurface::sample
+// (
+//     const volScalarField& vField
+// ) const
+// {
+//     return realSurface().sample(vField);
+// }
+
+
+// Foam::tmp<Foam::vectorField>
+// Foam::swakRegistryProxySurface::sample
+// (
+//     const volVectorField& vField
+// ) const
+// {
+//     return realSurface().sample(vField);
+// }
+
+
+// Foam::tmp<Foam::sphericalTensorField>
+// Foam::swakRegistryProxySurface::sample
+// (
+//     const volSphericalTensorField& vField
+// ) const
+// {
+//     return realSurface().sample(vField);
+// }
+
+
+// Foam::tmp<Foam::symmTensorField>
+// Foam::swakRegistryProxySurface::sample
+// (
+//     const volSymmTensorField& vField
+// ) const
+// {
+//     return realSurface().sample(vField);
+// }
+
+
+// Foam::tmp<Foam::tensorField>
+// Foam::swakRegistryProxySurface::sample
+// (
+//     const volTensorField& vField
+// ) const
+// {
+//     return realSurface().sample(vField);
+// }
+
 Foam::tmp<Foam::scalarField>
 Foam::swakRegistryProxySurface::sample
 (
-    const volScalarField& vField
+    const surfaceScalarField& vField
 ) const
 {
     return realSurface().sample(vField);
@@ -161,7 +210,7 @@ Foam::swakRegistryProxySurface::sample
 Foam::tmp<Foam::vectorField>
 Foam::swakRegistryProxySurface::sample
 (
-    const volVectorField& vField
+    const surfaceVectorField& vField
 ) const
 {
     return realSurface().sample(vField);
@@ -171,7 +220,7 @@ Foam::swakRegistryProxySurface::sample
 Foam::tmp<Foam::sphericalTensorField>
 Foam::swakRegistryProxySurface::sample
 (
-    const volSphericalTensorField& vField
+    const surfaceSphericalTensorField& vField
 ) const
 {
     return realSurface().sample(vField);
@@ -181,7 +230,7 @@ Foam::swakRegistryProxySurface::sample
 Foam::tmp<Foam::symmTensorField>
 Foam::swakRegistryProxySurface::sample
 (
-    const volSymmTensorField& vField
+    const surfaceSymmTensorField& vField
 ) const
 {
     return realSurface().sample(vField);
@@ -191,12 +240,11 @@ Foam::swakRegistryProxySurface::sample
 Foam::tmp<Foam::tensorField>
 Foam::swakRegistryProxySurface::sample
 (
-    const volTensorField& vField
+    const surfaceTensorField& vField
 ) const
 {
     return realSurface().sample(vField);
 }
-
 
 Foam::tmp<Foam::scalarField>
 Foam::swakRegistryProxySurface::interpolate

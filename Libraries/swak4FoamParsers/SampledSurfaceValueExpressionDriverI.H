@@ -94,9 +94,14 @@ namespace Foam {
                     new Field<Type>(
                         this->theSurface_.sample(
                             (
-                                !oldTime ?
-                                this->mesh().lookupObject<volField>(name) :
-                                this->mesh().lookupObject<volField>(name).oldTime()
+                                interpolation<Type>::New(
+                                    interpolationType_,
+                                    (
+                                        !oldTime ?
+                                        this->mesh().lookupObject<volField>(name) :
+                                        this->mesh().lookupObject<volField>(name).oldTime()
+                                    )
+                                )
                             )
                         )
                     )
@@ -133,9 +138,14 @@ namespace Foam {
                     new Field<Type>(
                         this->theSurface_.sample(
                             (
-                                !oldTime ?
-                                f() :
-                                f->oldTime()
+                                interpolation<Type>::New(
+                                    interpolationType_,
+                                    (
+                                        !oldTime ?
+                                        f() :
+                                        f->oldTime()
+                                    )
+                                )
                             )
                         )
                     )

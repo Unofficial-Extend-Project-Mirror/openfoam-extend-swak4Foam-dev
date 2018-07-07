@@ -148,32 +148,62 @@ public:
         //- sample field on surface
         virtual tmp<scalarField> sample
         (
-            const volScalarField&
+            const surfaceScalarField&
         ) const;
 
         //- sample field on surface
         virtual tmp<vectorField> sample
         (
-            const volVectorField&
+            const surfaceVectorField&
         ) const;
 
         //- sample field on surface
         virtual tmp<sphericalTensorField> sample
         (
-            const volSphericalTensorField&
+            const surfaceSphericalTensorField&
         ) const;
 
         //- sample field on surface
         virtual tmp<symmTensorField> sample
         (
-            const volSymmTensorField&
+            const surfaceSymmTensorField&
         ) const;
 
         //- sample field on surface
         virtual tmp<tensorField> sample
         (
-            const volTensorField&
+            const surfaceTensorField&
         ) const;
+
+    // //- sample field on surface
+    // virtual tmp<scalarField> sample
+    // (
+    //     const volScalarField&
+    // ) const;
+
+    // //- sample field on surface
+    // virtual tmp<vectorField> sample
+    // (
+    //     const volVectorField&
+    // ) const;
+
+    // //- sample field on surface
+    // virtual tmp<sphericalTensorField> sample
+    // (
+    //     const volSphericalTensorField&
+    // ) const;
+
+    // //- sample field on surface
+    // virtual tmp<symmTensorField> sample
+    // (
+    //     const volSymmTensorField&
+    // ) const;
+
+    // //- sample field on surface
+    // virtual tmp<tensorField> sample
+    // (
+    //     const volTensorField&
+    // ) const;
 
 
         //- interpolate field on surface
@@ -204,6 +234,38 @@ public:
         virtual tmp<tensorField> interpolate
         (
             const interpolation<tensor>&
+        ) const;
+
+
+    // New interface
+        //- sample field on surface
+        virtual tmp<scalarField> sample
+        (
+            const interpolation<scalar> &
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<vectorField> sample
+        (
+            const interpolation<vector> &
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<sphericalTensorField> sample
+        (
+            const interpolation<sphericalTensor> &
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<symmTensorField> sample
+        (
+            const interpolation<symmTensor> &
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<tensorField> sample
+        (
+            const interpolation<tensor> &
         ) const;
 
         //- Write
