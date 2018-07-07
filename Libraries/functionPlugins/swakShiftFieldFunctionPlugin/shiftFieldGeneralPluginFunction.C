@@ -80,10 +80,10 @@ void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
             origMesh.polyMesh::db()
         ),
 #ifdef FOAM_LIST_HAS_MOVABLE_CONSTRUCT
-        std::move(origMesh.points()),
-        std::move(origMesh.faces()),
-        std::move(origMesh.faceOwner()),
-        std::move(origMesh.faceNeighbour())
+        pointField(origMesh.points()),
+        faceList(origMesh.faces()),
+        labelList(origMesh.faceOwner()),
+        labelList(origMesh.faceNeighbour())
 #else
         Xfer<pointField>(origMesh.points()),
         Xfer<faceList>(origMesh.faces()),
@@ -155,6 +155,7 @@ void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
         //        meshToMesh::imMapNearest, // stable. No default
         ,Order
 #endif
+        ,meshToMesh::procMapMethod::pmAABB
 #ifndef FOAM_MESHTOMESH_OLD_STYLE
         ,false
 #endif
