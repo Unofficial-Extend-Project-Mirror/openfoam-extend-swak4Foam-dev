@@ -142,20 +142,24 @@ fvMesh &MeshesRepository::addMesh(
 
     times_.insert(
         name,
-        new Time(
-            Time::controlDictName,
-            usedN.path(),
-            fileName(usedN.name())
+        autoPtr<Time>(
+            new Time(
+                Time::controlDictName,
+                usedN.path(),
+                fileName(usedN.name())
+            )
         )
     );
     meshes_.insert(
         name,
-        new fvMesh(
-            IOobject(
-                region,
-                (*times_[name]).timeName(),
-                (*times_[name]),
-                Foam::IOobject::MUST_READ
+        autoPtr<fvMesh>(
+            new fvMesh(
+                IOobject(
+                    region,
+                    (*times_[name]).timeName(),
+                    (*times_[name]),
+                    Foam::IOobject::MUST_READ
+                )
             )
         )
     );
@@ -194,12 +198,14 @@ fvMesh &MeshesRepository::addCoupledMesh(
 
     meshes_.insert(
         name,
-        new fvMesh(
-            IOobject(
-                region,
-                time.timeName(),
-                time,
-                Foam::IOobject::MUST_READ
+        autoPtr<fvMesh>(
+            new fvMesh(
+                IOobject(
+                    region,
+                    time.timeName(),
+                    time,
+                    Foam::IOobject::MUST_READ
+                )
             )
         )
     );
@@ -229,12 +235,14 @@ meshToMesh &MeshesRepository::getMeshToMesh(
     if(!meshInterpolations_.found(name)) {
          meshInterpolations_.insert(
              name,
-             new meshToMesh(
-                 *meshes_[name],
-                 mesh
-#ifdef FOAM_NEW_MESH2MESH
-                 ,getInterpolationOrder(name)
-#endif
+             autoPtr<meshToMesh>(
+                 new meshToMesh(
+                     *meshes_[name],
+                     mesh
+                         #ifdef FOAM_NEW_MESH2MESH
+                     ,getInterpolationOrder(name)
+                         #endif
+                 )
              )
          );
     }

@@ -124,7 +124,8 @@ void timelineFunctionObject::closeAllFiles()
 
     forAllIter(HashPtrTable<OFstream>, filePtrs_, iter)
     {
-        delete filePtrs_.remove(iter);
+        //        delete filePtrs_.remove(iter);
+        filePtrs_.remove(iter);
     }
 }
 
@@ -146,7 +147,8 @@ bool timelineFunctionObject::start()
                 Dbug << "Closing file " << iter.key() << endl;
 
                 // Field has been removed. Close file
-                delete filePtrs_.remove(iter);
+                //                delete filePtrs_.remove(iter);
+                filePtrs_.remove(iter);
             }
         }
 
@@ -172,7 +174,12 @@ bool timelineFunctionObject::start()
                 }
                 OFstream* sPtr = new OFstream(theDir/fldName+fileExtension_);
 
-                filePtrs_.insert(fldName, sPtr);
+                filePtrs_.insert(
+                    fldName,
+                    autoPtr<OFstream>(
+                        sPtr
+                    )
+                );
 
                 OFstream &s=*sPtr;
 

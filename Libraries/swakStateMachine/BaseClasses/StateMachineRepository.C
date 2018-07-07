@@ -214,7 +214,8 @@ void StateMachineRepository::insert(
     } else {
         allMachines_.insert(
             name,
-            machine.ptr()
+            //            machine.ptr()
+            machine
         );
     }
     if(readFromRestart_.found(name)) {

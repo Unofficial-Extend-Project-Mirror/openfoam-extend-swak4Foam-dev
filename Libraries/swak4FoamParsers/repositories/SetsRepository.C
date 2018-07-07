@@ -142,12 +142,14 @@ sampledSet &SetsRepository::getSet(
         }
         sets_.insert(
             name,
-            sampledSet::New(
-                name,
-                mesh,
-                getSearch(mesh),
-                dict.subDict("set")
-            ).ptr()
+            autoPtr<sampledSet>(
+                sampledSet::New(
+                    name,
+                    mesh,
+                    getSearch(mesh),
+                    dict.subDict("set")
+                ).ptr()
+            )
         );
 
         if(debug) {
@@ -227,7 +229,9 @@ meshSearch &SetsRepository::getSearch(
         }
         meshSearches_.insert(
             name,
-            new meshSearch(mesh)
+            autoPtr<meshSearch>(
+                new meshSearch(mesh)
+            )
         );
 
         return *meshSearches_[name];

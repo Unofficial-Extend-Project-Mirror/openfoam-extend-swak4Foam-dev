@@ -157,11 +157,13 @@ sampledSurface &SurfacesRepository::getSurface(
         }
         surfaces_.insert(
             name,
-            sampledSurface::New(
-                name,
-                mesh,
-                dict.subDict("surface")
-            ).ptr()
+            autoPtr<sampledSurface>(
+                sampledSurface::New(
+                    name,
+                    mesh,
+                    dict.subDict("surface")
+                ).ptr()
+            )
         );
 
         bool writeSurface=dict.lookupOrDefault<bool>("autoWriteSurface",false);

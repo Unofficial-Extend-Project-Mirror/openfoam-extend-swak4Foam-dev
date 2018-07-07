@@ -123,7 +123,8 @@ void CloudRepository::addUpdateableCloud(
     } else {
         updateableClouds_.insert(
             name,
-            c.ptr()
+            //            c.ptr()
+            c
         );
     }
 }
@@ -153,7 +154,8 @@ void CloudRepository::addCloud(
     } else {
         clouds_.insert(
             name,
-            c.ptr()
+            // c.ptr()
+            c
         );
     }
 }

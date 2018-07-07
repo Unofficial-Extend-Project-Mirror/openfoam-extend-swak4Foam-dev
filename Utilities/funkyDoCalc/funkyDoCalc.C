@@ -116,7 +116,9 @@ void writeData(
             firstTime=true;
             csvFiles.insert(
                 name,
-                new OFstream(dataDir / name+".csv")
+                autoPtr<OFstream>(
+                    new OFstream(dataDir / name+".csv")
+                )
             );
         }
     }

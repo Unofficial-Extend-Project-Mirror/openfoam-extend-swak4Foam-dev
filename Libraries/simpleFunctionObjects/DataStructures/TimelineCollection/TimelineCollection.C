@@ -106,8 +106,10 @@ OFstream &TimelineCollection::operator()(
         mkDir(outputDirectory_/timeName);
         outputFilePtr_.insert(
             usedName,
-            new OFstream(
-                outputDirectory_/timeName/usedName
+            autoPtr<OFstream> (
+                new OFstream(
+                    outputDirectory_/timeName/usedName
+                )
             )
         );
         //        Pout << headerSpecs_ << endl;
