@@ -65,19 +65,22 @@ swakPsiChemistryModelPluginFunction::swakPsiChemistryModelPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-const psiChemistryModel &swakPsiChemistryModelPluginFunction::chemistryInternal(
+const  swakPsiChemistryModelPluginFunction::ChemistryModelType &swakPsiChemistryModelPluginFunction::chemistryInternal(
     const fvMesh &reg
 )
 {
-    static HashPtrTable<psiChemistryModel> chemistry_;
+    static HashPtrTable<swakPsiChemistryModelPluginFunction::ChemistryModelType> chemistry_;
 
-    if(reg.foundObject<psiChemistryModel>("chemistryProperties")) {
+    typedef swakPsiChemistryModelPluginFunction::ChemistryModelType::reactionThermo rThermo;
+    static HashPtrTable<rThermo> thermo_;
+
+    if(reg.foundObject< swakPsiChemistryModelPluginFunction::ChemistryModelType>("chemistryProperties")) {
         if(debug) {
             Info << "swakPsiChemistryModelPluginFunction::chemistryInternal: "
                 << "already in memory" << endl;
         }
         // Somebody else already registered this
-        return reg.lookupObject<psiChemistryModel>("chemistryProperties");
+        return reg.lookupObject< swakPsiChemistryModelPluginFunction::ChemistryModelType>("chemistryProperties");
     }
     if(!chemistry_.found(reg.name())) {
         if(debug) {
@@ -85,11 +88,32 @@ const psiChemistryModel &swakPsiChemistryModelPluginFunction::chemistryInternal(
                 << "not yet in memory for " << reg.name() << endl;
         }
 
-        // Create it ourself because nobody registered it
-        chemistry_.set(
+        if(reg.foundObject<rThermo>("thermophysicalProperties")) {
+            chemistry_.set(
                 reg.name(),
-                psiChemistryModel::New(reg).ptr()
-        );
+                swakPsiChemistryModelPluginFunction::ChemistryModelType::New(
+                    const_cast<rThermo&>(
+                        reg.lookupObject<rThermo>("thermophysicalProperties")
+                    )
+                ).ptr()
+            );
+        } else {
+            thermo_.set(
+                reg.name(),
+                rThermo::New(
+                    reg
+                ).ptr()
+            );
+            chemistry_.set(
+                reg.name(),
+                swakPsiChemistryModelPluginFunction::ChemistryModelType::New(
+                    const_cast<rThermo&>(
+                        *thermo_[reg.name()]
+                    )
+                ).ptr()
+            );
+        }
+        // Create it ourself because nobody registered it
 
         Info << "Created chemistry model. Calculating to get values ..."
             << endl;
@@ -108,7 +132,7 @@ const psiChemistryModel &swakPsiChemistryModelPluginFunction::chemistryInternal(
 
 void swakPsiChemistryModelPluginFunction::updateChemistry(const scalar dt)
 {
-    const_cast<psiChemistryModel&>(
+    const_cast< swakPsiChemistryModelPluginFunction::ChemistryModelType&>(
         chemistry()
     ).solve(
 #ifdef FOAM_CHEMISTRYMODEL_SOLVE_NEEDS_TIME
@@ -148,7 +172,7 @@ tmp<volScalarField> swakPsiChemistryModelPluginFunction::wrapDimField(
 }
 #endif
 
-const psiChemistryModel &swakPsiChemistryModelPluginFunction::chemistry()
+const  swakPsiChemistryModelPluginFunction::ChemistryModelType &swakPsiChemistryModelPluginFunction::chemistry()
 {
     return chemistryInternal(mesh());
 }
