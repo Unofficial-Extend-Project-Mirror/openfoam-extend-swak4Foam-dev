@@ -79,6 +79,10 @@
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
+  If everything goes well then
+: ./AllwmakeAll
+  should compile the essential requirements before compiling
+  =swak4Foam= itself (remember: there is an *if* in that sentence)
 ** Requirements
    - Version 2.0 or higher of OpenFOAM and version 3.0 or higher of
      Foam.  The =OpenFOAM-dev= is also supported but because this is
@@ -4046,6 +4050,11 @@ S_{expl} + S_{impl} T
 **** Additional output of =Allwmake=
      The current OpenFOAM-version and the version of the sources is
      printed in the beginning. This should help diagnosing problems
+**** Script =AllwmakeAll= that compiles requirements automatically
+     The script compiles =bison= and =lua= before compiling
+     =swak4Foam= itself. It also automatically sets
+     =swakConfiguration= to a version that tries to find the scripting
+     languages automatically
 *** Documentation
 *** New features
 **** Python 3 integration

@@ -1,0 +1,11 @@
+#! /bin/sh
+
+./maintainanceScripts/compileRequirements.sh
+
+if [ ! -e ./swakConfiguration ] ; then
+    echo "Using automatic swakConfiguration because none is there"
+    echo
+    ln -s ./swakConfiguration.automatic ./swakConfiguration
+fi
+
+./Allwmake
