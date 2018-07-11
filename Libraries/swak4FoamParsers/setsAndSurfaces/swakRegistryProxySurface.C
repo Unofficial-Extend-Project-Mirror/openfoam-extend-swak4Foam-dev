@@ -152,6 +152,52 @@ bool Foam::swakRegistryProxySurface::update()
 Foam::tmp<Foam::scalarField>
 Foam::swakRegistryProxySurface::sample
 (
+    const interpolation<scalar>& inter
+) const
+{
+    return realSurface().sample(inter);
+}
+
+Foam::tmp<Foam::vectorField>
+Foam::swakRegistryProxySurface::sample
+(
+    const interpolation<vector>& inter
+) const
+{
+    return realSurface().sample(inter);
+}
+
+Foam::tmp<Foam::tensorField>
+Foam::swakRegistryProxySurface::sample
+(
+    const interpolation<tensor>& inter
+) const
+{
+    return realSurface().sample(inter);
+}
+
+Foam::tmp<Foam::symmTensorField>
+Foam::swakRegistryProxySurface::sample
+(
+    const interpolation<symmTensor>& inter
+) const
+{
+    return realSurface().sample(inter);
+}
+
+Foam::tmp<Foam::sphericalTensorField>
+Foam::swakRegistryProxySurface::sample
+(
+    const interpolation<sphericalTensor>& inter
+) const
+{
+    return realSurface().sample(inter);
+}
+
+
+Foam::tmp<Foam::scalarField>
+Foam::swakRegistryProxySurface::sample
+(
     const surfaceScalarField& vField
 ) const
 {
