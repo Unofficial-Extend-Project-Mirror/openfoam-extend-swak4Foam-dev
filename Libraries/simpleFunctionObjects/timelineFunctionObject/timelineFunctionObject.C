@@ -124,8 +124,11 @@ void timelineFunctionObject::closeAllFiles()
 
     forAllIter(HashPtrTable<OFstream>, filePtrs_, iter)
     {
-        //        delete filePtrs_.remove(iter);
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
         filePtrs_.remove(iter);
+#else
+        delete filePtrs_.remove(iter);
+#endif
     }
 }
 
@@ -147,8 +150,11 @@ bool timelineFunctionObject::start()
                 Dbug << "Closing file " << iter.key() << endl;
 
                 // Field has been removed. Close file
-                //                delete filePtrs_.remove(iter);
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
                 filePtrs_.remove(iter);
+#else
+                delete filePtrs_.remove(iter);
+#endif
             }
         }
 
@@ -176,9 +182,13 @@ bool timelineFunctionObject::start()
 
                 filePtrs_.insert(
                     fldName,
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
                     autoPtr<OFstream>(
+#endif
                         sPtr
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
                     )
+#endif
                 );
 
                 OFstream &s=*sPtr;

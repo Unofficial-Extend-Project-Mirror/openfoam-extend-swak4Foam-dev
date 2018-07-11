@@ -71,7 +71,11 @@ const  swakPsiChemistryModelPluginFunction::ChemistryModelType &swakPsiChemistry
 {
     static HashPtrTable<swakPsiChemistryModelPluginFunction::ChemistryModelType> chemistry_;
 
+#ifdef FOAM_NO_PSICHEMISTRY_MODEL
     typedef swakPsiChemistryModelPluginFunction::ChemistryModelType::reactionThermo rThermo;
+#else
+    typedef psiReactionThermo rThermo;
+#endif
     static HashPtrTable<rThermo> thermo_;
 
     if(reg.foundObject< swakPsiChemistryModelPluginFunction::ChemistryModelType>("chemistryProperties")) {
@@ -88,6 +92,8 @@ const  swakPsiChemistryModelPluginFunction::ChemistryModelType &swakPsiChemistry
                 << "not yet in memory for " << reg.name() << endl;
         }
 
+        // Create it ourself because nobody registered it
+#ifdef FOAM_NO_PSICHEMISTRY_MODEL
         if(reg.foundObject<rThermo>("thermophysicalProperties")) {
             chemistry_.set(
                 reg.name(),
@@ -113,7 +119,12 @@ const  swakPsiChemistryModelPluginFunction::ChemistryModelType &swakPsiChemistry
                 ).ptr()
             );
         }
-        // Create it ourself because nobody registered it
+#else
+        chemistry_.set(
+            reg.name(),
+            psiChemistryModel::New(reg).ptr()
+        );
+#endif
 
         Info << "Created chemistry model. Calculating to get values ..."
             << endl;

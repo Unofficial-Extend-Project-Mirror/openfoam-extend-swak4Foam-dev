@@ -155,7 +155,9 @@ void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
         //        meshToMesh::imMapNearest, // stable. No default
         ,Order
 #endif
+#ifdef FOAM_MESHTOMESH_WANTS_PROCMAP_PARAMETER
         ,meshToMesh::procMapMethod::pmAABB
+#endif
 #ifndef FOAM_MESHTOMESH_OLD_STYLE
         ,false
 #endif

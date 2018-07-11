@@ -317,6 +317,9 @@ GlobalVariablesRepository::ResultTable::ResultTable(const ResultTable &r)
         this->insert(
             iter.key(),
             (**iter).clone()
+#ifndef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+            .ptr()
+#endif
         );
     }
 }

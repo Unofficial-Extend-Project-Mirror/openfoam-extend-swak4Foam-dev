@@ -79,6 +79,11 @@ namespace Foam {
 #define FOAM_CHEMISTRYMODEL_HAS_NO_SOURCE_TERM
 #endif
 
+#if (OPENFOAM_COM >= 1803)
+#define FOAM_NO_PSICHEMISTRY_MODEL
+#endif
+
+
 #include "DebugOStream.H"
 
 #endif

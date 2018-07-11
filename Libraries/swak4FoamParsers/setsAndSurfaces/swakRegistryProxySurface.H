@@ -145,67 +145,6 @@ public:
         }
 #endif
 
-        //- sample field on surface
-        virtual tmp<scalarField> sample
-        (
-            const surfaceScalarField&
-        ) const;
-
-        //- sample field on surface
-        virtual tmp<vectorField> sample
-        (
-            const surfaceVectorField&
-        ) const;
-
-        //- sample field on surface
-        virtual tmp<sphericalTensorField> sample
-        (
-            const surfaceSphericalTensorField&
-        ) const;
-
-        //- sample field on surface
-        virtual tmp<symmTensorField> sample
-        (
-            const surfaceSymmTensorField&
-        ) const;
-
-        //- sample field on surface
-        virtual tmp<tensorField> sample
-        (
-            const surfaceTensorField&
-        ) const;
-
-    // //- sample field on surface
-    // virtual tmp<scalarField> sample
-    // (
-    //     const volScalarField&
-    // ) const;
-
-    // //- sample field on surface
-    // virtual tmp<vectorField> sample
-    // (
-    //     const volVectorField&
-    // ) const;
-
-    // //- sample field on surface
-    // virtual tmp<sphericalTensorField> sample
-    // (
-    //     const volSphericalTensorField&
-    // ) const;
-
-    // //- sample field on surface
-    // virtual tmp<symmTensorField> sample
-    // (
-    //     const volSymmTensorField&
-    // ) const;
-
-    // //- sample field on surface
-    // virtual tmp<tensorField> sample
-    // (
-    //     const volTensorField&
-    // ) const;
-
-
         //- interpolate field on surface
         virtual tmp<scalarField> interpolate
         (
@@ -237,7 +176,7 @@ public:
         ) const;
 
 
-    // New interface
+#ifdef FOAM_SAMPLEDSURFACE_SAMPLE_WANTS_INTERPOLATION
         //- sample field on surface
         virtual tmp<scalarField> sample
         (
@@ -267,6 +206,67 @@ public:
         (
             const interpolation<tensor> &
         ) const;
+
+        //- sample field on surface
+        virtual tmp<scalarField> sample
+        (
+            const surfaceScalarField&
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<vectorField> sample
+        (
+            const surfaceVectorField&
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<sphericalTensorField> sample
+        (
+            const surfaceSphericalTensorField&
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<symmTensorField> sample
+        (
+            const surfaceSymmTensorField&
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<tensorField> sample
+        (
+            const surfaceTensorField&
+        ) const;
+#else
+        //- sample field on surface
+        virtual tmp<scalarField> sample
+        (
+            const volScalarField&
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<vectorField> sample
+        (
+            const volVectorField&
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<sphericalTensorField> sample
+        (
+            const volSphericalTensorField&
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<symmTensorField> sample
+        (
+            const volSymmTensorField&
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<tensorField> sample
+        (
+            const volTensorField&
+        ) const;
+#endif
 
         //- Write
         virtual void print(Ostream&) const;

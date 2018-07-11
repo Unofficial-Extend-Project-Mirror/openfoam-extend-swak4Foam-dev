@@ -549,6 +549,19 @@ Contributors/Copyright:
 #define FOAM_LIST_HAS_MOVABLE_CONSTRUCT
 #endif
 
+#if (OPENFOAM_COM >= 1803)
+#define FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+#endif
+
+#if (OPENFOAM_COM >= 1803)
+#define FOAM_SAMPLEDSURFACE_SAMPLE_WANTS_INTERPOLATION
+#endif
+
+#if (OPENFOAM_COM >= 1803)
+#define FOAM_MESHTOMESH_WANTS_PROCMAP_PARAMETER
+#endif
+
+
 #include "swakVersion.H"
 #include "DebugOStream.H"
 
