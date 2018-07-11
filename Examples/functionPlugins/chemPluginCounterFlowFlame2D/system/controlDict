@@ -1,0 +1,149 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     reactingFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.5;
+
+deltaT          1e-6;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.05;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression on;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+adjustTimeStep  yes;
+
+maxCo           0.4;
+
+libs (
+    "libswakFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakChemistryModelFunctionPlugin.so"
+);
+
+functions {
+    rateO2 {
+        type expressionField;
+        autowrite true;
+        fieldName rateO2;
+        expression "psiChem_RR(O2)";
+    }
+    rateO2Print {
+        type swakExpression;
+        verbose true;
+        valueType internalField;
+        expression "rateO2";
+        accumulations (
+            min
+            weightedAverage
+            max
+        );
+    }
+    rateError {
+        $rateO2;
+        fieldName rateError;
+        expression "psiChem_RRError()";
+    }
+    rateErrorPrint {
+        $rateO2Print;
+        expression "rateError";
+    }
+    deltaTChem {
+        $rateO2;
+        fieldName deltaTChemistry;
+        expression "psiChem_deltaTChem()";
+    }
+    deltaTChemPrint {
+        $rateO2Print;
+        expression "deltaTChemistry";
+    }
+    tcChem {
+        $rateO2;
+        fieldName tcChem;
+        expression "psiChem_tc()";
+    }
+    tcChemPrint {
+        $rateO2Print;
+        expression "tcChem";
+    }
+    QdotChem {
+        $rateO2;
+        fieldName QdotChem;
+        expression "psiChem_Qdot()";
+    }
+    QdotChemPrint {
+        $rateO2Print;
+        expression "QdotChem";
+    }
+    RRSumPositiveChem {
+        $rateO2;
+        fieldName RRSumPositiveChem;
+        expression "psiChem_RRSumPositive()";
+    }
+    RRSumPositiveChemPrint {
+        $rateO2Print;
+        expression "RRSumPositiveChem";
+    }
+    rateO2Small {
+        $rateO2;
+        fieldName rateO2Small;
+        expression "psiChem_updateChemistry(1e-9)+psiChem_RR(O2)";
+    }
+    rateSmallPrint {
+        $rateO2Print;
+        expression "rateO2Small";
+    }
+    rateO2Big {
+        $rateO2;
+        fieldName rateO2Big;
+        expression "psiChem_updateChemistry(1e-3)+psiChem_RR(O2)";
+    }
+    rateBigPrint {
+        $rateO2Print;
+        expression "rateO2Big";
+    }
+    rateO2Normal {
+        $rateO2;
+        fieldName rateO2Normal;
+        expression "psiChem_updateChemistry(1e-6)+psiChem_RR(O2)";
+    }
+    rateNormalPrint {
+        $rateO2Print;
+        expression "rateO2Normal";
+    }
+}
+// ************************************************************************* //
