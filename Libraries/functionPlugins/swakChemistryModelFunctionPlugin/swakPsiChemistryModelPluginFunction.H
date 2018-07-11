@@ -44,6 +44,8 @@ Contributors/Copyright:
 
 #include "runTimeSelectionTables.H"
 
+#include "swakThermoTypes.H"
+
 #ifdef FOAM_NO_PSICHEMISTRY_MODEL
 #include "BasicChemistryModel.H"
 #include "psiReactionThermo.H"
