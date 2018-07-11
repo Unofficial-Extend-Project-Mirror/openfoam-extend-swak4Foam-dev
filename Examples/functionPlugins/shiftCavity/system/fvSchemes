@@ -24,7 +24,7 @@ gradSchemes
 {
     default         Gauss linear;
     grad(p)         Gauss linear;
-    grad(valsShift) nix;
+    grad(valsShift) Gauss linear;
 }
 
 divSchemes

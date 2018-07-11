@@ -79,6 +79,12 @@ functions {
         expression "shiftConstantScalarField(vals,(-0.025 0 0))";
         //        expression "shiftConstantScalarField(pos().y<pos().x? 1 : -1,(-0.025 0 0))";
     }
+    noShift {
+        $constantShifted;
+        $shiftConstantScalarFieldData;
+        fieldName originalCircle;
+        expression "vals";
+    }
     mapShifted {
         $constantShifted;
         fieldName shiftedCircleMap;
