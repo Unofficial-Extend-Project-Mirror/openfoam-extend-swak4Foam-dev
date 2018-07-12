@@ -37,7 +37,7 @@ writeFormat     ascii;
 
 writePrecision  6;
 
-writeCompression compressed;
+writeCompression yes;
 
 timeFormat      general;
 
@@ -442,6 +442,7 @@ functions
             min
             max
         );
+        interpolationType cell;
     }
     surfacePlaneReuse
     {
@@ -454,6 +455,7 @@ functions
             min
             max
         );
+        interpolationType cell;
     }
     surfacePlaneMaxU
     {
@@ -476,6 +478,7 @@ functions
             max
             min
         );
+        interpolationType cell;
     }
     testPlaneArea
     {
@@ -521,6 +524,7 @@ functions
         writeSurfaceOnConstruction true;
         autoWriteSurface true;
         surfaceFormat vtk;
+        interpolationType cell;
     }
     surfaceDiffPlane
     {
@@ -537,6 +541,7 @@ functions
                 normal $..normalVector;
             }
             interpolate true;
+            interpolationType cell;
         }
         verbose true;
         variables "Umiddle{surface'testPlane2}=sum(mag(U)*area())/sum(area());";
@@ -547,6 +552,7 @@ functions
         writeSurfaceOnConstruction true;
         autoWriteSurface true;
         surfaceFormat vtk;
+        interpolationType cell;
     }
     surfacePatch
     {
@@ -567,6 +573,7 @@ functions
         writeSurfaceOnConstruction true;
         autoWriteSurface true;
         surfaceFormat vtk;
+        interpolationType cell;
     }
     surfaceCuttingPlane
     {
@@ -592,6 +599,7 @@ functions
         writeSurfaceOnConstruction true;
         autoWriteSurface true;
         surfaceFormat vtk;
+        interpolationType cell;
     }
     createThrePointSet
     {
@@ -879,6 +887,7 @@ functions
         writeSurfaceOnConstruction true;
         autoWriteSurface true;
         surfaceFormat vtk;
+        interpolationType cell;
     }
     surfaceIsoDist2
     {
@@ -901,6 +910,7 @@ functions
         writeSurfaceOnConstruction true;
         autoWriteSurface true;
         surfaceFormat vtk;
+        interpolationType cell;
     }
     surfaceIsoInterpolateOn
     {
@@ -948,6 +958,7 @@ functions
         writeSurfaceOnConstruction true;
         autoWriteSurface true;
         surfaceFormat vtk;
+        interpolationType cell;
     }
     surfaceIsoDistCell
     {
@@ -970,6 +981,7 @@ functions
         writeSurfaceOnConstruction true;
         autoWriteSurface true;
         surfaceFormat vtk;
+        interpolationType cell;
     }
     velocityMagnitude
     {
@@ -1003,6 +1015,7 @@ functions
         writeSurfaceOnConstruction true;
         autoWriteSurface true;
         surfaceFormat vtk;
+        interpolationType cell;
     }
     surfaceU45b
     {
@@ -1026,6 +1039,7 @@ functions
         writeSurfaceOnConstruction true;
         autoWriteSurface true;
         surfaceFormat vtk;
+        interpolationType cell;
     }
     testSurfaceU45 {
         $testPlaneArea;
@@ -1117,6 +1131,7 @@ functions
                             min
                             max
                         );
+                        interpolationType cell;
                     }
                     writeSurfaceOnConstruction true;
                     autoWriteSurface true;

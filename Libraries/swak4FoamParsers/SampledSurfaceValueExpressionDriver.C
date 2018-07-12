@@ -93,7 +93,7 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
     SubsetValueExpressionDriver(autoInterpolate,warnAutoInterpolate),
     theSurface_(surf),
     interpolate_(false),
-    interpolationType_("nix")
+    interpolationType_("noInterpolationTypeSpecified1")
 {
     setDebug();
 }
@@ -111,7 +111,11 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
         )
     ),
     interpolate_(false),
-    interpolationType_("nix")
+#ifndef FOAM_SAMPLEDSURFACE_SAMPLE_WANTS_INTERPOLATION
+    interpolationType_("noInterpolationTypeSpecified2")
+#else
+    interpolationType_("cell")
+#endif
 {
     setDebug();
 }
@@ -130,11 +134,15 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
     ),
     interpolate_(dict.lookupOrDefault<bool>("interpolate",false)),
     interpolationType_(
+#ifndef FOAM_SAMPLEDSURFACE_SAMPLE_WANTS_INTERPOLATION
         interpolate_
         ?
+#endif
         word(dict.lookup("interpolationType"))
+#ifndef FOAM_SAMPLEDSURFACE_SAMPLE_WANTS_INTERPOLATION
         :
-        word("nix")
+        word("noInterpolationTypeSpecified")
+#endif
     )
 {
     setDebug();

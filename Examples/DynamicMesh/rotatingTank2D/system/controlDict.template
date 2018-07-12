@@ -15,7 +15,11 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+<!--(if foamFork=="openfoamplus" and foamVersion>(1800,))-->
+application     interFoam;
+<!--(else)-->
 application     interDyMFoam;
+<!--(end)-->
 
 startFrom       startTime;
 
@@ -37,7 +41,7 @@ writeFormat     ascii;
 
 writePrecision  6;
 
-writeCompression compressed;
+writeCompression yes;
 
 timeFormat      general;
 

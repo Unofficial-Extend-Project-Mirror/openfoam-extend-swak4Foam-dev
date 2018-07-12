@@ -80,10 +80,10 @@ void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
             origMesh.polyMesh::db()
         ),
 #ifdef FOAM_LIST_HAS_MOVABLE_CONSTRUCT
-        std::move(origMesh.points()),
-        std::move(origMesh.faces()),
-        std::move(origMesh.faceOwner()),
-        std::move(origMesh.faceNeighbour())
+        pointField(origMesh.points()),
+        faceList(origMesh.faces()),
+        labelList(origMesh.faceOwner()),
+        labelList(origMesh.faceNeighbour())
 #else
         Xfer<pointField>(origMesh.points()),
         Xfer<faceList>(origMesh.faces()),
@@ -109,8 +109,10 @@ void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
         shiftMesh.fvSchemes::merge(
             origMesh.schemesDict()
         );
+
         shiftMesh.fvSchemes::readOpt()=IOobject::READ_IF_PRESENT;
         shiftMesh.fvSchemes::read();
+
         //        const_cast<dictionary&>(shiftMesh.schemesDict())=origMesh.schemesDict();
         // Info << origMesh.schemesDict() << endl;
         // Info << shiftMesh.schemesDict().name() << endl;
@@ -155,10 +157,17 @@ void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
         //        meshToMesh::imMapNearest, // stable. No default
         ,Order
 #endif
+#ifdef FOAM_MESHTOMESH_WANTS_PROCMAP_PARAMETER
+        ,meshToMesh::procMapMethod::pmAABB
+#endif
 #ifndef FOAM_MESHTOMESH_OLD_STYLE
         ,false
 #endif
     );
+
+    // Info << shiftMesh.schemesDict().name() << endl;
+    // Info << shiftMesh.schemesDict() << endl;
+    // Info << shiftMesh.fvSchemes::subDict("gradSchemes")["grad(valsShift)"] << endl;
 
 #ifdef FOAM_NEW_MESH2MESH
 #if defined(FOAM_MESH2MESH_NO_2ND_ORDER_TENSOR) && !defined(FOAM_MESHTOMESH_MAPSRCTOTGT_REDUCE)

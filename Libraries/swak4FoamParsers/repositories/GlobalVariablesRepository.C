@@ -314,7 +314,13 @@ GlobalVariablesRepository::ResultTable::ResultTable(const ResultTable &r)
     HashPtrTable<ExpressionResult>()
 {
     for(const_iterator iter=r.begin();iter!=r.end();iter++) {
-        this->insert(iter.key(),(**iter).clone().ptr());
+        this->insert(
+            iter.key(),
+            (**iter).clone()
+#ifndef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+            .ptr()
+#endif
+        );
     }
 }
 

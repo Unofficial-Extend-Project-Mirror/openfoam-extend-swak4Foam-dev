@@ -123,7 +123,11 @@ void CloudRepository::addUpdateableCloud(
     } else {
         updateableClouds_.insert(
             name,
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+            c
+#else
             c.ptr()
+#endif
         );
     }
 }
@@ -153,7 +157,11 @@ void CloudRepository::addCloud(
     } else {
         clouds_.insert(
             name,
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+            c
+#else
             c.ptr()
+#endif
         );
     }
 }

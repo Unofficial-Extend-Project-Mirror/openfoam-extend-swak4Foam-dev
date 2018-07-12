@@ -37,7 +37,7 @@ writeFormat     ascii;
 
 writePrecision  6;
 
-writeCompression compressed;
+writeCompression yes;
 
 timeFormat      general;
 
@@ -464,7 +464,7 @@ functions
         surface {
             type patch;
             patches ( outlet );
-            //            triangulate      false;      
+            //            triangulate      false;
         }
         verbose true;
         expression "mag(U)";

@@ -49,7 +49,7 @@ solution {
     integrationSchemes
     {
         //        U               Euler;
-        U               Analytical;
+        U               analytical;
         T               analytical;
     }
 <!--(if foamFork!="extend")-->
