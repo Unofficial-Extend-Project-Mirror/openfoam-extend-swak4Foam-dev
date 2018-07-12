@@ -40,6 +40,7 @@ Contributors/Copyright:
 
 #include "fvScalarMatrix.H"
 #include "dynamicFvMesh.H"
+#include "staticFvMesh.H"
 
 #include "fvm.H"
 #include "fvcMeshPhi.H"
@@ -78,7 +79,11 @@ Foam::solveTransportPDE::solveTransportPDE
             << "Not a polyMesh. Nothing I can do"
                 << endl;
     }
-    if(isA<dynamicFvMesh>(obr)) {
+    if(
+        isA<dynamicFvMesh>(obr)
+        &&
+        !isA<staticFvMesh>(obr)
+    ) {
         Info << name << ": Dynamic mesh. Is the phi relative?" << endl;
         makePhiRelative_=readBool(dict.lookup("makePhiRelative"));
     }
@@ -376,7 +381,7 @@ void Foam::solveTransportPDE::solve()
 		lduSolverPerformance  perf=eq.solve();
 #else
 		solverPerformance perf=eq.solve();
-#endif		
+#endif
                 if(
                     !perf.converged()
                     &&
