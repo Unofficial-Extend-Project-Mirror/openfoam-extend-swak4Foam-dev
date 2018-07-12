@@ -90,7 +90,7 @@ void TimeClone::copy(const Time &t)
 
     dictionary settings;
     if(t.writeCompression()==IOstream::COMPRESSED) {
-        settings.add("writeCompression","compressed");
+        settings.add("writeCompression","yes");
     }
     if(t.writeFormat()==IOstream::BINARY) {
         settings.add("writeFormat","binary");
