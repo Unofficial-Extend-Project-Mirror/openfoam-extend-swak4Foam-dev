@@ -32,15 +32,15 @@
 * The Matrix
   | Case name                                                   | 5.0 Fnd    | 4.1 Ext    | 1806       | 2.3        |
   |-------------------------------------------------------------+------------+------------+------------+------------|
-  | DynamicMesh/hecticInletACMI2D                               | \checkmark | \dagger    |            | \sad       |
-  | DynamicMesh/rotatingTank2D                                  | \checkmark | \checkmark |            | \checkmark |
-  | DynamicMesh/switchedTJunction                               | \sad       | \dagger    |            | \sad       |
-  | DynamicMesh/switchedInletACMI2D                             | \checkmark | \dagger    |            | \sad       |
-  | FiniteArea/planeTransport                                   | \dagger    | \checkmark |            | \dagger    |
+  | DynamicMesh/hecticInletACMI2D                               | \checkmark | \dagger    | \checkmark | \sad       |
+  | DynamicMesh/rotatingTank2D                                  | \checkmark | \checkmark | \checkmark | \checkmark |
+  | DynamicMesh/switchedInletACMI2D                             | \checkmark | \dagger    | \checkmark | \sad       |
+  | DynamicMesh/switchedTJunction                               | \sad       | \dagger    | \sad       | \sad       |
+  | FiniteArea/planeTransport                                   | \dagger    | \checkmark | \checkmark | \dagger    |
   | functionPlugins/chemPluginCounterFlowFlame2D                |            |            | \checkmark |            |
   | functionPlugins/shiftCavity                                 |            |            | \checkmark |            |
-  | FvOptions/angledDuctWithSources                             | \checkmark | \dagger    |            | \checkmark |
-  | FvOptions/heatExchangerSources                              | \checkmark | \dagger    |            | \sad       |
+  | FvOptions/angledDuctWithSources                             | \checkmark | \dagger    | \sad       | \checkmark |
+  | FvOptions/heatExchangerSources                              | \checkmark | \dagger    | \checkmark | \sad       |
   | groovyBC/average-t-junction                                 | \checkmark | \checkmark |            | \checkmark |
   | groovyBC/circulatingSplash                                  | \sad       | \checkmark |            | \checkmark |
   | groovyBC/delayed-t-junction                                 | \checkmark | \checkmark |            | \checkmark |
