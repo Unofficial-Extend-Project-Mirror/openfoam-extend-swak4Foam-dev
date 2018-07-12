@@ -93,7 +93,7 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
     SubsetValueExpressionDriver(autoInterpolate,warnAutoInterpolate),
     theSurface_(surf),
     interpolate_(false),
-    interpolationType_("noInterpolationTypeSpecified")
+    interpolationType_("noInterpolationTypeSpecified1")
 {
     setDebug();
 }
@@ -111,7 +111,11 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
         )
     ),
     interpolate_(false),
-    interpolationType_("noInterpolationTypeSpecified")
+#ifndef FOAM_SAMPLEDSURFACE_SAMPLE_WANTS_INTERPOLATION
+    interpolationType_("noInterpolationTypeSpecified2")
+#else
+    interpolationType_("cell")
+#endif
 {
     setDebug();
 }
