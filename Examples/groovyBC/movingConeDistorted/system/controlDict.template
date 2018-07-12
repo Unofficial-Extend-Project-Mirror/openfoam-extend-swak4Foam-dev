@@ -14,7 +14,11 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+<!--(if foamFork=="openfoamplus" and foamVersion>(1800,))-->
+application     pimpleFoam;
+<!--(else)-->
 application     pimpleDyMFoam;
+<!--(end)-->
 
 startFrom       startTime;
 
@@ -79,6 +83,7 @@ functions
         accumulations (
             average
         );
+        interpolationType cell;
 
         ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
@@ -93,6 +98,8 @@ functions
             sum
         );
 
+        interpolationType cell;
+
         ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     flowThroughAlternate
@@ -105,6 +112,7 @@ functions
         accumulations (
             sum
         );
+        interpolationType cell;
 
         ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
@@ -131,6 +139,7 @@ functions
             min
             max
         );
+        interpolationType cell;
 
         ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
@@ -144,6 +153,7 @@ functions
         accumulations (
             sum
         );
+        interpolationType cell;
 
         ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
@@ -168,6 +178,7 @@ functions
         accumulations (
             sum
         );
+        interpolationType cell;
 
         ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
@@ -192,6 +203,7 @@ functions
         accumulations (
             sum
         );
+        interpolationType cell;
 
         ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
@@ -223,7 +235,7 @@ functions
                 }
             }
         );
-        interpolationScheme nix;
+        interpolationScheme cell;
     }
     // whatIsHere {
     //     type listRegisteredObjects;
