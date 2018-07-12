@@ -176,6 +176,7 @@ functions
             max
             average
         );
+        interpolationType cell;
     }
     surfaceSize {
         type swakExpression;
@@ -195,6 +196,7 @@ functions
         accumulations (
             sum
         );
+        interpolationType cell;
     }
     normalizedVolume {
         type swakExpression;
