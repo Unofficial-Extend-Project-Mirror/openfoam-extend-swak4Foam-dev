@@ -15,7 +15,11 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+<!--(if foamFork=="openfoam" and foamVersion>(5,99))-->
+application     chtMultiRegionFoam;
+<!--(else)-->
 application     chtMultiRegionSimpleFoam;
+<!--(end)-->
 
 startFrom       latestTime;
 

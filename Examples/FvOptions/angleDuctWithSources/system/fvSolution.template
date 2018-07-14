@@ -71,7 +71,11 @@ PIMPLE
     rhoMax          rhoMax [ 1 -3 0 0 0 ] 4;
 <!--(end)-->
 
+<!--(if foamFork=="openfoam" and foamVersion>(5,99))-->
+    outerCorrectorResidualControl
+<!--(else)-->
     residualControl
+<!--(end)-->
     {
         "(U|k|epsilon)"
         {

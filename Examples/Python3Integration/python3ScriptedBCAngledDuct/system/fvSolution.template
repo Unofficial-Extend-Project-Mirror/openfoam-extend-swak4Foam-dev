@@ -64,7 +64,11 @@ PIMPLE
      pMin            1000;
 <!--(end)-->
 
+<!--(if foamFork=="openfoam" and foamVersion>(5,99))-->
+    outerCorrectorResidualControl
+<!--(else)-->
     residualControl
+<!--(end)-->
     {
         "(U|k|epsilon)"
         {
