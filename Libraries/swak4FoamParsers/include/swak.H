@@ -561,6 +561,9 @@ Contributors/Copyright:
 #define FOAM_MESHTOMESH_WANTS_PROCMAP_PARAMETER
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(6,0,0))
+#define FOAM_TIME_HAS_SEPARATE_SETDELTAT_NOADJUST
+#endif
 
 #include "swakVersion.H"
 #include "DebugOStream.H"
