@@ -143,6 +143,11 @@ namespace Foam {
 #define FOAM_IOPOSITION_NEEDS_STREAM_IN_READDATA
 #endif
 
+#if (OPENFOAM_COM >= 1712)                                          \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(6,0,0))
+#define FOAM_REACTING_PARCEL_HAS_NO_PC_METHOD
+#endif
+
 #if defined(FOAM_VERSION4SWAK_IS_EXTEND)
 #define FOAM_IOPOSITION_IS_TEMPLATE_OF_PARTICLE
 #endif
