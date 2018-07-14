@@ -212,6 +212,13 @@ Contributors/Copyright:
 #define FOAM_OLD_AMI_ACMI
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(6,0,0))
+#define FOAM_ACMI_RESETAMI_NO_PARAMETERS
+#endif
+
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(6,0,0))
+#define FOAM_ACMI_HAS_NO_AMI_METHOD
+#endif
 
 #ifndef FOAM_VERSION4SWAK_IS_EXTEND
 // movePoints now gets a polyMesh
