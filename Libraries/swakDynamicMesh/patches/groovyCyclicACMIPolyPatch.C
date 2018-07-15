@@ -61,7 +61,9 @@ namespace Foam
 
 void Foam::groovyCyclicACMIPolyPatch::resetAMI
 (
+#ifndef FOAM_ACMI_RESETAMI_NO_PARAMETERS
     const AMIPatchToPatchInterpolation::interpolationMethod& meth
+#endif
 ) const
 {
     // copy/pasted and then adapted version of the original method.
@@ -106,11 +108,17 @@ void Foam::groovyCyclicACMIPolyPatch::resetAMI
         // face is fully covered)
         cyclicAMIPolyPatch::resetAMI
         (
+#ifndef FOAM_ACMI_RESETAMI_NO_PARAMETERS
             AMIPatchToPatchInterpolation::imPartialFaceAreaWeight
+#endif
         );
 
         AMIPatchToPatchInterpolation& AMI =
+#ifdef FOAM_ACMI_HAS_NO_AMI_METHOD
+            this->AMIs_[0];
+#else
             const_cast<AMIPatchToPatchInterpolation&>(this->AMI());
+#endif
 
         scalarField &srcMask=const_cast<scalarField&>(
             this->srcMask()

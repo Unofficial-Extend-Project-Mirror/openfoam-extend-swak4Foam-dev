@@ -1273,7 +1273,11 @@ tmp<scalarField> CommonValueExpressionDriver::makeGaussRandomField(
 #ifdef FOAM_RANDOM_CLASS_NEW_INTERFACE
         const_cast<scalar&>(result()[i]) = rnd.GaussNormal<scalar>();
 #else
+#ifdef FOAM_RANDOM_CLASS_GAUSS_RENAMED
+        const_cast<scalar&>(result()[i]) = rnd.scalarNormal();
+#else
         const_cast<scalar&>(result()[i]) = rnd.GaussNormal();
+#endif
 #endif
     }
 

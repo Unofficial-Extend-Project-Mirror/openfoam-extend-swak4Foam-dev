@@ -136,6 +136,15 @@ public:
     //- Integrate between two values
     Type integrate(const scalar x1, const scalar x2) const;
 
+    //- Return value as a function of (scalar) independent variable
+    tmp<Field<Type>> value(const scalarField& x) const;
+
+    //- Integrate between two (scalar) values
+    tmp<Field<Type>> integrate
+    (
+        const scalarField& x1,
+        const scalarField& x2
+    ) const;
 
     // I/O
 

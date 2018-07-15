@@ -212,6 +212,13 @@ Contributors/Copyright:
 #define FOAM_OLD_AMI_ACMI
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(6,0,0))
+#define FOAM_ACMI_RESETAMI_NO_PARAMETERS
+#endif
+
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(6,0,0))
+#define FOAM_ACMI_HAS_NO_AMI_METHOD
+#endif
 
 #ifndef FOAM_VERSION4SWAK_IS_EXTEND
 // movePoints now gets a polyMesh
@@ -535,6 +542,10 @@ Contributors/Copyright:
 #define FOAM_RANDOM_CLASS_NEW_INTERFACE
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(5,0,0))
+#define FOAM_RANDOM_CLASS_GAUSS_RENAMED
+#endif
+
 #if (OPENFOAM_COM >= 1706) \
     || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(5,0,0))
 #define FOAM_PSTREAM_COMMSTYPE_IS_ENUMCLASS
@@ -561,6 +572,9 @@ Contributors/Copyright:
 #define FOAM_MESHTOMESH_WANTS_PROCMAP_PARAMETER
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(6,0,0))
+#define FOAM_TIME_HAS_SEPARATE_SETDELTAT_NOADJUST
+#endif
 
 #include "swakVersion.H"
 #include "DebugOStream.H"

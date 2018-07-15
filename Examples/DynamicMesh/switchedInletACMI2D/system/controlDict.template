@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-<!--(if foamFork=="openfoamplus" and foamVersion>(1800,))-->
+<!--(if (foamFork=="openfoamplus" and foamVersion>(1800,)) or (foamFork=="openfoam" and foamVersion>(5,99)))-->
 application     pimpleFoam;
 <!--(else)-->
 application     pimpleDyMFoam;
