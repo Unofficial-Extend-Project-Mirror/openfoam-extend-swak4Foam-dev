@@ -3995,6 +3995,8 @@ S_{expl} + S_{impl} T
 **** foam-extend 4.1
      This is a work in progress based on the =nextRelease=-branch as
      there is no release yet
+**** OpenFOAM 6
+     Compiles. Is tested
 *** Incompatibilities
 **** Solved field in =initPotentialFlow= now named differently
      The field name is now the name of the original field plus
