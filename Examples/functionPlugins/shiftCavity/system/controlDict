@@ -117,14 +117,14 @@ functions {
         }
         expression "shiftExpressionScalarField(vals,shift)";
     }
-    // timeMapShifted {
-    //     $constantShifted;
-    //     fieldName shiftedCircleTimeMap;
-    //     mapExpressionScalarFieldData {
-    //         $shiftConstantScalarFieldData;
-    //     }
-    //     expression "mapExpressionScalarField(vals,shift)";
-    // }
+    timeMapShifted {
+        $constantShifted;
+        fieldName shiftedCircleTimeMap;
+        mapExpressionScalarFieldData {
+            $shiftConstantScalarFieldData;
+        }
+        expression "mapExpressionScalarField(vals,shift)";
+    }
     shiftedCircleDefault {
         $constantShifted;
         fieldName shiftedCircleDefault;
@@ -141,14 +141,14 @@ functions {
         }
         expression "shiftExpressionVectorFieldDefault(vector(1,1,1)*vals,shift,(1 2 3))";
     }
-    // timeMapShiftedDefault {
-    //     $constantShifted;
-    //     fieldName shiftedCircleTimeMapDefault;
-    //     mapExpressionScalarFieldDefaultData {
-    //         $shiftConstantScalarFieldData;
-    //     }
-    //     expression "mapExpressionScalarFieldDefault(vals,shift,2)";
-    // }
+    timeMapShiftedDefault {
+        $constantShifted;
+        fieldName shiftedCircleTimeMapDefault;
+        mapExpressionScalarFieldDefaultData {
+            $shiftConstantScalarFieldData;
+        }
+        expression "mapExpressionScalarFieldDefault(vals,shift,2)";
+    }
     findShiftedTime {
         $constantShifted;
         fieldName shiftedCircleFindTime;

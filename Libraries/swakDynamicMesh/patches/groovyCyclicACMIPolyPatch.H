@@ -81,8 +81,10 @@ protected:
         //- Reset the AMI interpolator
         virtual void resetAMI
         (
+#ifndef FOAM_ACMI_RESETAMI_NO_PARAMETERS
             const AMIPatchToPatchInterpolation::interpolationMethod& AMIMethod =
                 AMIPatchToPatchInterpolation::imFaceAreaWeight
+#endif
         ) const;
 
 public:

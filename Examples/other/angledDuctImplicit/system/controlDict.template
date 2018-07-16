@@ -608,13 +608,18 @@ functions
         outputInterval 1;
         setName threePoints;
         set {
+<!--(if foamFork=="openfoam" and foamVersion>(5,99))-->
+            type points;
+<!--(else)-->
             type cloud;
+<!--(end)-->
             axis x;
             points (
                 (0.1 0.14 0.0001)
                 (0.0 0.02 0.0001)
                 (-0.1 0.02 0.0001)
             );
+            ordered true;
         }
         writeSetOnConstruction true;
         autoWriteSet true;
@@ -723,13 +728,18 @@ functions
             average
         );
         set {
+<!--(if foamFork=="openfoam" and foamVersion>(5,99))-->
+            type points;
+<!--(else)-->
             type cloud;
+<!--(end)-->
             axis x;
             points (
                 (0.1 0.14 0.0001)
                 (0.0 0.02 0.0001)
                 (-0.1 0.02 0.0001)
             );
+            ordered false;
         }
         writeSetOnConstruction true;
         autoWriteSet true;
@@ -931,7 +941,11 @@ functions
             max
         );
         interpolate on;
+<!--(if foamFork=="openfoam" and foamVersion>(5,99))-->
+        interpolationType cellPoint;
+<!--(else)-->
         interpolationType cellPointWallModified;
+<!--(end)-->
         writeSurfaceOnConstruction true;
         autoWriteSurface true;
         surfaceFormat vtk;
@@ -1187,7 +1201,11 @@ functions
         outputInterval 1;
         setName fromMinToMax;
         set {
+<!--(if foamFork=="openfoam" and foamVersion>(5,99))-->
+            type lineUniform;
+<!--(else)-->
             type uniform;
+<!--(end)-->
             axis distance;
             start (-0.01 0 -0.025);
             end (0.141421 0.176777 0.025);
@@ -1202,7 +1220,12 @@ functions
         $createMinMaxLineSet;
         setName fromMinToMax2;
         set {
+<!--(if foamFork=="openfoam" and foamVersion>(5,99))-->
+            type lineCell;
+<!--(else)-->
             type midPoint;
+<!--(end)-->
+
             axis distance;
             start (-0.01 0 -0.025);
             end (0.141421 0.176777 0.025);
@@ -1217,7 +1240,11 @@ functions
         $createMinMaxLineSet;
         setName fromMinToMax3;
         set {
+<!--(if foamFork=="openfoam" and foamVersion>(5,99))-->
+            type lineCellFace;
+<!--(else)-->
             type midPointAndFace;
+<!--(end)-->
             axis distance;
             start (-0.01 0 -0.025);
             end (0.141421 0.176777 0.025);

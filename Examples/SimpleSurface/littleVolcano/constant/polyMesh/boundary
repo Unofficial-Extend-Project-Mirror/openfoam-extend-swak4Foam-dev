@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  v1806                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
-|    \\/     M anipulation  |                                                 |
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  6
+     \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -15,47 +15,26 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-6
+3
 (
     sea
     {
         type            wall;
         inGroups        1(wall);
-        nFaces          1197;
-        startFace       360393;
+        nFaces          3600;
+        startFace       210000;
     }
     outside
     {
         type            patch;
-        nFaces          4394;
-        startFace       361590;
+        nFaces          4800;
+        startFace       213600;
     }
     sky
     {
         type            patch;
         nFaces          3600;
-        startFace       365984;
-    }
-    volcano_wall
-    {
-        type            wall;
-        inGroups        1(wall);
-        nFaces          5177;
-        startFace       369584;
-    }
-    volcano_inlet
-    {
-        type            wall;
-        inGroups        1(wall);
-        nFaces          55;
-        startFace       374761;
-    }
-    land
-    {
-        type            wall;
-        inGroups        1(wall);
-        nFaces          11532;
-        startFace       374816;
+        startFace       218400;
     }
 )
 
