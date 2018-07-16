@@ -13,4 +13,5 @@ EXE_INC = -I$(OBJECTS_DIR) \
 LIB_LIBS = -lfiniteVolume \
 	-lsampling \
 	-L$(FOAM_USER_LIBBIN) \
+        $(SWAK_IMMERSED_BC_LIB) \
 	-lswak4FoamParsers
