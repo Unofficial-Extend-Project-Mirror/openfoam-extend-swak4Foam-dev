@@ -161,12 +161,12 @@ Type swakDataEntry<Type>::integrate(const scalar x1,const scalar x2) const
 }
 
 template<class Type>
-tmp<Field<Type>> swakDataEntry<Type>::value
+tmp<Field<Type> > swakDataEntry<Type>::value
 (
     const scalarField& x
 ) const
 {
-    tmp<Field<Type>> tfld(new Field<Type>(x.size()));
+    tmp<Field<Type> > tfld(new Field<Type>(x.size()));
     Field<Type>& fld = const_cast<Field<Type>&>(tfld());
 
     forAll(x, i)
@@ -177,13 +177,13 @@ tmp<Field<Type>> swakDataEntry<Type>::value
 }
 
 template<class Type>
-tmp<Field<Type>> swakDataEntry<Type>::integrate
+tmp<Field<Type> > swakDataEntry<Type>::integrate
 (
     const scalarField& x1,
     const scalarField& x2
 ) const
 {
-    tmp<Field<Type>> tfld(new Field<Type>(x1.size()));
+    tmp<Field<Type> > tfld(new Field<Type>(x1.size()));
     Field<Type>& fld = const_cast<Field<Type>&>(tfld());
 
     forAll(x1, i)
