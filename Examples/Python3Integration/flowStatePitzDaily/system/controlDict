@@ -1,0 +1,102 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application simpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         2000;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   50;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression yes;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+libs (
+    "libswakPython3Integration.so"
+    "libswakFunctionObjects.so"
+);
+
+functions {
+    onlyAtStart {
+        type executeIfStartTime;
+        readDuringConstruction yes;
+        runIfStartTime yes;
+        functions {
+            createStateField {
+                type expressionField;
+                fieldName flowDirection;
+                autowrite true;
+                expression "0";
+                outputControl timeStep;
+                outputInterval 1;
+            }
+        }
+    }
+    // whoIsHere {
+    //     type listRegisteredObjects;
+    // }
+    manipulateFields {
+        type python3Integration;
+        startFile "$FOAM_CASE/system/start.py";
+        executeFile "$FOAM_CASE/system/execute.py";
+        endCode "print('Never been here')";
+        //        tolerateExceptions true;
+        parallelMasterOnly false;
+        isParallelized true;
+        //        interactiveAfterExecute true;
+        interactiveAfterException true;
+        referenceVariables (
+            {
+                name UInner;
+                type internalField;
+                fieldName U;
+            }
+            {
+                name UOut;
+                type patchField;
+                fieldName U;
+                patchName outlet;
+            }
+            {
+                name flowState;
+                type internalField;
+                fieldName flowDirection;
+            }
+        );
+    }
+}
+
+// ************************************************************************* //

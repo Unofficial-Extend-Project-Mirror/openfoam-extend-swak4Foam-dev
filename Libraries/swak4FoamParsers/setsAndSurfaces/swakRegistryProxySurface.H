@@ -1,31 +1,26 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2010 OpenCFD Ltd.
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software: you can redistribute it and/or modify it
+    swak4Foam is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+    along with swak4Foam.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
     Foam::swakRegistryProxySurface
@@ -38,7 +33,7 @@ SourceFiles
     swakRegistryProxySurface.C
 
 Contributors/Copyright:
-    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2016 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
@@ -150,37 +145,6 @@ public:
         }
 #endif
 
-        //- sample field on surface
-        virtual tmp<scalarField> sample
-        (
-            const volScalarField&
-        ) const;
-
-        //- sample field on surface
-        virtual tmp<vectorField> sample
-        (
-            const volVectorField&
-        ) const;
-
-        //- sample field on surface
-        virtual tmp<sphericalTensorField> sample
-        (
-            const volSphericalTensorField&
-        ) const;
-
-        //- sample field on surface
-        virtual tmp<symmTensorField> sample
-        (
-            const volSymmTensorField&
-        ) const;
-
-        //- sample field on surface
-        virtual tmp<tensorField> sample
-        (
-            const volTensorField&
-        ) const;
-
-
         //- interpolate field on surface
         virtual tmp<scalarField> interpolate
         (
@@ -210,6 +174,99 @@ public:
         (
             const interpolation<tensor>&
         ) const;
+
+
+#ifdef FOAM_SAMPLEDSURFACE_SAMPLE_WANTS_INTERPOLATION
+        //- sample field on surface
+        virtual tmp<scalarField> sample
+        (
+            const interpolation<scalar> &
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<vectorField> sample
+        (
+            const interpolation<vector> &
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<sphericalTensorField> sample
+        (
+            const interpolation<sphericalTensor> &
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<symmTensorField> sample
+        (
+            const interpolation<symmTensor> &
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<tensorField> sample
+        (
+            const interpolation<tensor> &
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<scalarField> sample
+        (
+            const surfaceScalarField&
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<vectorField> sample
+        (
+            const surfaceVectorField&
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<sphericalTensorField> sample
+        (
+            const surfaceSphericalTensorField&
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<symmTensorField> sample
+        (
+            const surfaceSymmTensorField&
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<tensorField> sample
+        (
+            const surfaceTensorField&
+        ) const;
+#else
+        //- sample field on surface
+        virtual tmp<scalarField> sample
+        (
+            const volScalarField&
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<vectorField> sample
+        (
+            const volVectorField&
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<sphericalTensorField> sample
+        (
+            const volSphericalTensorField&
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<symmTensorField> sample
+        (
+            const volSymmTensorField&
+        ) const;
+
+        //- sample field on surface
+        virtual tmp<tensorField> sample
+        (
+            const volTensorField&
+        ) const;
+#endif
 
         //- Write
         virtual void print(Ostream&) const;

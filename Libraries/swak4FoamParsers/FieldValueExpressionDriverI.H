@@ -1,9 +1,10 @@
 /*----------------------- -*- C++ -*- ---------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
     This file is part of swak4Foam.
@@ -25,7 +26,7 @@ Description
 
 
 Contributors/Copyright:
-    2006-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2006-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2012 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id$

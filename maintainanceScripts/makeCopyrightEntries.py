@@ -72,7 +72,7 @@ parser.add_argument('--extensions', dest='extensions', type=str, action='append'
                     default=["py","C","sh","H","ll","yy"],
                     help="Valid extension to investigate. Add to default list: %(default)s")
 parser.add_argument('--ignore-files', dest='ignoreList', type=str, action='append',
-                    default=["lnInclude","Make",".hg",".issues"],
+                    default=["lnInclude","Make",".hg",".issues","filesThatAreOnlyInSomeDistributions"],
                     help="Directories and files that should not be handled. Add to default list: %(default)s")
 parser.add_argument('--special-file', dest='special', type=str, action='append',
                     default=["Allwmake","Allwclean","files","options"],
@@ -83,6 +83,12 @@ parser.add_argument('--all-files', dest='allFiles', action='store_true',
 parser.add_argument('--add-contributor', dest='addContrib', type=str, action='append',
                     default=[],
                     help="Add a contributor entry of the form '<year>,<name>' to the file even if he is not yet in the source file")
+parser.add_argument('--no-banner',dest="banner",action='store_false',
+                    default=True,
+                    help="Do not add the swak4Foam banner and remove old banners")
+parser.add_argument('--no-add-contributor',dest="addContributor",action='store_false',
+                    default=True,
+                    help="Do not add the contributor line if it is missing")
 
 args = parser.parse_args()
 
@@ -117,7 +123,19 @@ swakRevision=" SWAK Revision:"
 
 contribLine=re.compile("\s*(?P<years>[0-9]{4}((-|, )[0-9]{4})*) (?P<name>.+)$")
 
+headerStart=re.compile(r"/\*-----.*-----\*\\")
+headerEnd=re.compile(r"\\\*-----.*-----\*/")
+licenseLine=re.compile("License.*")
+swakBanner=r"""|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
+-------------------------------------------------------------------------------"""+"\n"
+
 modifiedFiles=[]
+noContributorsAdded=[]
 
 def getContributorsFromLine(line):
     m=contribLine.match(line)
@@ -203,6 +221,64 @@ def processFile(f,data):
 
     lines=open(f).readlines()
 
+    doWrite=False
+    def changeText(lines):
+        m1=headerStart.match(lines[0])
+        touched=False
+        if m1 is None:
+            return False,lines
+        oldBanner=[]
+        bannerLen=0
+        for i,l in enumerate(lines[1:]):
+            ml=licenseLine.match(l)
+            if ml is None:
+                oldBanner.append(l)
+                bannerLen+=1
+            else:
+                break
+        if "".join(oldBanner)!=swakBanner:
+            touched=True
+            #            print_("".join(oldBanner))
+            #            print(swakBanner)
+            print_("Adding swak4Foam-Banner")
+            del lines[1:(bannerLen+1)]
+            lines.insert(1,swakBanner)
+
+        touchedCopy=0
+        inCopy=False
+        foundContrib=False
+        for i,l in enumerate(lines):
+            if l.startswith(contribStart):
+                foundContrib=True
+            me=headerEnd.match(l)
+            if me is not None:
+                if not foundContrib and args.addContributor:
+                    touched=True
+                    print("Adding missing contributor-start")
+                    lines.insert(i,contribStart+"\n")
+                    lines.insert(i+1,"\n")
+                    lines.insert(i+2,swakRevision+" $Id$\n")
+                break
+            ml=licenseLine.match(l)
+            if ml is not None:
+                inCopy=True
+            if inCopy:
+                newline=l
+                for o,n in [("based on OpenFOAM","part of swak4Foam"),("OpenFOAM","swak4Foam")]:
+                    newline=newline.replace(o,n)
+                if newline!=l:
+                    touchedCopy+=1
+                    touched=True
+                    lines[i]=newline
+
+        if touchedCopy>0:
+            print_("Replaced OpenFOAM in license {} times".format(touchedCopy))
+
+        return touched,lines
+
+    if args.banner:
+        doWrite,lines=changeText(lines)
+
     for i,l in enumerate(lines):
         if l.startswith(swakRevision):
             swakLine=i
@@ -220,24 +296,34 @@ def processFile(f,data):
     if contrStart!=None:
         if swakLine==None:
             print_("No finishing '"+swakRevision+"' found. No contributors added")
+            noContributorsAdded.append(f)
             return
-        users=list(set([u for u,y in localContrib]))
-        cLines=[]
-        for u in users:
-            cLines.append(buildContributorLine(u,localContrib))
-        cLines.sort()
-        print_("Adding",len(cLines),"contributor lines to",f)
+        else:
+            doWrite=True
+            users=list(set([u for u,y in localContrib]))
+            cLines=[]
+            for u in users:
+                cLines.append(buildContributorLine(u,localContrib))
+            cLines.sort()
+            print_("Adding",len(cLines),"contributor lines to",f)
+
+    if doWrite:
         if not args.dryRun:
+            print_("Writing",f)
             f=open(f,"w")
-            f.writelines(lines[:contrStart+1])
-            f.writelines([l+"\n" for l in cLines])
-            f.writelines(lines[swakLine-1:])
+            if contrStart is not None:
+                f.writelines(lines[:contrStart+1])
+                f.writelines([l+"\n" for l in cLines])
+                f.writelines(lines[swakLine-1:])
+            else:
+                f.writelines(lines)
             f.close()
             modifiedFiles.append(f)
 
 def handleFiles(files):
     for f in files:
         if path.basename(f) in args.ignoreList:
+            print_("Skipping",f)
             continue
         if not path.exists(f):
             print_("WARNING: File",f,"does not exist. Don't try this again with me")
@@ -256,7 +342,7 @@ def handleFiles(files):
 
 handleFiles(args.files)
 
-print
+print_("\n\n")
 print_("Summary: Lines")
 nameLen=max([len(n) for n in allLines.keys()])
 tabFormat="%"+str(nameLen)+"s : %s"
@@ -266,10 +352,13 @@ for k in allLines:
     print_(tabFormat % (k,allLines[k]))
 
 if len(modifiedFiles)>0:
-    print
+    print_()
     print_(len(modifiedFiles),"files modified")
-    print
-
+    print_()
+if len(noContributorsAdded)>0:
+    print_()
+    print_("\n    ".join(["No contributors added"]+noContributorsAdded))
+    print_()
 print_("Years - Contributors")
 print_("--------------------")
 years=list(set([y for u,y in allContrib]))

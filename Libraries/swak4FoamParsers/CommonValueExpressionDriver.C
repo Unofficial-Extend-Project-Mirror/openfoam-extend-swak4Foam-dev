@@ -1,38 +1,33 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2012 Bruno Santos <wyldckat@gmail.com>
     2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
-    2017 Mark Olesen <Mark.Olesen@esi-group.com>
+    2017-2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -513,14 +508,19 @@ CommonValueExpressionDriver::~CommonValueExpressionDriver()
 List<exprString> CommonValueExpressionDriver::readVariableStrings(
     const dictionary &dict,
     const word &name,
-    const label recursionDepth
+    const label recursionDepth,
+    bool mustExist
 )
 {
     Sbug << "::readVariableStrings " << name
         << " depth " << recursionDepth << endl;
 
     if(!dict.found(name)) {
-        return List<exprString>();
+        if(mustExist) {
+            return List<exprString>(dict.lookup(name));
+        } else {
+            return List<exprString>();
+        }
     }
 
     if(recursionDepth>maxVariableRecursionDepth_) {
@@ -1273,7 +1273,11 @@ tmp<scalarField> CommonValueExpressionDriver::makeGaussRandomField(
 #ifdef FOAM_RANDOM_CLASS_NEW_INTERFACE
         const_cast<scalar&>(result()[i]) = rnd.GaussNormal<scalar>();
 #else
+#ifdef FOAM_RANDOM_CLASS_GAUSS_RENAMED
+        const_cast<scalar&>(result()[i]) = rnd.scalarNormal();
+#else
         const_cast<scalar&>(result()[i]) = rnd.GaussNormal();
+#endif
 #endif
     }
 

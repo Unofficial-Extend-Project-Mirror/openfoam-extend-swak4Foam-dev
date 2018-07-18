@@ -1,0 +1,179 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     simpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         2000;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   100;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression on;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+functions
+{
+    startupResiduals {
+        type addGlobalVariable;
+        globalScope solverResiduals;
+        globalName dummy;
+        resultType StackExpressionResult;
+    }
+    getResiduals {
+        type solverPerformanceToGlobalVariables;
+        fieldNames (
+            p
+        );
+        vectorFieldNames (
+            U
+        );
+        toGlobalNamespace solverResiduals;
+    }
+    raiseRelax {
+        type scriptableFvSolutionFvSchemes;
+        languageWrapperType lua;
+        schemesFromDict newSchemes;
+        solutionFromDict newSolution;
+        dictFromSchemes currentSchemes;
+        dictFromSolution currentSolution;
+        luaDictionaryParserErrorMode fail;
+        interactiveAfterException true;
+        //        interactiveAfterExecute true;
+
+        initCode #{
+--- -*- mode: lua -*-
+print('Starting up')
+lastResiduals={}
+allResiduals={}
+nrResiduals=10
+scaleResiduals={p=true}
+--- scaleResiduals={U=true,p=true}
+factor=0.75
+upFactor=1.05
+scaleThres=1.05
+
+function average(vals)
+   cnt=0
+   sum=0
+
+   for i,v in pairs(vals) do
+      cnt=cnt+1
+      sum=sum+math.log(v)
+   end
+   if cnt>0 then
+      --- print("avg: "..sum.."/"..cnt)
+      return math.exp(sum/cnt)
+   else
+      return 0
+   end
+end
+            #};
+        schemesCode #{
+--- -*- mode: lua -*-
+newSchemes={}
+
+            #};
+        solutionCode #{
+--- -*- mode: lua -*-
+if not initRelax then
+   initRelax=currentSolution.relaxationFactors.equations
+end
+
+lastP=p_initialResidual_last
+avgP=average(allResiduals)
+
+print("Average p-Residual "..avgP)
+
+if #lastResiduals>=nrResiduals then
+   table.remove(lastResiduals,1)
+   avg=average(lastResiduals)
+   usedP=lastP
+   ---   usedP=avgP
+   if avg*scaleThres<usedP then
+      print("Scaling residuals down: "..avg*scaleThres.."<"..usedP)
+      if factor>1 then
+         factor=1/upFactor
+      else
+         factor=factor/upFactor
+      end
+      if factor<0.1 then
+         factor=0.1
+      end
+   elseif avg>usedP*scaleThres then
+      print("Scaling residuals up :"..avg..">"..usedP*scaleThres)
+      factor=factor*upFactor
+      if factor>2 then
+         factor=2
+      end
+   else
+      print("No rescaling")
+   end
+end
+
+lastResiduals[#lastResiduals+1]=lastP
+allResiduals[#allResiduals+1]=lastP
+
+print("Scaling relaxation with factor "..factor)
+relax={}
+
+for k,v in pairs(initRelax) do
+   if scaleResiduals[k] then
+      relax[k]=factor*v
+      if relax[k]>0.99 then
+         relax[k]=0.99
+      end
+      print("Scaling relaxation of "..k.." from "..v.." to "..relax[k])
+   end
+end
+
+newSolution={relaxationFactors={equations=relax}}
+            #};
+        swakToLuaNamespaces (
+              solverResiduals
+        );
+        referenceToGlobal no;
+    }
+
+    #includeFunc streamlines
+}
+
+libs (
+    "libswakLuaIntegration.so"
+    "libswakFunctionObjects.so"
+);
+
+// ************************************************************************* //

@@ -141,6 +141,37 @@ The version of flex with
     flex -V
 
 
+### Scripting languages
+
+If some scripting language integration should be used then the
+appropriate development packages for that language must be
+installed (something like `python-devel`) for Python. This differs
+on the various platforms. The settings for your machine read from
+the file `swakConfiguation` if it is present. The file
+`swakConfiguation.automatic` tries to guess these settings so
+either copy it with
+
+    cp swakConfiguation.automatic swakConfiguation
+
+and modify it or link it
+
+    ln -s swakConfiguation.automatic swakConfiguation
+
+but be aware that if modifying it the original is modified.
+
+Because of its small footprint and to avoid problems on
+distributions where it is outdated `Lua` is automatically compiled
+by the `maintainanceScripts/compileRequirements` script and
+`swakConfiguration.automatic` uses this version if found. It may
+be necessary to install the development package of `readline` for
+this
+
+The script will also install `luarocks` (the Lua package manager)
+and using that `luaprompt`. The `luaprompt`-library will be used
+for interactive interactions with the Lua-integration (making it
+more comfortable)
+
+
 ## Building
 
     wmake all
@@ -166,10 +197,18 @@ present these unconfigured features will not be compiled.
 
 Environment variables that can be set in this file are:
 
--   **SWAK<sub>PYTHON</sub><sub>INCLUDE</sub>:** Path to the `Python.h` file of the used
+-   **SWAK<sub>PYTHON2</sub><sub>INCLUDE</sub>:** Path to the `Python.h` file of the used
     `python`-installation
--   **SWAK<sub>PYTHON</sub><sub>LINK</sub>:** Options to link the `python`-library to the
+-   **SWAK<sub>PYTHON2</sub><sub>LINK</sub>:** Options to link the `python`-library to the
     library for the `python`-integration
+-   **SWAK<sub>PYTHON3</sub><sub>INCLUDE</sub>:** Path to the `Python.h` file of the used
+    `python3`-installation
+-   **SWAK<sub>PYTHON3</sub><sub>LINK</sub>:** Options to link the `python3`-library to the
+    library for the `python3`-integration
+-   **SWAK<sub>LUA</sub><sub>INCLUDE</sub>:** Path to the header files of the used
+    `Lua`-installation
+-   **SWAK<sub>LUA</sub><sub>LINK</sub>:** Options to link the `Lua`-library to the
+    library for the `Lua`-integration
 -   **SWAK<sub>USER</sub><sub>PLUGINS</sub>:** A list of paths separated by
     semicolons. These are the directories of libraries with
     function-plugins. They are compiled in the course of the
@@ -220,8 +259,8 @@ suffix `Cluster` makes a file
 `libswakPythonIntegrationCluster.so`). That script has to be run
 **on the target system** and needs 3 parameters:
 
-1.  `SWAK_PYTHON_INCLUDE`
-2.  `SWAK_PYTHON_LINK`
+1.  `SWAK_PYTHON2_INCLUDE`
+2.  `SWAK_PYTHON2_LINK`
 3.  The suffix
 
 For instance
@@ -433,18 +472,6 @@ use the Mercurial-branch `groovyStandardBCs` to *groovyify*
 standard boundary conditions.
 
 
-### `pythonIntegration`
-
-Embeds a `Python`-interpreter.
-
--   **`pythonIntegrationFunctionObject`:** Executes `Python`-code
-    at the usual execution times of functionObjects. The
-    interpreter keeps its state
-
-This library is only compiled if the paths to the Python-Headers
-are configured in the `swakConfiguration`-file (see above)
-
-
 ### `simpleLagrangianFunctionObjects`
 
 Function objects that allow the easy addition of lagrangian
@@ -535,6 +562,39 @@ for special particle classes. These are
 
 These libraries have to be included in the `libs`-entry to
 be able to handle these libraries
+
+
+### `languageIntegration`
+
+Libraries that integrate various scripting languages with swak4Foam
+
+
+#### `swakGeneralLanguageIntegration`
+
+This library implements a common interface for the actual
+language integrations.
+
+
+#### `swakPythonIntegration`
+
+Embeds a `Python 2`-interpreter.
+
+-   **`pythonIntegrationFunctionObject`:** Executes `Python`-code
+    at the usual execution times of functionObjects. The
+    interpreter keeps its state
+
+This library is only compiled if the paths to the Python-Headers
+are configured in the `swakConfiguration`-file (see above)
+
+
+#### `swakPython3Integration`
+
+Embeds a `Python 3`-interpreter.
+
+
+#### `swakLuaIntegration`
+
+Embeds a `Lua`-interpreter.
 
 
 ## Utilities
@@ -1266,6 +1326,12 @@ machine using `vagrant`. Also to be used for packaging
 Patches that have to be applied to releases to get swak4Foam to
 work with them. These are only needed to fix problems of the
 distributions
+
+
+## Development
+
+Programs and libraries that are only used for testing/developing
+swak
 
 
 # Bug reporting and Development
@@ -5775,9 +5841,9 @@ missing in that Foam-version)
 
 Currently 4 Foam-versions are tested
 
--   OpenFOAM 4.1 (the Foundation release)
+-   OpenFOAM 5.0 (the Foundation release)
 -   Foam-extend 4.0
--   OpenFOAM+ 1612
+-   OpenFOAM+ 1706
 -   OpenFOAM 2.3 (to check compatibility with old versions)
 
 Other versions might or might not work. The first three will be
@@ -6155,11 +6221,10 @@ The field name is now the name of the original field plus
 that field have to be provided
 
 
-#### `funkyDoCalc`-files with an entry `expressions` assumed to be new format
+#### Environment variables for Python 2 integration renamed
 
-If one of the dictionaries in the specification file for
-`funkyDoCalc` is named `expressions` it is assumed that the file
-is in the new format and calculations will probably fail
+These environment variables are now renamed from `_PYTHON_` to
+`_PYTHON2_`. Scripts are adapted
 
 
 ### Bug fixes
@@ -6187,13 +6252,61 @@ if the number of particles differed between them. This has been fixed
 ### Internals (for developers)
 
 
+#### Refactoring of the python integration
+
+The Python integration has now been split into the actual Python
+2 integration and a general part to allow the integration of
+other interpreter languages
+
+
 ### Infrastructure
+
+
+#### Automatic detection of Python in `swakConfiguation.automatic`
+
+If `swakConfiguation.automatic` is used as `swakConfiguation`
+then the highest available version of Python 2 and Python 3 is
+used for the integration of these two languages
 
 
 ### Documentation
 
 
 ### New features
+
+
+#### Python 3 integration
+
+In addition to the "regular" Python-integration a separate
+library `swakPython3Integration` has been added which integrates
+with Python 3. The "old" Python integration will always be
+Python 2. The two integrations have the same features and the
+same function objects (in the names the `python` has to be
+replaced with `python3`)
+
+
+#### Lua integration
+
+The library `swakLuaIntegration` integrates with the [Lua
+Scripting language](https://www.lua.org/) the same way that the Python 2 and Python 3
+integrations do. The same function objects exist except that in
+the names `python` has to be replaced with `lua`. If fields are
+transferred to Lua then they are converted into
+Lua-tables. Therefor the performance should be much slower than
+the Python-integration where the native data is mapped to
+`numpy`-arrays
+
+The script `./maintainanceScripts/compileRequirements.sh`
+compiles a private version of Lua that is automatically used when
+the `swakConfiguation.automatic` is used
+
+
+#### Function object to read and write dictionaries
+
+The function object `readAndWriteDictionary` in the
+`simpleFunctionObjects` reads a dictionary from disk and writes
+it with the other data. The main purpose of this function object
+is to allow scripting languages to write their data
 
 
 #### `atan2` added to parsers

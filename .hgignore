@@ -7,6 +7,8 @@ syntax: glob
 *.o
 
 *.gz
+*.MD5
+*.tbz2
 
 linux*Opt
 linux*Debug

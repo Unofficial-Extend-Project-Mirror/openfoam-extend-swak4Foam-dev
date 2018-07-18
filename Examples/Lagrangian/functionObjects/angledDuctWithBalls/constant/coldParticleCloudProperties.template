@@ -49,7 +49,7 @@ solution {
     integrationSchemes
     {
         //        U               Euler;
-        U               Analytical;
+        U               analytical;
         T               analytical;
     }
 <!--(if foamFork!="extend")-->
@@ -95,7 +95,7 @@ subModels {
     {
         gravity         off;
         sphereDrag;
-<!--(if foamFork=="openfoamplus" and foamVersion>=(1706,))-->
+<!--(if (foamFork=="openfoamplus" and foamVersion>=(1706,)) or (foamFork=="openfoam" and foamVersion>(5,99)))-->
 <!--(else)-->
         virtualMass     off;
         pressureGradient off;

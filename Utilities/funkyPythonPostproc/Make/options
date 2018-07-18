@@ -2,19 +2,21 @@ include $(OBJECTS_DIR)/../../../../Libraries/rules/versionOptions
 
 EXE_INC = -I$(OBJECTS_DIR) \
     $(FOAM_DEV_OPTION) 	\
-    $(SWAK_PYTHON_INCLUDE) \
+    $(SWAK_PYTHON2_INCLUDE) \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \
-    -I../../Libraries/swakPythonIntegration/lnInclude/ \
+    -I../../Libraries/languageIntegration/swakPythonIntegration/lnInclude/ \
+    -I../../Libraries/languageIntegration/swakGeneralLanguageIntegration/lnInclude/ \
     -I../../Libraries/simpleFunctionObjects/lnInclude/ \
     -I../../Libraries/swak4FoamParsers/lnInclude/
 
 
 EXE_LIBS = -lfiniteVolume \
 	-lmeshTools \
-        $(SWAK_PYTHON_LINK) \
+        $(SWAK_PYTHON2_LINK) \
 	-L$(FOAM_USER_LIBBIN) \
         -lswakPythonIntegration \
+        -lswakGeneralLanguageIntegration \
         -lsimpleFunctionObjects \
 	-lswak4FoamParsers

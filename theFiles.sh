@@ -10,7 +10,8 @@ export SWAKLIBS=(groovyBC \
     swakTopoSources \
     swak4FoamParsers \
     swakLagrangianParser \
-    swakPythonIntegration* \
+    swak*Integration* \
+    swakScriptableLagrangian \
     swak*FunctionPlugin \
     swak*CloudAdaptor \
     swakFvOptions \
