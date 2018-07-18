@@ -446,7 +446,11 @@ namespace Foam {
                         patch
                     );
 #endif
+#ifdef FOAM_COUPLEDPOLYPATCH_MASTER_IS_OWNER
+                    return pp.master();
+#else
                     return pp.owner();
+#endif
                 } else {
                     return false;
                 }
