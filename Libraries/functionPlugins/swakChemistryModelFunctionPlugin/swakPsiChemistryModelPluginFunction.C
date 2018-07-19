@@ -73,10 +73,8 @@ const  swakPsiChemistryModelPluginFunction::ChemistryModelType &swakPsiChemistry
 
 #ifdef FOAM_NO_PSICHEMISTRY_MODEL
     typedef swakPsiChemistryModelPluginFunction::ChemistryModelType::reactionThermo rThermo;
-#else
-    typedef psiReactionThermo rThermo;
-#endif
     static HashPtrTable<rThermo> thermo_;
+#endif
 
     if(reg.foundObject< swakPsiChemistryModelPluginFunction::ChemistryModelType>("chemistryProperties")) {
         if(debug) {

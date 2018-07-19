@@ -81,7 +81,6 @@ namespace Foam {
 
 #if (OPENFOAM_COM >= 1803)                                          \
     || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(6,0,0))
-
 #define FOAM_NO_PSICHEMISTRY_MODEL
 #endif
 
