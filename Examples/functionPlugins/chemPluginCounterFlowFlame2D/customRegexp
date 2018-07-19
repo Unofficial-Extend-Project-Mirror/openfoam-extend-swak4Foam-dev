@@ -1,0 +1,13 @@
+// -*- c++ -*-
+
+rateO2Var {
+    theTitle "Rates of O2";
+    expr "Expression rate(.+)Print :  min=(.+) weightedAverage=(.+) max=(.+)";
+    type dynamic;
+    idNr 1;
+    titles (
+        min
+        average
+        max
+    );
+}

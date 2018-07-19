@@ -74,10 +74,16 @@ namespace Foam {
 #define FOAM_BASIC_THERMO_HAS_NO_NEW
 #endif
 
-#if (OPENFOAM_COM >= 1706) \
+#if (OPENFOAM_COM >= 1706)                                          \
     || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(5,0,0))
 #define FOAM_CHEMISTRYMODEL_HAS_NO_SOURCE_TERM
 #endif
+
+#if (OPENFOAM_COM >= 1803)                                          \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(6,0,0))
+#define FOAM_NO_PSICHEMISTRY_MODEL
+#endif
+
 
 #include "DebugOStream.H"
 

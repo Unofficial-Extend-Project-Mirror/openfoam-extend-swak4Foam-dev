@@ -38,7 +38,7 @@ writeFormat     ascii;
 
 writePrecision  6;
 
-writeCompression compressed;
+writeCompression yes;
 
 timeFormat      general;
 
@@ -88,7 +88,11 @@ functions
         outputInterval 1;
         setName fillingLine;
         set {
+<!--(if foamFork=="openfoam" and foamVersion>(5,99))-->
+    type lineUniform;
+<!--(else)-->
             type uniform;
+<!--(end)-->
             axis y;
             start (0.1 0 0.007);
             end (0.1 0.584 0.007);
@@ -176,6 +180,7 @@ functions
             max
             average
         );
+        interpolationType cell;
     }
     surfaceSize {
         type swakExpression;
@@ -195,6 +200,7 @@ functions
         accumulations (
             sum
         );
+        interpolationType cell;
     }
     normalizedVolume {
         type swakExpression;

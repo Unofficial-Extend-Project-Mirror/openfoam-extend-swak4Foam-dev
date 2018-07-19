@@ -65,6 +65,9 @@ solvers
     cellMotionU {
         $cellMotionUx;
     }
+    pcorrFinal {
+        $pcorr;
+    }
 }
 
 PIMPLE

@@ -214,7 +214,11 @@ void StateMachineRepository::insert(
     } else {
         allMachines_.insert(
             name,
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+            machine
+#else
             machine.ptr()
+#endif
         );
     }
     if(readFromRestart_.found(name)) {

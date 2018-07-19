@@ -15,7 +15,11 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+<!--(if (foamFork=="openfoamplus" and foamVersion>(1800,)) or (foamFork=="openfoam" and foamVersion>(5,99)))-->
+application     pimpleFoam;
+<!--(else)-->
 application     pimpleDyMFoam;
+<!--(end)-->
 
 startFrom       latestTime;
 
@@ -52,16 +56,9 @@ maxCo           0.5;
 libs (
     "libswakDynamicMesh.so"
     "libsimpleSwakFunctionObjects.so"
-    "libgroovyBC.so"
 );
 
 functions {
-    getTheValve {
-        type readAndUpdateFields;
-        fields (
-            valveField
-        );
-    }
     calcMassFlows {
         type patchExpression;
         patches (
@@ -106,19 +103,6 @@ functions {
         $calcMassFlowDeficit;
         expression "myArea-otherArea";
     }
-}
-
-DebugSwitches {
-    // disallowGenericFvPatchField 1;
-    // disallowGenericPointPatchField 1;
-    // disallowGenericPolyPatch    1;
-    // cyclicACMI 1;
-    // cyclicACMILduInterface 1;
-    // cyclicACMILduInterfaceField 1;
-    // cyclicAMI 1;
-    // cyclicAMILduInterface 1;
-    // cyclicAMILduInterfaceField 1;
-    // groovyCyclicACMI 1;
 }
 
 // ************************************************************************* //

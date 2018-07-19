@@ -38,6 +38,7 @@ laplacianSchemes
     default         none;
     laplacian(nu,U) Gauss linear corrected;
     laplacian(rAU,pcorr) Gauss linear corrected;
+    laplacian(rAUf,pcorr) Gauss linear corrected;
     laplacian(rAU,p) Gauss linear corrected;
     laplacian(rAUf,p) Gauss linear corrected;
     laplacian(diffusivity,cellMotionU) Gauss linear uncorrected;

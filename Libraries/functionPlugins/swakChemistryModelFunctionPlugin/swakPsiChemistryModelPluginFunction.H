@@ -44,7 +44,14 @@ Contributors/Copyright:
 
 #include "runTimeSelectionTables.H"
 
+#include "swakThermoTypes.H"
+
+#ifdef FOAM_NO_PSICHEMISTRY_MODEL
+#include "BasicChemistryModel.H"
+#include "psiReactionThermo.H"
+#else
 #include "psiChemistryModel.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -64,9 +71,15 @@ class swakPsiChemistryModelPluginFunction
     swakPsiChemistryModelPluginFunction(const swakPsiChemistryModelPluginFunction &);
 
 protected:
-    static const psiChemistryModel &chemistryInternal(const fvMesh &reg);
+#ifdef FOAM_NO_PSICHEMISTRY_MODEL
+    typedef BasicChemistryModel<psiReactionThermo> ChemistryModelType;
+#else
+    typedef psiChemistryModel ChemistryModelType;
+#endif
 
-    const psiChemistryModel &chemistry();
+    static const  swakPsiChemistryModelPluginFunction::ChemistryModelType &chemistryInternal(const fvMesh &reg);
+
+    const  swakPsiChemistryModelPluginFunction::ChemistryModelType &chemistry();
 
     void updateChemistry(const scalar dt);
 

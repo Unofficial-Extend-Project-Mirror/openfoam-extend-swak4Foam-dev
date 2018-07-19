@@ -106,9 +106,15 @@ OFstream &TimelineCollection::operator()(
         mkDir(outputDirectory_/timeName);
         outputFilePtr_.insert(
             usedName,
-            new OFstream(
-                outputDirectory_/timeName/usedName
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+            autoPtr<OFstream> (
+#endif
+                new OFstream(
+                    outputDirectory_/timeName/usedName
+                )
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
             )
+#endif
         );
         //        Pout << headerSpecs_ << endl;
         OFstream &o=*outputFilePtr_[usedName];

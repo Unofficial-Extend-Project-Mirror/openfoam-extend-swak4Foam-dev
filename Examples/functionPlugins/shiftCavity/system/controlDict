@@ -39,7 +39,7 @@ writeFormat     ascii;
 
 writePrecision  6;
 
-writeCompression compressed;
+writeCompression yes;
 
 timeFormat      general;
 
@@ -79,6 +79,12 @@ functions {
         expression "shiftConstantScalarField(vals,(-0.025 0 0))";
         //        expression "shiftConstantScalarField(pos().y<pos().x? 1 : -1,(-0.025 0 0))";
     }
+    noShift {
+        $constantShifted;
+        $shiftConstantScalarFieldData;
+        fieldName originalCircle;
+        expression "vals";
+    }
     mapShifted {
         $constantShifted;
         fieldName shiftedCircleMap;
@@ -111,14 +117,14 @@ functions {
         }
         expression "shiftExpressionScalarField(vals,shift)";
     }
-    // timeMapShifted {
-    //     $constantShifted;
-    //     fieldName shiftedCircleTimeMap;
-    //     mapExpressionScalarFieldData {
-    //         $shiftConstantScalarFieldData;
-    //     }
-    //     expression "mapExpressionScalarField(vals,shift)";
-    // }
+    timeMapShifted {
+        $constantShifted;
+        fieldName shiftedCircleTimeMap;
+        mapExpressionScalarFieldData {
+            $shiftConstantScalarFieldData;
+        }
+        expression "mapExpressionScalarField(vals,shift)";
+    }
     shiftedCircleDefault {
         $constantShifted;
         fieldName shiftedCircleDefault;
@@ -135,14 +141,14 @@ functions {
         }
         expression "shiftExpressionVectorFieldDefault(vector(1,1,1)*vals,shift,(1 2 3))";
     }
-    // timeMapShiftedDefault {
-    //     $constantShifted;
-    //     fieldName shiftedCircleTimeMapDefault;
-    //     mapExpressionScalarFieldDefaultData {
-    //         $shiftConstantScalarFieldData;
-    //     }
-    //     expression "mapExpressionScalarFieldDefault(vals,shift,2)";
-    // }
+    timeMapShiftedDefault {
+        $constantShifted;
+        fieldName shiftedCircleTimeMapDefault;
+        mapExpressionScalarFieldDefaultData {
+            $shiftConstantScalarFieldData;
+        }
+        expression "mapExpressionScalarFieldDefault(vals,shift,2)";
+    }
     findShiftedTime {
         $constantShifted;
         fieldName shiftedCircleFindTime;

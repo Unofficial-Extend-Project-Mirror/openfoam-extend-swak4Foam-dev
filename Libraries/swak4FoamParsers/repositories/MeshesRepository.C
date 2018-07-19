@@ -142,22 +142,34 @@ fvMesh &MeshesRepository::addMesh(
 
     times_.insert(
         name,
-        new Time(
-            Time::controlDictName,
-            usedN.path(),
-            fileName(usedN.name())
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+        autoPtr<Time>(
+#endif
+            new Time(
+                Time::controlDictName,
+                usedN.path(),
+                fileName(usedN.name())
+            )
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
         )
+#endif
     );
     meshes_.insert(
         name,
-        new fvMesh(
-            IOobject(
-                region,
-                (*times_[name]).timeName(),
-                (*times_[name]),
-                Foam::IOobject::MUST_READ
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+        autoPtr<fvMesh>(
+#endif
+            new fvMesh(
+                IOobject(
+                    region,
+                    (*times_[name]).timeName(),
+                    (*times_[name]),
+                    Foam::IOobject::MUST_READ
+                )
             )
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
         )
+#endif
     );
 
     return *meshes_[name];
@@ -194,14 +206,20 @@ fvMesh &MeshesRepository::addCoupledMesh(
 
     meshes_.insert(
         name,
-        new fvMesh(
-            IOobject(
-                region,
-                time.timeName(),
-                time,
-                Foam::IOobject::MUST_READ
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+        autoPtr<fvMesh>(
+#endif
+            new fvMesh(
+                IOobject(
+                    region,
+                    time.timeName(),
+                    time,
+                    Foam::IOobject::MUST_READ
+                )
             )
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
         )
+#endif
     );
 
     return *meshes_[name];
@@ -229,13 +247,19 @@ meshToMesh &MeshesRepository::getMeshToMesh(
     if(!meshInterpolations_.found(name)) {
          meshInterpolations_.insert(
              name,
-             new meshToMesh(
-                 *meshes_[name],
-                 mesh
-#ifdef FOAM_NEW_MESH2MESH
-                 ,getInterpolationOrder(name)
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+             autoPtr<meshToMesh>(
 #endif
+                 new meshToMesh(
+                     *meshes_[name],
+                     mesh
+                         #ifdef FOAM_NEW_MESH2MESH
+                     ,getInterpolationOrder(name)
+                         #endif
+                 )
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
              )
+#endif
          );
     }
 
@@ -332,7 +356,7 @@ meshToMeshOrder MeshesRepository::getInterpolationOrder(
         return interpolationOrder_[name];
     } else {
 #ifdef FOAM_NEW_MESH2MESH
-        return meshToMesh::imCellVolumeWeight;
+        return meshToMesh::interpolationMethod::imCellVolumeWeight;
 #else
         return meshToMesh::INTERPOLATE;
 #endif

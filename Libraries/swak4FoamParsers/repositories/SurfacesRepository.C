@@ -161,7 +161,11 @@ sampledSurface &SurfacesRepository::getSurface(
                 name,
                 mesh,
                 dict.subDict("surface")
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+            )
+#else
             ).ptr()
+#endif
         );
 
         bool writeSurface=dict.lookupOrDefault<bool>("autoWriteSurface",false);

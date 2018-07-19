@@ -10,9 +10,9 @@
 ** Used Foam-versions
    Currently these Foam-versions are in the matrix (these are the
    names in the column titles):
-   - 5.0 Fnd :: The OpenFOAM.org 5.0 release
+   - 6 Fnd :: The OpenFOAM.org 6 release
    - 4.1 Ext :: The Foam-Extend 4.1 release
-   - 1712 :: The OpenFOAM.com 1712 release
+   - 1806 :: The OpenFOAM.com 1806 release
    - 2.3 :: The OpenFOAM 2.3 release (this is the oldest release
         tested)
 ** Symbols in the tables
@@ -30,17 +30,19 @@
         of technical constraints (missing solver etc)
    - no symbol :: This means that the case was not yet tested on this version
 * The Matrix
-  | Case name                                                   | 5.0 Fnd    | 4.1 Ext    | 1712       | 2.3        |
+  | Case name                                                   | 6 Fnd      | 4.1 Ext    | 1806       | 2.3        |
   |-------------------------------------------------------------+------------+------------+------------+------------|
   | DynamicMesh/hecticInletACMI2D                               | \checkmark | \dagger    | \checkmark | \sad       |
   | DynamicMesh/rotatingTank2D                                  | \checkmark | \checkmark | \checkmark | \checkmark |
-  | DynamicMesh/switchedTJunction                               | \sad       | \dagger    | \sad       | \sad       |
   | DynamicMesh/switchedInletACMI2D                             | \checkmark | \dagger    | \checkmark | \sad       |
+  | DynamicMesh/switchedTJunction                               | \sad       | \dagger    | \sad       | \sad       |
   | FiniteArea/planeTransport                                   | \dagger    | \checkmark | \checkmark | \dagger    |
+  | functionPlugins/chemPluginCounterFlowFlame2D                | \checkmark | \sad       | \checkmark |            |
+  | functionPlugins/shiftCavity                                 | \checkmark | \sad       | \checkmark |            |
   | FvOptions/angledDuctWithSources                             | \checkmark | \dagger    | \checkmark | \checkmark |
-  | FvOptions/heatExchangerSources                              | \checkmark | \dagger    | \checkmark | \sad       |
+  | FvOptions/heatExchangerSources                              | \partial   | \dagger    | \checkmark | \sad       |
   | groovyBC/average-t-junction                                 | \checkmark | \checkmark | \checkmark | \checkmark |
-  | groovyBC/circulatingSplash                                  | \sad       | \checkmark | \partial   | \checkmark |
+  | groovyBC/circulatingSplash                                  | \checkmark | \checkmark | \partial   | \checkmark |
   | groovyBC/delayed-t-junction                                 | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/fillingTheDam                                      | \checkmark | \sad       | \checkmark | \checkmark |
   | groovyBC/movingConeDistorted                                | \checkmark | \checkmark | \checkmark | \checkmark |
@@ -48,35 +50,35 @@
   | groovyBC/wobbler                                            | \checkmark | \checkmark | \checkmark | \checkmark |
   | ImmersedBC/pitzDailyImmersed                                | \dagger    | \checkmark | \dagger    | \dagger    |
   | Lagrangian/functionObject/angledDuctWithBalls               | \checkmark | \checkmark | \checkmark | \checkmark |
-  | Lagrangian/functionObject/hotStream                         | \sad       | \checkmark | \sad       | \sad       |
+  | Lagrangian/functionObject/hotStream                         | \dagger    | \checkmark | \sad       | \sad       |
   | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark | \checkmark | \checkmark |
-  | Lagrangian/LanguageIntegration/angledDuctWithLuaInject      | \checkmark | \checkmark |            |            |
-  | Lagrangian/LanguageIntegration/angledDuctWithPython2Inject  | \checkmark | \checkmark |            |            |
+  | Lagrangian/LanguageIntegration/angledDuctWithLuaInject      | \checkmark | \checkmark | \checkmark |            |
+  | Lagrangian/LanguageIntegration/angledDuctWithPython2Inject  | \checkmark | \checkmark | \checkmark |            |
   | Lagrangian/LanguageIntegration/angledDuctWithPython3Inject  | \checkmark | \checkmark |            |            |
   | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark | \checkmark | \checkmark |
-  | Lagrangian/parser/simplifiedSiwek                           | \sad       | \sad       |            | \checkmark |
-  | LuaIntegration/flowStatePitzDaily                           | \checkmark | \checkmark |            | \checkmark |
-  | LuaIntegration/luaScriptedBCAngledDuct                      | \checkmark | \checkmark |            | \checkmark |
-  | LuaIntegration/raiseRelaxationPitzDaily                     | \checkmark | \dagger    |            | \dagger    |
+  | Lagrangian/parser/simplifiedSiwek                           | \sad       | \sad       | \sad       | \checkmark |
+  | LuaIntegration/flowStatePitzDaily                           | \checkmark | \checkmark | \checkmark | \checkmark |
+  | LuaIntegration/luaScriptedBCAngledDuct                      | \checkmark | \checkmark | \checkmark | \checkmark |
+  | LuaIntegration/raiseRelaxationPitzDaily                     | \checkmark | \dagger    | \checkmark | \dagger    |
   | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    | \checkmark | \checkmark |
   | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark | \dagger    | \checkmark | \checkmark |
-  | other/angledDuctImplicit                                    |            |            | \checkmark |            |
+  | other/angledDuctImplicit                                    | \checkmark |            | \checkmark |            |
   | other/capillaryRise                                         | \checkmark | \sad       | \checkmark | \checkmark |
-  | other/counterFlowFlame2DInitialized                         | \checkmark | \sad       | \partial   | \checkmark |
+  | other/counterFlowFlame2DInitialized                         | \partial   | \sad       | \partial   | \checkmark |
   | other/simpleBendedPipe                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | other/topoSetDamBreak                                       | \checkmark | \checkmark | \checkmark | \checkmark |
   | Python3Integration/flowStatePitzDaily                       | \checkmark | \checkmark |            |            |
   | Python3Integration/python3ScriptedBCAngledDuct              | \checkmark | \checkmark |            |            |
-  | SimpleSurface/littleVolcano                                 | \checkmark |            | \checkmark |            |
+  | SimpleSurface/littleVolcano                                 | \sad       |            | \checkmark |            |
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
-  | tests/languageIntegration/luaIntegration                    | \checkmark | \checkmark | \checkmark | \checkmark |
+  | tests/languageIntegration/luaIntegration                    | bug        | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/pythonIntegration                 | \checkmark | \checkmark | \checkmark | \checkmark |
-  | tests/languageIntegration/python3Integration                | \checkmark | \checkmark | \checkmark | \checkmark |
+  | tests/languageIntegration/python3Integration                | \checkmark | \checkmark |            | \checkmark |
   | tests/SearchableSurfaces/objectsTest                        | \checkmark |            | \checkmark |            |
-  | tests/SearchableSurfaces/operationsTest                     | \checkmark |            | \checkmark |            |
-  | tests/SearchableSurfaces/operationsTestRotated              | \partial   |            | \partial   |            |
+  | tests/SearchableSurfaces/operationsTest                     |            |            |            |            |
+  | tests/SearchableSurfaces/operationsTestRotated              |            |            |            |            |
   | tests/SearchableSurfaces/scaledIglooWithFridges             | \checkmark |            | \checkmark |            |
   | tests/testFOExecution                                       | \checkmark | \checkmark | \checkmark |            |
 

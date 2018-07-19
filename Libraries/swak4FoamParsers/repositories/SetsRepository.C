@@ -147,7 +147,11 @@ sampledSet &SetsRepository::getSet(
                 mesh,
                 getSearch(mesh),
                 dict.subDict("set")
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+            )
+#else
             ).ptr()
+#endif
         );
 
         if(debug) {
@@ -227,7 +231,13 @@ meshSearch &SetsRepository::getSearch(
         }
         meshSearches_.insert(
             name,
-            new meshSearch(mesh)
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+            autoPtr<meshSearch>(
+#endif
+                new meshSearch(mesh)
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+            )
+#endif
         );
 
         return *meshSearches_[name];
