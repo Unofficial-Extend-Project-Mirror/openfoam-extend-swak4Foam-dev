@@ -169,7 +169,7 @@ namespace Foam {
             rawMode_=false;
         }
 
-        friend parserRawDict::RawFoamDictionaryParser;
+        friend class parserRawDict::RawFoamDictionaryParser;
 
         virtual void add(const word& name,scalar value) = 0;
 
