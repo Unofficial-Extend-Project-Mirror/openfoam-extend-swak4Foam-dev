@@ -4029,6 +4029,9 @@ S_{expl} + S_{impl} T
      Reported by Matti Rauter at
      https://twitter.com/igt_matti/status/989870314241880067
      Fixed
+**** =groovyBCJumpAMI= not working correctly
+     Because the reference was returned instead of the =tmp= some
+     values were overwritten
 *** Internals (for developers)
 **** Refactoring of the python integration
      The Python integration has now been split into the actual Python
