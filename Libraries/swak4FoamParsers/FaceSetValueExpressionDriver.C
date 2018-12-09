@@ -99,7 +99,7 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(
     const fvMesh&mesh
 )
  :
-    SetSubsetValueExpressionDriver(dict,dict.lookup("setName"),INVALID),
+    SetSubsetValueExpressionDriver(dict,word(dict.lookup("setName")),INVALID),
     faceSet_(
         getTopoSet<faceSet>(
             regionMesh(
@@ -107,7 +107,7 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(
                 mesh,
                 searchOnDisc()
             ),
-            dict.lookup("setName"),
+            word(dict.lookup("setName")),
             origin_
         )
     )

@@ -84,12 +84,9 @@ bool writeFieldsOftenFunctionObject::start()
 {
     writeFieldsGeneralFunctionObject::start();
 
-    word wcName=dict_.lookup("writeControl");
+    const word wcName(dict_.lookup("writeControl"));
 
-    writeControl_ = writeControlNames.read
-        (
-            dict_.lookup("writeControl")
-        );
+    writeControl_ = writeControlNames[wcName];
 
     writeInterval_ = readScalar(dict_.lookup("writeIntervall"));
     if(writeControl_ == Time::wcTimeStep && label(writeInterval_) <1) {
@@ -100,7 +97,7 @@ bool writeFieldsOftenFunctionObject::start()
     }
 
     Info << "Additional fields " << fieldNames() << " will be written "
-        << "with writeControl " << wcName << " and intervall " << writeInterval_ << endl;
+        << "with writeControl " << wcName << " and interval " << writeInterval_ << endl;
 
     if(writeControl_ == Time::wcAdjustableRunTime) {
         WarningIn("bool writeFieldsOftenFunctionObject::start()")
