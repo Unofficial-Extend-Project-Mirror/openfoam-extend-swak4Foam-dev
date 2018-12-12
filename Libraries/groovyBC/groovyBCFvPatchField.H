@@ -138,6 +138,8 @@ public:
 
     // Member functions
 
+    virtual tmp<Field<Type>> patchNeighbourField() const;
+
     //- Update the coefficients associated with the patch field
     virtual void updateCoeffs();
 

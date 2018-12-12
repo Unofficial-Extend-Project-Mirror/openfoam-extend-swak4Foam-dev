@@ -4136,4 +4136,10 @@ S_{expl} + S_{impl} T
      destroyed
 **** =groovyBCJump= now works for non-scalar boundary conditions
      Now the boundary condition works for non-scalar fields as well
+**** =groovyBC= now supports =neighbourField(foo)=
+     If used on a cyclic patch then this will get the value of =foo=
+     on the other side. Before this raise a =Not Implemented=-Error
+
+     *Attention*: =foo= on the patch has to be a =groovyBC= for this
+      work (or any other BC that implements =patchNeighbourField()=
 *** Examples

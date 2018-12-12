@@ -30,6 +30,7 @@ Contributors/Copyright:
 \*---------------------------------------------------------------------------*/
 
 #include "groovyBCFvPatchField.H"
+#include "cyclicFvPatch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -206,6 +207,45 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+template<class Type>
+tmp<Field<Type>> groovyBCFvPatchField<Type>::patchNeighbourField() const
+{
+    if(isA<cyclicFvPatch>(this->patch())) {
+        // reimplement the cyclicFvPatchField<Type>::patchNeighbourField()
+
+        const cyclicFvPatch &cyclicPatch=dynamicCast<const cyclicFvPatch>(this->patch());
+        const Field<Type>& iField = this->primitiveField();
+        const labelUList& nbrFaceCells =
+            cyclicPatch.neighbPatch().faceCells();
+
+        tmp<Field<Type>> tpnf(new Field<Type>(this->size()));
+        Field<Type>& pnf = tpnf.ref();
+
+        bool doTransform=!(cyclicPatch.parallel() || pTraits<Type>::rank==0);
+        if (doTransform)
+        {
+            forAll(pnf, facei)
+            {
+                pnf[facei] = transform
+                    (
+                        cyclicPatch.forwardT()[0], iField[nbrFaceCells[facei]]
+                    );
+            }
+        }
+        else
+        {
+            forAll(pnf, facei)
+            {
+                pnf[facei] = iField[nbrFaceCells[facei]];
+            }
+        }
+        return tpnf;
+    } else {
+        NotImplemented;
+        return *this;
+    }
+}
 
 template<class Type>
 void groovyBCFvPatchField<Type>::updateCoeffs()
