@@ -157,12 +157,6 @@ public:
     virtual void write(Ostream&) const;
 };
 
-#ifndef FOAM_JUMP_IS_JUMP_CYCLIC
-//- Specialisation of the jump-condition for the pressure
-template<>
-void groovyBCJumpFvPatchField<scalar>::updateCoeffs();
-#endif
-
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam

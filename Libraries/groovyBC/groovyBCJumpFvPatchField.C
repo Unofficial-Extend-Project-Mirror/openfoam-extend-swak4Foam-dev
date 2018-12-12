@@ -174,6 +174,21 @@ tmp<Field<scalar> > groovyBCJumpFvPatchField<Type>::jump() const
 #endif
 
 template<class Type>
+void Foam::groovyBCJumpFvPatchField<Type>::updateCoeffs()
+{
+    if(debug) {
+        Info << "groovyBCJumpFvPatchField<Type>::jump() with "
+            << jumpExpression_ << endl;
+    }
+
+    driver_.clearVariables();
+
+    this->jump_ = driver_.evaluate<Type>(this->jumpExpression_);
+
+    fixedJumpFvPatchField<Type>::updateCoeffs();
+}
+
+template<class Type>
 void groovyBCJumpFvPatchField<Type>::write(Ostream& os) const
 {
     if(debug) {

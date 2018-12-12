@@ -4134,4 +4134,6 @@ S_{expl} + S_{impl} T
      objects causes a segmentation fault after the run
      finished. Probably because the function objects are inconsitently
      destroyed
+**** =groovyBCJump= now works for non-scalar boundary conditions
+     Now the boundary condition works for non-scalar fields as well
 *** Examples
