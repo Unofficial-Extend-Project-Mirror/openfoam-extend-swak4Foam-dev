@@ -94,6 +94,7 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
     driver_(dict,this->patch()),
     cyclicSlave_(dict.lookupOrDefault<bool>("cyclicSlave",false))
 {
+    this->patchType() = dict.lookupOrDefault<word>("patchType", word::null);
     if(debug) {
         Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 3" << endl;
     }
