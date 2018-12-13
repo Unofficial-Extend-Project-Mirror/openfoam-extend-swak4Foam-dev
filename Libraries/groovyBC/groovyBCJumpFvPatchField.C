@@ -204,7 +204,7 @@ void groovyBCJumpFvPatchField<Type>::write(Ostream& os) const
 
     driver_.writeCommon(os,debug);
 
-    this->writeEntry("value", os);
+    //    this->writeEntry("value", os);
 }
 
 
