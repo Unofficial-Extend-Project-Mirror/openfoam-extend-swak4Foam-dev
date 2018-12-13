@@ -48,7 +48,8 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
 :
     mixedFvPatchField<Type>(p, iF),
     groovyBCCommon<Type>(true),
-    driver_(this->patch())
+    driver_(this->patch()),
+    cyclicSlave_(false)
 {
     if(debug) {
         Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 1" << endl;
@@ -71,7 +72,8 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
 :
     mixedFvPatchField<Type>(ptf, p, iF, mapper),
     groovyBCCommon<Type>(ptf),
-    driver_(this->patch(),ptf.driver_)
+    driver_(this->patch(),ptf.driver_),
+    cyclicSlave_(ptf.cyclicSlave_)
 {
     if(debug) {
         Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 2" << endl;
@@ -89,7 +91,8 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
 :
     mixedFvPatchField<Type>(p, iF),
     groovyBCCommon<Type>(dict,true),
-    driver_(dict,this->patch())
+    driver_(dict,this->patch()),
+    cyclicSlave_(dict.lookupOrDefault<bool>("cyclicSlave",false))
 {
     if(debug) {
         Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 3" << endl;
@@ -181,7 +184,8 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
 :
     mixedFvPatchField<Type>(ptf),
     groovyBCCommon<Type>(ptf),
-    driver_(this->patch(),ptf.driver_)
+    driver_(this->patch(),ptf.driver_),
+    cyclicSlave_(ptf.cyclicSlave_)
 {
     if(debug) {
         Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 4" << endl;
@@ -198,7 +202,8 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
 :
     mixedFvPatchField<Type>(ptf, iF),
     groovyBCCommon<Type>(ptf),
-    driver_(this->patch(),ptf.driver_)
+    driver_(this->patch(),ptf.driver_),
+    cyclicSlave_(ptf.cyclicSlave_)
 {
     if(debug) {
         Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 5" << endl;
@@ -267,11 +272,52 @@ void groovyBCFvPatchField<Type>::updateCoeffs()
         Info << "groovyBCFvPatchField<Type>::updateCoeffs - updating" << endl;
     }
 
-    driver_.clearVariables();
+    if(
+        isA<cyclicFvPatch>(this->patch())
+        &&
+        cyclicSlave_
+    ) {
+        const cyclicFvPatch &cyclicPatch=dynamicCast<const cyclicFvPatch>(this->patch());
+        const GeometricField<Type, fvPatchField, volMesh>& fld =
+            static_cast<const GeometricField<Type, fvPatchField, volMesh>&>
+            (
+                this->primitiveField()
+            );
 
-    this->refValue() = driver_.evaluate<Type>(this->valueExpression_);
-    this->refGrad() = driver_.evaluate<Type>(this->gradientExpression_);
-    this->valueFraction() = driver_.evaluate<scalar>(this->fractionExpression_);
+        if(
+            !isA<groovyBCFvPatchField<Type> >(
+                fld.boundaryField()[
+                    cyclicPatch.neighbPatchID()
+                ]
+            )
+        ) {
+            FatalErrorInFunction
+                << "specified 'cyclicSlave' on " << this->patch().name() << " but "
+                    << fld.boundaryField()[cyclicPatch.neighbPatchID()].patch().name()
+                    << " is not a groovyBC"
+                    << endl
+                    << exit(FatalError);
+        }
+
+        groovyBCFvPatchField<Type> &other=const_cast<groovyBCFvPatchField<Type>& >(
+            dynamicCast<const groovyBCFvPatchField<Type> >(
+                fld.boundaryField()[
+                    cyclicPatch.neighbPatchID()
+                ]
+            )
+        );
+        other.updateCoeffs();
+        this->refValue() = other.refValue();
+        this->refGrad() = other.refGrad();
+        this->valueFraction() = other.valueFraction();
+
+    } else {
+        driver_.clearVariables();
+
+        this->refValue() = driver_.evaluate<Type>(this->valueExpression_);
+        this->refGrad() = driver_.evaluate<Type>(this->gradientExpression_);
+        this->valueFraction() = driver_.evaluate<scalar>(this->fractionExpression_);
+    }
 
     mixedFvPatchField<Type>::updateCoeffs();
 }
@@ -285,6 +331,9 @@ void groovyBCFvPatchField<Type>::write(Ostream& os) const
     }
     mixedFvPatchField<Type>::write(os);
     groovyBCCommon<Type>::write(os);
+
+    os.writeKeyword("cyclicSlave")
+        << cyclicSlave_ << token::END_STATEMENT << nl;
 
     driver_.writeCommon(os,this->debug_ || debug);
 }
