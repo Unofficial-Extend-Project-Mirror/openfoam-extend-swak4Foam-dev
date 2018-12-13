@@ -45,6 +45,7 @@
   | groovyBC/circulatingSplash                                  | \checkmark | \checkmark | \partial   | \checkmark |
   | groovyBC/delayed-t-junction                                 | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/fillingTheDam                                      | \checkmark | \sad       | \checkmark | \checkmark |
+  | groovyBC/jumpChannel                                        |            |            | \checkmark |            |
   | groovyBC/movingConeDistorted                                | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/pulsedPitzDaily                                    | \checkmark | \sad       | \checkmark | \checkmark |
   | groovyBC/wobbler                                            | \checkmark | \checkmark | \checkmark | \checkmark |
@@ -72,7 +73,6 @@
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
-  | tests/jumpChannel                                           |            |            | \checkmark |            |
   | tests/languageIntegration/luaIntegration                    | bug        | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/pythonIntegration                 | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/python3Integration                | \checkmark | \checkmark |            | \checkmark |
