@@ -1,0 +1,54 @@
+// -*- c++ -*-
+
+pJump {
+    type dynamic;
+    idNr 1;
+    theTitle "Pressure jump";
+    expr "Expression pJump(.+) :  weightedAverage=(.+)";
+    titles ( avg );
+}
+
+interfaceVelocity {
+    type dynamic;
+    theTitle "Velocity on boundary";
+    idNr 1;
+    expr "Expression interfaceU on jump(.+):  min=\((.+) (.+) .+\) weightedAverage=\((.+) (.+) .+\) max=\((.+) (.+) .+\)";
+    titles (
+        "min x"
+        "min y"
+        "avg x"
+        "avg y"
+        "max x"
+        "max y"
+    );
+    specialwith {
+        ".*_int .*" "lines lw 2";
+    }
+}
+interfaceVelocityInternal {
+    type dynamicslave;
+    master interfaceVelocity;
+    idNr 1;
+    expr "Expression interfaceUInternal on jump(.+):  min=\((.+) (.+) .+\) weightedAverage=\((.+) (.+) .+\) max=\((.+) (.+) .+\)";
+    titles (
+        "int min x"
+        "int min y"
+        "int avg x"
+        "int avg y"
+        "int max x"
+        "int max y"
+    );
+}
+massFlow {
+    type dynamic;
+    idNr 1;
+    theTitle "Mass flow";
+    expr "Expression massFlow on (.+):  average=(.+)";
+    titles (
+        sum
+    );
+    specialwith {
+        "outlet" "lines dt 3 lw 4";
+        ".+_master" "lines dt 2 lw 3";
+    }
+}

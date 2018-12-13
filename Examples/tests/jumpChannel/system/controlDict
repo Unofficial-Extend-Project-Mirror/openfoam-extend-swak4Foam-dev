@@ -37,7 +37,7 @@ writeFormat     ascii;
 
 writePrecision  6;
 
-writeCompression unyes;
+writeCompression yes;
 
 timeFormat      general;
 
@@ -48,6 +48,65 @@ runTimeModifiable yes;
 libs (
     "libswakTopoSources.so"
     "libgroovyBC.so"
+    "libsimpleSwakFunctionObjects.so"
 );
 
+functions {
+    pJumpBaffle1 {
+        type swakExpression;
+        valueType patch;
+        patchName jump1_master;
+        otherPatch jump1_slave;
+        accumulations (
+            weightedAverage
+        );
+        verbose true;
+        expression "p-otherP";
+        variables (
+            "otherP{$otherPatch}=sum(p*area())/sum(area());"
+        );
+    }
+    pJumpTotal {
+        $pJumpBaffle1;
+        patchName inlet;
+        otherPatch outlet;
+    }
+    pJumpBaffle2 {
+        $pJumpBaffle1;
+        patchName jump2_master;
+        otherPatch jump2_slave;
+    }
+    interfaceU {
+        type patchExpression;
+        verbose true;
+        expression "U";
+        patches (
+            "jump.*"
+        );
+        accumulations (
+            min
+            weightedAverage
+            max
+        );
+        allowCoupled true;
+    }
+    interfaceUInternal {
+        $interfaceU;
+        expression "internalField(U)";
+    }
+    massFlow {
+        type patchExpression;
+        verbose true;
+        expression "mag(sum(phi))";
+        patches (
+            "jump.*"
+            inlet
+            outlet
+        );
+        accumulations (
+            average
+        );
+        allowCoupled true;
+    }
+}
 // ************************************************************************* //
