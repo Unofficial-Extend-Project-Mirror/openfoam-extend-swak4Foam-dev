@@ -4037,6 +4037,18 @@ S_{expl} + S_{impl} T
 **** =groovyBCJumpAMI= not working correctly
      Because the reference was returned instead of the =tmp= some
      values were overwritten
+**** =patchFunctionObject= hangs with =processorCyclic= boundaries and regular expressions
+     To enable =cyclic= boundary conditions on decomposed cases
+     =processorCyclic= boundaries are created on *some*
+     processors. Sometimes these boundaries are picked up by regular
+     expressions in function objects derived from
+     =patchFunctionObject= (for instance =patchExpression=). This
+     makes the run hang
+
+     This has been fixed by checking whether all processors have the
+     same boundaries in the list and stopping if they haven't
+     requesting the user to be more specific in the regular
+     expressions
 *** Internals (for developers)
 **** Refactoring of the python integration
      The Python integration has now been split into the actual Python
