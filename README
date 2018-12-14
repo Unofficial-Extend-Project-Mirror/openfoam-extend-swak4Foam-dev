@@ -4115,6 +4115,10 @@ S_{expl} + S_{impl} T
      - all :: alias for =and=
      - any :: alias for =or=
      - none :: only =true= if everything is =false= (basically =not or=)
+**** =neighbourPatch=-function for expressions on =cyclic= patches
+     The expression =neighbourPatch(foo)= on a cyclic patch gets the
+     value of =foo= on the "other" side of the cyclic. For this the
+     field has to be a =cyclic= or a subclass
 *** Enhancements
 **** =solverPerformanceToGlobalVariables= now supports vector fields
      With an additional (optional) parameter =vectorFieldNames= this

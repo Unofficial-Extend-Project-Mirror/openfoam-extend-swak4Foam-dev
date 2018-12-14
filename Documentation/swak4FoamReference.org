@@ -544,6 +544,9 @@ hide circle
           neighbouring internal cells(P, FP)
      - neighbourField(fieldName) :: For a coupled patch get the value
           of the internal field of the coupled patch (P, FP)
+     - neighbourPatch(fieldName) :: For a =cyclic= field (or
+          =cyclicAMI= or =cyclicACMI=) get the value from the other
+          side of the patch (P, FP)
      These functions are only available if the patch has been defined
      as a =mappedPatch= (=directMappedPatch= in OpenFOAM before 2.0)
      or a subclass in the =boundary=-file:

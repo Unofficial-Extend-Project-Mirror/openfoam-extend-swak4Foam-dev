@@ -90,6 +90,32 @@ functions {
         );
         allowCoupled true;
     }
+    uDifference {
+        type patchExpression;
+        verbose true;
+        expression "U-neighbourPatch(U)";
+        patches (
+            jump1_master
+        );
+        accumulations (
+            min
+            weightedAverage
+            max
+        );
+        allowCoupled true;
+    }
+    pDifference {
+        $uDifference;
+        patches (
+            jump1_master
+            jump2_master
+        );
+        expression "p-neighbourPatch(p)";
+    }
+    patchVsField {
+        $uDifference;
+        expression "neighbourPatch(U)-neighbourField(U)";
+    }
     interfaceUInternal {
         $interfaceU;
         expression "internalField(U)";

@@ -246,6 +246,9 @@ public:
     tmp<Field<Type> > getPatchNeighbourField(const word &name);
 
     template<class Type>
+    tmp<Field<Type> > getPatchNeighbourPatch(const word &name);
+
+    template<class Type>
     tmp<Field<Type> > toFace(const Field<Type> &);
 
     template<class Type>
