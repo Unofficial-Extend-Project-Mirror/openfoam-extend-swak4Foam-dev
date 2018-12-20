@@ -482,6 +482,7 @@ namespace Foam {
         ) {
             const typename localVolField::PatchFieldType &pField=
                 patch_.lookupPatchField<localVolField,Type>(name);
+#ifdef FOAM_CYCLIC_FV_PATCH_FIELD_HAS_NEIGHBOUR_PATCH
             if(isA<cyclicFvPatchField<Type> >(pField)) {
                 return dynamicCast<const cyclicFvPatchField<Type> >(pField).neighbourPatchField();
 #ifdef FOAM_HAS_AMI_INTERFACE
@@ -499,6 +500,12 @@ namespace Foam {
                         << endl
                         << exit(FatalError);
             }
+#else // FOAM_CYCLIC_FV_PATCH_FIELD_HAS_NEIGHBOUR_PATCH
+            FatalErrorInFunction
+                << "In this OpenFOAM-version cyclicFvPAtchField has no neighbourPatchField-method"
+                    << endl
+                    << exit(FatalError);
+#endif
             return pField.patchNeighbourField();
         } else{
             FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getPatchNeighbourField(const word &name)")

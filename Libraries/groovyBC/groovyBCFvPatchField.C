@@ -94,7 +94,7 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
     driver_(dict,this->patch()),
     cyclicSlave_(dict.lookupOrDefault<bool>("cyclicSlave",false))
 {
-    this->patchType() = dict.lookupOrDefault<word>("patchType", word::null);
+    const_cast<word&>(this->patchType()) = dict.lookupOrDefault<word>("patchType", word::null);
     if(debug) {
         Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 3" << endl;
     }
@@ -218,6 +218,7 @@ template<class Type>
 tmp<Field<Type>> groovyBCFvPatchField<Type>::patchNeighbourField() const
 {
     if(isA<cyclicFvPatch>(this->patch())) {
+#ifdef FOAM_CYCLIC_FV_PATCH_FIELD_HAS_NEIGHBOUR_PATCH
         // reimplement the cyclicFvPatchField<Type>::patchNeighbourField()
 
         const cyclicFvPatch &cyclicPatch=dynamicCast<const cyclicFvPatch>(this->patch());
@@ -247,6 +248,13 @@ tmp<Field<Type>> groovyBCFvPatchField<Type>::patchNeighbourField() const
             }
         }
         return tpnf;
+#else
+        FatalErrorInFunction
+            << "No patchNeighbourField in this OpenFOAM-version"
+                << endl
+                << exit(FatalError);
+        return *this;
+#endif
     } else {
         NotImplemented;
         return *this;
@@ -278,6 +286,7 @@ void groovyBCFvPatchField<Type>::updateCoeffs()
         &&
         cyclicSlave_
     ) {
+#ifdef FOAM_CYCLIC_FV_PATCH_FIELD_HAS_NEIGHBOUR_PATCH
         const cyclicFvPatch &cyclicPatch=dynamicCast<const cyclicFvPatch>(this->patch());
         const GeometricField<Type, fvPatchField, volMesh>& fld =
             static_cast<const GeometricField<Type, fvPatchField, volMesh>&>
@@ -311,7 +320,12 @@ void groovyBCFvPatchField<Type>::updateCoeffs()
         this->refValue() = other.refValue();
         this->refGrad() = other.refGrad();
         this->valueFraction() = other.valueFraction();
-
+#else
+        FatalErrorInFunction
+            << "No patchNeighbourField in this OpenFOAM-version"
+                << endl
+                << exit(FatalError);
+#endif
     } else {
         driver_.clearVariables();
 

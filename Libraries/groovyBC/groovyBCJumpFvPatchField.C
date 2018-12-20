@@ -151,7 +151,7 @@ groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField
 
 #ifdef FOAM_JUMP_IS_JUMP_CYCLIC
 template<class Type>
-tmp<Field<scalar> > groovyBCJumpFvPatchField<Type>::jump() const
+tmp<Field<Type> > groovyBCJumpFvPatchField<Type>::jump() const
 {
     if(debug) {
         Info << "groovyBCJumpFvPatchField<Type>::jump() with "
@@ -162,16 +162,17 @@ tmp<Field<scalar> > groovyBCJumpFvPatchField<Type>::jump() const
 
     driver.clearVariables();
 
-    tmp<Field<scalar> > tjf(
-        new Field<scalar>(this->size())
+    tmp<Field<Type> > tjf(
+        new Field<Type>(this->size())
     );
-    Field<scalar> &jf=tjf();
+    Field<Type> &jf=tjf();
 
-    jf = driver.evaluate<scalar>(this->jumpExpression_);
+    jf = driver.evaluate<Type>(this->jumpExpression_);
 
     return tjf;
 }
-#endif
+
+#else
 
 template<class Type>
 void Foam::groovyBCJumpFvPatchField<Type>::updateCoeffs()
@@ -187,6 +188,7 @@ void Foam::groovyBCJumpFvPatchField<Type>::updateCoeffs()
 
     fixedJumpFvPatchField<Type>::updateCoeffs();
 }
+#endif
 
 template<class Type>
 void groovyBCJumpFvPatchField<Type>::write(Ostream& os) const
