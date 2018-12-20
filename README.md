@@ -65,17 +65,19 @@ In alphabetical order of the surname
 -   **E.David Huckaby:** Add the writing of particles to `writeFieldsOften`
 -   **Alexey Matveichev:** -   release generation script.
     -   Automatic `swakConfiguration`
--   **Mark Olesen:** -   port to OpenFOAM+ v1612
+-   **Mark Olesen:** -   port to OpenFOAM+ since v1612
     -   improvements to scripts
 -   **Philippose Rajan:** -   Bugfix for segmentation faults in parallel
+-   **Matti Rauter:** -   Spell-checking the compilation scripts
 
 If anyone is forgotten: let me know
 
-According to the commits in the `mercurial`-repository (and
-the repositories of the projects from which swak emerged)
-contributors are (ordered by the year of their first contribution):
+According to the commits in the `mercurial`-repository (and the
+repositories of the projects from which swak emerged) contributors
+are (ordered by the year of their first contribution. EMail is the
+latest under which this author submitted):
 
--   2006-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+-   2006-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 -   2008 Hannes Kroeger (hannes@kroegeronline.net)
 -   2008-2009, 2012 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
 -   2010 Marianne Mataln <mmataln@ice-sf.at>
@@ -88,7 +90,7 @@ contributors are (ordered by the year of their first contribution):
 -   2014 David Huckaby <e.david.huckaby@netl.doe.gov>
 -   2015 Domink Christ <d.christ@wikki.co.uk>
 -   2015 Alexey Matveichev <alexey.matveichev@gmail.com>
--   2016-2017 Mark Olesen <mark@opencfd>
+-   2016-2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
 
 ## Documentation
@@ -97,6 +99,13 @@ See: <http://openfoamwiki.net/index.php/contrib/swak4Foam>
 
 
 # Installation/Compilation
+
+If everything goes well then
+
+    ./AllwmakeAll
+
+should compile the essential requirements before compiling
+`swak4Foam` itself (remember: there is an **if** in that sentence)
 
 
 ## Requirements
@@ -6205,10 +6214,25 @@ Some adaptions were required to make this compile
 Minor adaptions were required to make this compile by Mark Olesen
 
 
+#### OpenFOAM+ v1806
+
+Adaptions supplied by Mark Olesen. Adaptions needed after the release
+
+
 #### foam-extend 4.1
 
 This is a work in progress based on the `nextRelease`-branch as
 there is no release yet
+
+
+#### OpenFOAM 6
+
+Compiles. Is tested
+
+
+#### OpenFOAM+ v1812
+
+Adaptions supplied by Mark Olesen.
 
 
 ### Incompatibilities
@@ -6225,6 +6249,13 @@ that field have to be provided
 
 These environment variables are now renamed from `_PYTHON_` to
 `_PYTHON2_`. Scripts are adapted
+
+
+#### `funkyDoCalc`-files with an entry `expressions` assumed to be new format
+
+If one of the dictionaries in the specification file for
+`funkyDoCalc` is named `expressions` it is assumed that the file
+is in the new format and calculations will probably fail
 
 
 ### Bug fixes
@@ -6249,6 +6280,27 @@ These particles could not be read data from different time-steps
 if the number of particles differed between them. This has been fixed
 
 
+#### `funkyDoCalc` does not write data files correctly for parallel cases
+
+In parallel cases the same data was written to each
+`processor`-directory when writing CSV-files or
+distributions. This has been fixed so that the data is written
+similarly to single-CPU-cases
+
+
+#### Horrible spelling mistake in the `Allwmake`
+
+Reported by Matti Rauter at
+<https://twitter.com/igt_matti/status/989870314241880067>
+Fixed
+
+
+#### `groovyBCJumpAMI` not working correctly
+
+Because the reference was returned instead of the `tmp` some
+values were overwritten
+
+
 ### Internals (for developers)
 
 
@@ -6267,6 +6319,36 @@ other interpreter languages
 If `swakConfiguation.automatic` is used as `swakConfiguation`
 then the highest available version of Python 2 and Python 3 is
 used for the integration of these two languages
+
+
+#### Change banner in Sources
+
+The regular OpenFOAM and the obsolete ICE-banner are removed and
+a new swak4Foam-banner are added to the source files. This
+modifies almost every file without changing any functionality
+
+
+#### Renaming of the Forks
+
+The three main supported forks are now renamed in the `#ifdef`
+
+-   **EXTEND:** stays the same
+-   **ORG:** formerly known as `OPENFOAM`. The CFDDirect/Foundation fork
+-   **COM:** formerly `PLUS`. The Version maintained by ESI/OpenCFD
+
+
+#### Additional output of `Allwmake`
+
+The current OpenFOAM-version and the version of the sources is
+printed in the beginning. This should help diagnosing problems
+
+
+#### Script `AllwmakeAll` that compiles requirements automatically
+
+The script compiles `bison` and `lua` before compiling
+`swak4Foam` itself. It also automatically sets
+`swakConfiguration` to a version that tries to find the scripting
+languages automatically
 
 
 ### Documentation
@@ -6331,6 +6413,13 @@ sometimes should make the intention clearer
 ### Enhancements
 
 
+#### `solverPerformanceToGlobalVariables` now supports vector fields
+
+With an additional (optional) parameter `vectorFieldNames` this
+function object now collects information about the performance of
+the linear solver for vector fields as well
+
+
 #### New file format for `funkyDoCalc`
 
 `funkyDoCalc` now has a new file format. If a dictionary
@@ -6342,12 +6431,34 @@ allow specifying things that previously only specified on the command line:
 -   noDimensionChecking
 -   foreignMeshesThatFollowTime
 
+A list `libs` also allows specifying a list of libraries to
+load. This allows adding boundary conditions that would otherwise
+make the execution fail
+
 
 #### `funkyDoCalc` allows writing data as a dictionary
 
 The option `-writeDict` writes all the results as a
 dictionary. It also includes a sub-dictionary with a copy of the
 specification file
+
+
+#### `funkyDoCalc` executes function objects
+
+With the `-allowFunctionObjects` the regular function objects
+from the `constrolDict` are now executed.
+
+If the new file format is used and there is an entry `functions`
+then the function objects specified there are executed (this
+allows setting up additional fields etc)
+
+A list `preloadFields` allows preloading fields that might be
+needed by the function objects
+
+**BUG**: using separate function
+objects causes a segmentation fault after the run
+finished. Probably because the function objects are inconsitently
+destroyed
 
 
 ### Examples
