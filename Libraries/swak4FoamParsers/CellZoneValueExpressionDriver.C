@@ -101,9 +101,7 @@ CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(
                     mesh,
                     searchOnDisc()
                 ),
-                dict.lookup(
-                    "zoneName"
-                )
+                word(dict.lookup("zoneName"))
             )
         ]
     )

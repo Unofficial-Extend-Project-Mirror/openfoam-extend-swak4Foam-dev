@@ -102,7 +102,7 @@ autoPtr<SLGThermo> loadSLGThermoModelFunctionObject::initModel()
             ),
             const_cast<swakFluidThermoType &>(
                 obr().lookupObject<swakFluidThermoType>(
-                    dict_.lookup("thermoName")
+                    word(dict_.lookup("thermoName"))
                 )
             )
         )

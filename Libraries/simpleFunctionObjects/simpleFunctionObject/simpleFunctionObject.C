@@ -108,7 +108,7 @@ simpleFunctionObject::simpleFunctionObject
     ),
     regionName_(
         dict_.found("region")
-        ? dict_.lookup("region")
+        ? word(dict_.lookup("region"))
         : polyMesh::defaultRegion
     ),
     obr_(time_.lookupObject<objectRegistry>(regionName_))

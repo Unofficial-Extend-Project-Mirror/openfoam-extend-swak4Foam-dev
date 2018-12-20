@@ -569,7 +569,7 @@ int main(int argc, char *argv[])
 
                     Info << "\n\nPart: " << (*iter).keyword() << endl;
 
-                    word field=part["field"];
+                    word field(part.lookup("field"));
 
                     exprString expression(
                         part["expression"],

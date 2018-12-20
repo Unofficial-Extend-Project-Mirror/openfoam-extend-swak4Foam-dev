@@ -132,7 +132,7 @@ void Foam::expressionField::read(const dictionary& dict)
         );
         autowrite_=Switch(dict.lookup("autowrite"));
         if(dict.found("dimension")) {
-            dimensions_.reset(dict.lookup("dimension"));
+            dimensions_.reset(dimensionSet(dict.lookup("dimension")));
             setDimensions_=true;
         } else {
             WarningIn("Foam::expressionField::read(const dictionary& dict)")
