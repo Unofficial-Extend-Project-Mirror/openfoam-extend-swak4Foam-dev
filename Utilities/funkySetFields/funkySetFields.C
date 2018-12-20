@@ -901,7 +901,7 @@ int main(int argc, char *argv[])
         if(args.options().found("field")) {
             Info << " Using command-line options\n" << endl;
 
-            word field=args.options()["field"];
+            word field(args.options()["field"]);
 
             exprString expression(
                 args.options()["expression"],
@@ -1035,7 +1035,7 @@ int main(int argc, char *argv[])
                     DO_PRELOAD_FIELDS(allMeshes,preLoadFields);
                 }
 
-                word field=part["field"];
+                word field(part.lookup("field"));
 
                 exprString expression(
                     part["expression"],

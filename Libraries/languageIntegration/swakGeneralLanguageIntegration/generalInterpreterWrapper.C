@@ -292,11 +292,11 @@ RawFoamDictionaryParserDriver &generalInterpreterWrapper::getParser() {
         Dbug << "No parser" << endl;
         RawFoamDictionaryParserDriver::ErrorMode mode=
             RawFoamDictionaryParserDriver::errorModeNames[
-                dict().lookup(
+                word(dict().lookup(
                     interpreterName()
                     +
                     "DictionaryParserErrorMode"
-                )
+                ))
             ];
         Dbug << "Creating with mode " << mode << endl;
         parser_=this->getParserInternal(mode);

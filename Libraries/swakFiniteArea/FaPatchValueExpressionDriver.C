@@ -101,9 +101,12 @@ FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(
                         dict,
                         mesh,
                         searchOnDisc()
-                    )),
-                dict.lookup(
-                    "faPatchName"
+                    )
+                ),
+                word(
+                    dict.lookup(
+                        "faPatchName"
+                    )
                 )
             )
         ]

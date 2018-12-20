@@ -124,7 +124,9 @@ bool executeIfEnvironmentVariableFunctionObject::condition()
 
 void executeIfEnvironmentVariableFunctionObject::readData(const dictionary& dict)
 {
-    fitVariableMode_=fitVariableModeNames_[dict.lookup("fitVariableMode")];
+    fitVariableMode_=fitVariableModeNames_[
+        word(dict.lookup("fitVariableMode"))
+    ];
     variableName_=word(dict.lookup("variableName"));
 
     if(fitVariableMode_==fvmFitsRegexp) {

@@ -99,7 +99,7 @@ template<class Type>
 Foam::interpolation2DTable<Type>::interpolation2DTable(const dictionary& dict)
 :
     List<Tuple2<scalar, List<Tuple2<scalar, Type> > > >(),
-    boundsHandling_(wordToBoundsHandling(dict.lookup("outOfBounds"))),
+    boundsHandling_(wordToBoundsHandling(word(dict.lookup("outOfBounds")))),
     fileName_(dict.lookup("fileName")),
     reader_(tableReader<Type>::New(dict))
 {
