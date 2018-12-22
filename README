@@ -4029,6 +4029,15 @@ S_{expl} + S_{impl} T
      Reported by Matti Rauter at
      https://twitter.com/igt_matti/status/989870314241880067
      Fixed
+**** =groovyBCJumpAMI= not working correctly
+     Because the reference was returned instead of the =tmp= some
+     values were overwritten
+**** Problem compiling on OF 5.0
+     Fixed a compilation problem on 5.0 that was due to a wrong
+     assumption about the change of an API in the =Random=-class (it
+     happens one version later). Thanks for reporting it at
+     https://sourceforge.net/p/openfoam-extend/ticketsswak4foam/244/
+     to Daniel Pielmeier
 *** Internals (for developers)
 **** Refactoring of the python integration
      The Python integration has now been split into the actual Python

@@ -114,7 +114,7 @@ StateMachine::StateMachine(
     ),
     initialState_(
         stateCode(
-            dict.lookup("initialState")
+            word(dict.lookup("initialState"))
         )
     ),
     state_(initialState_),
@@ -163,7 +163,7 @@ StateMachine::StateTransition::StateTransition(
     ),
     logicalAccumulation_(
         LogicalAccumulationNamedEnum::names[
-            data.lookup("logicalAccumulation")
+            word(data.lookup("logicalAccumulation"))
         ]
     )
 {

@@ -149,9 +149,7 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(
                     mesh,
                     searchOnDisc()
                 ),
-                dict.lookup(
-                    "patchName"
-                )
+                word(dict.lookup("patchName"))
             )
         ]
     ),
@@ -501,7 +499,7 @@ const word PatchValueExpressionDriver::getInterpolationScheme(const word &name)
                 << ". Using 'default'"
                 << endl;
 
-        word scheme(word(mappingInterpolationSchemes_.lookup("default")));
+        word scheme(mappingInterpolationSchemes_.lookup("default"));
         mappingInterpolationSchemes_.add(name,scheme);
 
         return scheme;

@@ -174,8 +174,7 @@ tmp<Field<Type> > groovyBCJumpAMIFvPatchField<Type>::jump() const
         Field<Type> &jf=const_cast<Field<Type>&>(tjf());
 
         jf = driver.evaluate<Type>(this->jumpExpression_);
-
-        return jf;
+        return tjf;
     } else {
        const groovyBCJumpAMIFvPatchField& nbrPatch =
            refCast<const groovyBCJumpAMIFvPatchField<Type> >(

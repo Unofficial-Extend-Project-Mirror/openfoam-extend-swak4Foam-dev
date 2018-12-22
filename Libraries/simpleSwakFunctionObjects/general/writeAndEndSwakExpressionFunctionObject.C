@@ -84,7 +84,7 @@ void writeAndEndSwakExpressionFunctionObject::readParameters(
     );
 
     logicalAccumulation_=LogicalAccumulationNamedEnum::names[
-        dict.lookup("logicalAccumulation")
+        word(dict.lookup("logicalAccumulation"))
     ];
 }
 

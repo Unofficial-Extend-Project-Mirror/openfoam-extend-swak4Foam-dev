@@ -72,14 +72,14 @@ loadIncompressibleTurbulenceModelFunctionObject::loadIncompressibleTurbulenceMod
 {
     return incompressible::turbulenceModel::New(
         obr().lookupObject<volVectorField>(
-            dict_.lookup("UName")
+            word(dict_.lookup("UName"))
         ),
         obr().lookupObject<surfaceScalarField>(
-            dict_.lookup("phiName")
+            word(dict_.lookup("phiName"))
         ),
         const_cast<transportModel &>(
             obr().lookupObject<transportModel>(
-                dict_.lookup("transportModel")
+                word(dict_.lookup("transportModel"))
             )
         )
     );

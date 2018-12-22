@@ -74,16 +74,16 @@ loadCompressibleTurbulenceModelFunctionObject::loadCompressibleTurbulenceModelFu
 {
     return compressible::turbulenceModel::New(
         obr().lookupObject<volScalarField>(
-            dict_.lookup("rhoName")
+            word(dict_.lookup("rhoName"))
         ),
         obr().lookupObject<volVectorField>(
-            dict_.lookup("UName")
+            word(dict_.lookup("UName"))
         ),
         obr().lookupObject<surfaceScalarField>(
-            dict_.lookup("phiName")
+            word(dict_.lookup("phiName"))
         ),
         obr().lookupObject<swakFluidThermoType>(
-            dict_.lookup("thermoName")
+            word(dict_.lookup("thermoName"))
         )
     );
 }

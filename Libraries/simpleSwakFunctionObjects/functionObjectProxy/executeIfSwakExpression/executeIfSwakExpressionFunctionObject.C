@@ -139,7 +139,9 @@ void executeIfSwakExpressionFunctionObject::readParameters(const dictionary &dic
         dict
     );
 
-    logicalAccumulation_=LogicalAccumulationNamedEnum::names[dict.lookup("logicalAccumulation")];
+    logicalAccumulation_=LogicalAccumulationNamedEnum::names[
+         word(dict.lookup("logicalAccumulation"))
+    ];
 }
 
 } // namespace Foam

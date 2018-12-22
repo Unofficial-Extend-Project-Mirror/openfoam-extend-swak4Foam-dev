@@ -82,7 +82,7 @@ void writeIfSwakExpressionFunctionObject::readParameters(const dictionary &dict)
     );
 
     writeAccumulation_=LogicalAccumulationNamedEnum::names[
-        dict.lookup("writeConditionAccumulation")
+        word(dict.lookup("writeConditionAccumulation"))
     ];
 
     if(cooldownMode()==cdmRetrigger) {
@@ -92,7 +92,7 @@ void writeIfSwakExpressionFunctionObject::readParameters(const dictionary &dict)
         );
 
         stopCooldownAccumulation_=LogicalAccumulationNamedEnum::names[
-            dict.lookup("retriggerConditionAccumulation")
+            word(dict.lookup("retriggerConditionAccumulation"))
         ];
     }
     if(writeControlMode()==scmWriteUntilSwitch) {
@@ -102,7 +102,7 @@ void writeIfSwakExpressionFunctionObject::readParameters(const dictionary &dict)
         );
 
         stopWriteAccumulation_=LogicalAccumulationNamedEnum::names[
-            dict.lookup("stopWritingConditionAccumulation")
+            word(dict.lookup("stopWritingConditionAccumulation"))
         ];
     }
 }
