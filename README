@@ -4140,4 +4140,7 @@ S_{expl} + S_{impl} T
      objects causes a segmentation fault after the run
      finished. Probably because the function objects are inconsitently
      destroyed
+**** =groovyBC= supports immersed boundary conditions in =Foam-extend 4.1=
+     Immersed boundaries need special treatment because it is not a
+     "real" boundary that should have a written value
 *** Examples
