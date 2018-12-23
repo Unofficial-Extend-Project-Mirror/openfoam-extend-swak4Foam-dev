@@ -4002,6 +4002,8 @@ S_{expl} + S_{impl} T
      there is no release yet
 **** OpenFOAM 6
      Compiles. Is tested
+**** OpenFOAM+ v1812
+     Adaptions supplied by Mark Olesen.
 *** Incompatibilities
 **** Solved field in =initPotentialFlow= now named differently
      The field name is now the name of the original field plus
@@ -4177,3 +4179,7 @@ S_{expl} + S_{impl} T
      This old test-example has been upgraded to a full example to
      demonstrate the use of =groovyBC= with the =cyclicSlave=-option
      and the =groovyBCJump=-condition
+
+# Local Variables:
+# eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
+# End:
