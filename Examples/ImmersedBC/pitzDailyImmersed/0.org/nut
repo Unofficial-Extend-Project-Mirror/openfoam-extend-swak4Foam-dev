@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.x                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -11,50 +11,41 @@ FoamFile
     format      ascii;
     class       volScalarField;
     location    "0";
-    object      p;
+    object      nut;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 2 -2 0 0 0 0];
+dimensions      [0 2 -1 0 0 0 0];
 
 internalField   uniform 0;
 
 boundaryField
 {
-    walls
+    pitzDailyIB
+    {
+        type            nutWallFunction;
+        patchType       immersedBoundary;
+        value           uniform 0;
+    }
+    top
     {
         type            zeroGradient;
+        value           uniform 0;
     }
     inlet
     {
         type            zeroGradient;
+        value           uniform 0;
     }
     outlet
     {
-        type            fixedValue;
+        type            zeroGradient;
         value           uniform 0;
     }
-    jump1_master
+    bottom
     {
-        type            groovyBCJump;
-        patchType       cyclic;
-        jumpExpression  "(normal() & U)>0 ? -1 : 1";
+        type            zeroGradient;
         value           uniform 0;
-    }
-    jump1_slave
-    {
-        $jump1_master;
-    }
-    jump2_master
-    {
-        type            groovyBCJump;
-        patchType       cyclic;
-        jumpExpression  "((normal() & U)>0 ? -1 : 1)*10*mag(U)";
-        value           uniform 0;
-    }
-    jump2_slave
-    {
-        $jump2_master;
     }
     frontAndBack
     {

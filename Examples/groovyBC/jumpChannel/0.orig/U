@@ -45,11 +45,15 @@ boundaryField
     }
     jump2_master
     {
-        $jump1_master;
+        type groovyBC;
+        valueExpression "normal()*phi/area()";
+        value           uniform (0 0 0);
+        patchType cyclic;
     }
     jump2_slave
     {
-        $jump1_slave;
+        $jump2_master;
+        cyclicSlave true;
     }
     frontAndBack
     {

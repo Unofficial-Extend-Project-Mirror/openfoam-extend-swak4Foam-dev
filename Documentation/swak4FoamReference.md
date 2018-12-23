@@ -109,7 +109,7 @@ the `swakExpression`-function object) the used parser can by
 selected by name. These names and a description of the entity the
 parser works on are given in table \ref{tab:selectionNames}.
 
-<table id="org53ce042" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org00856e5" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 1:</span> Selection names for the parsers</caption>
 
 <colgroup>
@@ -256,7 +256,7 @@ structure if necessary (for instance `toPoint(1)` to use the
 constant `1` on the vertexes of a patch). Table
 \ref{tab:structures} gives an overview of the structures.
 
-<table id="org3bc03a2" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org1bd0f26" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 2:</span> Structures for the different parsers</caption>
 
 <colgroup>
@@ -422,7 +422,7 @@ In addition there are two unary operators:
     x-component of the field `U`). Table \ref{tab:components} gives
     an overview of the components of the various types
 
-    <table id="orgb596f2b" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+    <table id="org2dab7a5" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
     <caption class="t-above"><span class="table-number">Table 3:</span> Component names for the data types</caption>
 
     <colgroup>
@@ -568,7 +568,7 @@ but help identify certain entities:
 -   **weight:** The "natural" weight according to table
     \ref{tab:naturalWeights} for the current parser
 
-<table id="org500e14f" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="orgd30eb26" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 4:</span> "Natural" weights for different parsers</caption>
 
 <colgroup>
@@ -663,7 +663,7 @@ sense for face zones. Calling this function will result in an
 error message). Table \ref{tab:parsershorthand} lists the short
 descriptions.
 
-<table id="orgbcec8ad" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org9e41f33" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 5:</span> Shorthand for the parsers</caption>
 
 <colgroup>
@@ -859,6 +859,9 @@ descriptions.
         neighbouring internal cells(P, FP)
     -   **neighbourField(fieldName):** For a coupled patch get the value
         of the internal field of the coupled patch (P, FP)
+    -   **neighbourPatch(fieldName):** For a `cyclic` field (or
+        `cyclicAMI` or `cyclicACMI`) get the value from the other
+        side of the patch (P, FP)
 
     These functions are only available if the patch has been defined
     as a `mappedPatch` (`directMappedPatch` in OpenFOAM before 2.0)
@@ -1688,7 +1691,7 @@ to the name. The added accumulations are:
     entity. Usually the volume oder the area of it.
 
 
-<a id="orgeca9dda"></a>
+<a id="org665e56c"></a>
 
 ### Logical accumulations
 
@@ -2024,7 +2027,7 @@ parameters:
     -   **condition:** a swak-expression. This is the condition that is
         tested. If it is `true` the machine switches to a new state
     -   **logicalAccumulation:** Boils down the array of logical values
-        to one logical decision. See [5.1.1](#orgeca9dda) above
+        to one logical decision. See [5.1.1](#org665e56c) above
     -   **to:** name of the state the machine moves to if `condition` is
         `true` according to `logicalAccumulation`
     -   **description:** A descriptive text that is printed out at every

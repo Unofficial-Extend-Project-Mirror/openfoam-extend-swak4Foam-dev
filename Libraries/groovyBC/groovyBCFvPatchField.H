@@ -69,6 +69,9 @@ protected:
 
     PatchValueExpressionDriver driver_;
 
+    //- if this is on a cyclic patch should we copy the values from the other patch?
+    bool cyclicSlave_;
+
 public:
 
     //- Runtime type information
@@ -138,11 +141,18 @@ public:
 
     // Member functions
 
+    virtual tmp<Field<Type>> patchNeighbourField() const;
+
     //- Update the coefficients associated with the patch field
     virtual void updateCoeffs();
 
     //- Write
     virtual void write(Ostream&) const;
+
+    //- is this a slave on a cyclic
+    bool cyclicSlave() const {
+        return cyclicSlave_;
+    }
 };
 
 

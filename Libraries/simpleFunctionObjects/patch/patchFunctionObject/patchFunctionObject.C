@@ -95,7 +95,32 @@ bool patchFunctionObject::start()
     }
 
     patchNames_=patchNamesNew.toc();
+    Foam::sort(patchNames_);
 
+    if(Pstream::parRun()) {
+        List<wordList> patchNames(Pstream::nProcs());
+        patchNames[Pstream::myProcNo()]=patchNames_;
+        Pstream::gatherList(patchNames);
+        Pstream::scatterList(patchNames);
+        bool different=false;
+        forAll(patchNames,procI) {
+            if(patchNames[procI]!=patchNames[0]) {
+                if(!different) {
+                    different=true;
+                    Info << "Patch Names on master processor: " << patchNames[0] << endl;
+                }
+                Info << "Different patch names on processor " << procI << ": "
+                    << patchNames[procI] << endl;
+            }
+        }
+        if(different && Pstream::master()) {
+            FatalErrorInFunction
+                << "Inconsistent patch names on at least 1 processor. Probably because patterns in "
+                    << newPatches << " are too liberal"
+                    << endl
+                    << exit(FatalError);
+        }
+    }
     // the patches changed
     if(patchNames_!=oldPatchNames) {
         closeAllFiles();

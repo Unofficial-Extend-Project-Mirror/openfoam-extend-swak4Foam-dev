@@ -162,6 +162,7 @@ weights               return token::TOKEN_weights;
 snGrad                return token::TOKEN_snGrad;
 internalField         return token::TOKEN_internalField;
 neighbourField        return token::TOKEN_neighbourField;
+neighbourPatch        return token::TOKEN_neighbourPatch;
 oldTime               return token::TOKEN_oldTime;
 normal                return token::TOKEN_normal;
 rand                  { BEGIN(needsIntegerParameter); return token::TOKEN_rand; }

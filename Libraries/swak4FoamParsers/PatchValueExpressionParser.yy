@@ -280,6 +280,7 @@ namespace Foam {
 %token TOKEN_snGrad
 %token TOKEN_internalField
 %token TOKEN_neighbourField
+%token TOKEN_neighbourPatch
 %token TOKEN_oldTime
 
 %token TOKEN_deltaT
@@ -754,6 +755,10 @@ vexp:   vector                  { $$ = $1; }
           }
         | TOKEN_neighbourField '(' TOKEN_VID ')' {
             $$=driver.getPatchNeighbourField<Foam::vector>(*$3).ptr();
+            delete $3;
+          }
+        | TOKEN_neighbourPatch '(' TOKEN_VID ')' {
+            $$=driver.getPatchNeighbourPatch<Foam::vector>(*$3).ptr();
             delete $3;
           }
         | TOKEN_min '(' vexp ',' vexp  ')'           {
@@ -1352,6 +1357,10 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1).ptr(); }
             $$=driver.getPatchNeighbourField<Foam::scalar>(*$3).ptr();
             delete $3;
           }
+        | TOKEN_neighbourPatch '(' TOKEN_SID ')' {
+            $$=driver.getPatchNeighbourPatch<Foam::scalar>(*$3).ptr();
+            delete $3;
+          }
         | TOKEN_min '(' exp ',' exp  ')'           {
             $$ = Foam::min(*$3,*$5).ptr();
             delete $3; delete $5;
@@ -1546,6 +1555,10 @@ texp:   tensor                  { $$ = $1; }
             $$=driver.getPatchNeighbourField<Foam::tensor>(*$3).ptr();
             delete $3;
           }
+        | TOKEN_neighbourPatch '(' TOKEN_TID ')' {
+            $$=driver.getPatchNeighbourPatch<Foam::tensor>(*$3).ptr();
+            delete $3;
+          }
         | TOKEN_min '(' texp ',' texp  ')'           {
             $$ = Foam::min(*$3,*$5).ptr();
             delete $3; delete $5;
@@ -1717,6 +1730,10 @@ yexp:   symmTensor                  { $$ = $1; }
             $$=driver.getPatchNeighbourField<Foam::symmTensor>(*$3).ptr();
             delete $3;
           }
+        | TOKEN_neighbourPatch '(' TOKEN_YID ')' {
+            $$=driver.getPatchNeighbourPatch<Foam::symmTensor>(*$3).ptr();
+            delete $3;
+          }
         | TOKEN_min '(' yexp ',' yexp  ')'           {
             $$ = Foam::min(*$3,*$5).ptr();
             delete $3; delete $5;
@@ -1834,6 +1851,10 @@ hexp:   sphericalTensor                  { $$ = $1; }
           }
         | TOKEN_neighbourField '(' TOKEN_HID ')' {
             $$=driver.getPatchNeighbourField<Foam::sphericalTensor>(*$3).ptr();
+            delete $3;
+          }
+        | TOKEN_neighbourPatch '(' TOKEN_HID ')' {
+            $$=driver.getPatchNeighbourPatch<Foam::sphericalTensor>(*$3).ptr();
             delete $3;
           }
         | TOKEN_min '(' hexp ',' hexp  ')'           {
