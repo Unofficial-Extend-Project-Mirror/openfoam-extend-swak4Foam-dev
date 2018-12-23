@@ -45,6 +45,7 @@
   | groovyBC/circulatingSplash                                  | \checkmark | \checkmark | \partial   | \checkmark |
   | groovyBC/delayed-t-junction                                 | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/fillingTheDam                                      | \checkmark | \sad       | \checkmark | \checkmark |
+  | groovyBC/jumpChannel                                        |            |            | \checkmark |            |
   | groovyBC/movingConeDistorted                                | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/pulsedPitzDaily                                    | \checkmark | \sad       | \checkmark | \checkmark |
   | groovyBC/wobbler                                            | \checkmark | \checkmark | \checkmark | \checkmark |

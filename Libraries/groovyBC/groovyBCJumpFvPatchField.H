@@ -144,7 +144,7 @@ public:
 
 #ifdef FOAM_JUMP_IS_JUMP_CYCLIC
     //- Return the "jump" across the patch as a "half" field
-    tmp<Field<scalar> > jump() const;
+    tmp<Field<Type> > jump() const;
 #else
     // Evaluation functions
 
@@ -156,12 +156,6 @@ public:
     //- Write
     virtual void write(Ostream&) const;
 };
-
-#ifndef FOAM_JUMP_IS_JUMP_CYCLIC
-//- Specialisation of the jump-condition for the pressure
-template<>
-void groovyBCJumpFvPatchField<scalar>::updateCoeffs();
-#endif
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
