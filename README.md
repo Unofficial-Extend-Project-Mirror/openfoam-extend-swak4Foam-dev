@@ -800,6 +800,14 @@ The old `groovyBC`-Demos
     condition
 
 
+#### jumpChannel
+
+-   **Solver:** icoFoam
+-   **Preparation:** run `pyFoamPrepareCase.py`
+-   **Description:** Demonstrates `groovyBC` on cyclic patches and
+    the `groovyBCJump`-condition
+
+
 ### FunkyDoCalc
 
 Example dictionaries for `funkyDoCalc`
@@ -6301,6 +6309,30 @@ Because the reference was returned instead of the `tmp` some
 values were overwritten
 
 
+#### `patchFunctionObject` hangs with `processorCyclic` boundaries and regular expressions
+
+To enable `cyclic` boundary conditions on decomposed cases
+`processorCyclic` boundaries are created on **some**
+processors. Sometimes these boundaries are picked up by regular
+expressions in function objects derived from
+`patchFunctionObject` (for instance `patchExpression`). This
+makes the run hang
+
+This has been fixed by checking whether all processors have the
+same boundaries in the list and stopping if they haven't
+requesting the user to be more specific in the regular
+expressions
+
+
+#### Problem compiling on OF 5.0
+
+Fixed a compilation problem on 5.0 that was due to a wrong
+assumption about the change of an API in the `Random`-class (it
+happens one version later). Thanks for reporting it at
+<https://sourceforge.net/p/openfoam-extend/ticketsswak4foam/244/>
+to Daniel Pielmeier
+
+
 ### Internals (for developers)
 
 
@@ -6410,6 +6442,13 @@ sometimes should make the intention clearer
 -   **none:** only `true` if everything is `false` (basically `not or`)
 
 
+#### `neighbourPatch`-function for expressions on `cyclic` patches
+
+The expression `neighbourPatch(foo)` on a cyclic patch gets the
+value of `foo` on the "other" side of the cyclic. For this the
+field has to be a `cyclic` or a subclass
+
+
 ### Enhancements
 
 
@@ -6461,4 +6500,31 @@ finished. Probably because the function objects are inconsitently
 destroyed
 
 
+#### `groovyBCJump` now works for non-scalar boundary conditions
+
+Now the boundary condition works for non-scalar fields as well
+
+
+#### `groovyBC` now supports `neighbourField(foo)`
+
+If used on a cyclic patch then this will get the value of `foo`
+on the other side. Before this raise a `Not Implemented`-Error
+
+**Attention**: `foo` on the patch has to be a `groovyBC` for this
+ work (or any other BC that implements `patchNeighbourField()`
+
+
+#### `groovyBC` supports immersed boundary conditions in `Foam-extend 4.1`
+
+Immersed boundaries need special treatment because it is not a
+"real" boundary that should have a written value
+
+
 ### Examples
+
+
+#### `groovyBC/jumpChannel` to demonstrate `groovyBC` on cyclic boundaries
+
+This old test-example has been upgraded to a full example to
+demonstrate the use of `groovyBC` with the `cyclicSlave`-option
+and the `groovyBCJump`-condition
