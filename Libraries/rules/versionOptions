@@ -9,6 +9,9 @@ include $(SELF_DIR)foamVersion
 
 ifdef FOAM_DEV
 FOAM_DEV_OPTION = -DFOAM_DEV
+  ifeq "4.1" "$(word 1, $(sort 4.1 $(WM_PROJECT_VERSION)))"
+    SWAK_IMMERSED_BC_LIB=-limmersedBoundary
+  endif
 endif
 
 FLUIDTHERMO_LIB=-lbasicThermophysicalModels

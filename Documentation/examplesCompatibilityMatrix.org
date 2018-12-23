@@ -37,8 +37,8 @@
   | DynamicMesh/switchedInletACMI2D                             | \checkmark | \dagger    | \checkmark | \sad       |
   | DynamicMesh/switchedTJunction                               | \sad       | \dagger    | \sad       | \sad       |
   | FiniteArea/planeTransport                                   | \dagger    | \checkmark | \checkmark | \dagger    |
-  | functionPlugins/chemPluginCounterFlowFlame2D                | \checkmark |            | \checkmark |            |
-  | functionPlugins/shiftCavity                                 | \checkmark |            | \checkmark |            |
+  | functionPlugins/chemPluginCounterFlowFlame2D                | \checkmark | \sad       | \checkmark |            |
+  | functionPlugins/shiftCavity                                 | \checkmark | \sad       | \checkmark |            |
   | FvOptions/angledDuctWithSources                             | \checkmark | \dagger    | \checkmark | \checkmark |
   | FvOptions/heatExchangerSources                              | \partial   | \dagger    | \checkmark | \sad       |
   | groovyBC/average-t-junction                                 | \checkmark | \checkmark | \checkmark | \checkmark |
@@ -49,6 +49,7 @@
   | groovyBC/movingConeDistorted                                | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/pulsedPitzDaily                                    | \checkmark | \sad       | \checkmark | \checkmark |
   | groovyBC/wobbler                                            | \checkmark | \checkmark | \checkmark | \checkmark |
+  | ImmersedBC/pitzDailyImmersed                                | \dagger    | \checkmark | \dagger    | \dagger    |
   | Lagrangian/functionObject/angledDuctWithBalls               | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/functionObject/hotStream                         | \dagger    | \checkmark | \sad       | \sad       |
   | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark | \checkmark | \checkmark |

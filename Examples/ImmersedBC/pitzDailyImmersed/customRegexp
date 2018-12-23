@@ -1,0 +1,14 @@
+// -*- c++ -*-
+
+deltaP {
+        theTitle "Pressure difference";
+        expr "Expression pressureDiff on inlet:  average=(%f%)";
+        titles (avg);
+        progress "dp: $0";
+}
+detatch {
+        expr "Expression findPoint :  max=(%f%)";
+        theTitle "Location of the detachment point";
+        titles ( x );
+        progress "detach: $0";
+}

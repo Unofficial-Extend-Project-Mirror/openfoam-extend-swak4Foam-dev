@@ -1,0 +1,151 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+libs
+(
+    "libimmersedBoundary.so"
+    "liblduSolvers.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libgroovyBC.so"
+);
+
+application     simpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         2500;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   50;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+functions
+(
+    minMaxP
+    {
+        type minMaxField;
+        functionObjectLibs ("libfieldFunctionObjects.so");
+        name p;
+    }
+    minMaxU
+    {
+        type minMaxField;
+        functionObjectLibs ("libfieldFunctionObjects.so");
+        name U;
+    }
+    minMaxEpsilon
+    {
+        type maxFieldCell;
+        functionObjectLibs ("libfieldFunctionObjects.so");
+        name epsilon;
+    }
+    minMaxEpsilon
+    {
+        type maxFieldCell;
+        functionObjectLibs ("libfieldFunctionObjects.so");
+        name nut;
+    }
+    faceNumbers {
+        type patchExpression;
+        expression "1";
+        verbose true;
+        patches (
+            inlet
+            outlet
+            top
+            bottom
+            pitzDailyIB
+        );
+        accumulations (
+            sum
+            weightedSum
+        );
+    }
+    pressureDiff {
+        type patchExpression;
+        patches (
+            inlet
+        );
+        variables (
+            "pOut{patch'outlet}=sum(p*area())/sum(area());"
+        );
+        accumulations (
+            average
+        );
+        expression "p-pOut";
+        verbose true;
+    }
+    findPoint {
+        type swakExpression;
+        verbose true;
+        valueType patch;
+        patchName pitzDailyIB;
+        expression "internalField(U).x<0 ? pos().x : -0.1";
+        accumulations (
+            max
+        );
+    }
+    cellVolumes {
+        type swakExpression;
+        verbose true;
+        valueType internalField;
+        expression "vol()";
+        accumulations (
+            min
+            max
+            sum
+            weightedQuantile0.01
+            weightedQuantile0.1
+            weightedQuantile0.5
+            weightedQuantile0.9
+            weightedQuantile0.99
+            quantile0.01
+            quantile0.1
+            quantile0.5
+            quantile0.9
+            quantile0.99
+        );
+    }
+    calcStress {
+        type readAndUpdateFields;
+        fields (
+            stress
+        );
+    }
+);
+
+
+// ************************************************************************* //

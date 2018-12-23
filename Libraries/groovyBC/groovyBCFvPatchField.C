@@ -32,6 +32,11 @@ Contributors/Copyright:
 #include "groovyBCFvPatchField.H"
 #include "cyclicFvPatch.H"
 
+#ifdef FOAM_HAS_IMMERSED_BOUNDARY_CONDITION
+#include "surfaceWriter.H"
+#include "immersedBoundaryFvPatch.H"
+#endif
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -344,13 +349,62 @@ void groovyBCFvPatchField<Type>::write(Ostream& os) const
     if(debug) {
         Info << "groovyBCFvPatchField<Type>::write" << endl;
     }
+#ifdef FOAM_HAS_IMMERSED_BOUNDARY_CONDITION
+    bool isImmersed=isA<immersedBoundaryFvPatch>(this->patch());
+
+    if(isImmersed) {
+        fvPatchField<Type>::write(os);
+        os.writeKeyword("patchType")
+            << immersedBoundaryFvPatch::typeName << token::END_STATEMENT << nl;
+        // The value entry needs to be written with zero size
+        Field<Type>::null().writeEntry("value", os);
+    } else {
+        mixedFvPatchField<Type>::write(os);
+    }
+#else
     mixedFvPatchField<Type>::write(os);
+#endif
+
     groovyBCCommon<Type>::write(os);
 
     os.writeKeyword("cyclicSlave")
         << cyclicSlave_ << token::END_STATEMENT << nl;
 
     driver_.writeCommon(os,this->debug_ || debug);
+
+#ifdef FOAM_HAS_IMMERSED_BOUNDARY_CONDITION
+    // Write VTK on master only
+    if (
+        Pstream::master()
+        &&
+        isImmersed
+    )
+    {
+        const immersedBoundaryFvPatch &ibPatch=
+            dynamicCast<const immersedBoundaryFvPatch&>(this->patch());
+
+        // Add parallel reduction of all faces and data to proc 0
+        // and write the whola patch together
+
+        // Write immersed boundary data as a vtk file
+        autoPtr<surfaceWriter> writerPtr = surfaceWriter::New("vtk");
+
+        // Get the intersected patch
+        const standAlonePatch& ts = ibPatch.ibPolyPatch().ibPatch();
+
+        writerPtr->write
+            (
+                this->dimensionedInternalField().path(),
+                ibPatch.name(),
+                ts.points(),
+                ts,
+                this->dimensionedInternalField().name(),
+                *this,
+                false, // FACE_DATA
+                false  // verbose
+            );
+    }
+#endif
 }
 
 
