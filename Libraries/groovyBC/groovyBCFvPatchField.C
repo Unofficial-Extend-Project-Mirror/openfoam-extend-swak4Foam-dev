@@ -227,12 +227,17 @@ tmp<Field<Type>> groovyBCFvPatchField<Type>::patchNeighbourField() const
         // reimplement the cyclicFvPatchField<Type>::patchNeighbourField()
 
         const cyclicFvPatch &cyclicPatch=dynamicCast<const cyclicFvPatch>(this->patch());
-        const Field<Type>& iField = this->primitiveField();
+        const Field<Type>& iField =
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+            this->primitiveField();
+#else
+            this->internalField();
+#endif
         const labelUList& nbrFaceCells =
             cyclicPatch.neighbPatch().faceCells();
 
         tmp<Field<Type>> tpnf(new Field<Type>(this->size()));
-        Field<Type>& pnf = tpnf.ref();
+        Field<Type>& pnf = const_cast<Field<Type>&>(tpnf()); //.ref();
 
         bool doTransform=!(cyclicPatch.parallel() || pTraits<Type>::rank==0);
         if (doTransform)
@@ -296,7 +301,11 @@ void groovyBCFvPatchField<Type>::updateCoeffs()
         const GeometricField<Type, fvPatchField, volMesh>& fld =
             static_cast<const GeometricField<Type, fvPatchField, volMesh>&>
             (
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
                 this->primitiveField()
+#else
+                this->internalField()
+#endif
             );
 
         if(
