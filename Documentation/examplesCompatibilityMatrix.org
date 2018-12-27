@@ -54,8 +54,8 @@
   | Lagrangian/functionObject/hotStream                         | \dagger    | \checkmark | \sad       | \sad       |
   | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/LanguageIntegration/angledDuctWithLuaInject      | \checkmark | \checkmark | \checkmark | \sad       |
-  | Lagrangian/LanguageIntegration/angledDuctWithPython2Inject  | \checkmark | \checkmark | \checkmark |            |
-  | Lagrangian/LanguageIntegration/angledDuctWithPython3Inject  | \checkmark | \checkmark |            |            |
+  | Lagrangian/LanguageIntegration/angledDuctWithPython2Inject  | \checkmark | \checkmark | \checkmark | \sad       |
+  | Lagrangian/LanguageIntegration/angledDuctWithPython3Inject  | \checkmark | \checkmark |            | \sad       |
   | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/parser/simplifiedSiwek                           | \sad       | \sad       | \sad       | \checkmark |
   | LuaIntegration/flowStatePitzDaily                           | \checkmark | \checkmark | \checkmark | \checkmark |
@@ -63,13 +63,13 @@
   | LuaIntegration/raiseRelaxationPitzDaily                     | \checkmark | \dagger    | \checkmark | \dagger    |
   | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    | \checkmark | \checkmark |
   | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark | \dagger    | \checkmark | \checkmark |
-  | other/angledDuctImplicit                                    | \checkmark |            | \checkmark |            |
+  | other/angledDuctImplicit                                    | \checkmark |            | \checkmark | \sad       |
   | other/capillaryRise                                         | \checkmark | \sad       | \checkmark | \checkmark |
   | other/counterFlowFlame2DInitialized                         | \partial   | \sad       | \partial   | \checkmark |
   | other/simpleBendedPipe                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | other/topoSetDamBreak                                       | \checkmark | \checkmark | \checkmark | \checkmark |
-  | Python3Integration/flowStatePitzDaily                       | \checkmark | \checkmark |            |            |
-  | Python3Integration/python3ScriptedBCAngledDuct              | \checkmark | \checkmark |            |            |
+  | Python3Integration/flowStatePitzDaily                       | \checkmark | \checkmark |            | \checkmark |
+  | Python3Integration/python3ScriptedBCAngledDuct              | \checkmark | \checkmark |            | \checkmark |
   | SimpleSurface/littleVolcano                                 | \sad       |            | \checkmark | \checkmark |
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
