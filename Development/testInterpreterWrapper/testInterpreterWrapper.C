@@ -52,6 +52,10 @@ int main(int argc,char **argv)
     argList::validArgs.append("dataDictionary");
     argList::validOptions.insert("debugSwitches","");
 
+#ifndef FOAM_DLLIBRARY_USES_STATIC_METHODS
+    dlLibraryTable table;
+#endif
+
 #   include "setRootCase.H"
 #   include "createTime.H"
 #   include "createPolyMesh.H"
