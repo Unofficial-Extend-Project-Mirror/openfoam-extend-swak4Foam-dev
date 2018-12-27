@@ -295,6 +295,10 @@ void groovyBCFvPatchField<Type>::updateCoeffs()
         isA<cyclicFvPatch>(this->patch())
         &&
         cyclicSlave_
+#ifndef FOAM_CYCLIC_FV_PATCH_FIELD_HAS_NEIGHBOUR_PATCH
+        &&
+        false
+#endif
     ) {
 #ifdef FOAM_CYCLIC_FV_PATCH_FIELD_HAS_NEIGHBOUR_PATCH
         const cyclicFvPatch &cyclicPatch=dynamicCast<const cyclicFvPatch>(this->patch());
@@ -335,10 +339,10 @@ void groovyBCFvPatchField<Type>::updateCoeffs()
         this->refGrad() = other.refGrad();
         this->valueFraction() = other.valueFraction();
 #else
-        FatalErrorInFunction
-            << "No patchNeighbourField in this OpenFOAM-version"
-                << endl
-                << exit(FatalError);
+        // FatalErrorInFunction
+        //     << "No patchNeighbourField in this OpenFOAM-version"
+        //         << endl
+        //         << exit(FatalError);
 #endif
     } else {
         driver_.clearVariables();

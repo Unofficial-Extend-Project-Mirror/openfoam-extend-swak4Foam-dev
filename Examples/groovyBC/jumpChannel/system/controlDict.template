@@ -52,11 +52,11 @@ libs (
 );
 
 functions {
-    pJumpBaffle1 {
+    pJumpTotal {
         type swakExpression;
         valueType patch;
-        patchName jump1_master;
-        otherPatch jump1_slave;
+        patchName inlet;
+        otherPatch outlet;
         accumulations (
             weightedAverage
         );
@@ -66,22 +66,27 @@ functions {
             "otherP{$otherPatch}=sum(p*area())/sum(area());"
         );
     }
-    pJumpTotal {
-        $pJumpBaffle1;
-        patchName inlet;
-        otherPatch outlet;
+<!--(if foamFork!="extend")-->
+    pJumpBaffle1 {
+        $pJumpTotal;
+        patchName jump1_master;
+        otherPatch jump1_slave;
     }
     pJumpBaffle2 {
-        $pJumpBaffle1;
+        $pJumpTotal;
         patchName jump2_master;
         otherPatch jump2_slave;
     }
+<!--(end)-->
     interfaceU {
         type patchExpression;
         verbose true;
         expression "U";
         patches (
-            "jump.*"
+            "jump.*_master"
+<!--(if foamFork!="extend")-->
+            "jump.*_slave"
+<!--(end)-->
         );
         accumulations (
             min
@@ -90,6 +95,7 @@ functions {
         );
         allowCoupled true;
     }
+<!--(if foamFork!="extend")-->
     uDifference {
         type patchExpression;
         verbose true;
@@ -116,6 +122,7 @@ functions {
         $uDifference;
         expression "neighbourPatch(U)-neighbourField(U)";
     }
+<!--(end)-->
     interfaceUInternal {
         $interfaceU;
         expression "internalField(U)";
@@ -125,7 +132,10 @@ functions {
         verbose true;
         expression "mag(sum(phi))";
         patches (
-            "jump.*"
+            "jump.*_master"
+<!--(if foamFork!="extend")-->
+            "jump.*_slave"
+<!--(end)-->
             inlet
             outlet
         );
