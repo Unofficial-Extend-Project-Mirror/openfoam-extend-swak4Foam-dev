@@ -59,4 +59,8 @@ Contributors/Copyright:
 #define NotImplemented notImplemented(FUNCTION_NAME)
 #endif
 
+#ifndef WarningInFunction
+#define WarningInFunction WarningIn(FUNCTION_NAME)
+#endif
+
 #endif
