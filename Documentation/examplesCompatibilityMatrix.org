@@ -37,8 +37,8 @@
   | DynamicMesh/switchedInletACMI2D                             | \checkmark | \dagger    | \checkmark | \sad       |
   | DynamicMesh/switchedTJunction                               | \sad       | \dagger    | \sad       | \sad       |
   | FiniteArea/planeTransport                                   | \dagger    | \checkmark | \checkmark | \dagger    |
-  | functionPlugins/chemPluginCounterFlowFlame2D                | \checkmark | \sad       | \checkmark |            |
-  | functionPlugins/shiftCavity                                 | \checkmark | \sad       | \checkmark |            |
+  | functionPlugins/chemPluginCounterFlowFlame2D                | \checkmark | \sad       | \checkmark | \sad       |
+  | functionPlugins/shiftCavity                                 | \checkmark | \sad       | \checkmark | \sad       |
   | FvOptions/angledDuctWithSources                             | \checkmark | \dagger    | \checkmark | \checkmark |
   | FvOptions/heatExchangerSources                              | \partial   | \dagger    | \checkmark | \sad       |
   | groovyBC/average-t-junction                                 | \checkmark | \checkmark | \checkmark | \checkmark |
@@ -53,7 +53,7 @@
   | Lagrangian/functionObject/angledDuctWithBalls               | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/functionObject/hotStream                         | \dagger    | \checkmark | \sad       | \sad       |
   | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark | \checkmark | \checkmark |
-  | Lagrangian/LanguageIntegration/angledDuctWithLuaInject      | \checkmark | \checkmark | \checkmark |            |
+  | Lagrangian/LanguageIntegration/angledDuctWithLuaInject      | \checkmark | \checkmark | \checkmark | \sad       |
   | Lagrangian/LanguageIntegration/angledDuctWithPython2Inject  | \checkmark | \checkmark | \checkmark |            |
   | Lagrangian/LanguageIntegration/angledDuctWithPython3Inject  | \checkmark | \checkmark |            |            |
   | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark | \checkmark | \checkmark |
@@ -70,18 +70,18 @@
   | other/topoSetDamBreak                                       | \checkmark | \checkmark | \checkmark | \checkmark |
   | Python3Integration/flowStatePitzDaily                       | \checkmark | \checkmark |            |            |
   | Python3Integration/python3ScriptedBCAngledDuct              | \checkmark | \checkmark |            |            |
-  | SimpleSurface/littleVolcano                                 | \sad       |            | \checkmark |            |
+  | SimpleSurface/littleVolcano                                 | \sad       |            | \checkmark | \checkmark |
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/luaIntegration                    | bug        | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/pythonIntegration                 | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/python3Integration                | \checkmark | \checkmark |            | \checkmark |
-  | tests/SearchableSurfaces/objectsTest                        | \checkmark |            | \checkmark |            |
-  | tests/SearchableSurfaces/operationsTest                     |            |            |            |            |
-  | tests/SearchableSurfaces/operationsTestRotated              |            |            |            |            |
-  | tests/SearchableSurfaces/scaledIglooWithFridges             | \checkmark |            | \checkmark |            |
-  | tests/testFOExecution                                       | \checkmark | \checkmark | \checkmark |            |
+  | tests/SearchableSurfaces/objectsTest                        | \checkmark |            | \checkmark | \checkmark |
+  | tests/SearchableSurfaces/operationsTest                     |            |            |            | \partial   |
+  | tests/SearchableSurfaces/operationsTestRotated              |            |            |            | \partial   |
+  | tests/SearchableSurfaces/scaledIglooWithFridges             | \checkmark |            | \checkmark | \checkmark |
+  | tests/testFOExecution                                       | \checkmark | \checkmark | \checkmark | \checkmark |
 
 # Local Variables:
 # eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
