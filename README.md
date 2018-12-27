@@ -1606,6 +1606,18 @@ Currently only the data from scalar fields can be correctly
 parsed. If `vector`-fields are specified the function object fails
 
 
+## Failing `Python2` and `Python3` integration if Floating Point Exception is enabled
+
+On some platforms if floating point exceptions are enabled then
+importing `numpy` fails because it seems to use FPEs to detect
+properties of the floating point implementation. This makes the
+whole program fail.
+
+Only known workaround is switching FPE-trapping off by
+
+    export FOAM_SIGFPE=false
+
+
 # History
 
 
@@ -6331,6 +6343,21 @@ assumption about the change of an API in the `Random`-class (it
 happens one version later). Thanks for reporting it at
 <https://sourceforge.net/p/openfoam-extend/ticketsswak4foam/244/>
 to Daniel Pielmeier
+
+
+#### Failing `Python2` and `Python3` integration if Floating Point Exception is enabled
+
+On some platforms if floating point exceptions are enabled then
+importing `numpy` fails because it seems to use FPEs to detect
+properties of the floating point implementation. This makes the
+whole program fail.
+
+Only known workaround is switching FPE-trapping off by
+
+    export FOAM_SIGFPE=false
+
+Currently there is a warning issued the first time `numpy` is
+imported to guide the user to the fix
 
 
 ### Internals (for developers)
