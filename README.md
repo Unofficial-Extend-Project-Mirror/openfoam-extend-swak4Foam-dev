@@ -6603,3 +6603,33 @@ and the `groovyBCJump`-condition
 
 This demonstrates that swak-evaluations can be used for the
 immersed boundary conditions in `foam-extend`
+
+
+## Next release - version number : 0.4.3
+
+
+### New supported versions
+
+
+### Incompatibilities
+
+
+### Bug fixes
+
+
+### Internals (for developers)
+
+
+### Infrastructure
+
+
+### Documentation
+
+
+### New features
+
+
+### Enhancements
+
+
+### Examples
