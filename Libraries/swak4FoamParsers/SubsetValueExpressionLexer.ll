@@ -1,9 +1,10 @@
 /*----------------------- -*- C++ -*- ---------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
     This file is part of swak4Foam.
@@ -25,7 +26,7 @@ Description
 
 
 Contributors/Copyright:
-    2010-2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010-2013, 2015-2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -135,6 +136,7 @@ log10                 return token::TOKEN_log10;
 asin                  return token::TOKEN_asin;
 acos                  return token::TOKEN_acos;
 atan                  return token::TOKEN_atan;
+atan2                 return token::TOKEN_atan2;
 sinh                  return token::TOKEN_sinh;
 cosh                  return token::TOKEN_cosh;
 tanh                  return token::TOKEN_tanh;

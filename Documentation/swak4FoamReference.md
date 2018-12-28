@@ -109,7 +109,7 @@ the `swakExpression`-function object) the used parser can by
 selected by name. These names and a description of the entity the
 parser works on are given in table \ref{tab:selectionNames}.
 
-<table id="org3f98730" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org00856e5" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 1:</span> Selection names for the parsers</caption>
 
 <colgroup>
@@ -256,7 +256,7 @@ structure if necessary (for instance `toPoint(1)` to use the
 constant `1` on the vertexes of a patch). Table
 \ref{tab:structures} gives an overview of the structures.
 
-<table id="orga5bbfbf" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org1bd0f26" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 2:</span> Structures for the different parsers</caption>
 
 <colgroup>
@@ -422,7 +422,7 @@ In addition there are two unary operators:
     x-component of the field `U`). Table \ref{tab:components} gives
     an overview of the components of the various types
 
-    <table id="org2b47fdf" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+    <table id="org2dab7a5" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
     <caption class="t-above"><span class="table-number">Table 3:</span> Component names for the data types</caption>
 
     <colgroup>
@@ -486,13 +486,17 @@ The following functions only work for scalars:
 -   **log10(x):** Logarithm with the base 10
 -   **sin, cos, tan:** Usual trigonometric functions
 -   **asin, acos, atan:** Inverse trigonometric functions
+-   **atan2:** This takes 2 values of which one must be non-zero (they
+    represent a point in the $(x,y)$-plane) and calculates
+    the angle in radiants between this vector and the
+    x-axis
 -   **sinh, cosh, tanh:** Hyperbolic functions
 -   **asinh, acosh, atanh:** Inverse hyperbolic functions
 -   **sqr(x):** Square \(x^2\)
 -   **magSqr(x):** Square of the magnitude \(|x|^2\)
 -   **sqrt(x):** Square root \(\sqrt{x}\)
 -   **erf(x):** Error function
--   erfc(x) ::Complement error function
+-   **erfc(x):** Complement error function
 -   **besselJ0, besselJ1, besselY0, besselY1:** Bessel-functions
 -   **lgamma:** Logarithm gamma function
 
@@ -564,7 +568,7 @@ but help identify certain entities:
 -   **weight:** The "natural" weight according to table
     \ref{tab:naturalWeights} for the current parser
 
-<table id="org88f0e9a" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="orgd30eb26" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 4:</span> "Natural" weights for different parsers</caption>
 
 <colgroup>
@@ -659,7 +663,7 @@ sense for face zones. Calling this function will result in an
 error message). Table \ref{tab:parsershorthand} lists the short
 descriptions.
 
-<table id="org9aa2d25" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org9e41f33" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 5:</span> Shorthand for the parsers</caption>
 
 <colgroup>
@@ -855,6 +859,9 @@ descriptions.
         neighbouring internal cells(P, FP)
     -   **neighbourField(fieldName):** For a coupled patch get the value
         of the internal field of the coupled patch (P, FP)
+    -   **neighbourPatch(fieldName):** For a `cyclic` field (or
+        `cyclicAMI` or `cyclicACMI`) get the value from the other
+        side of the patch (P, FP)
 
     These functions are only available if the patch has been defined
     as a `mappedPatch` (`directMappedPatch` in OpenFOAM before 2.0)
@@ -1684,217 +1691,279 @@ to the name. The added accumulations are:
     entity. Usually the volume oder the area of it.
 
 
+<a id="org665e56c"></a>
+
 ### Logical accumulations
 
 Logical swak-expressions usually generate an arry with more than 1
 logical value. Then a `logicalAccumulation` is used to boil it
-down to one logical value. The possible values here are either
+down to one logical value. The possible values here are
 
 -   **or:** It is `true` if at least one of the logical values is
     `true`. Therefor it is only `false` if **all** logical values
     are `false`
 -   **and:** This is only `true` if **all** logical values are `true`
+-   **any:** an alias for `or`
+-   **all:** an alias for `and`
+-   **none:** only `true` if all logical values are `false`
 
 
-## Parameters for the Python-interpreter wrapper
+## Script language integration
+
+
+### General
+
+1.  General behavior
+
+    When the program is started (function object is created) the
+    scripting language is initialized and a workspace is
+    created. This interpreter/workspace is the same until the
+    instance is destroyed. This means that variables keep their
+    values between calls to **one** interpreter instance but
+    interpreter instances do not share their values.
+
+    Before control is handed to the actual script-code two things
+    happen:
+
+    1.  variables in the language-namespace are initialized to certain
+        values (see below) that let the script know about "the world
+        around him"
+    2.  if specified variables from global namespaces are injected
+        into the language namespace.
+
+    Then the language-script is executed. If there is an exception in
+    the script execution of the program is terminated (it is possible
+    to find the source of the problem on the language-shell). In the
+    end specified language-variables are copied to a global namespace
+    for other parts of swak to work with them. In parallel there are
+    two cases:
+
+    -   the script is only executed on the master. In this case the
+        variables are pushed to all the other processors and they have
+        the same value on all processors (no decomposition is done)
+    -   the script is executed on all processors: in this case each
+        processor only has its "own" variables
+
+2.  Predefined variables and functions
+
+    Variables defined are
+
+    -   **functionObjectName:** the name of the function object (or
+        `notAFunctionObject`)
+    -   **caseDir:** Path to the case directory
+    -   **systemDir:** Path to the `system` directory of the case
+    -   **constantDir:** Path to the `constant` directory
+    -   **meshDir:** Path to the currently used `polyMesh`-directory
+    -   **procDir:** Only defined for parallel runs. Path to the
+        `processor`-directory of the current run
+    -   **parRun:** `bool` that says whether the current run is a
+        parallel one
+    -   **myProcNo:** Number of the current processor
+    -   **runTime:** Current simulation time as a float
+    -   **timeName:** Name of the current time as a string
+    -   **deltaT:** Time step of the simulation as a float
+    -   **deltaT0:** Previous time step of the simulation as a float
+    -   **endTime:** time at which the simulation is going to end as a float
+    -   **outputTime:** `bool` that says whether the current time is a
+        time at which output is scheduled
+    -   **timeDir:** Directory to which current time date would be written
+    -   **timeIndex:** The index of the current time-step
+
+3.  The options
+
+    These options are common to all integrations. If the option has
+    `<language>` in the name then this string is replaced with the
+    actual language name (for instance `python`, `python3`, `lua`)
+
+    -   **tolerateExceptions:** Optional setting. If set to `true` and an
+        unhandled exception occurs in the Python-code then the
+        execution continues. Otherwise the execution of the
+        OpenFOAM-program will stop with a `FatalError`. Default:
+        `false`
+    -   **warnOnNonUniform:** If `numpy` is not important and a
+        non-uniform variable is injected into the language-namespace
+        then a warning is issued. Optional and defaults to `true`
+    -   **isParallelized:** This option is only of effect in a parallel
+        run. It signals that the language-code can be
+        executed in parallel. If it is `false` a
+        parallel run will fail. Optional and defaults
+        to `false`
+    -   **parallelMasterOnly:** The language-code is not actually parallel
+        but only executed on the master processor. Required in
+        parallel runs. Otherwise unnecessary
+    -   **swakTo<language>Namespaces:** Optional list of swak global
+        namespaces from which variables are injected under their
+        name into the language-namespace
+    -   **<language>ToSwakNamespace:** Name of a global swak namespace into
+        which selected language variables are imported. If unset no
+        variables are exported
+    -   **<language>ToSwakVariables:** List of language variables which are
+        exported into the global namespace
+        `pythonToSwakNamespace`. Optional
+    -   **interactiveAfterExecute:** If this variable is set then after
+        every execution the process is dropped to an interactive
+        shell. This allows the inspection of the variables,
+        manipulation, trying out things and it mainly used for
+        developing. When the shell is ended execution of the
+        OpenFOAM-program continues as usual. Defaults to `false`
+    -   **interactiveAfterException:** If an unhandled exception occurs
+        in the Python-code and this variable is set then the process
+        drops to an interactive shell. This allows debugging the
+        problem. Optional and defaults to `false`
+    -   **debug<language>Wrapper:** Optional. If set to a value not \(0\) then
+        the language-Wrapper prints additional information. Default: \(0\)
+
+4.  Loading code snipplets
+
+    Language code-snipplets can be specified in two forms:
+
+    1.  As a separate file
+    2.  As a string in the dictionary
+
+    If a snipplet with the name `prefix` is read then one of the two
+    entries has to be present in the dictionary
+
+    -   **prefixFile:** name of the file. If this file is not found
+        relative to the current working directory then it
+        is looked for from the directory of the
+        dictionary (for instance `system` if the
+        dictionary is a function object specification in
+        `controlDict`)
+    -   **prefixCode:** String with the code of the snipplet
+
+    `File` and `Code` are mutual exclusive. If both (or neither) are
+    specified an error occurs
+
+
+### Python 2 integration
 
 These parameters are common to all programs that use the embedded
 python-interpreter and are specified in a dictionary (usually the
 one of the function object or a special one - `python` for.
 `funkyPythonPostproc`)
 
+1.  General behavior
 
-### General behavior
+    For Python the behavior is slightly different from the general
+    case: When the program is started (function object is created)
+    Python is initialized (if this is the first instance) and then a
+    new Python interpreter with a separate namespace is created (for
+    technical reasons all these interpreters share the same Python
+    instance. Especially do they share imported libraries).
 
-When the program is started (function object is created) Python
-is initialized (if this is the first instance) and then a new
-Python interpreter with a separate namespace is created (for
-technical reasons all these interpreters share the same Python
-instance. Especially do they share imported libraries). This
-interpreter/workspace is the same until the instance is
-destroyed. This means that variables keep their values between
-calls to **one** interpreter instance but interpreter instances do
-not share their values.
+    If possible global variables that are injected into Python are
+    encapsulated in `numpy`-arrays. In this case the objects are *by
+    reference*. This means that changes to these arrays are later
+    visible in the global object. If no `numpy` is used then these
+    variables are only copied and there are restrictions on the type
+    of the variables possible (no arrays)
 
-Before control is handed to the actual Python-code two things
-happen:
+    1.  On `numpy`-variables
 
-1.  variables in the Python-namespace are initialized to certain
-    values (see below) that let the script know about "the world
-    around him"
-2.  if specified variables from global namespaces are injected
-    into the Python namespace. If possible these objects are
-    encapsulated in `numpy`-arrays. In this case the objects are
-    *by reference*. This means that changes to these arrays are
-    later visible in the global object. If no `numpy` is used then
-    these variables are only copied and there are restrictions on
-    the type of the variables possible (no arrays)
+        If the `numpy`-library is found then global variables which are
+        fields are being transformed to `numpy`-arrays. These arrays can
+        be accessed with the usual `numpy`-array access like `a[i,j]` or
+        `a[i,:]`. Global variables are made accessible **by
+        reference**. This means that writing a value changes the global
+        variable. Setting the whole variable has to be done by slicing
+        `a[:]=3` (`a=3` removes it from the workspace). Vectors and
+        tensors are two-dimensional arrays. They have
+        convenience-attributes that return the whole vector of a
+        component (like `a.x` for vectors or `a.xx` for tensors). To
+        overwrite these they have to be sliced: `a.x[:]=0` (`a.x=0` only
+        changes the attribute)
 
-Then the Python-script is executed. If there is an exception in
-the script execution of the program is terminated (it is possible
-to find the source of the problem on the Python-shell). In the
-end specified Python-variables are copied to a global namespace
-for other parts of swak to work with them. In parallel there are
-two cases:
+        For encapsulating the fields special class `OpenFOAMFieldArray`
+        which is based on `numpy.ndarray` is used.
 
--   the script is only executed on the master. In this case the
-    variables are pushed to all the other processors and they have
-    the same value on all processors (no decomposition is done)
--   the script is executed on all processors: in this case each
-    processor only has its "own" variables
+        If a variable that is going to a global namespace is a
+        `numpy`-array then it is translated by the following rules:
+        vectors are transformed to `scalarField`. Arrays with 3 columns
+        to `vectorField`, 9 columns to `tensorField` and 6 columns to
+        `symmTensorField`. Different column-numbers produce errors
 
-1.  On `numpy`-variables
+2.  Predefined variables and functions
 
-    If the `numpy`-library is found then global variables which are
-    fields are being transformed to `numpy`-arrays. These arrays can
-    be accessed with the usual `numpy`-array access like `a[i,j]` or
-    `a[i,:]`. Global variables are made accessible **by
-    reference**. This means that writing a value changes the global
-    variable. Setting the whole variable has to be done by slicing
-    `a[:]=3` (`a=3` removes it from the workspace). Vectors and
-    tensors are two-dimensional arrays. They have
-    convenience-attributes that return the whole vector of a
-    component (like `a.x` for vectors or `a.xx` for tensors). To
-    overwrite these they have to be sliced: `a.x[:]=0` (`a.x=0` only
-    changes the attribute)
+    In addition to the other variable the Python-integration has two
+    convenience-functions that return a filename with the full path
+    and create the directories if necessary. The file is **not**
+    created (that is the responsibility of the Python-code).
 
-    For encapsulating the fields special class `OpenFOAMFieldArray`
-    which is based on `numpy.ndarray` is used.
+    The functions are (`name` is the name of the function object)
 
-    If a variable that is going to a global namespace is a
-    `numpy`-array then it is translated by the following rules:
-    vectors are transformed to `scalarField`. Arrays with 3 columns
-    to `vectorField`, 9 columns to `tensorField` and 6 columns to
-    `symmTensorField`. Different column-numbers produce errors
+    -   **dataFile(fname):** creates a directory
+        `<case>/<name>_data/<time>`. To be used for data that is
+        written at times that differ from write-time
+    -   **timeDataFile(fname):** creates a directory
+        `<case>/<time>/<name>_data`. Should only be used for data
+        that is written only at write-time
 
+3.  The options
 
-### Predefined variables and functions
+    Additional options are
 
-Variables defined are
+    -   **useNumpy:** Automatically import the `numpy`-library if it is
+        present (otherwise the program will behave as if the
+        option wasn't set). Only with this library are
+        non-uniform variables imported as arrays. Without
+        this option they are reduced to a single value and
+        injected as a single value into the Python
+        namespace. This option is optional and defaults to
+        `true`
+    -   **useIPython:** If the program drops to the interactive shell,
+        `IPython` is installed and this option is set
+        then the shell is an `IPython`-shell with
+        enhanced interactive capabilities. It tries to
+        support older versions of IPython too. If the
+        import fails then a regular shell is used. This
+        option is optional and defaults to `true`
+    -   **importLibs:** Optional dictionary with libraries to be imported
+        on startup and injected into the
+        Python-namespace. If the dictionary entry has no
+        value then the library name and the name under
+        which it is imported are the same. Otherwise the
+        library is inserted under the name of the
+        dictionary key and the value is the actual library
+        (for instance `np numpy;` imports the library
+        `numpy` under the name `np`).
 
--   **functionObjectName:** the name of the function object (or
-    `notAFunctionObject`)
--   **caseDir:** Path to the case directory
--   **systemDir:** Path to the `system` directory of the case
--   **constantDir:** Path to the `constant` directory
--   **meshDir:** Path to the currently used `polyMesh`-directory
--   **procDir:** Only defined for parallel runs. Path to the
-    `processor`-directory of the current run
--   **parRun:** `bool` that says whether the current run is a
-    parallel one
--   **myProcNo:** Number of the current processor
--   **runTime:** Current simulation time as a float
--   **timeName:** Name of the current time as a string
--   **deltaT:** Time step of the simulation as a float
--   **endTime:** time at which the simulation is going to end as a float
--   **outputTime:** `bool` that says whether the current time is a
-    time at which output is scheduled
--   **timeDir:** Directory to which current time date would be written
-
-Python-integration now has two convenience-functions that return
-a filename with the full path and create the directories if
-necessary. The file is **not** created (that is the responsibility
-of the Python-code).
-
-The functions are (`name` is the name of the function object)
-
--   **dataFile(fname):** creates a directory
-    `<case>/<name>_data/<time>`. To be used for data that is
-    written at times that differ from write-time
--   **timeDataFile(fname):** creates a directory
-    `<case>/<time>/<name>_data`. Should only be used for data
-    that is written only at write-time
+        This option is necessary for certain libraries
+        which cause a deadlock when imported in the usual
+        Python-code
 
 
-### The options
+### Python 3 integration
 
--   **useNumpy:** Automatically import the `numpy`-library if it is
-    present (otherwise the program will behave as if the
-    option wasn't set). Only with this library are
-    non-uniform variables imported as arrays. Without
-    this option they are reduced to a single value and
-    injected as a single value into the Python
-    namespace. This option is optional and defaults to
-    `true`
--   **useIPython:** If the program drops to the interactive shell,
-    `IPython` is installed and this option is set
-    then the shell is an `IPython`-shell with
-    enhanced interactive capabilities. It tries to
-    support older versions of IPython too. If the
-    import fails then a regular shell is used. This
-    option is optional and defaults to `true`
--   **tolerateExceptions:** Optional setting. If set to `true` and an
-    unhandled exception occurs in the Python-code then the
-    execution continues. Otherwise the execution of the
-    OpenFOAM-program will stop with a `FatalError`. Default:
-    `false`
--   **warnOnNonUniform:** If `numpy` is not important and a
-    non-uniform variable is injected into the Python-namespace
-    then a warning is issued. Optional and defaults to `true`
--   **isParallelized:** This option is only of effect in a parallel
-    run. It signals that the Python-code can be
-    executed in parallel. If it is `false` a
-    parallel run will fail. Optional and defaults
-    to `false`
--   **parallelMasterOnly:** The python-code is not actually parallel
-    but only executed on the master processor. Required in
-    parallel runs. Otherwise unnecessary
--   **swakToPythonNamespaces:** Optional list of swak global
-    namespaces from which variables are injected under their
-    name into the Python-namespace
--   **pythonToSwakNamespace:** Name of a global swak namespace into
-    which selected Python variables are imported. If unset no
-    variables are exported
--   **pythonToSwakVariables:** List of python variables which are
-    exported into the global namespace
-    `pythonToSwakNamespace`. Optional
--   **interactiveAfterExecute:** If this variable is set then after
-    every execution the process is dropped to an interactive
-    shell. This allows the inspection of the variables,
-    manipulation, trying out things and it mainly used for
-    developing. When the shell is ended execution of the
-    OpenFOAM-program continues as usual. Defaults to `false`
--   **interactiveAfterException:** If an unhandled exception occurs
-    in the Python-code and this variable is set then the process
-    drops to an interactive shell. This allows debugging the
-    problem. Optional and defaults to `false`
--   **debugPythonWrapper:** Optional. If set to a value not \(0\) then
-    the Python-Wrapper prints additional information. Default: \(0\)
--   **importLibs:** Optional dictionary with libraries to be imported
-    on startup and injected into the
-    Python-namespace. If the dictionary entry has no
-    value then the library name and the name under
-    which it is imported are the same. Otherwise the
-    library is inserted under the name of the
-    dictionary key and the value is the actual library
-    (for instance `np numpy;` imports the library
-    `numpy` under the name `np`).
-
-    This option is necessary for certain libraries
-    which cause a deadlock when imported in the usual
-    Python-code
+This integration is similar to the Python 2 integration and all
+the options and variables are the same
 
 
-### Loading code snipplets
+### Lua integration
 
-Python code-snipplets can be specified in two forms:
+Every Lua-instance is separate (no shared variables).
 
-1.  As a separate file
-2.  As a string in the dictionary
+1.  Variable conversions
 
-If a snipplet with the name `prefix` is read then one of the two
-entries has to be present in the dictionary
+    Global variables are mapped to Lua-variables of the same name with
+    these rules
 
--   **prefixFile:** name of the file. If this file is not found
-    relative to the current working directory then it
-    is looked for from the directory of the
-    dictionary (for instance `system` if the
-    dictionary is a function object specification in
-    `controlDict`)
--   **prefixCode:** String with the code of the snippled
+    -   **uniform scalar:** becomes a Lua-number
+    -   **uniform vector, tensor etc:** becomes a Lua-table with
+        components that correspond to the Foam-component names. So
+        the vector `(1 2 3)` becomes `{x=1,y=2,z=3}`
+    -   **non-uniform fields:** a field of the size \(N\) becomes a
+        Lua-table with the indices \(1\) to \(N\) (this is **different** to
+        the C++/Foam-convention of indices from \(0\) to \(N-1\)). The
+        components are either numbers or tables with the components
 
-`File` and `Code` are mutual exclusive. If both (or neither) are
-specified an error occurs
+    When mapping from Lua-variables to global Foam variables it is
+    assumed that these follow the same conventions. Extra fields in
+    tables are ignored (a Lua variable `{w=2,y=2,x=1,z=3}` becomes a
+    Foam-vector `(1 2 3)`
+
+    Variables are always copied to the other namespace (there are no
+    references). This means additional memory usage and performance
+    loss due to the conversion for large fields
 
 
 ## State machines
@@ -1958,7 +2027,7 @@ parameters:
     -   **condition:** a swak-expression. This is the condition that is
         tested. If it is `true` the machine switches to a new state
     -   **logicalAccumulation:** Boils down the array of logical values
-        to one logical decision. See [5.1.1](#orgb59a197) above
+        to one logical decision. See [5.1.1](#org665e56c) above
     -   **to:** name of the state the machine moves to if `condition` is
         `true` according to `logicalAccumulation`
     -   **description:** A descriptive text that is printed out at every

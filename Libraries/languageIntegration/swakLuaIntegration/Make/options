@@ -1,0 +1,18 @@
+include $(OBJECTS_DIR)/../../../../rules/versionOptions
+
+EXE_INC = \
+        -I$(FOAM_SRC)/finiteVolume/lnInclude \
+        -I$(FOAM_SRC)/sampling/lnInclude \
+        -I$(FOAM_SRC)/meshTools/lnInclude \
+        $(FOAM_DEV_OPTION) \
+	$(SWAK_LUA_INCLUDE) \
+        -I../swakGeneralLanguageIntegration/lnInclude \
+	-I../../swak4FoamParsers/lnInclude \
+	-I../../simpleFunctionObjects/lnInclude
+        
+LIB_LIBS = \
+	$(SWAK_LUA_LINK) \
+	-L$(FOAM_USER_LIBBIN) \
+        -lswakGeneralLanguageIntegration \
+	-lswak4FoamParsers \
+	-lsimpleFunctionObjects

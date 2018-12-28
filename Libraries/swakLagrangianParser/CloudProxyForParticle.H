@@ -1,31 +1,26 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2010 OpenCFD Ltd.
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software: you can redistribute it and/or modify it
+    swak4Foam is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+    along with swak4Foam.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
     Foam::CloudProxyForParticle
@@ -36,7 +31,8 @@ SourceFiles
     CloudProxyForParticle.C
 
 Contributors/Copyright:
-    2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -209,8 +205,7 @@ protected:
             }
     };
 
-    HashPtrTable<ParticleMethodWrapper<scalar>,word,string::hash>
-      scalarFunctions_;
+    HashPtrTable<ParticleMethodWrapper<scalar> > scalarFunctions_;
 
     void addScalarFunction(
         const word &name,
@@ -218,8 +213,7 @@ protected:
         ParticleMethodWrapper<scalar> *ptr
     );
 
-    HashPtrTable<ParticleMethodWrapper<bool>,word,string::hash>
-      boolFunctions_;
+    HashPtrTable<ParticleMethodWrapper<bool> > boolFunctions_;
 
     void addBoolFunction(
         const word &name,
@@ -227,8 +221,7 @@ protected:
         ParticleMethodWrapper<bool> *ptr
     );
 
-    HashPtrTable<ParticleMethodWrapper<vector>,word,string::hash>
-      vectorFunctions_;
+    HashPtrTable<ParticleMethodWrapper<vector> > vectorFunctions_;
 
     void addVectorFunction(
         const word &name,
@@ -236,8 +229,7 @@ protected:
         ParticleMethodWrapper<vector> *ptr
     );
 
-    HashPtrTable<ParticleMethodWrapper<tensor>,word,string::hash>
-      tensorFunctions_;
+    HashPtrTable<ParticleMethodWrapper<tensor> > tensorFunctions_;
 
     void addTensorFunction(
         const word &name,
@@ -245,8 +237,7 @@ protected:
         ParticleMethodWrapper<tensor> *ptr
     );
 
-    HashPtrTable<ParticleMethodWrapper<symmTensor>,word,string::hash>
-      symmTensorFunctions_;
+    HashPtrTable<ParticleMethodWrapper<symmTensor> > symmTensorFunctions_;
 
     void addSymmTensorFunction(
         const word &name,
@@ -254,8 +245,7 @@ protected:
         ParticleMethodWrapper<symmTensor> *ptr
     );
 
-    HashPtrTable<ParticleMethodWrapper<sphericalTensor>,word,string::hash>
-      sphericalTensorFunctions_;
+    HashPtrTable<ParticleMethodWrapper<sphericalTensor> > sphTensorFunctions_;
 
     void addSphericalTensorFunction(
         const word &name,

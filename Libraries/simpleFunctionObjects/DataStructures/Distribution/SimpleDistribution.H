@@ -1,31 +1,26 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
@@ -39,7 +34,7 @@ SourceFiles
     SimpleDistribution.C
 
 Contributors/Copyright:
-    2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2013-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -201,6 +196,25 @@ public:
     }
 
     label maxNrBins() const;
+
+    //- Return the normalised distribution (probability density)
+    //  and bins
+    List< List<Pair<scalar> > > normalised() const
+        { return Distribution<Type>::normalised(); }
+
+    //- Return the distribution of the total bin weights
+    List< List < Pair<scalar> > > raw() const
+        { return Distribution<Type>::raw(); }
+
+    //- Return the cumulative normalised distribution and
+    //  integration locations (at end of bins)
+    List< List<Pair<scalar> > > cumulativeNormalised() const
+        { return Distribution<Type>::cumulativeNormalised(); }
+
+    //- Return the cumulative total bin weights and integration
+    //  locations (at end of bins)
+    List< List<Pair<scalar> > > cumulativeRaw() const
+        { return Distribution<Type>::cumulativeRaw(); }
 
     //- Write the distribution to file: only key and raw.
     //  Produces a separate file for each component.

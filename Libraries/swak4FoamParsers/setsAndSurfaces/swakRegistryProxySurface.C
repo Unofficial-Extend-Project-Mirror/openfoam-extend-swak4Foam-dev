@@ -1,34 +1,29 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2010 OpenCFD Ltd.
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software: you can redistribute it and/or modify it
+    swak4Foam is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+    along with swak4Foam.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -152,7 +147,103 @@ bool Foam::swakRegistryProxySurface::update()
     return originalUpdate;
 }
 
+#ifdef FOAM_SAMPLEDSURFACE_SAMPLE_WANTS_INTERPOLATION
 
+Foam::tmp<Foam::scalarField>
+Foam::swakRegistryProxySurface::sample
+(
+    const interpolation<scalar>& inter
+) const
+{
+    return realSurface().sample(inter);
+}
+
+Foam::tmp<Foam::vectorField>
+Foam::swakRegistryProxySurface::sample
+(
+    const interpolation<vector>& inter
+) const
+{
+    return realSurface().sample(inter);
+}
+
+Foam::tmp<Foam::tensorField>
+Foam::swakRegistryProxySurface::sample
+(
+    const interpolation<tensor>& inter
+) const
+{
+    return realSurface().sample(inter);
+}
+
+Foam::tmp<Foam::symmTensorField>
+Foam::swakRegistryProxySurface::sample
+(
+    const interpolation<symmTensor>& inter
+) const
+{
+    return realSurface().sample(inter);
+}
+
+Foam::tmp<Foam::sphericalTensorField>
+Foam::swakRegistryProxySurface::sample
+(
+    const interpolation<sphericalTensor>& inter
+) const
+{
+    return realSurface().sample(inter);
+}
+
+
+Foam::tmp<Foam::scalarField>
+Foam::swakRegistryProxySurface::sample
+(
+    const surfaceScalarField& vField
+) const
+{
+    return realSurface().sample(vField);
+}
+
+
+Foam::tmp<Foam::vectorField>
+Foam::swakRegistryProxySurface::sample
+(
+    const surfaceVectorField& vField
+) const
+{
+    return realSurface().sample(vField);
+}
+
+
+Foam::tmp<Foam::sphericalTensorField>
+Foam::swakRegistryProxySurface::sample
+(
+    const surfaceSphericalTensorField& vField
+) const
+{
+    return realSurface().sample(vField);
+}
+
+
+Foam::tmp<Foam::symmTensorField>
+Foam::swakRegistryProxySurface::sample
+(
+    const surfaceSymmTensorField& vField
+) const
+{
+    return realSurface().sample(vField);
+}
+
+
+Foam::tmp<Foam::tensorField>
+Foam::swakRegistryProxySurface::sample
+(
+    const surfaceTensorField& vField
+) const
+{
+    return realSurface().sample(vField);
+}
+#else
 Foam::tmp<Foam::scalarField>
 Foam::swakRegistryProxySurface::sample
 (
@@ -201,7 +292,7 @@ Foam::swakRegistryProxySurface::sample
 {
     return realSurface().sample(vField);
 }
-
+#endif
 
 Foam::tmp<Foam::scalarField>
 Foam::swakRegistryProxySurface::interpolate

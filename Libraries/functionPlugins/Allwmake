@@ -8,7 +8,7 @@ do
     fi
 done
 
-if [ "$FOAM_DEV" != "" ]
+if [[ "$FOAM_DEV" != "" || ( ${WM_PROJECT_VERSION:0:1} == "v" && ${WM_PROJECT_VERSION:1} -gt 1707 ) ]]
 then
     wmake libso swakFacSchemesFunctionPlugin
 fi

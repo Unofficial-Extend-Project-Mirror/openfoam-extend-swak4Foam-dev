@@ -1,31 +1,26 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
- =========                   |
- \\      /   F ield          | OpenFOAM: The Open Source CFD Toolbox
-  \\    /    O peration      |
-   \\  /     A nd            | Copyright (C) 1991-2005 OpenCFD Ltd.
-    \\/      M anipulation   |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Application
@@ -34,7 +29,8 @@ Application
 Description
 
 Contributors/Copyright:
-    2006-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2006-2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -670,49 +666,7 @@ void doAnExpression
     }
 }
 
-template<class FieldType>
-void preLoadFieldsFunction(
-    const DynamicList<fvMesh*> &meshes,
-    const wordList &fieldNames,
-    PtrList<FieldType> &fieldList
-)
-{
-    forAll(meshes,m) {
-        const fvMesh &mesh=*(meshes[m]);
-
-        forAll(fieldNames,i) {
-            const word &name=fieldNames[i];
-
-            IOobject fieldHeader
-                (
-                    name,
-                    mesh.time().timeName(),
-                    mesh,
-                    IOobject::MUST_READ,
-                    IOobject::AUTO_WRITE
-                );
-
-            if
-            (
-#ifdef FOAM_HAS_TYPE_HEADER_OK
-                fieldHeader.typeHeaderOk<FieldType>(true)
-#else
-                fieldHeader.headerOk()
-                && fieldHeader.headerClassName() == pTraits<FieldType>::typeName
-#endif
-            )
-            {
-                Info << " Preloading " << name << " of type "
-                    << pTraits<FieldType>::typeName
-                    << " for mesh " << mesh.name() << endl;
-
-                label sz=fieldList.size();
-                fieldList.setSize(sz+1);
-                fieldList.set(sz, new FieldType(fieldHeader, mesh));
-            }
-        }
-    }
-}
+#include "preloadFieldsFunction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
@@ -948,7 +902,7 @@ int main(int argc, char *argv[])
         if(args.options().found("field")) {
             Info << " Using command-line options\n" << endl;
 
-            word field=args.options()["field"];
+            word field(args.options()["field"]);
 
             exprString expression(
                 args.options()["expression"],
@@ -992,17 +946,7 @@ int main(int argc, char *argv[])
             IStringStream valuePatchesStream("("+valuePatchesString+")");
             wordList valuePatches(valuePatchesStream);
 
-            PtrList<volScalarField> vsf;
-            PtrList<volVectorField> vvf;
-            PtrList<volTensorField> vtf;
-            PtrList<volSymmTensorField> vyf;
-            PtrList<volSphericalTensorField> vhf;
-
-            PtrList<surfaceScalarField> ssf;
-            PtrList<surfaceVectorField> svf;
-            PtrList<surfaceTensorField> stf;
-            PtrList<surfaceSymmTensorField> syf;
-            PtrList<surfaceSphericalTensorField> shf;
+            PRELOAD_FIELDS_LISTS;
 
             if(args.options().found("preloadFields")) {
                 IStringStream preloadStream(
@@ -1011,17 +955,7 @@ int main(int argc, char *argv[])
 
                 wordList preLoadFields(preloadStream);
 
-                preLoadFieldsFunction(allMeshes,preLoadFields,vsf);
-                preLoadFieldsFunction(allMeshes,preLoadFields,vvf);
-                preLoadFieldsFunction(allMeshes,preLoadFields,vtf);
-                preLoadFieldsFunction(allMeshes,preLoadFields,vyf);
-                preLoadFieldsFunction(allMeshes,preLoadFields,vhf);
-
-                preLoadFieldsFunction(allMeshes,preLoadFields,ssf);
-                preLoadFieldsFunction(allMeshes,preLoadFields,svf);
-                preLoadFieldsFunction(allMeshes,preLoadFields,stf);
-                preLoadFieldsFunction(allMeshes,preLoadFields,syf);
-                preLoadFieldsFunction(allMeshes,preLoadFields,shf);
+                DO_PRELOAD_FIELDS(allMeshes,preLoadFields);
             }
 
             dictionary dummyDict;
@@ -1094,35 +1028,15 @@ int main(int argc, char *argv[])
 
                 Info << "\n\nPart: " << parts[partI].keyword() << endl;
 
-                PtrList<volScalarField> vsf;
-                PtrList<volVectorField> vvf;
-                PtrList<volTensorField> vtf;
-                PtrList<volSymmTensorField> vyf;
-                PtrList<volSphericalTensorField> vhf;
-
-                PtrList<surfaceScalarField> ssf;
-                PtrList<surfaceVectorField> svf;
-                PtrList<surfaceTensorField> stf;
-                PtrList<surfaceSymmTensorField> syf;
-                PtrList<surfaceSphericalTensorField> shf;
+                PRELOAD_FIELDS_LISTS;
 
                 if(part.found("preloadFields")) {
                     wordList preLoadFields(part.lookup("preloadFields"));
 
-                    preLoadFieldsFunction(allMeshes,preLoadFields,vsf);
-                    preLoadFieldsFunction(allMeshes,preLoadFields,vvf);
-                    preLoadFieldsFunction(allMeshes,preLoadFields,vtf);
-                    preLoadFieldsFunction(allMeshes,preLoadFields,vyf);
-                    preLoadFieldsFunction(allMeshes,preLoadFields,vhf);
-
-                    preLoadFieldsFunction(allMeshes,preLoadFields,ssf);
-                    preLoadFieldsFunction(allMeshes,preLoadFields,svf);
-                    preLoadFieldsFunction(allMeshes,preLoadFields,stf);
-                    preLoadFieldsFunction(allMeshes,preLoadFields,syf);
-                    preLoadFieldsFunction(allMeshes,preLoadFields,shf);
+                    DO_PRELOAD_FIELDS(allMeshes,preLoadFields);
                 }
 
-                word field=part["field"];
+                word field(part.lookup("field"));
 
                 exprString expression(
                     part["expression"],

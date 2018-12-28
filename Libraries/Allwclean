@@ -33,9 +33,9 @@ wclean swakFiniteArea
 
 wclean groovyStandardBCs
 
-wclean swakPythonIntegration
-
 wclean swakFvOptions
+
+(cd languageIntegration/; ./Allwclean)
 
 (cd functionPlugins; ./Allwclean)
 
@@ -56,8 +56,8 @@ then
 
     for plug in $plugins
     do
-	echo "Clearing user function-plugin $plug"
-	wclean $plugins
+        echo "Clearing user function-plugin $plug"
+        wclean $plugins
     done
 fi
 
@@ -67,6 +67,7 @@ then
     rmdepall="wrmdep -all"
 fi
 
-$rmdepall Libraries/filesThatAreOnlyInSomeDistributions
+echo "$rmdepall filesThatAreOnlyInSomeDistributions"
+$rmdepall filesThatAreOnlyInSomeDistributions 2>/dev/null || true
 
 # -----------------------------------------------------------------------------

@@ -1,34 +1,30 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2010 OpenCFD Ltd.
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software: you can redistribute it and/or modify it
+    swak4Foam is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+    along with swak4Foam.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -38,6 +34,8 @@ Contributors/Copyright:
 #include "DebugOStream.H"
 
 #include <functional>
+
+#include "swakCloudTypes.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -97,6 +95,7 @@ CloudProxyForParticle<CloudType>::CloudProxyForParticle
             &particleType::face
         )
     );
+#ifndef FOAM_BARYCENTRIC_PARTICLES
     addBoolFunction(
         "softImpact",
         "used impact model",
@@ -104,13 +103,35 @@ CloudProxyForParticle<CloudType>::CloudProxyForParticle
             &particleType::softImpact
         )
     );
+#endif
     addBoolFunction(
         "onBoundary",
         "is this currently on the boundary",
         new ParticleMethodWrapperValue<bool>(
+#ifdef FOAM_BARYCENTRIC_PARTICLES
+            &particleType::onBoundaryFace
+#else
             &particleType::onBoundary
+#endif
         )
     );
+#ifdef FOAM_BARYCENTRIC_PARTICLES
+    addBoolFunction(
+        "onBoundaryFace",
+        "is this currently on the boundary",
+        new ParticleMethodWrapperValue<bool>(
+            &particleType::onBoundaryFace
+        )
+    );
+    addBoolFunction(
+        "onInternalFace",
+        "is this currently on the internal",
+        new ParticleMethodWrapperValue<bool>(
+            &particleType::onInternalFace
+        )
+    );
+#endif
+#ifndef FOAM_BARYCENTRIC_PARTICLES
     addScalarFunction(
         "currentTime",
         "current time of the particle",
@@ -118,6 +139,7 @@ CloudProxyForParticle<CloudType>::CloudProxyForParticle
             &particleType::currentTime
         )
     );
+#endif
     addScalarFunction(
         "stepFraction",
         "fraction of the time-step completed",
@@ -125,6 +147,15 @@ CloudProxyForParticle<CloudType>::CloudProxyForParticle
             &particleType::stepFraction
         )
     );
+#ifdef FOAM_BARYCENTRIC_PARTICLES
+    addScalarFunction(
+        "currentTimeFraction",
+        "Current fraction within the time-step",
+        new ParticleMethodWrapperValue<scalar>(
+            &particleType::currentTimeFraction
+        )
+    );
+#endif
 }
 
 
@@ -214,7 +245,7 @@ void CloudProxyForParticle<CloudType>::addSphericalTensorFunction(
 )
 {
     addField<sphericalTensor>(name,description);
-    sphericalTensorFunctions_.set(
+    sphTensorFunctions_.set(
         name,
         ptr
     );
@@ -335,10 +366,10 @@ tmp<Field<sphericalTensor> > CloudProxyForParticle<CloudType>::getSphericalTenso
     const word &name
 ) const
 {
-    if(sphericalTensorFunctions_.found(name)) {
+    if(sphTensorFunctions_.found(name)) {
         Dbug << "Found " << name << " in sphericalTensor table" << endl;
         return mapToParticles<sphericalTensor>(
-            *sphericalTensorFunctions_[name]
+            *sphTensorFunctions_[name]
         );
     }
 

@@ -1,31 +1,26 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
@@ -38,9 +33,9 @@ Description
 SourceFiles
 
 Contributors/Copyright:
-    2012-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2015-2016 Bruno Santos <wyldckat@gmail.com>
-    2016 Mark Olesen <Mark.Olesen@esi-group.com>
+    2016-2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -84,11 +79,13 @@ Contributors/Copyright:
 #define FOAM_SYMMTENSOR_WORKAROUND
 #endif
 
-#if (OPENFOAM_PLUS >= 1606) ||  (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
+#if (OPENFOAM_COM >= 1606) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
 #define FOAM_EIGENVECTORS_RETURNS_SYMMTENSOR
 #endif
 
-#if (OPENFOAM_PLUS >= 1606) ||  (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
+#if (OPENFOAM_COM >= 1606) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
 #define FOAM_MISSING_POW2_DEFINITION_IN_COF_METHOD
 #endif
 
@@ -110,24 +107,24 @@ Contributors/Copyright:
 #if FOAM_VERSION4SWAK < VERSION_NR(2,1,0) || defined(FOAM_VERSION4SWAK_IS_EXTEND)
 // what is later called mappedPatch is called directMappedPatch
 #define FOAM_MAPPED_IS_DIRECTMAPPED
+#endif
 
-#else
-
+#if !(FOAM_VERSION4SWAK < VERSION_NR(2,1,0) || defined(FOAM_VERSION4SWAK_IS_EXTEND))
 // has basicSources
 #define FOAM_HAS_BASICSOURCES
-
 #endif
 
 #if FOAM_VERSION4SWAK >= VERSION_NR(3,2,0) && defined(FOAM_VERSION4SWAK_IS_EXTEND)
 #define FOAM_DEFAULTCOMMSTYPE_IS_METHOD
 #endif
 
-// this changed starting with 2.1
 #if (FOAM_VERSION4SWAK >= VERSION_NR(2,1,0)) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)
-
 // this Foam-Version now has ABI-patches
 #define FOAM_HAS_ABI_PATCHES
+#endif
 
+#if (FOAM_VERSION4SWAK >= VERSION_NR(2,1,0)) && !defined(FOAM_VERSION4SWAK_IS_EXTEND) \
+    || ((FOAM_VERSION4SWAK > VERSION_NR(4,0,9)) && defined(FOAM_VERSION4SWAK_IS_EXTEND))
 // the coded function objects have an additional data entry
 #define SWAK_FUNCTION_OBJECT_HAS_DATAPTR
 
@@ -136,7 +133,8 @@ Contributors/Copyright:
 // this changed starting with 2.2
 #if FOAM_VERSION4SWAK > VERSION_NR2(2,1)
 
-#if (FOAM_VERSION4SWAK > VERSION_NR(2,2,0)) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#if ((FOAM_VERSION4SWAK > VERSION_NR(2,2,0)) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)) \
+    || ((FOAM_VERSION4SWAK > VERSION_NR(4,0,9)) && defined(FOAM_VERSION4SWAK_IS_EXTEND))
 // this is NOT changed in 2.2.0 but in the earliest commits of 2.2.x
 // lookupClass returns a non-const list
 #define FOAM_LOOKUPCLASS_NO_CONST
@@ -149,7 +147,7 @@ Contributors/Copyright:
 #define FOAM_SAMPLEDSET_NEEDS_REFPOINT
 #endif
 
-#if OPENFOAM_PLUS >= 1612
+#if (OPENFOAM_COM >= 1612)
 #define FOAM_SAMPLED_SURFACE_ADDITIONAL_METHODS
 #endif
 
@@ -160,19 +158,19 @@ Contributors/Copyright:
 #define FOAM_MESHTOMESH_OLD_STYLE
 #endif
 
-#if (OPENFOAM_PLUS >= 1606)
+#if (OPENFOAM_COM >= 1606)
 #define FOAM_MESHTOMESH_MAPSRCTOTGT_REDUCE
 #endif
 
-#if (OPENFOAM_PLUS >= 1606)
+#if (OPENFOAM_COM >= 1606)
 #define FOAM_MESHTOMESH_MAPSRCTOTGT_NO_TENSOR
 #endif
 
-#ifdef OPENFOAM_PLUS
+#ifdef OPENFOAM_COM
 #define FOAM_MESHTOMESH_HAS_CORRECTEDCELLVOLUMEWEIGHT
 #endif
 
-#if !defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#if !defined(FOAM_VERSION4SWAK_IS_EXTEND) || (FOAM_VERSION4SWAK > VERSION_NR2(4,0))
 // functionObject now needs at least dummy-implementations of updateMesh and movePoints
 #define FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH
 #endif
@@ -197,23 +195,30 @@ Contributors/Copyright:
 #define FOAM_HAS_FVOPTIONS
 #endif
 
-#if defined(OPENFOAM_PLUS) \
-    || (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
+#if defined(OPENFOAM_COM) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
 #define FOAM_FVOPTIONS_IN_FV
 #endif
 
-#if defined(FOAM_VERSION4SWAK_IS_OPENFOAMPLUS) || (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(2,2))
+#if defined(FOAM_VERSION4SWAK_IS_COM) || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(2,2))
 #define FOAM_HAS_ACMI_INTERFACE
 #endif
 
-#if defined(FOAM_VERSION4SWAK_IS_OPENFOAMPLUS) || (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(2,2))
+#if defined(FOAM_VERSION4SWAK_IS_COM) || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(2,2))
 #define FOAM_HAS_AMI_INTERFACE
 #endif
 
-#if (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK<VERSION_NR(4,0,0))
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK<VERSION_NR(4,0,0))
 #define FOAM_OLD_AMI_ACMI
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(6,0,0))
+#define FOAM_ACMI_RESETAMI_NO_PARAMETERS
+#endif
+
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(6,0,0))
+#define FOAM_ACMI_HAS_NO_AMI_METHOD
+#endif
 
 #ifndef FOAM_VERSION4SWAK_IS_EXTEND
 // movePoints now gets a polyMesh
@@ -226,8 +231,16 @@ Contributors/Copyright:
 #endif
 
 #ifndef FOAM_VERSION4SWAK_IS_EXTEND
+#define FOAM_SEARCHABLE_SURF_HAS_BOUND_METHOD
+#endif
+
+#ifndef FOAM_VERSION4SWAK_IS_EXTEND
 // points method of searchable surfaces now part of interface
 #define FOAM_SEARCHABLE_SURF_HAS_POINTS
+#endif
+
+#ifndef FOAM_VERSION4SWAK_IS_EXTEND
+#define FOAM_EDGEMESH_INCLUDE_WITH_FA
 #endif
 
 #endif // version starting with 2.2
@@ -256,20 +269,20 @@ Contributors/Copyright:
 #define FOAM_NO_SEPARATE_CONSTANT_NAMESPACE
 #endif
 
-#ifdef FOAM_VERSION4SWAK_IS_EXTEND
+#if defined(FOAM_VERSION4SWAK_IS_EXTEND) && (FOAM_VERSION4SWAK<VERSION_NR(4,1,0))
 #define FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
 #endif
 
-#if (OPENFOAM_PLUS >= 1612) \
-    || (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
+#if (OPENFOAM_COM >= 1612) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
 #define FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
 #endif
 
-#ifdef FOAM_VERSION4SWAK_IS_EXTEND
+#if defined(FOAM_VERSION4SWAK_IS_EXTEND) && (FOAM_VERSION4SWAK < VERSION_NR(4,1,0))
 #define FOAM_ISTREAM_HAS_NO_STDSTREAM
 #endif
 
-#ifndef FOAM_VERSION4SWAK_IS_EXTEND
+#if !defined(FOAM_VERSION4SWAK_IS_EXTEND) || (FOAM_VERSION4SWAK > VERSION_NR2(4,0))
 #define FOAM_SURFACEWRITER_NOT_A_TEMPLATE
 #endif
 
@@ -277,12 +290,13 @@ Contributors/Copyright:
 #define FOAM_PARTICLE_CLASS_IS_TEMPLATE
 #endif
 
-#ifdef FOAM_VERSION4SWAK_IS_EXTEND
+#if defined(FOAM_VERSION4SWAK_IS_EXTEND) && (FOAM_VERSION4SWAK < VERSION_NR2(4, 0))
 #define FOAM_HAS_NO_DATAENTRY_CLASS
 #endif
 
-#if (OPENFOAM_PLUS >= 1606) \
-    || (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
+#if (OPENFOAM_COM >= 1606) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(3,0)) \
+    || (defined(FOAM_VERSION4SWAK_IS_EXTEND) && (FOAM_VERSION4SWAK > VERSION_NR2(4, 0)))
 #define FOAM_DATAENTRY_IS_NOW_FUNCTION1
 #endif
 
@@ -290,16 +304,21 @@ Contributors/Copyright:
 #define FOAM_DATAENTRY_HAS_TENSOR_INSTANCES
 #endif
 
-#if (FOAM_VERSION4SWAK > VERSION_NR2(2,0)) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#if (FOAM_VERSION4SWAK > VERSION_NR2(2,0)) && !defined(FOAM_VERSION4SWAK_IS_EXTEND) \
+    || (defined(FOAM_VERSION4SWAK_IS_EXTEND) && (FOAM_VERSION4SWAK > VERSION_NR2(4, 0)))
 #define FOAM_DATAENTRY_CLASS_NEEDS_WRITEDATA
 #endif
 
-#ifdef FOAM_VERSION4SWAK_IS_EXTEND
+#if defined(FOAM_VERSION4SWAK_IS_EXTEND) && (FOAM_VERSION4SWAK < VERSION_NR(4,0,9))
 #define FOAM_HAS_NO_CODED_CLASS
 #endif
 
 #ifdef FOAM_VERSION4SWAK_IS_EXTEND
 #define FOAM_JUMP_IS_JUMP_CYCLIC
+#endif
+
+#ifndef FOAM_VERSION4SWAK_IS_EXTEND
+#define FOAM_CYCLIC_FV_PATCH_FIELD_HAS_NEIGHBOUR_PATCH
 #endif
 
 #ifdef FOAM_VERSION4SWAK_IS_EXTEND
@@ -318,7 +337,7 @@ Contributors/Copyright:
 #define FOAM_HAS_STRINGOPS
 #endif
 
-#ifdef FOAM_VERSION4SWAK_IS_EXTEND
+#if defined(FOAM_VERSION4SWAK_IS_EXTEND) && FOAM_VERSION4SWAK < VERSION_NR(4,1,0)
 #define FOAM_DLLIBRARY_USES_STATIC_METHODS
 #endif
 
@@ -326,11 +345,15 @@ Contributors/Copyright:
 #define FOAM_COUPLEDPOLYPATCH_HAS_OWNER
 #endif
 
+#if FOAM_VERSION4SWAK > VERSION_NR(4,0,9) && defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#define FOAM_COUPLEDPOLYPATCH_MASTER_IS_OWNER
+#endif
+
 #if FOAM_VERSION4SWAK > VERSION_NR2(2,2) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)
 #define FOAM_NEW_MESH2MESH
 #endif
 
-#ifdef OPENFOAM_PLUS
+#ifdef OPENFOAM_COM
 #define FOAM_MESH2MESH_NO_2ND_ORDER_TENSOR
 #endif
 
@@ -354,11 +377,11 @@ Contributors/Copyright:
 #define FOAM_FVMESH_IS_DATAOBJECT
 #endif
 
-#if defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#if defined(FOAM_VERSION4SWAK_IS_EXTEND) && (FOAM_VERSION4SWAK < VERSION_NR(4,0,9))
 #define FOAM_ZONEMESH_HAS_NO_FINDINDEX
 #endif
 
-#if defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#if defined(FOAM_VERSION4SWAK_IS_EXTEND) && (FOAM_VERSION4SWAK < VERSION_NR(4,0,9))
 #define FOAM_HAS_NO_FOUR_PARAMETER_FINDINSTANCE
 #endif
 
@@ -420,6 +443,15 @@ Contributors/Copyright:
 #define FOAM_LDUMATRIX_SOLVERPERFORMANCE
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_COM) && OPENFOAM_COM < 1612)      \
+        || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK<VERSION_NR(5,0,0))
+#define FOAM_SOLVERPERFORMANCE_NITERATIONS_NO_VECTOR
+#endif
+
+#if FOAM_VERSION4SWAK >= VERSION_NR(4,0,0) && defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#define FOAM_FVSCHEMES_HAS_SETFLUXREQUIRED
+#endif
+
 #ifdef FOAM_VERSION4SWAK_IS_EXTEND
 #define FOAM_POINTPATCHFIELD_HAS_FIVE_TEMPLATE_PARAMETERS
 #endif
@@ -436,46 +468,70 @@ Contributors/Copyright:
 #define FOAM_HAS_TOLERANCE_SWITCHES
 #endif
 
-#if (OPENFOAM_PLUS >= 1606)
-#define FOAM_HAS_TYPE_HEADER_OK
+#ifdef FOAM_VERSION4SWAK_IS_EXTEND
+#define FOAM_HAS_LONG_DOUBLE_SCALAR
 #endif
 
-#if (OPENFOAM_PLUS >= 1606)
+#if defined(FOAM_VERSION4SWAK_IS_EXTEND) && FOAM_VERSION4SWAK<VERSION_NR(4,0,9)
+#define FOAM_TOKEN_CLASS_HAS_FATAL_ERROR
+#endif
+
+#if (OPENFOAM_COM >= 1606) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(5,0,0))
+#define FOAM_HAS_TYPE_HEADER_OK
+#if (OPENFOAM_COM >= 1712)
+#define FOAM_TYPE_HEADER_OK_HAS_EXTRA_PARAMTERS
+#endif
+#endif
+
+#if (OPENFOAM_COM >= 1606) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(5,0,0))
 #define FOAM_HAS_LOCAL_FILEPATH
 #endif
 
-#if (OPENFOAM_PLUS >= 1606) \
-    || (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
+#if (OPENFOAM_COM >= 1712) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(5,0,0))
+#define FOAM_LOCAL_FILEPATH_NEEDS_TYPE_PARAMETER
+#endif
+
+#if (OPENFOAM_COM >= 1712) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(5,0,0))
+#define FOAM_READSTREAM_METHOD_NEEDS_BOOL_PARAMETER
+#endif
+
+#if (OPENFOAM_COM >= 1606) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
 #define FOAM_COMPONENT_NAMES_ARE_CONST_PTR
 #endif
 
-#if (OPENFOAM_PLUS >= 1612) \
-    || (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
+#if (OPENFOAM_COM >= 1612) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
 #define FOAM_PATCHFIELDTYPE_IN_GEOFIELD_IS_NOW_PATCH
 #endif
 
-#if (OPENFOAM_PLUS >= 1612) \
-    || (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
+#if (OPENFOAM_COM >= 1612) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
 #define FOAM_IOFILTER_WRITE_NEEDS_BOOL
 #endif
 
-#if (OPENFOAM_PLUS >= 1612) \
-    || (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
+#if (OPENFOAM_COM >= 1612) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
 #define FOAM_HAS_NO_IOFILTERFUNCTIONOBJECT_ANYMORE
 #endif
 
-#if (OPENFOAM_PLUS >= 1612) \
-    || (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
+#if (OPENFOAM_COM >= 1612) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
 // TODO: currently only used to comment the instantiations out
 #define FOAM_CODED_FUNCTION_OBJECT_NEW_INTERFACE
 #endif
 
-#if (OPENFOAM_PLUS >= 1612) \
-    || (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
+#if (OPENFOAM_COM >= 1612) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
 #define FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
 #endif
 
-#if (OPENFOAM_PLUS >= 1612)
+#if (OPENFOAM_COM >= 1612) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(5,0,0))
 #define FOAM_MAKE_TEMPLATE_PATCHTYPE_FIELD_USES_PRIMITIVES
 #endif
 
@@ -483,16 +539,62 @@ Contributors/Copyright:
 #define FOAM_CXX_COMPILER_ALLOWS_NON_POD_IN_UNION
 #endif
 
-#if (OPENFOAM_PLUS >= 1706)
+#if __cplusplus < 201103L
+#define FOAM_CXX_COMPILER_HAS_NO_NULLPTR
+#ifndef nullptr
+#define nullptr NULL
+#endif
+#endif
+
+#if (OPENFOAM_COM >= 1706)
 #define FOAM_RANDOM_CLASS_NEW_INTERFACE
 #endif
 
-#if (OPENFOAM_PLUS >= 1706)
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR(5,0,0))
+#define FOAM_RANDOM_CLASS_GAUSS_RENAMED
+#endif
+
+#if (OPENFOAM_COM >= 1706) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(5,0,0))
 #define FOAM_PSTREAM_COMMSTYPE_IS_ENUMCLASS
+#endif
+
+#if (OPENFOAM_COM >= 1712) \
+    || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(5,0,0))
+#define FOAM_REGIOOBJECT_WRITEOBJECT_WITH_VALID
+#endif
+
+#if (OPENFOAM_COM >= 1803)
+#define FOAM_LIST_HAS_MOVABLE_CONSTRUCT
+#endif
+
+#if FOAM_VERSION4SWAK >= VERSION_NR(4,1,0) && defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#define FOAM_HAS_IMMERSED_BOUNDARY_CONDITION
+#endif
+
+#if (OPENFOAM_COM >= 1803)
+#define FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+#endif
+
+#if (OPENFOAM_COM >= 1803)
+#define FOAM_SAMPLEDSURFACE_SAMPLE_WANTS_INTERPOLATION
+#endif
+
+#if (OPENFOAM_COM >= 1803)
+#define FOAM_MESHTOMESH_WANTS_PROCMAP_PARAMETER
+#endif
+
+#if (OPENFOAM_COM >= 1811)
+#define FOAM_MESHOBJECT_GRAVITY
+#endif
+
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(6,0,0))
+#define FOAM_TIME_HAS_SEPARATE_SETDELTAT_NOADJUST
 #endif
 
 #include "swakVersion.H"
 #include "DebugOStream.H"
+#include "BackportMacros.H"
 
 #endif
 

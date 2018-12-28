@@ -1,9 +1,10 @@
 /*----------------------- -*- C++ -*- ---------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
     This file is part of swak4Foam.
@@ -25,7 +26,7 @@ Description
 
 
 Contributors/Copyright:
-    2009-2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2009-2013, 2015-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -33,9 +34,7 @@ Contributors/Copyright:
 %skeleton "lalr1.cc"
 /* %require "2.1a" */
 %defines
-%define "parser_class_name" "PatchValueExpressionParser"
-
-%pure-parser
+%define parser_class_name {PatchValueExpressionParser}
 
 %{
 #include <volFields.H>
@@ -57,7 +56,7 @@ Contributors/Copyright:
 
 %}
 
-%name-prefix="parserPatch"
+%define api.prefix {parserPatch}
 
 %parse-param {void * scanner}
 %parse-param { PatchValueExpressionDriver& driver }
@@ -281,6 +280,7 @@ namespace Foam {
 %token TOKEN_snGrad
 %token TOKEN_internalField
 %token TOKEN_neighbourField
+%token TOKEN_neighbourPatch
 %token TOKEN_oldTime
 
 %token TOKEN_deltaT
@@ -308,6 +308,7 @@ namespace Foam {
 %token TOKEN_asin
 %token TOKEN_acos
 %token TOKEN_atan
+%token TOKEN_atan2
 %token TOKEN_sinh
 %token TOKEN_cosh
 %token TOKEN_tanh
@@ -756,6 +757,10 @@ vexp:   vector                  { $$ = $1; }
             $$=driver.getPatchNeighbourField<Foam::vector>(*$3).ptr();
             delete $3;
           }
+        | TOKEN_neighbourPatch '(' TOKEN_VID ')' {
+            $$=driver.getPatchNeighbourPatch<Foam::vector>(*$3).ptr();
+            delete $3;
+          }
         | TOKEN_min '(' vexp ',' vexp  ')'           {
             $$ = Foam::min(*$3,*$5).ptr();
             delete $3; delete $5;
@@ -1031,6 +1036,11 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1).ptr(); }
         | TOKEN_atan '(' exp ')'          {
             $$ = new Foam::scalarField(Foam::atan(*$3));
             delete $3;
+          }
+        | TOKEN_atan2 '(' exp ',' exp ')'          {
+            $$ = new Foam::scalarField(Foam::atan2(*$3,*$5));
+            delete $3;
+            delete $5;
           }
         | TOKEN_sinh '(' exp ')'          {
             $$ = new Foam::scalarField(Foam::sinh(*$3));
@@ -1347,6 +1357,10 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1).ptr(); }
             $$=driver.getPatchNeighbourField<Foam::scalar>(*$3).ptr();
             delete $3;
           }
+        | TOKEN_neighbourPatch '(' TOKEN_SID ')' {
+            $$=driver.getPatchNeighbourPatch<Foam::scalar>(*$3).ptr();
+            delete $3;
+          }
         | TOKEN_min '(' exp ',' exp  ')'           {
             $$ = Foam::min(*$3,*$5).ptr();
             delete $3; delete $5;
@@ -1541,6 +1555,10 @@ texp:   tensor                  { $$ = $1; }
             $$=driver.getPatchNeighbourField<Foam::tensor>(*$3).ptr();
             delete $3;
           }
+        | TOKEN_neighbourPatch '(' TOKEN_TID ')' {
+            $$=driver.getPatchNeighbourPatch<Foam::tensor>(*$3).ptr();
+            delete $3;
+          }
         | TOKEN_min '(' texp ',' texp  ')'           {
             $$ = Foam::min(*$3,*$5).ptr();
             delete $3; delete $5;
@@ -1712,6 +1730,10 @@ yexp:   symmTensor                  { $$ = $1; }
             $$=driver.getPatchNeighbourField<Foam::symmTensor>(*$3).ptr();
             delete $3;
           }
+        | TOKEN_neighbourPatch '(' TOKEN_YID ')' {
+            $$=driver.getPatchNeighbourPatch<Foam::symmTensor>(*$3).ptr();
+            delete $3;
+          }
         | TOKEN_min '(' yexp ',' yexp  ')'           {
             $$ = Foam::min(*$3,*$5).ptr();
             delete $3; delete $5;
@@ -1829,6 +1851,10 @@ hexp:   sphericalTensor                  { $$ = $1; }
           }
         | TOKEN_neighbourField '(' TOKEN_HID ')' {
             $$=driver.getPatchNeighbourField<Foam::sphericalTensor>(*$3).ptr();
+            delete $3;
+          }
+        | TOKEN_neighbourPatch '(' TOKEN_HID ')' {
+            $$=driver.getPatchNeighbourPatch<Foam::sphericalTensor>(*$3).ptr();
             delete $3;
           }
         | TOKEN_min '(' hexp ',' hexp  ')'           {
@@ -2283,6 +2309,11 @@ pexp:   pexp '+' pexp 		{
         | TOKEN_atan '(' pexp ')'          {
             $$ = new Foam::scalarField(Foam::atan(*$3));
             delete $3;
+          }
+        | TOKEN_atan2 '(' pexp ',' pexp ')'          {
+            $$ = new Foam::scalarField(Foam::atan2(*$3,*$5));
+            delete $3;
+            delete $5;
           }
         | TOKEN_sinh '(' pexp ')'          {
             $$ = new Foam::scalarField(Foam::sinh(*$3));

@@ -1,31 +1,26 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software: you can redistribute it and/or modify it
+    swak4Foam is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+    along with swak4Foam.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
     Foam::ReaderParticleCloud
@@ -37,7 +32,8 @@ SourceFiles
     ReaderParticleCloud.C
 
 Contributors/Copyright:
-    2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2013, 2015-2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -78,19 +74,19 @@ class ReaderParticleCloud
         //- Disallow default bitwise assignment
         void operator=(const ReaderParticleCloud&);
 
-    HashTable<Field<label>,word> labelData_;
-    HashTable<Field<scalar>,word> scalarData_;
-    HashTable<Field<vector>,word> vectorData_;
-    HashTable<Field<tensor>,word> tensorData_;
-    HashTable<Field<symmTensor>,word> symmTensorData_;
-    HashTable<Field<sphericalTensor>,word> sphericalTensorData_;
-    //    HashTable<Field<bool>,word> boolData_;
+    HashTable<Field<label> > labelData_;
+    HashTable<Field<scalar> > scalarData_;
+    HashTable<Field<vector> > vectorData_;
+    HashTable<Field<tensor> > tensorData_;
+    HashTable<Field<symmTensor> > symmTensorData_;
+    HashTable<Field<sphericalTensor> > sphericalTensorData_;
+    //    HashTable<Field<bool> > boolData_;
 
     template <typename T>
     void addDataInternal(
         const word &name,
         const Field<T> &inData,
-        HashTable<Field<T>,word> &data,
+        HashTable<Field<T> > &data,
         bool overwrite=false
     );
 
@@ -106,10 +102,12 @@ protected:
 
     template <typename T>
     void writeData(
-        const HashTable<Field<T>,word> &data
+        const HashTable<Field<T> > &data
     ) const;
 
     void clearData();
+
+    void rereadBasics();
 
 public:
 

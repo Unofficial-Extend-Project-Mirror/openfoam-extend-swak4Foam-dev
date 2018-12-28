@@ -63,7 +63,10 @@ dynamicRefineFvMeshCoeffs
         (nHatf none)
         (rhoPhi none)
         (alphaPhi none)
-        (ghf none)    );
+        (alphaPhiUn none)
+        (alphaPhi0.water none)
+        (ghf none)
+    );
 
     // Write cellLevel?
     dumpLevel true;

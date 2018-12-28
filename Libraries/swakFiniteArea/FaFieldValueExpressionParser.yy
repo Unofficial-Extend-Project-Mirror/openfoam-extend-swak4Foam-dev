@@ -1,9 +1,10 @@
 /*----------------------- -*- C++ -*- ---------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
     This file is part of swak4Foam.
@@ -25,7 +26,7 @@ Description
 
 
 Contributors/Copyright:
-    2011-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -33,10 +34,7 @@ Contributors/Copyright:
 %skeleton "lalr1.cc"
 /* %require "2.1a" */
 %defines
-%define "parser_class_name" "FaFieldValueExpressionParser"
-
-// make reentrant to allow sub-parsers
-%pure-parser
+%define parser_class_name {FaFieldValueExpressionParser}
 
 %{
 #include <areaFields.H>
@@ -69,7 +67,7 @@ Contributors/Copyright:
 #include "swak.H"
 %}
 
-%name-prefix="parserFaField"
+%define api.prefix {parserFaField}
 
 %parse-param {void * scanner}
 %parse-param { FaFieldValueExpressionDriver& driver }
@@ -351,6 +349,7 @@ autoPtr<T> FaFieldValueExpressionDriver::evaluatePluginFunction(
 %token TOKEN_asin
 %token TOKEN_acos
 %token TOKEN_atan
+%token TOKEN_atan2
 %token TOKEN_sinh
 %token TOKEN_cosh
 %token TOKEN_tanh
@@ -969,6 +968,13 @@ fsexp:  TOKEN_surf '(' scalar ')'           {
         | TOKEN_atan '(' fsexp ')'          {
             $$ = new Foam::edgeScalarField(Foam::atan(*$3));
             delete $3;
+          }
+        | TOKEN_atan2 '(' fsexp ',' fsexp ')'          {
+            $$ = driver.makeField<Foam::edgeScalarField>(
+                Foam::atan2(*$3,*$5)
+            ).ptr();
+            delete $3;
+            delete $5;
           }
         | TOKEN_sinh '(' fsexp ')'          {
             $$ = new Foam::edgeScalarField(Foam::sinh(*$3));
@@ -1611,6 +1617,13 @@ exp:    TOKEN_NUM                                  {
             $$ = new Foam::areaScalarField(Foam::atan(*$3));
             delete $3;
             driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_atan2 '(' exp ',' exp ')'          {
+            $$ = driver.makeField<Foam::areaScalarField>(
+                Foam::atan2(*$3,*$5)
+            ).ptr();
+            delete $3;
+            delete $5;
           }
         | TOKEN_sinh '(' exp ')'                   {
             $$ = new Foam::areaScalarField(Foam::sinh(*$3));
@@ -2341,9 +2354,11 @@ texp:   tensor                  { $$ = $1; }
             driver.setCalculatedPatches(*$$);
           }
         | TOKEN_eigenVectors '(' yexp ')'       {
+#ifndef FOAM_EIGENVECTORS_RETURNS_SYMMTENSOR
             $$ = driver.makeField<Foam::areaTensorField>(
                 Foam::eigenVectors($3->internalField())
             ).ptr();
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -2352,9 +2367,11 @@ texp:   tensor                  { $$ = $1; }
             delete $3;    driver.setCalculatedPatches(*$$);
           }
         | TOKEN_cof '(' texp ')' 	           {
+#ifndef FOAM_MISSING_POW2_DEFINITION_IN_COF_METHOD
             $$ = driver.makeField<Foam::areaTensorField>(
                 Foam::cof($3->internalField())
             ).ptr();
+#endif
             delete $3;    driver.setCalculatedPatches(*$$);
           }
         | TOKEN_dev '(' texp ')' 	           {
@@ -2573,9 +2590,11 @@ yexp:   symmTensor                  { $$ = $1; }
             delete $3;    driver.setCalculatedPatches(*$$);
           }
         | TOKEN_cof '(' yexp ')' 	           {
+#ifndef FOAM_MISSING_POW2_DEFINITION_IN_COF_METHOD
             $$ = driver.makeField<Foam::areaSymmTensorField>(
                 Foam::cof($3->internalField())
             ).ptr();
+#endif
             delete $3;    driver.setCalculatedPatches(*$$);
           }
         | TOKEN_dev '(' yexp ')' 	           {
@@ -2990,9 +3009,11 @@ ftexp:   ftensor                  { $$ = $1; }
             driver.setCalculatedPatches(*$$);
           }
         | TOKEN_eigenVectors '(' fyexp ')'       {
+#ifndef FOAM_EIGENVECTORS_RETURNS_SYMMTENSOR
             $$ = driver.makeField<Foam::edgeTensorField>(
                 Foam::eigenVectors($3->internalField())
             ).ptr();
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -3001,9 +3022,11 @@ ftexp:   ftensor                  { $$ = $1; }
             delete $3;
           }
         | TOKEN_cof '(' ftexp ')' 	           {
+#ifndef FOAM_MISSING_POW2_DEFINITION_IN_COF_METHOD
             $$ = driver.makeField<Foam::edgeTensorField>(
                 Foam::cof($3->internalField())
             ).ptr();
+#endif
             delete $3;
           }
         | TOKEN_dev '(' ftexp ')' 	           {
@@ -3196,9 +3219,11 @@ fyexp:   fsymmTensor                  { $$ = $1; }
             delete $3;
           }
         | TOKEN_cof '(' fyexp ')' 	           {
+#ifndef FOAM_MISSING_POW2_DEFINITION_IN_COF_METHOD
             $$ = driver.makeField<Foam::edgeSymmTensorField>(
                 Foam::cof($3->internalField())
             ).ptr();
+#endif
             delete $3;
           }
         | TOKEN_dev '(' fyexp ')' 	           {

@@ -1,35 +1,30 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -62,7 +57,10 @@ Foam::expressionFaField::expressionFaField
                 << endl;
     }
     read(dict);
-    execute();
+    Dbug << "Read. Now writing" << endl;
+    write();
+
+    Dbug << "expressionField::expressionField - end" << endl;
 }
 
 Foam::expressionFaField::~expressionFaField()
@@ -90,6 +88,21 @@ void Foam::expressionFaField::storeField(
         //        dynamicCast<T &>(field_())==data; // doesn't work with gcc 4.2
         dynamic_cast<T &>(field_())==data;
     }
+
+    if(
+        this->autowrite_
+        &&
+        this->obr_.time().outputTime()
+    ) {
+        Dbug << "storeField() - writing" << endl;
+        field_->write();
+    }
+    Dbug << "storeField() - end" << endl;
+}
+
+void Foam::expressionFaField::timeSet()
+{
+    // Do nothing
 }
 
 void Foam::expressionFaField::read(const dictionary& dict)
@@ -119,7 +132,12 @@ void Foam::expressionFaField::read(const dictionary& dict)
     }
 }
 
-void Foam::expressionFaField::execute()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::expressionFaField::write()
 {
     if(active_) {
         FaFieldValueExpressionDriver &driver=driver_();
@@ -178,14 +196,19 @@ void Foam::expressionFaField::execute()
     }
 
     driver_->tryWrite();
+    Dbug << "write() - end" << endl;
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 
 void Foam::expressionFaField::end()
 {
+    execute();
 }
 
-void Foam::expressionFaField::write()
+void Foam::expressionFaField::execute()
 {
 }
 

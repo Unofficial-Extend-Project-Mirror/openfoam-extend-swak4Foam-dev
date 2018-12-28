@@ -1,0 +1,7 @@
+pythonInterpreterWrapper.C
+pythonIntegrationFunctionObject.C
+pythonFluIntegrationFunctionObject.C
+Python2FoamDictionaryParserDriver.C
+makeFunctionObjects.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswakPythonIntegration$(SWAK_PYTHON2_INTEGRATION_SUFFIX)

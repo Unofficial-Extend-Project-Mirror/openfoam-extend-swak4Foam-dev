@@ -1,35 +1,30 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -64,6 +59,8 @@ Foam::solvePDECommonFiniteArea::solvePDECommonFiniteArea
         loadFromFiles
     )
 {
+    Dbug << " Constructor" << endl;
+
     if (!isA<polyMesh>(obr))
     {
         active_=false;
@@ -81,8 +78,10 @@ Foam::areaScalarField &Foam::solvePDECommonFiniteArea::theField()
     // either the field was created by someone else ... then it should be
     // in the registry. Or we created it.
     if(theField_.valid()) {
+        Dbug << fieldName_ << " theField is owned" << endl;
         return theField_();
     } else {
+        Dbug << fieldName_ << " theField is not owned" << endl;
         return const_cast<areaScalarField&>(
             obr_.lookupObject<areaScalarField>(
                 fieldName_
@@ -93,7 +92,11 @@ Foam::areaScalarField &Foam::solvePDECommonFiniteArea::theField()
 
 void Foam::solvePDECommonFiniteArea::read(const dictionary& dict)
 {
+    Dbug << " - read" << endl;
+
     solvePDECommon::read(dict);
+
+    Dbug << " - read - after common" << endl;
 
     if(active_) {
         const fvMesh& mesh = refCast<const fvMesh>(obr_);
@@ -120,7 +123,10 @@ void Foam::solvePDECommonFiniteArea::read(const dictionary& dict)
         );
 
         if(!theField_.valid()) {
+            Dbug << " ::read - no valid field" << endl;
+
             if(obr_.foundObject<areaScalarField>(fieldName_)) {
+                Dbug << " ::read " << fieldName_ << " in memory" << endl;
                 if(!dict.found("useFieldFromMemory")) {
                     FatalErrorIn("Foam::solvePDECommonFiniteArea::read(const dictionary& dict)")
                         << "Field " << fieldName_ << " alread in memory. "
@@ -128,7 +134,6 @@ void Foam::solvePDECommonFiniteArea::read(const dictionary& dict)
                             << "use different name"
                             << endl
                             << exit(FatalError);
-
                 }
                 bool useFieldFromMemory=readBool(
                     dict.lookup("useFieldFromMemory")
@@ -141,6 +146,8 @@ void Foam::solvePDECommonFiniteArea::read(const dictionary& dict)
                             << exit(FatalError);
                 }
             } else {
+                Dbug << " ::read " << fieldName_ << " reading from disk at "
+                    << mesh.time().timeName() << endl;
                 theField_.set(
                     new areaScalarField(
                         IOobject (

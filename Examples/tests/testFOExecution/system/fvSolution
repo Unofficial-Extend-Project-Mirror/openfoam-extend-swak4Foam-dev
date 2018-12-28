@@ -32,6 +32,13 @@ solvers
     };
 }
 
+p.potential {
+    solver           PCG;
+    preconditioner   DIC;
+    tolerance        1e-6;
+    relTol           0.0;
+}
+
 potentialFlow {
     nNonOrthogonalCorrectors 10;
 }

@@ -10,7 +10,8 @@ export SWAKLIBS=(groovyBC \
     swakTopoSources \
     swak4FoamParsers \
     swakLagrangianParser \
-    swakPythonIntegration* \
+    swak*Integration* \
+    swakScriptableLagrangian \
     swak*FunctionPlugin \
     swak*CloudAdaptor \
     swakFvOptions \
@@ -18,7 +19,7 @@ export SWAKLIBS=(groovyBC \
     swakDynamicMesh \
     swakFunctionObjects)
 
-if [ "$FOAM_DEV" != "" ]
+if [[ "$FOAM_DEV" != "" || ( ${WM_PROJECT_VERSION:0:1} == "v" && ${WM_PROJECT_VERSION:1} -gt 1707 ) ]]
 then
     SWAKLIBS+=(swakFiniteArea)
 else

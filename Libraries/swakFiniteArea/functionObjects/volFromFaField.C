@@ -1,46 +1,48 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "objectRegistry.H"
 
+#include "volMesh.H"
 #include "faCFD.H"
 
 #include "volFromFaField.H"
 
 #include "FaFieldValueExpressionDriver.H"
+
+#include "swak.H"
+
+#ifdef FOAM_PATCHFIELDTYPE_IN_GEOFIELD_IS_NOW_PATCH
+#define GeometricBoundaryField Boundary
+#endif
 
 namespace Foam {
     defineTypeNameAndDebug(volFromFaField,0);
@@ -66,7 +68,8 @@ Foam::volFromFaField::volFromFaField
                 << endl;
     }
     read(dict);
-    execute();
+
+    write();
 }
 
 Foam::volFromFaField::~volFromFaField()
@@ -101,7 +104,17 @@ void Foam::volFromFaField::makeVolField(
 
     volSurfaceMapping mapper(data.mesh());
 
-    mapper.mapToVolume(data,  dynamic_cast<VF &>(field_()).boundaryField());
+    mapper.mapToVolume(
+        data,
+        const_cast<typename VF::GeometricBoundaryField&>(
+            dynamic_cast<VF &>(field_()).boundaryField()
+        )
+    );
+}
+
+void Foam::volFromFaField::timeSet()
+{
+    // Do nothing
 }
 
 void Foam::volFromFaField::read(const dictionary& dict)
@@ -126,7 +139,12 @@ void Foam::volFromFaField::read(const dictionary& dict)
     }
 }
 
-void Foam::volFromFaField::execute()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::volFromFaField::write()
 {
     if(active_) {
         FaFieldValueExpressionDriver &driver=driver_();
@@ -157,19 +175,26 @@ void Foam::volFromFaField::execute()
             );
         } else {
             WarningIn("Foam::volFromFaField::execute()")
-                << "Field '" << name_
-                    << "' is of an unsupported type (scalar or vector)"
+                << "Field '" << name_ << "' result type " << driver.getResultType()
+                    << " is of an unsupported type (scalar or vector)"
                     << endl;
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+            return false;
+#endif
         }
     }
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 
 void Foam::volFromFaField::end()
 {
+    execute();
 }
 
-void Foam::volFromFaField::write()
+void Foam::volFromFaField::execute()
 {
 }
 

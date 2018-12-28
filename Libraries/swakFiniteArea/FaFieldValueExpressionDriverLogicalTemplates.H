@@ -1,9 +1,10 @@
 /*----------------------- -*- C++ -*- ---------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
     This file is part of swak4Foam.
@@ -25,7 +26,7 @@ Description
 
 
 Contributors/Copyright:
-    2011, 2013-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -67,18 +68,19 @@ FaFieldValueExpressionDriver::doCompare(
 
     forAll(res(),cellI) {
         if( op(a[cellI],b[cellI]) ) {
-            res()[cellI]=TRUE_Value;
+            const_cast<Field&>(res())[cellI]=TRUE_Value;
         } else {
-            res()[cellI]=FALSE_Value;
+            const_cast<Field&>(res())[cellI]=FALSE_Value;
         }
+
     }
 
     forAll(res->boundaryField(),pI) {
         forAll(res->boundaryField()[pI],fI) {
             if( op(getFaceValue(a),getFaceValue(b)) ) {
-                getFaceValue(res())=TRUE_Value;
+                const_cast<typename Field::value_type&>(getFaceValue(res()))=TRUE_Value;
             } else {
-                getFaceValue(res())=FALSE_Value;
+                const_cast<typename Field::value_type&>(getFaceValue(res()))=FALSE_Value;
             }
         }
     }
@@ -100,9 +102,9 @@ tmp<Field> FaFieldValueExpressionDriver::doLogicalOp(
         bool bv= toBool(b[cellI]);
 
         if( op(av,bv) ) {
-            res()[cellI]=TRUE_Value;
+            const_cast<Field&>(res())[cellI]=TRUE_Value;
         } else {
-            res()[cellI]=FALSE_Value;
+            const_cast<Field&>(res())[cellI]=FALSE_Value;
         }
     }
 
@@ -111,9 +113,9 @@ tmp<Field> FaFieldValueExpressionDriver::doLogicalOp(
             bool av= toBool(getFaceValue(a));
             bool bv= toBool(getFaceValue(b));
             if( op(av,bv) ) {
-                getFaceValue(res())=TRUE_Value;
+                const_cast<typename Field::value_type&>(getFaceValue(res()))=TRUE_Value;
             } else {
-                getFaceValue(res())=FALSE_Value;
+                const_cast<typename Field::value_type&>(getFaceValue(res()))=FALSE_Value;
             }
         }
     }
@@ -135,9 +137,9 @@ tmp<T>  FaFieldValueExpressionDriver::doConditional(
     forAll(result(),cellI) {
         bool c= toBool(cond[cellI]);
         if(c) {
-            result()[cellI]=yes[cellI];
+            const_cast<T&>(result())[cellI]=yes[cellI];
         } else {
-            result()[cellI]=no[cellI];
+            const_cast<T&>(result())[cellI]=no[cellI];
         }
     }
 
@@ -145,9 +147,9 @@ tmp<T>  FaFieldValueExpressionDriver::doConditional(
         forAll(result->boundaryField()[pI],fI) {
             bool c= toBool(getFaceValue(cond));
             if(c) {
-                getFaceValue(result())=getFaceValue(yes);
+                const_cast<typename T::value_type&>(getFaceValue(result()))=getFaceValue(yes);
             } else {
-                getFaceValue(result())=getFaceValue(no);
+                const_cast<typename T::value_type&>(getFaceValue(result()))=getFaceValue(no);
             }
         }
     }
@@ -164,9 +166,9 @@ tmp<Field> FaFieldValueExpressionDriver::doLogicalNot(const Field &a)
         bool av= toBool(a[cellI]);
 
         if( !av ) {
-            res()[cellI]=TRUE_Value;
+            const_cast<typename Field::value_type&>(res()[cellI])=TRUE_Value;
         } else {
-            res()[cellI]=FALSE_Value;
+            const_cast<typename Field::value_type&>(res()[cellI])=FALSE_Value;
         }
     }
 
@@ -174,9 +176,9 @@ tmp<Field> FaFieldValueExpressionDriver::doLogicalNot(const Field &a)
         forAll(res->boundaryField()[pI],fI) {
             bool av= toBool(getFaceValue(a));
             if( !av ) {
-                getFaceValue(res())=TRUE_Value;
+                const_cast<typename Field::value_type&>(getFaceValue(res()))=TRUE_Value;
             } else {
-                getFaceValue(res())=FALSE_Value;
+                const_cast<typename Field::value_type&>(getFaceValue(res()))=FALSE_Value;
             }
         }
     }

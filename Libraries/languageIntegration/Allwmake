@@ -1,0 +1,65 @@
+#! /bin/bash
+
+if [ -e ../../swakConfiguration ]; then
+    echo "Reading variables from 'swakConfiguration'"
+    cd ../..
+    source ./swakConfiguration
+    cd Libraries/languageIntegration
+else
+    echo "No file 'swakConfiguration' in the top directory of the swak-sources. Language integrations probably won't work"
+fi
+
+wmake libso swakGeneralLanguageIntegration
+
+if [ "$SWAK_PYTHON2_INCLUDE" != "" ]
+then
+    SOEXT=so
+
+    if [ `uname -s`=="Darwin" ]; then
+	SOEXT=dylib
+    fi
+
+    oldPython="$FOAM_USER_LIBBIN/libpythonIntegration.$SOEXT"
+    if [ -e $oldPython ]
+    then
+	echo "Removing old python integration $oldPython"
+	rm $oldPython
+    fi
+    wmake libso swakPythonIntegration
+else
+    echo
+    echo "SWAK_PYTHON2_INCLUDE not defined .... no Python2-Integration. Most people are fine without it"
+    echo
+fi
+
+if [ "$SWAK_PYTHON3_INCLUDE" != "" ]
+then
+    SOEXT=so
+
+    if [ `uname -s`=="Darwin" ]; then
+	SOEXT=dylib
+    fi
+
+    oldPython="$FOAM_USER_LIBBIN/libpythonIntegration.$SOEXT"
+    if [ -e $oldPython ]
+    then
+	echo "Removing old python integration $oldPython"
+	rm $oldPython
+    fi
+    wmake libso swakPython3Integration
+else
+    echo
+    echo "SWAK_PYTHON3_INCLUDE not defined .... no Python3-Integration. Most people are fine without it"
+    echo
+fi
+
+if [ "$SWAK_LUA_LINK" != "" ]
+then
+    wmake libso swakLuaIntegration
+else
+    echo
+    echo "SWAK_LUA_LINK not defined .... no Lua-Integration. Most people are fine without it"
+    echo
+fi
+
+wmake libso swakScriptableLagrangian

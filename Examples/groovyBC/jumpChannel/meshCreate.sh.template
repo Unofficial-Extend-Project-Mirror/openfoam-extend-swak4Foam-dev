@@ -1,0 +1,17 @@
+#! /bin/sh
+
+rm -rf 0
+cp -r 0.orig 0
+
+blockMesh
+
+setSet -batch makeFaceSet.setSet
+
+setsToZones -noFlipMap
+
+<!--(if foamFork=="extend")-->
+createBaffles -overwrite jump1 jump1_master
+createBaffles -overwrite jump2 jump2_master
+<!--(else)-->
+createBaffles -overwrite
+<!--(end)-->

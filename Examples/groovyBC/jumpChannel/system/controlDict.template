@@ -1,0 +1,148 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     icoFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.5;
+
+deltaT          0.005;
+
+writeControl    timeStep;
+
+writeInterval   20;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression yes;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+libs (
+    "libswakTopoSources.so"
+    "libgroovyBC.so"
+    "libsimpleSwakFunctionObjects.so"
+);
+
+functions {
+    pJumpTotal {
+        type swakExpression;
+        valueType patch;
+        patchName inlet;
+        otherPatch outlet;
+        accumulations (
+            weightedAverage
+        );
+        verbose true;
+        expression "p-otherP";
+        variables (
+            "otherP{$otherPatch}=sum(p*area())/sum(area());"
+        );
+    }
+<!--(if foamFork!="extend")-->
+    pJumpBaffle1 {
+        $pJumpTotal;
+        patchName jump1_master;
+        otherPatch jump1_slave;
+    }
+    pJumpBaffle2 {
+        $pJumpTotal;
+        patchName jump2_master;
+        otherPatch jump2_slave;
+    }
+<!--(end)-->
+    interfaceU {
+        type patchExpression;
+        verbose true;
+        expression "U";
+        patches (
+            "jump.*_master"
+<!--(if foamFork!="extend")-->
+            "jump.*_slave"
+<!--(end)-->
+        );
+        accumulations (
+            min
+            weightedAverage
+            max
+        );
+        allowCoupled true;
+    }
+<!--(if foamFork!="extend")-->
+    uDifference {
+        type patchExpression;
+        verbose true;
+        expression "U-neighbourPatch(U)";
+        patches (
+            jump1_master
+        );
+        accumulations (
+            min
+            weightedAverage
+            max
+        );
+        allowCoupled true;
+    }
+    pDifference {
+        $uDifference;
+        patches (
+            jump1_master
+            jump2_master
+        );
+        expression "p-neighbourPatch(p)";
+    }
+    patchVsField {
+        $uDifference;
+        expression "neighbourPatch(U)-neighbourField(U)";
+    }
+<!--(end)-->
+    interfaceUInternal {
+        $interfaceU;
+        expression "internalField(U)";
+    }
+    massFlow {
+        type patchExpression;
+        verbose true;
+        expression "mag(sum(phi))";
+        patches (
+            "jump.*_master"
+<!--(if foamFork!="extend")-->
+            "jump.*_slave"
+<!--(end)-->
+            inlet
+            outlet
+        );
+        accumulations (
+            average
+        );
+        allowCoupled true;
+    }
+}
+// ************************************************************************* //

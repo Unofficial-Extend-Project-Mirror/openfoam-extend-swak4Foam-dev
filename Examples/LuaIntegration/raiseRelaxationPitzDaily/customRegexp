@@ -1,0 +1,14 @@
+// -*- c++ -*-
+
+scaling {
+    expr "Scaling relaxation with factor (.+)";
+    theTitle "Scaling of the relaxation";
+    titles ( val );
+    logscale yes;
+}
+averagePResidual {
+    expr "Average p-Residual (.+)";
+    theTitle "Average Residual of p";
+    titles ( val );
+    logscale yes;
+}

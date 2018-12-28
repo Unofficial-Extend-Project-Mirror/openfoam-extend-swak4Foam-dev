@@ -52,7 +52,7 @@ baseFormSphere {
 }
 
 // test overlap
- baseFormOverlap {
+baseFormOverlap {
     a {
         type searchableBox;
         min (-1  -1   -1);
@@ -113,7 +113,6 @@ geometry
                 (B_ bbbb)
             );
             surface {
-                //                type union;
                 type difference;
                 $baseForm;
             }
@@ -130,7 +129,6 @@ geometry
             surface {
                 type intersect;
                 a {
-                    //                    type union;
                     type exclusive;
                     $baseForm;
                 }

@@ -12,19 +12,19 @@ mkdir -p $requirementsDir/compilation
 
 if [ -e $requirementsDir/bin/bison ];
 then
-    echo "Bison alread installed/compiled"
+    echo "Bison already installed/compiled"
 else
-    bisonTarball=bison-2.7.1.tar.gz
+    bisonTarball=bison-3.0.4.tar.gz
     if [ -e  $requirementsDir/sources/$bisonTarball ];
     then
 	echo "$bisonTarball already downloaded"
     else
-	(cd $requirementsDir/sources; wget http://ftp.gnu.org/gnu/bison/bison-2.7.1.tar.gz)
+	(cd $requirementsDir/sources; wget http://ftp.gnu.org/gnu/bison/$bisonTarball)
     fi
     echo "Untarring bison-sources"
     ( cd $requirementsDir/compilation; tar xzf $requirementsDir/sources/$bisonTarball )
 
-    ( cd $requirementsDir/compilation/bison-2.7.1 ; ./configure --prefix=$requirementsDir; make; make install )
+    ( cd $requirementsDir/compilation/bison-3.0.4 ; ./configure --prefix=$requirementsDir; make; make install )
 
 fi
 
@@ -34,6 +34,64 @@ then
 else
     echo
     echo "Bison not compiled. Check output"
+    echo
+fi
+
+if [ -e $requirementsDir/bin/lua ];
+then
+    echo "Lua already installed/compiled"
+else
+    luaTarball=lua-5.3.4.tar.gz
+    if [ -e  $requirementsDir/sources/$luaTarball ];
+    then
+	echo "$luaTarball already downloaded"
+    else
+	(cd $requirementsDir/sources; wget https://www.lua.org/ftp/$luaTarball)
+    fi
+    echo "Untarring lua-sources"
+    ( cd $requirementsDir/compilation; tar xzf $requirementsDir/sources/$luaTarball )
+
+    (
+        cd $requirementsDir/compilation/lua-5.3.4;
+        sed -i bak -e "s|/usr/local|$requirementsDir|" Makefile
+        sed -i bak -e "s|/usr/local|$requirementsDir|" src/luaconf.h
+        sed -i bak -e "s|CC= gcc -std=gnu99|CC= gcc -fPIC -std=gnu99|" src/Makefile
+        if [[ $(uname) == "Darwin" ]];
+        then
+            make macosx
+        else
+            make linux
+        fi
+        make install
+    )
+    if [ -e $requirementsDir/bin/lua ];
+    then
+       luarocksTarball=luarocks-2.4.1.tar.gz
+       if [ -e  $requirementsDir/sources/$luarocksTarball ];
+       then
+	   echo "$luarocksTarball already downloaded"
+       else
+	   (cd $requirementsDir/sources; wget https://luarocks.org/releases/$luarocksTarball)
+       fi
+       echo "Untarring luarocks-sources"
+       ( cd $requirementsDir/compilation; tar xzf $requirementsDir/sources/$luarocksTarball )
+       export PATH=$requirementsDir/bin:$PATH
+       (
+           cd $requirementsDir/compilation/luarocks-2.4.1
+           ./configure --prefix=$requirementsDir
+           make bootstrap
+           luarocks install luaprompt
+       )
+    fi
+    echo "If there were problems during compilation install the readline-devel package (name may be different on platforms)"
+fi
+
+if [ -e $requirementsDir/bin/lua ];
+then
+    echo "Lua successfully compiled"
+else
+    echo
+    echo "Lua not compiled. Check output"
     echo
 fi
 

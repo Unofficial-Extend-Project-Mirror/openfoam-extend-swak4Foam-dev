@@ -1,31 +1,26 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
@@ -38,7 +33,8 @@ SourceFiles
     CommonValueExpressionDriver.C
 
 Contributors/Copyright:
-    2010-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010-2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -126,7 +122,7 @@ class CommonValueExpressionDriver
     word otherMeshName_;
 
     //- list with aliases. Meant to workaround situations where fields have names that don't fit what swak accepts as a field name
-    HashTable<word,word> aliases_;
+    HashTable<word> aliases_;
 
 protected:
     //- get the string of the context in a form that is usable for an error message
@@ -151,12 +147,12 @@ protected:
     //- return the actual name for an alias
     const word &getAlias(const word &name) const;
 
-    const HashTable<word,word> &aliases() const
+    const HashTable<word> &aliases() const
         {
             return aliases_;
         }
 
-    void setAliases(const HashTable<word,word> &orig) {
+    void setAliases(const HashTable<word> &orig) {
         aliases_=orig;
     }
 
@@ -171,22 +167,22 @@ protected:
 private:
     ExpressionResult result_;
 
-    HashTable<ExpressionResult,word> variables_;
+    HashTable<ExpressionResult> variables_;
 
     List<StoredExpressionResult> storedVariables_;
 
-    HashTable<DelayedExpressionResult,word> delayedVariables_;
+    HashTable<DelayedExpressionResult> delayedVariables_;
 
     label specialVariablesIndex_;
 
     wordList globalVariableScopes_;
 
-    HashTable<interpolationTable<scalar>,word> lines_;
+    HashTable<interpolationTable<scalar> > lines_;
 
-    HashTable<interpolationTable<scalar>,word> lookup_;
+    HashTable<interpolationTable<scalar> > lookup_;
 
 #ifdef FOAM_HAS_INTERPOLATION2DTABLE
-    HashTable<interpolation2DTable<scalar>,word> lookup2D_;
+    HashTable<interpolation2DTable<scalar> > lookup2D_;
 #endif
 
     exprString content_;
@@ -426,7 +422,7 @@ protected:
     virtual void parseInternal(int startSymbol) = 0;
 
     //- only subclasses have write-access
-    //    inline  HashTable<ExpressionResult,word> &variables();
+    //    inline  HashTable<ExpressionResult> &variables();
     ExpressionResult &variable(const word &name);
 
     //- expand string list to include other lists reference with #
@@ -518,7 +514,7 @@ public:
 
     // Member Functions
 
-    //    inline const HashTable<ExpressionResult,word> &variables() const;
+    //    inline const HashTable<ExpressionResult> &variables() const;
     const ExpressionResult &variable(const word &name) const;
 
     bool hasVariable(const word &name) const;
@@ -561,7 +557,8 @@ public:
     static List<exprString> readVariableStrings(
         const dictionary &dict,
         const word &name="variables",
-        const label recursionDepth=0
+        const label recursionDepth=0,
+        bool mustExist=false
     );
 
     //- read an expression string and also do substitution
@@ -713,7 +710,7 @@ public:
         const word &fieldName,
         meshToMeshOrder theOrder=
 #ifdef FOAM_NEW_MESH2MESH
-        meshToMesh::imCellVolumeWeight
+        meshToMesh::interpolationMethod::imCellVolumeWeight
 #else
         meshToMesh::INTERPOLATE
 #endif

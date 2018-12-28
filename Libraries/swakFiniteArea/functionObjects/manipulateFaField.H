@@ -1,31 +1,26 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
@@ -38,7 +33,7 @@ SourceFiles
     manipulateFaField.C
 
 Contributors/Copyright:
-    2011, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -51,6 +46,9 @@ Contributors/Copyright:
 #include "pointFieldFwd.H"
 #include "Switch.H"
 #include "autoPtr.H"
+#include "dictionary.H"
+
+#include "swak.H"
 
 #include "exprString.H"
 
@@ -60,6 +58,7 @@ namespace Foam
 class objectRegistry;
 class dictionary;
 class mapPolyMesh;
+class polyMesh;
 
 class FaFieldValueExpressionDriver;
 
@@ -77,6 +76,9 @@ protected:
 
     //- are we working?
     bool active_;
+
+    //- re-write manipulated field
+    bool writeManipulated_;
 
     //- Name of the field
     word name_;
@@ -136,6 +138,9 @@ public:
             return name_;
         }
 
+    //- Called when time was set at the end of the Time::operator++
+    virtual void timeSet();
+
     //- Read the forces data
     virtual void read(const dictionary&);
 
@@ -146,14 +151,22 @@ public:
     virtual void end();
 
     //- Write the forces
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    virtual bool write();
+#else
     virtual void write();
+#endif
 
     //- Update for changes of mesh
     virtual void updateMesh(const mapPolyMesh&)
         {}
 
     //- Update for changes of mesh
+#ifdef FOAM_MOVEPOINTS_GETS_POLYMESH
+    virtual void movePoints(const polyMesh&)
+#else
     virtual void movePoints(const pointField&)
+#endif
         {}
 };
 

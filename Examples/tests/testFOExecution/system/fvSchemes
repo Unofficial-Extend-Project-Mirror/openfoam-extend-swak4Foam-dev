@@ -34,7 +34,7 @@ laplacianSchemes
 {
     default         none;
     laplacian(diffusion,scalar) Gauss linear corrected;
-    laplacian(1,p) Gauss linear corrected;
+    laplacian(1,pPotential) Gauss linear corrected;
 }
 
 interpolationSchemes
@@ -51,6 +51,7 @@ fluxRequired
 {
     default         no;
     p;
+    pPotential;
 }
 
 // ************************************************************************* //

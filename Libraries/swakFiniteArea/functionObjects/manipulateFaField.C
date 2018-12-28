@@ -1,35 +1,30 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -51,6 +46,7 @@ Foam::manipulateFaField::manipulateFaField
 )
 :
     active_(true),
+    writeManipulated_(false),
     obr_(obr),
     dict_(dict)
 {
@@ -64,7 +60,18 @@ Foam::manipulateFaField::manipulateFaField
                 << endl;
     }
     read(dict);
-    execute();
+    bool writeAtStart=true;
+    if(dict.found("manipulateAtStartup")) {
+        writeAtStart=readBool(dict.lookup("manipulateAtStartup"));
+    } else {
+        WarningIn("Foam::manipulateField::manipulateField")
+            << "'manipulateAtStartup' not set in " << dict.name() << nl
+                << "Assuming: true"
+                << endl;
+    }
+    if(writeAtStart) {
+        write();
+    }
 }
 
 Foam::manipulateFaField::~manipulateFaField()
@@ -77,13 +84,34 @@ void Foam::manipulateFaField::manipulate(
 )
 {
     T &original=const_cast<T &>(obr_.lookupObject<T>(name_));
+    label cnt=0;
 
     forAll(original,cellI) {
         if(mask[cellI]>SMALL) {
+            cnt++;
             original[cellI]=data[cellI];
         }
     }
+
+    reduce(cnt,plusOp<label>());
+    Info << "Manipulated field " << name_ << " in " << cnt
+        << " cells with the expression " << expression_ << endl;
     original.correctBoundaryConditions();
+
+    if(
+        obr_.time().outputTime()
+        &&
+        original.writeOpt()==IOobject::AUTO_WRITE
+    ) {
+        if(this->writeManipulated_) {
+            Info << "Rewriting manipulated field " << original.name() << endl;
+
+            original.write();
+        } else {
+            Info << "Manipulated field " << original.name()
+                << " not rewritten. Set 'writeManipulated'" << endl;
+        }
+    }
 }
 
 template<class T,class TMask>
@@ -93,13 +121,41 @@ void Foam::manipulateFaField::manipulateEdge(
 )
 {
     T &original=const_cast<T &>(obr_.lookupObject<T>(name_));
+    label cnt=0;
 
     forAll(original,cellI) {
         if(mask[cellI]>SMALL) {
+            cnt++;
             original[cellI]=data[cellI];
         }
     }
+
+    reduce(cnt,plusOp<label>());
+    Info << "Manipulated field " << name_ << " on " << cnt
+        << " edges with the expression " << expression_ << endl;
+
+    // this does not work for surface fields
     //    original.correctBoundaryConditions();
+
+    if(
+        obr_.time().outputTime()
+        &&
+        original.writeOpt()==IOobject::AUTO_WRITE
+    ) {
+        if(this->writeManipulated_) {
+            Info << "Rewriting manipulated field " << original.name() << endl;
+
+            original.write();
+        } else {
+            Info << "Manipulated field " << original.name()
+                << " not rewritten. Set 'writeManipulated'" << endl;
+        }
+    }
+}
+
+void Foam::manipulateFaField::timeSet()
+{
+    // Do nothing
 }
 
 void Foam::manipulateFaField::read(const dictionary& dict)
@@ -114,6 +170,7 @@ void Foam::manipulateFaField::read(const dictionary& dict)
             dict.lookup("mask"),
             dict
         );
+        writeManipulated_=dict.lookupOrDefault<bool>("writeManipulated",false);
 
         const fvMesh& mesh = refCast<const fvMesh>(obr_);
 
@@ -132,7 +189,12 @@ void Foam::manipulateFaField::read(const dictionary& dict)
     }
 }
 
-void Foam::manipulateFaField::execute()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::manipulateFaField::write()
 {
     if(active_) {
         FaFieldValueExpressionDriver &driver=driver_();
@@ -226,14 +288,19 @@ void Foam::manipulateFaField::execute()
     }
 
     driver_->tryWrite();
+
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 
 void Foam::manipulateFaField::end()
 {
+    execute();
 }
 
-void Foam::manipulateFaField::write()
+void Foam::manipulateFaField::execute()
 {
 }
 

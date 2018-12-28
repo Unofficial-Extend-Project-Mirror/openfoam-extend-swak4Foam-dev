@@ -1,9 +1,10 @@
 /*----------------------- -*- C++ -*- ---------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
     This file is part of swak4Foam.
@@ -25,7 +26,7 @@ Description
 
 
 Contributors/Copyright:
-    2011-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -93,7 +94,12 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
             Pout << "sizes: " << vals.size() << " " << f->size() << endl;
         }
         if(vals.size()==f->size()) {
-            f->internalField()=vals;
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+            const_cast<Field<typename T::value_type>&>(f->internalField().field())
+#else
+            f->internalField()
+#endif
+                =vals;
         } else {
             Type avg=gAverage(vals);
 
@@ -110,7 +116,12 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
                 }
             }
 
-            f->internalField()=avg;
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+            const_cast<Field<typename T::value_type>&>(f->internalField().field())
+#else
+            f->internalField()
+#endif
+                =avg;
         }
         return f;
     }
@@ -290,10 +301,10 @@ void FaFieldValueExpressionDriver::setCalculatedPatches
     GeometricField<T,faPatchField,areaMesh> &field,
     T unusedValue
 ) {
-    typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    const typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField &bf=field.boundaryField();
 
     forAll(bf,patchI) {
-        faPatchField<T> &pf=bf[patchI];
+        faPatchField<T> &pf=const_cast<faPatchField<T>&>(bf[patchI]);
 
         if(
             typeid(pf)==typeid(calculatedFaPatchField<T>)
@@ -310,10 +321,10 @@ void FaFieldValueExpressionDriver::setCalculatedPatches
     GeometricField<T,faePatchField,edgeMesh> &field,
     T value
 ) {
-    typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    const typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bf=field.boundaryField();
 
     forAll(bf,patchI) {
-        faePatchField<T> &pf=bf[patchI];
+        faePatchField<T> &pf=const_cast<faePatchField<T>&>(bf[patchI]);
 
         if(
             typeid(pf)==typeid(calculatedFaePatchField<T>)
@@ -490,7 +501,12 @@ inline tmp<FType> FaFieldValueExpressionDriver::makeField(
                 << exit(FatalError);
     }
 
-    f->internalField()=val;
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<Field<typename FType::value_type>&>(f->internalField().field())
+#else
+    f->internalField()
+#endif
+        =val;
 
     return tmp<FType>(f);
 }

@@ -1,0 +1,23 @@
+#! /bin/sh
+
+rm -f constant/polyMesh/*.gz
+rm -rf constant/polyMesh/sets
+
+blockMesh
+
+<!--(if foamFork=="extend")-->
+  <!--(for s in ["3","4","5","6","7"])-->
+    cp system/cellSetDict.|-s-| system/cellSetDict
+    cellSet
+    rm system/cellSet
+  <!--(end)-->
+  <!--(for s in ["3","4","5","6"])-->
+    cp system/faceSetDict.|-s-| system/faceSetDict
+    faceSet
+    rm system/faceSet
+  <!--(end)-->
+<!--(else)-->
+topoSet
+<!--(end)-->
+
+setsToZones

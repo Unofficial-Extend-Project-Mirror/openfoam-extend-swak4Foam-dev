@@ -1,0 +1,372 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     replayTransientBC;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.5;
+
+deltaT          0.005;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.1;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression yes;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+functions {
+    getTransport {
+        type readAndWriteDictionary;
+        dictName transportProperties;
+        inConstant true;
+        inSystem false;
+    }
+    luaStorageDict {
+        type readAndWriteDictionary;
+        dictName luaStorage;
+        inConstant false;
+        inSystem false;
+        mustExist false;
+        autowrite true;
+    }
+    // whosThere {
+    //     type listRegisteredObjects;
+    // }
+    luaSimple
+    {
+        type luaIntegration;
+
+        //        debugLuaWrapper 1; // switching on
+
+        startCode "print('Starting');a=0; print('a is',a)";
+        executeCode "a=a+1; print('a:',a)";
+        endCode "print('Never been here')";
+        //        tolerateExceptions true;
+        parallelMasterOnly false;
+        isParallelized true;
+        //        interactiveAfterExecute true;
+        interactiveAfterException true;
+    }
+    luaFromTransport
+    {
+        type luaIntegration;
+
+        dictionaryToLua {
+            trans {
+                name transportProperties;
+                region region0;
+            };
+            solution {
+                name fvSolution;
+                region region0;
+            };
+        }
+        luaToDictionary {
+            data {
+                name luaStorage;
+                region region0;
+            }
+        }
+        //        debugLuaWrapper 1; // switching on
+
+        startCode "line={}";
+        executeCode "line[#line+1]={tonumber(timeName),deltaT,endTime}; data={nu=trans.nu,uTol=solution.solvers.U.tolerance,tline=line};print(\"Length:\",#line) ";
+        endCode $executeCode;
+        //        tolerateExceptions true;
+        parallelMasterOnly false;
+        isParallelized true;
+        //        interactiveAfterExecute true;
+        interactiveAfterException true;
+
+        luaDictionaryParserErrorMode fail;
+    }
+
+    luaOutput
+    {
+        type luaIntegration;
+
+        startCode "";
+        executeCode "print('timeName :',timeName,'outputTime:',outputTime)";
+        endCode "print('timeName :',timeName,'outputTime:',outputTime)";
+        //        tolerateExceptions true;
+        parallelMasterOnly true;
+    }
+    luaPaths
+    {
+        type luaIntegration;
+        startFile "$FOAM_CASE/printPaths.lua";
+        executeCode "print('FOAM_CASE=',os.getenv('FOAM_CASE'));print('Time data:',timeDir)";
+        endCode "print('Never been here')";
+        //        tolerateExceptions true;
+        parallelMasterOnly false;
+        isParallelized true;
+    }
+    addScalar
+    {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalScope luaVars;
+        globalName aScalar;
+        valueType scalar;
+        value 42;
+    }
+    addVector
+    {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalScope luaVars;
+        globalName aVector;
+        valueType vector;
+        value (1 2 3);
+    }
+    luaGetGlobals
+    {
+        type luaIntegration;
+        swakToLuaNamespaces ( luaVars );
+        startCode "print('Start:',aVector,aScalar);newTime=0;newVector={x=0,y=0,z=0};newBool=true";
+        executeCode "print('Running:',runTime+aScalar+aVector.x);newTime=aScalar*runTime;newVector={x=runTime,y=-runTime,z=1};newBool=false;newTable={foo=1,bar=3}";
+        // executeCode "print('not implemented .... yet')";
+        endCode "print('Never been here')";
+        //        tolerateExceptions true;
+        luaToSwakNamespace testLua;
+        luaToSwakVariables (
+            newTime
+            newVector
+            newBool
+            notHere
+            newTable
+        );
+        parallelMasterOnly false;
+        isParallelized true;
+        interactiveAfterException true;
+        //        interactiveAfterExecute true;
+    }
+    checkSingleValue {
+        type swakExpression;
+        verbose true;
+        valueType internalField;
+        accumulations (
+            min
+            max
+        );
+        globalScopes (
+            testLua
+        );
+        expression "newTime";
+    }
+    checkSingleValue2 {
+        $checkSingleValue;
+        expression "newBool";
+    }
+    checkSingleValue3 {
+        $checkSingleValue;
+        expression "newVector";
+    }
+    calcNonUniformValues {
+        type calculateGlobalVariables;
+        outputControl timeStep;
+        outputInterval 1;
+        valueType patch;
+        patchName fixedWalls;
+        toGlobalNamespace testLuaFields;
+        toGlobalVariables (
+            facePos
+            faceArea
+        );
+        variables (
+            "facePos=pos();"
+            "faceArea=area()+1e-6*randNormal();"
+        );
+        noReset true;
+    }
+    luaGetNonUniformGetGlobals
+    {
+        type luaIntegration;
+        isParallelized true;
+        parallelMasterOnly false;
+        swakToLuaNamespaces (
+            testLua
+            testLuaFields
+        );
+        startCode "print(facePos);total={};for i=1,#facePos do total[i]=0; end;vecSum={};for i=1,#facePos do vecSum[i]={x=0,y=0,z=0}; end";
+        executeCode "for i=1,#facePos do total[i]=total[i]+facePos[i].y;end;print(total);for i=1,#facePos do vecSum[i]={x=vecSum[i].x+facePos[i].x,y=vecSum[i].y+facePos[i].y,z=vecSum[i].z+facePos[i].z};end";
+        endCode "";
+        //        interactiveAfterExecute true;
+        interactiveAfterException true;
+        luaToSwakNamespace variablesFromLua;
+        luaToSwakVariables (
+            total
+            vecSum
+        );
+        referenceToGlobal no;
+    }
+    luaGetNonUniformGetGlobalsReference {
+        $luaGetNonUniformGetGlobals;
+        referenceToGlobal yes;
+        //        interactiveAfterExecute yes;
+    }
+    checkMultiValue {
+        type swakExpression;
+        verbose true;
+        valueType patch;
+        patchName fixedWalls;
+        accumulations (
+            min
+            average
+            max
+        );
+        globalScopes (
+            variablesFromLua
+        );
+        expression "total";
+    }
+    checkMultiValue2 {
+        $checkMultiValue;
+        expression "vecSum";
+    }
+    luaGetNonUniformSetGlobals
+    {
+        type luaIntegration;
+        isParallelized true;
+        parallelMasterOnly false;
+        swakToLuaNamespaces (
+            testLua
+            testLuaFields
+        );
+        executeCode "randomVector={};for i=1,#facePos do randomVector[i]={x=math.random(),y=math.random(),z=math.random()}; end ;randomField={};for i=1,#faceArea do randomField[i]=math.random(); end ; normalVector={x=1,y=2,z=3};normalScalar=42";
+        startCode $executeCode;
+        endCode "";
+        writeCode "print('Write')";
+
+        luaToSwakNamespace variablesFromLua;
+        luaToSwakVariables (
+            randomField
+            randomVector
+            normalVector
+            normalScalar
+        );
+        //        interactiveAfterExecute true;
+        interactiveAfterException true;
+        referenceToGlobal false;
+    }
+    checkRandom {
+        type swakExpression;
+        valueType patch;
+        patchName fixedWalls;
+        accumulations (
+            min
+            average
+            max
+        );
+        verbose yes;
+        expression "randomVector";
+        globalScopes (
+            variablesFromLua
+        );
+    }
+    luaGetNonUniformSetGlobalsNative {
+        $luaGetNonUniformSetGlobals;
+        referenceToGlobal yes;
+        executeCode "randomVector=swak4foam.newVectorField(#facePos);for i=1,#facePos do randomVector[i].x=math.random();randomVector[i].y=math.random();randomVector[i].z=math.random(); end ;randomField=swak4foam.newScalarField(#faceArea);for i=1,#faceArea do randomField[i]=math.random(); end ; normalVector={x=1,y=2,z=3};normalScalar=42";
+        writeCode "print('Write Native')";
+        luaToSwakNamespace variablesFromLuaNative;
+        startCode $executeCode;
+        //        interactiveAfterExecute true;
+    }
+    checkRandomNative {
+        $checkRandom;
+        globalScopes (
+            variablesFromLuaNative
+        );
+    }
+    luaDeltaT {
+        type setDeltaTWithLua;
+        parallelMasterOnly true;
+        deltaTCode "return 0.005*(1+0.5*math.sin(20*runTime))";
+        initCode "";
+    }
+    luaEndTime {
+        type setEndTimeWithLua;
+        parallelMasterOnly false;
+        isParallelized true;
+        endTimeCode "return 0.5+0.25*math.sqrt(runTime)";
+        initCode "";
+    }
+    luaDynamic {
+        type dynamicFunctionObjectListProxy;
+        readDuringConstruction true;
+        dictionaryProvider stdoutFromLuaScriptProvider;
+        parallelMasterOnly true;
+        scriptFile "$FOAM_CASE/printFO.lua";
+    }
+    luaDynamic2 {
+        $luaDynamic;
+        parallelMasterOnly false;
+        isParallelized true;
+    }
+    writeIfLua {
+        type writeIfLua;
+        parallelMasterOnly false;
+        isParallelized true;
+        initCode "import math";
+        writeControlMode timesteps;
+        cooldownMode timesteps;
+        storeAndWritePreviousState true;
+        writeTimesteps 3;
+        cooldownTimesteps 15;
+        numberOfTimestepsToStore 2;
+        initVariablesCode "";
+        startWriteCode "return True";
+    }
+    endEarly {
+        type writeAndEndLua;
+        parallelMasterOnly false;
+        isParallelized true;
+        initCode "";
+        conditionCode "return runTime>0.15";
+        //        conditionCode "return 2>1";
+        interactiveAfterException true;
+    }
+}
+
+libs (
+    "libgroovyBC.so"
+    "libswakLuaIntegration.so"
+    "libswakFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
+);
+
+// ************************************************************************* //

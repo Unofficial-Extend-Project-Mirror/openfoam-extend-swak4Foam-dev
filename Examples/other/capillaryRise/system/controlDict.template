@@ -43,7 +43,7 @@ writeFormat     ascii;
 
 writePrecision  6;
 
-writeCompression compressed;
+writeCompression yes;
 
 timeFormat      general;
 
@@ -97,6 +97,7 @@ functions
             min
             max
         );
+        interpolationType cella;
     }
     // This should fail because the size of the variable changes
 //     moved
@@ -128,6 +129,7 @@ functions
         accumulations (
             sum
         );
+        interpolationType cell;
     }
     deviation
     {
@@ -140,6 +142,7 @@ functions
         accumulations (
             sum
         );
+        interpolationType cella;
     }
     velocity
     {
@@ -151,6 +154,7 @@ functions
         accumulations (
             max
         );
+        interpolationType cell;
     }
     swakSurfInterface
     {

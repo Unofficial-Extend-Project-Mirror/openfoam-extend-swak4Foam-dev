@@ -1,35 +1,30 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -70,19 +65,24 @@ swakPsiChemistryModelPluginFunction::swakPsiChemistryModelPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-const psiChemistryModel &swakPsiChemistryModelPluginFunction::chemistryInternal(
+const  swakPsiChemistryModelPluginFunction::ChemistryModelType &swakPsiChemistryModelPluginFunction::chemistryInternal(
     const fvMesh &reg
 )
 {
-    static HashPtrTable<psiChemistryModel> chemistry_;
+    static HashPtrTable<swakPsiChemistryModelPluginFunction::ChemistryModelType> chemistry_;
 
-    if(reg.foundObject<psiChemistryModel>("chemistryProperties")) {
+#ifdef FOAM_NO_PSICHEMISTRY_MODEL
+    typedef swakPsiChemistryModelPluginFunction::ChemistryModelType::reactionThermo rThermo;
+    static HashPtrTable<rThermo> thermo_;
+#endif
+
+    if(reg.foundObject< swakPsiChemistryModelPluginFunction::ChemistryModelType>("chemistryProperties")) {
         if(debug) {
             Info << "swakPsiChemistryModelPluginFunction::chemistryInternal: "
                 << "already in memory" << endl;
         }
         // Somebody else already registered this
-        return reg.lookupObject<psiChemistryModel>("chemistryProperties");
+        return reg.lookupObject< swakPsiChemistryModelPluginFunction::ChemistryModelType>("chemistryProperties");
     }
     if(!chemistry_.found(reg.name())) {
         if(debug) {
@@ -91,10 +91,38 @@ const psiChemistryModel &swakPsiChemistryModelPluginFunction::chemistryInternal(
         }
 
         // Create it ourself because nobody registered it
-        chemistry_.set(
+#ifdef FOAM_NO_PSICHEMISTRY_MODEL
+        if(reg.foundObject<rThermo>("thermophysicalProperties")) {
+            chemistry_.set(
                 reg.name(),
-                psiChemistryModel::New(reg).ptr()
+                swakPsiChemistryModelPluginFunction::ChemistryModelType::New(
+                    const_cast<rThermo&>(
+                        reg.lookupObject<rThermo>("thermophysicalProperties")
+                    )
+                ).ptr()
+            );
+        } else {
+            thermo_.set(
+                reg.name(),
+                rThermo::New(
+                    reg
+                ).ptr()
+            );
+            chemistry_.set(
+                reg.name(),
+                swakPsiChemistryModelPluginFunction::ChemistryModelType::New(
+                    const_cast<rThermo&>(
+                        *thermo_[reg.name()]
+                    )
+                ).ptr()
+            );
+        }
+#else
+        chemistry_.set(
+            reg.name(),
+            psiChemistryModel::New(reg).ptr()
         );
+#endif
 
         Info << "Created chemistry model. Calculating to get values ..."
             << endl;
@@ -113,7 +141,7 @@ const psiChemistryModel &swakPsiChemistryModelPluginFunction::chemistryInternal(
 
 void swakPsiChemistryModelPluginFunction::updateChemistry(const scalar dt)
 {
-    const_cast<psiChemistryModel&>(
+    const_cast< swakPsiChemistryModelPluginFunction::ChemistryModelType&>(
         chemistry()
     ).solve(
 #ifdef FOAM_CHEMISTRYMODEL_SOLVE_NEEDS_TIME
@@ -153,7 +181,7 @@ tmp<volScalarField> swakPsiChemistryModelPluginFunction::wrapDimField(
 }
 #endif
 
-const psiChemistryModel &swakPsiChemistryModelPluginFunction::chemistry()
+const  swakPsiChemistryModelPluginFunction::ChemistryModelType &swakPsiChemistryModelPluginFunction::chemistry()
 {
     return chemistryInternal(mesh());
 }
@@ -188,8 +216,12 @@ defineTypeNameAndDebug(swakPsiChemistryModelPluginFunction_ ## funcName,0);  \
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakPsiChemistryModelPluginFunction_ ## funcName,name,psiChem_ ## funcName);
 
 concreteChemistryFunction(tc,volScalarField);
+#ifdef  FOAM_CHEMISTRYMODEL_HAS_NO_SOURCE_TERM
+concreteChemistryFunction(Qdot,volScalarField);
+#else
 concreteChemistryFunction(Sh,volScalarField);
 concreteChemistryFunction(dQ,volScalarField);
+#endif
 
 class swakPsiChemistryModelPluginFunction_RR
 : public swakPsiChemistryModelPluginFunction

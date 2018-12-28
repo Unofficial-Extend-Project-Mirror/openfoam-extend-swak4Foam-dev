@@ -16,7 +16,7 @@ FoamFile
 
 solvers
 {
-    p_rgh
+    "p_rgh.*"
     {
         solver           GAMG;
         tolerance        1e-7;
@@ -28,7 +28,7 @@ solvers
         maxIter          10;
     }
 
-    "(U|h|e|k|epsilon)"
+    "(U|h|e|k|epsilon).*"
     {
         solver           PBiCGStab;
         preconditioner   DILU;
@@ -42,6 +42,10 @@ SIMPLE
     nNonOrthogonalCorrectors 0;
     rhoMax          1100;
     rhoMin          900;
+}
+PIMPLE
+{
+    $SIMPLE;
 }
 
 relaxationFactors

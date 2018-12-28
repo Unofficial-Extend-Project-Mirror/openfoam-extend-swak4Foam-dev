@@ -1,0 +1,251 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      thermoCloud1Properties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+<!--(if foamFork!="extend")-->
+solution {
+<!--(end)-->
+    active          yes;
+    coupled         true;
+    transient       true;
+    cellValueSourceCorrection on;
+
+    interpolationSchemes
+    {
+        rho             cell;
+        pseudoRho       $rho;
+        thermo:mu       cell;
+        mu              cell;
+        pseudoMu        $mu;
+        kappa           cell;
+        U               cellPoint;
+        //        U               cell;
+        T               cell;
+        Cp              cell;
+    }
+
+    sourceTerms
+    {
+        schemes
+        {
+            rho             explicit 1;
+            U               explicit 1;
+            Yi              explicit 1;
+            h               explicit 1;
+        }
+    }
+
+    integrationSchemes
+    {
+        U               Euler;
+        //        U               Analytical;
+        T               analytical;
+    }
+<!--(if foamFork!="extend")-->
+}
+<!--(end)-->
+
+parcelTypeId    1;
+
+constantProperties
+{
+    parcelTypeId    1;
+
+<!--(if foamFork=="extend")-->
+    rhoMin           rhoMin [1 -3 0 0 0] 1e-15;
+    minParticleMass  minM [1 0 0 0 0] 1.0e-25;
+    rho0             rho0 [1 -3 0 0 0] 2500;
+<!--(else)-->
+    rhoMin           1e-15;
+    TMin             200;
+    minParticleMass  1.0e-25;
+    rho0             2500;
+<!--(end)-->
+    TMin             200;
+    T0               300; // initial temperature
+    Cp0              900;
+    epsilon0         1;
+    f0               0.5;
+    Pr               0.7;
+
+    pMin  1e4;
+    constantVolume 1;
+    Tvap   450;
+    Tbp   370;
+
+    youngsModulus   1e9;
+    poissonsRatio   0.35;
+}
+
+<!--(if foamFork!="extend")-->
+subModels {
+<!--(end)-->
+    particleForces
+    {
+        gravity         off;
+        sphereDrag;
+<!--(if (foamFork=="openfoamplus" and foamVersion>=(1706,)) or (foamFork=="openfoam" and foamVersion>(5,99)))-->
+<!--(else)-->
+        virtualMass     off;
+        pressureGradient off;
+<!--(end)-->
+    }
+
+    DragModel SphereDrag;
+
+    injectionModel  patchInjection;
+    InjectionModel  PatchInjection;
+
+    dispersionModel none; //stochasticDispersionRAS;
+    DispersionModel $dispersionModel;
+
+    stochasticCollisionModel none;
+
+    /*
+    patchInteractionModel standardWallInteraction;
+
+    standardWallInteractionCoeffs
+    {
+        type            rebound;
+    }
+    */
+
+    patchInteractionModel localInteraction;
+    PatchInteractionModel LocalInteraction;
+
+    localInteractionCoeffs
+    {
+        patches
+        (
+            "(movingWall|fixedWalls)"
+            {
+                type rebound;
+                e    1;
+                mu   0;
+            }
+        );
+    }
+    LocalInteractionCoeffs {
+        patches
+            (
+<!--(for p in ["movingWall","fixedWalls"])-->
+                |-p-|
+                {
+                    type rebound;
+                    e    1;
+                    mu   0;
+                }
+<!--(end)-->
+            );
+    }
+
+    heatTransferModel RanzMarshall;
+
+    RanzMarshallCoeffs
+    {
+        BirdCorrection  off;
+    }
+
+    radiation       off;
+
+    PatchInjectionCoeffs {
+        type            patchInjection;
+        patchName       movingWall;
+        patch $patchName;
+        U0              ( 0 -1 0 );
+        flowRateProfile constant  0.1;
+        volumeFlowRate  $flowRateProfile;
+        massTotal        mt [1 0 0 0 0 0 0] 1.0e-12;
+        SOI              0;
+        parcelBasisType mass;
+        duration 10;
+        parcelsPerSecond 500;
+        sizeDistribution
+        {
+            type fixedValue;
+            fixedValueDistribution
+            {
+                value 1e-6;
+            }
+        }
+        parcelPDF {
+            pdfType uniform;
+            uniformPDF {
+                minValue 1e-6;
+                maxValue 1.0001e-6;
+            }
+        }
+    }
+
+    injectionModels
+    {
+        first
+        {
+            type            patchInjection;
+            patchName       movingWall;
+            patch $patchName;
+            U0              ( 0 -1 0 );
+            flowRateProfile constant  0.1;
+            massTotal        1.0e-12;
+            SOI              0;
+            parcelBasisType mass;
+            duration 10;
+            parcelsPerSecond 500;
+            sizeDistribution
+            {
+                type fixedValue;
+                fixedValueDistribution
+                {
+                    value 1e-6;
+                }
+            }
+        }
+
+    }
+
+    PostProcessingModel PatchPostProcessing;
+
+    surfaceFilmModel none;
+<!--(if foamFork!="extend")-->
+}
+<!--(end)-->
+
+<!--(if foamFork!="extend")-->
+cloudFunctions
+{
+<!--(end)-->
+
+    second {
+        type particleTracks;
+        trackInterval 1;
+        maxSamples 10000000;
+        resetOnWrite false;
+    }
+
+    PatchPostProcessingCoeffs {
+        type patchPostProcessing;
+        maxStoredParcels 10000;
+        patches (
+            movingWall
+            fixedWalls
+        );
+    }
+<!--(if foamFork!="extend")-->
+}
+<!--(end)-->
+
+
+// ************************************************************************* //

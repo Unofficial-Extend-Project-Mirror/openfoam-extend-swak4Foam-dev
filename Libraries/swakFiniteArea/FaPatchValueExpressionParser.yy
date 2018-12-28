@@ -1,9 +1,10 @@
 /*----------------------- -*- C++ -*- ---------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
     This file is part of swak4Foam.
@@ -25,7 +26,7 @@ Description
 
 
 Contributors/Copyright:
-    2010-2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010-2013, 2015-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -33,11 +34,17 @@ Contributors/Copyright:
 %skeleton "lalr1.cc"
 /* %require "2.1a" */
 %defines
-%define "parser_class_name" "FaPatchValueExpressionParser"
-
-%pure-parser
+%define parser_class_name {FaPatchValueExpressionParser}
 
 %{
+#include "swak.H"
+
+#ifdef FOAM_EDGEMESH_INCLUDE_WITH_FA
+#include "edgeFaMesh.H"
+#else
+#include "edgeMesh.H"
+#endif
+
 #include <volFields.H>
 
 #include <functional>
@@ -56,7 +63,7 @@ Contributors/Copyright:
 #include "swak.H"
 %}
 
-%name-prefix="parserFaPatch"
+%define api.prefix {parserFaPatch}
 
 %parse-param {void * scanner}
 %parse-param { FaPatchValueExpressionDriver& driver }
@@ -303,6 +310,7 @@ namespace Foam {
 %token TOKEN_asin
 %token TOKEN_acos
 %token TOKEN_atan
+%token TOKEN_atan2
 %token TOKEN_sinh
 %token TOKEN_cosh
 %token TOKEN_tanh
@@ -994,6 +1002,11 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1).ptr(); }
         | TOKEN_atan '(' exp ')'          {
             $$ = new Foam::scalarField(Foam::atan(*$3));
             delete $3;
+          }
+        | TOKEN_atan2 '(' exp ',' exp ')'          {
+            $$ = new Foam::scalarField(Foam::atan2(*$3,*$5));
+            delete $3;
+            delete $5;
           }
         | TOKEN_sinh '(' exp ')'          {
             $$ = new Foam::scalarField(Foam::sinh(*$3));
@@ -2152,6 +2165,11 @@ pexp:   pexp '+' pexp 		{
         | TOKEN_atan '(' pexp ')'          {
             $$ = new Foam::scalarField(Foam::atan(*$3));
             delete $3;
+          }
+        | TOKEN_atan2 '(' pexp ',' pexp ')'          {
+            $$ = new Foam::scalarField(Foam::atan2(*$3,*$5));
+            delete $3;
+            delete $5;
           }
         | TOKEN_sinh '(' pexp ')'          {
             $$ = new Foam::scalarField(Foam::sinh(*$3));

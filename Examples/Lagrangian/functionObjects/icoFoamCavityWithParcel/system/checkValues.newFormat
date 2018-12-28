@@ -1,0 +1,88 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+noDimensionChecking false;
+
+foreignMeshesThatFollowTime ( );
+
+expressions {
+    internalPressure {
+        valueType internalField;
+        expression "p";
+        accumulations (
+            min
+            weightedAverage
+            max
+        );
+        writeCsv true;
+    }
+    internalVelocity {
+        $internalPressure;
+        expression "U";
+    }
+    wallPressureFixed {
+        $internalPressure;
+        valueType patch;
+        patchName fixedWalls;
+    }
+
+    wallPressureMoving {
+        $wallPressureFixed;
+        patchName movingWall;
+    }
+
+    fluxes {
+        valueType internalField;
+        expression "phi";
+        accumulations (
+            min
+            max
+            sum
+        );
+    }
+    particleNumber {
+        valueType cloud;
+        cloudName coldParticleCloud;
+        expression "1";
+        accumulations (
+            sum
+            size
+        );
+    }
+    particleAge {
+        $particleNumber;
+        expression "age";
+        accumulations (
+            min
+            average
+            max
+        );
+        writeDistributions true;
+        distributionBinWidth 0.01;
+    }
+    particlePosition {
+        $particleNumber;
+        expression "pos()";
+        accumulations (
+            min
+            average
+            max
+        );
+    }
+}
+
+// ************************************************************************* //

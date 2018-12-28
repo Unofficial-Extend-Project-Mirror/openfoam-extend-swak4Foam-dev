@@ -17,12 +17,37 @@ FoamFile
 
 solvers
 {
+    "alpha.phase.*"
+    {
+        nAlphaCorr      3;
+        nAlphaSubCycles 1;
+        cAlpha          1;
+        icAlpha         0;
+
+        alphaOuterCorrectors yes;
+
+        MULESCorr       yes;
+        nLimiterIter    25;
+        alphaApplyPrevCorr yes;
+
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-8;
+        relTol          0;
+        minIter         1;
+    }
+
     pcorr
     {
         solver          PCG;
         preconditioner  DIC;
         tolerance       1e-10;
-        relTol          0;
+        relTol          0.01;
+    }
+
+    pcorrFinal {
+        $pcorr;
+        relTol 0;
     }
 
     p_rgh
@@ -33,11 +58,21 @@ solvers
         relTol          0.05;
     }
 
+    pd
+    {
+        $p_rgh;
+    }
+
     p_rghFinal
     {
         $p_rgh;
         tolerance       1e-07;
         relTol          0;
+    }
+
+    pdFinal
+    {
+        $p_rghFinal;
     }
 
     U

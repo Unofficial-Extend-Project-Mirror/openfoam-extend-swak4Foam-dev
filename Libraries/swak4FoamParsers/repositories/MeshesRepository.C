@@ -1,35 +1,31 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -96,7 +92,7 @@ fvMesh &MeshesRepository::addMesh(
         Pout << "Location: " << usedN << " Region " << region << endl;
     }
 
-    typedef  HashPtrTable<Time,word> tableIterator;
+    typedef HashPtrTable<Time> tableIterator;
 
     forAllIter(
         tableIterator,
@@ -146,22 +142,34 @@ fvMesh &MeshesRepository::addMesh(
 
     times_.insert(
         name,
-        new Time(
-            Time::controlDictName,
-            usedN.path(),
-            fileName(usedN.name())
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+        autoPtr<Time>(
+#endif
+            new Time(
+                Time::controlDictName,
+                usedN.path(),
+                fileName(usedN.name())
+            )
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
         )
+#endif
     );
     meshes_.insert(
         name,
-        new fvMesh(
-            IOobject(
-                region,
-                (*times_[name]).timeName(),
-                (*times_[name]),
-                Foam::IOobject::MUST_READ
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+        autoPtr<fvMesh>(
+#endif
+            new fvMesh(
+                IOobject(
+                    region,
+                    (*times_[name]).timeName(),
+                    (*times_[name]),
+                    Foam::IOobject::MUST_READ
+                )
             )
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
         )
+#endif
     );
 
     return *meshes_[name];
@@ -198,14 +206,20 @@ fvMesh &MeshesRepository::addCoupledMesh(
 
     meshes_.insert(
         name,
-        new fvMesh(
-            IOobject(
-                region,
-                time.timeName(),
-                time,
-                Foam::IOobject::MUST_READ
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+        autoPtr<fvMesh>(
+#endif
+            new fvMesh(
+                IOobject(
+                    region,
+                    time.timeName(),
+                    time,
+                    Foam::IOobject::MUST_READ
+                )
             )
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
         )
+#endif
     );
 
     return *meshes_[name];
@@ -233,13 +247,19 @@ meshToMesh &MeshesRepository::getMeshToMesh(
     if(!meshInterpolations_.found(name)) {
          meshInterpolations_.insert(
              name,
-             new meshToMesh(
-                 *meshes_[name],
-                 mesh
-#ifdef FOAM_NEW_MESH2MESH
-                 ,getInterpolationOrder(name)
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+             autoPtr<meshToMesh>(
 #endif
+                 new meshToMesh(
+                     *meshes_[name],
+                     mesh
+                         #ifdef FOAM_NEW_MESH2MESH
+                     ,getInterpolationOrder(name)
+                         #endif
+                 )
+#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
              )
+#endif
          );
     }
 
@@ -336,7 +356,7 @@ meshToMeshOrder MeshesRepository::getInterpolationOrder(
         return interpolationOrder_[name];
     } else {
 #ifdef FOAM_NEW_MESH2MESH
-        return meshToMesh::imCellVolumeWeight;
+        return meshToMesh::interpolationMethod::imCellVolumeWeight;
 #else
         return meshToMesh::INTERPOLATE;
 #endif

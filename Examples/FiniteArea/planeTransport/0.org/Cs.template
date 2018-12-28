@@ -1,0 +1,51 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM Extend Project: Open source CFD        |
+|  \\    /   O peration     | Version:  1.6-ext                               |
+|   \\  /    A nd           | Web:      www.extend-project.de                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       areaScalarField;
+    location    "0";
+    object      Cs;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions          [1 -2 0 0 0 0 0];
+
+internalField       uniform 0;
+
+referenceLevel      0;
+
+boundaryField
+{
+    inlet {
+        type groovyBC;
+        value uniform 1;
+        globalScopes ("planeInlet");
+        variables (
+            "minY=min(pos().y);"
+            "maxY=max(pos().y);"
+        );
+        valueExpression "const+amplitude*sin(freq*time())*amplitude2*(pos().y-minY)*(maxY-pos().y)/pow(maxY-minY,2)";
+    }
+    outlet {
+        type inletOutlet;
+        value uniform 1;
+        phi phis;
+        inletValue uniform 0;
+    }
+    bound {
+<!--(if foamFork=="extend")-->
+        type symmetryPlane;
+<!--(else)-->
+        type symmetry;
+<!--(end)-->
+    }
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

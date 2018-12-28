@@ -1,35 +1,30 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2014, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2017 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
@@ -93,13 +88,16 @@ CommonPluginFunction::CommonPluginFunction(
 
     forAll(argumentSpecification,i)
     {
-	const string &spec=argumentSpecification[i];
-        label space1=spec.find(' ');
-        label space2=spec.find(' ',space1+1);
-        label space3=spec.find(' ',space2+1);
+        const string &spec=argumentSpecification[i];
+        const string::size_type space1=spec.find(' ');
+        const string::size_type space2=spec.find(' ', space1+1);
+        const string::size_type space3=spec.find(' ', space2+1);
 
-        if(
-            space1 < 0 || space2 < 0 || space3 > 0
+        if
+        (
+            space1 == string::npos
+         || space2 == string::npos
+         || space3 != string::npos
         ) {
             FatalErrorIn("CommonValueExpressionDriver::CommonPluginFunction::CommonPluginFunction")
                 << "The argument specification " << spec
@@ -108,9 +106,10 @@ CommonPluginFunction::CommonPluginFunction(
                     << endl
                     << exit(FatalError);
         }
-        argumentNames_[i]=spec(space1);
-        argumentParsers_[i]=spec(space1+1,space2-space1-1);
-        argumentTypes_[i]=spec(space2+1,spec.size()-space2-1);
+        argumentNames_[i] = spec.substr(0,space1);
+        argumentParsers_[i] = spec.substr(space1+1,space2-space1-1);
+        argumentTypes_[i] = spec.substr(space2+1);
+
         if(debug || parentDriver_.traceParsing()) {
             Info << "Argument " << i << ": "
                 << argumentNames_[i] << " " << argumentParsers_[i]

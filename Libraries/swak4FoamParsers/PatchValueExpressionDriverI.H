@@ -1,35 +1,30 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2009-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2009-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
     2015 Dominik Christ <d.christ@wikki.co.uk>
 
@@ -59,6 +54,14 @@ namespace Foam {
 #else
 #include "mappedPatchBase.H"
 #include "interpolationCell.H"
+#endif
+
+#include "cyclicFvPatchField.H"
+#ifdef FOAM_HAS_AMI_INTERFACE
+#include "cyclicAMIFvPatchField.H"
+#endif
+#ifdef FOAM_HAS_ACMI_INTERFACE
+#include "cyclicACMIFvPatchField.H"
 #endif
 
 #include <cassert>
@@ -424,6 +427,85 @@ namespace Foam {
         ) {
             const typename localVolField::PatchFieldType &pField=
                 patch_.lookupPatchField<localVolField,Type>(name);
+            return pField.patchNeighbourField();
+        } else{
+            FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getPatchNeighbourField(const word &name)")
+                << "No field of type " << pTraits<Type>::typeName
+                    << " with the name " << name
+                    << " found or unsupported type for patchNeighbourField\n"
+                    << endl
+                    << exit(FatalError);
+
+            return tmp<Field<Type> >(
+                new Field<Type>(0)
+            );
+        }
+    }
+
+    template<class Type>
+    tmp<Field<Type> > PatchValueExpressionDriver::getPatchNeighbourPatch(
+        const word &inName
+    )
+    {
+        word name(inName);
+        if(this->hasAlias(name)) {
+            if(debug) {
+                Pout << "PatchValueExpressionDriver::getPatchNeighbourField. Name: " << name
+                    << " is an alias for " << this->getAlias(name) << endl;
+            }
+            name=this->getAlias(name);
+        }
+
+        typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
+
+        if(
+            hasVariable(name)
+            &&
+            variable(name).valueType()==pTraits<Type>::typeName
+        ) {
+            return variable(name).getResult<Type>(true);
+        }
+
+        autoPtr<localVolField> dummy; // hold on to the field until the calculation is finished
+        if(
+            !patch_.boundaryMesh().mesh().
+            objectRegistry::foundObject<localVolField>(name)
+            &&
+            searchOnDisc()
+        ) {
+            dummy=this->getOrReadField<localVolField>(name,false);
+        }
+
+        if(
+            patch_.boundaryMesh().mesh().
+            objectRegistry::foundObject<localVolField>(name)
+        ) {
+            const typename localVolField::PatchFieldType &pField=
+                patch_.lookupPatchField<localVolField,Type>(name);
+#ifdef FOAM_CYCLIC_FV_PATCH_FIELD_HAS_NEIGHBOUR_PATCH
+            if(isA<cyclicFvPatchField<Type> >(pField)) {
+                return dynamicCast<const cyclicFvPatchField<Type> >(pField).neighbourPatchField();
+#ifdef FOAM_HAS_AMI_INTERFACE
+            } else if(isA<cyclicAMIFvPatchField<Type> >(pField)) {
+                return dynamicCast<const cyclicAMIFvPatchField<Type> >(pField).neighbourPatchField();
+#endif
+#ifdef FOAM_HAS_ACMI_INTERFACE
+            } else if(isA<cyclicACMIFvPatchField<Type> >(pField)) {
+                return dynamicCast<const cyclicACMIFvPatchField<Type> >(pField).neighbourPatchField();
+#endif
+            } else {
+                FatalErrorInFunction
+                    << pField.patch().name() << " not a cyclic patch for field "
+                        << name << ". Can't use neighbourPatch()"
+                        << endl
+                        << exit(FatalError);
+            }
+#else // FOAM_CYCLIC_FV_PATCH_FIELD_HAS_NEIGHBOUR_PATCH
+            FatalErrorInFunction
+                << "In this OpenFOAM-version cyclicFvPAtchField has no neighbourPatchField-method"
+                    << endl
+                    << exit(FatalError);
+#endif
             return pField.patchNeighbourField();
         } else{
             FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getPatchNeighbourField(const word &name)")

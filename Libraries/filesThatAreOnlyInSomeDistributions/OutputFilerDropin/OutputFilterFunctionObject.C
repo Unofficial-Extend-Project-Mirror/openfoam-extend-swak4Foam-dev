@@ -284,7 +284,11 @@ bool Foam::OutputFilterFunctionObject<OutputFilter>::adjustTimeStep()
             if (newDeltaT < deltaT)
             {
                 deltaT = max(newDeltaT, 0.2*deltaT);
+#ifdef FOAM_TIME_HAS_SEPARATE_SETDELTAT_NOADJUST
+                const_cast<Time&>(time_).setDeltaTNoAdjust(deltaT);
+#else
                 const_cast<Time&>(time_).setDeltaT(deltaT, false);
+#endif
             }
         }
     }

@@ -1,37 +1,32 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "clearExpressionFaField.H"
@@ -60,6 +55,11 @@ Foam::clearExpressionFaField::clearExpressionFaField
 Foam::clearExpressionFaField::~clearExpressionFaField()
 {}
 
+void Foam::clearExpressionFaField::timeSet()
+{
+    // Do nothing
+}
+
 void Foam::clearExpressionFaField::read(const dictionary& dict)
 {
     name_=word(dict.lookup("fieldName"));
@@ -78,7 +78,7 @@ void Foam::clearExpressionFaField::execute()
             );
 
             if(ef.name()==name_) {
-                found=true;                
+                found=true;
                 ef.clearData();
             }
         }
@@ -86,7 +86,7 @@ void Foam::clearExpressionFaField::execute()
 
     if(!found) {
         WarningIn("clearExpressionFaField::execute()")
-            << "No function object named " << name_ << " found" 
+            << "No function object named " << name_ << " found"
                 << endl;
     }
 }
@@ -96,8 +96,16 @@ void Foam::clearExpressionFaField::end()
 {
 }
 
-void Foam::clearExpressionFaField::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::clearExpressionFaField::write()
 {
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 // ************************************************************************* //

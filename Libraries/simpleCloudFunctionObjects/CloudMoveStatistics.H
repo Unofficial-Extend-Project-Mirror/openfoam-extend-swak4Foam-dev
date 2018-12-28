@@ -1,31 +1,26 @@
 /*---------------------------------------------------------------------------*\
-    ##   ####  ######     |
-    ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
-    ##  ##     ####       |
-    ##  ##     ##         | http://www.ice-sf.at
-    ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is part of OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software: you can redistribute it and/or modify it
+    swak4Foam is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+    along with swak4Foam.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
     Foam::CloudMoveStatistics
@@ -34,14 +29,16 @@ Description
     Record the number of faces etc that were hit during one evolution. This is
     mainly used to find out whether there is a problem during the tracking phase
 
+    Based on the CloudTracks-function object
+
 SourceFiles
     CloudMoveStatistics.C
 
 Contributors/Copyright:
-    2016 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
-    Based on the CloudTracks-function object
-
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef CloudMoveStatistics_H
@@ -77,7 +74,7 @@ class CloudMoveStatistics
     //- Convenience typedef for hash hit-table
     typedef HashTable<label, labelPair, typename labelPair::Hash<> > hitTableType;
 
-    typedef HashTable<label, word> patchHitTableType;
+    typedef HashTable<label> patchHitTableType;
 
     //- Table of number of times a particle has hit a face
     hitTableType faceHitCounter_;

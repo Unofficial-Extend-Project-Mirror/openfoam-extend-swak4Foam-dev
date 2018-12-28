@@ -1,0 +1,11 @@
+
+EXE_INC = -I../../Libraries/swak4FoamParsers/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/sampling/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I../../Libraries/languageIntegration/swakGeneralLanguageIntegration/lnInclude
+
+EXE_LIBS = -L$(FOAM_USER_LIBBIN) \
+         -lswak4FoamParsers \
+         -lswakLuaIntegration \
+         -lswakGeneralLanguageIntegration

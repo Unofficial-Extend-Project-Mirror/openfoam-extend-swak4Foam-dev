@@ -1,35 +1,30 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2017 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
@@ -156,7 +151,7 @@ groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField
 
 #ifdef FOAM_JUMP_IS_JUMP_CYCLIC
 template<class Type>
-tmp<Field<scalar> > groovyBCJumpFvPatchField<Type>::jump() const
+tmp<Field<Type> > groovyBCJumpFvPatchField<Type>::jump() const
 {
     if(debug) {
         Info << "groovyBCJumpFvPatchField<Type>::jump() with "
@@ -167,14 +162,31 @@ tmp<Field<scalar> > groovyBCJumpFvPatchField<Type>::jump() const
 
     driver.clearVariables();
 
-    tmp<Field<scalar> > tjf(
-        new Field<scalar>(this->size())
+    tmp<Field<Type> > tjf(
+        new Field<Type>(this->size())
     );
-    Field<scalar> &jf=tjf();
+    Field<Type> &jf=tjf();
 
-    jf = driver.evaluate<scalar>(this->jumpExpression_);
+    jf = driver.evaluate<Type>(this->jumpExpression_);
 
     return tjf;
+}
+
+#else
+
+template<class Type>
+void Foam::groovyBCJumpFvPatchField<Type>::updateCoeffs()
+{
+    if(debug) {
+        Info << "groovyBCJumpFvPatchField<Type>::jump() with "
+            << jumpExpression_ << endl;
+    }
+
+    driver_.clearVariables();
+
+    this->jump_ = driver_.evaluate<Type>(this->jumpExpression_);
+
+    fixedJumpFvPatchField<Type>::updateCoeffs();
 }
 #endif
 
@@ -194,7 +206,7 @@ void groovyBCJumpFvPatchField<Type>::write(Ostream& os) const
 
     driver_.writeCommon(os,debug);
 
-    this->writeEntry("value", os);
+    //    this->writeEntry("value", os);
 }
 
 

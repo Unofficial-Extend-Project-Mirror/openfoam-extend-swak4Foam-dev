@@ -82,6 +82,9 @@ functions {
         $cloudPosition;
         expression "origId";
     }
+<!--(if foamFork=="openfoam" and foamVersion>=(5,))-->
+<!--(elif foamFork=="openfoamplus" and foamVersion>=(1712,))-->
+<!--(else)-->
     cloudSoftImpact {
         $cloudPosition;
         expression "softImpact";
@@ -90,6 +93,7 @@ functions {
         $cloudPosition;
         expression "currentTime";
     }
+<!--(end)-->
     cloudStepFraction {
         $cloudPosition;
         expression "stepFraction";

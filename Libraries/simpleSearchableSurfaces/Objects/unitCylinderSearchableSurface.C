@@ -1,35 +1,30 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     |
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2009, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2009, 2013-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -68,7 +63,7 @@ Foam::pointIndexHit Foam::unitCylinderSearchableSurface::findNearest
         topPt.x()/=topRadius;
         topPt.y()/=topRadius;
     } else {
-        hit[0]=false;
+        hit[0]=true;
     }
     point &bottomPt=pts[1];
     bottomPt=bottom_.nearestPoint(sample);
@@ -77,7 +72,7 @@ Foam::pointIndexHit Foam::unitCylinderSearchableSurface::findNearest
         bottomPt.x()/=bottomRadius;
         bottomPt.y()/=bottomRadius;
     } else {
-        hit[1]=false;
+        hit[1]=true;
     }
 
     scalar r=max(
@@ -126,17 +121,27 @@ void Foam::unitCylinderSearchableSurface::findLineAll
 
     vector dir=end-start;
 
-    f[0]=max(min(top_.normalIntersect(start,dir),pTraits<scalar>::max),pTraits<scalar>::min);
+    scalar topIntersect=top_.normalIntersect(start,dir);
+    f[0]=max(min(topIntersect,pTraits<scalar>::max),pTraits<scalar>::min);
     point pt0=start+f[0]*dir;
     pt0.z()=0;
-    if(magSqr(pt0)>1) {
+    if(
+        mag(topIntersect)>GREAT
+        ||
+        mag(pt0)>1
+    ) {
         f[0]=pTraits<scalar>::max;
     }
 
-    f[1]=max(min(bottom_.normalIntersect(start,dir),pTraits<scalar>::max),pTraits<scalar>::min);
+    scalar bottomIntersect=bottom_.normalIntersect(start,dir);
+    f[1]=max(min(bottomIntersect,pTraits<scalar>::max),pTraits<scalar>::min);
     point pt1=start+f[1]*dir;
     pt1.z()=0;
-    if(magSqr(pt1)>1) {
+    if(
+        mag(bottomIntersect)>GREAT
+        ||
+        magSqr(pt1)>1
+    ) {
         f[1]=pTraits<scalar>::max;
     }
 
@@ -210,6 +215,9 @@ Foam::unitCylinderSearchableSurface::unitCylinderSearchableSurface
     top_(point(0,0,1),vector(0,0,1)),
     bottom_(point(0,0,-1),vector(0,0,-1))
 {
+#ifdef FOAM_SEARCHABLE_SURF_HAS_BOUND_METHOD
+    bounds()=boundBox(point(-1,-1,-1),point(1,1,1));
+#endif
 }
 
 
@@ -428,7 +436,7 @@ void Foam::unitCylinderSearchableSurface::boundingSpheres
     centres[0] = 0.5*(top_.refPoint()+bottom_.refPoint());
 
     radiusSqr.setSize(1);
-    radiusSqr[0] = 1*1 + 1*1 + SMALL;
+    radiusSqr[0] = 1*1 + 1*1 + SMALL*SMALL;
 }
 #endif
 

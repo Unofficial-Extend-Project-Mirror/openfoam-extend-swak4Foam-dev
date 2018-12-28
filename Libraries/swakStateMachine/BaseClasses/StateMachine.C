@@ -1,29 +1,31 @@
 /*---------------------------------------------------------------------------*\
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           |
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2013, 2015-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2013, 2015-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -113,7 +115,7 @@ StateMachine::StateMachine(
     ),
     initialState_(
         stateCode(
-            dict.lookup("initialState")
+            word(dict.lookup("initialState"))
         )
     ),
     state_(initialState_),
@@ -162,7 +164,7 @@ StateMachine::StateTransition::StateTransition(
     ),
     logicalAccumulation_(
         LogicalAccumulationNamedEnum::names[
-            data.lookup("logicalAccumulation")
+            word(data.lookup("logicalAccumulation"))
         ]
     )
 {
@@ -212,10 +214,15 @@ bool StateMachine::StateTransition::operator()()
 
     switch(logicalAccumulation_) {
         case LogicalAccumulationNamedEnum::logAnd:
+        case LogicalAccumulationNamedEnum::logAll:
             result=driver.getReduced(andOp<bool>(),true);
             break;
         case LogicalAccumulationNamedEnum::logOr:
+        case LogicalAccumulationNamedEnum::logAny:
             result=driver.getReduced(orOp<bool>(),false);
+            break;
+        case LogicalAccumulationNamedEnum::logNone:
+            result=!driver.getReduced(orOp<bool>(),false);
             break;
         default:
             FatalErrorIn("StateMachine::StateTransition::operator()()")

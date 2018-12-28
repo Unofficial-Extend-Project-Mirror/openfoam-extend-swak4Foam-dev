@@ -1,29 +1,31 @@
 /*---------------------------------------------------------------------------*\
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
-     \\/     M anipulation  |
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
 -------------------------------------------------------------------------------
 License
-    This file is based on OpenFOAM.
+    This file is part of swak4Foam.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
+    swak4Foam is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
     Free Software Foundation; either version 2 of the License, or (at your
     option) any later version.
 
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
+    along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -77,10 +79,17 @@ void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
             origMesh.polyMesh::instance(),
             origMesh.polyMesh::db()
         ),
+#ifdef FOAM_LIST_HAS_MOVABLE_CONSTRUCT
+        pointField(origMesh.points()),
+        faceList(origMesh.faces()),
+        labelList(origMesh.faceOwner()),
+        labelList(origMesh.faceNeighbour())
+#else
         Xfer<pointField>(origMesh.points()),
         Xfer<faceList>(origMesh.faces()),
         Xfer<labelList>(origMesh.faceOwner()),
         Xfer<labelList>(origMesh.faceNeighbour())
+#endif
     );
     {
         const polyBoundaryMesh &origBound=origMesh.boundaryMesh();
@@ -100,8 +109,10 @@ void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
         shiftMesh.fvSchemes::merge(
             origMesh.schemesDict()
         );
+
         shiftMesh.fvSchemes::readOpt()=IOobject::READ_IF_PRESENT;
         shiftMesh.fvSchemes::read();
+
         //        const_cast<dictionary&>(shiftMesh.schemesDict())=origMesh.schemesDict();
         // Info << origMesh.schemesDict() << endl;
         // Info << shiftMesh.schemesDict().name() << endl;
@@ -146,10 +157,17 @@ void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
         //        meshToMesh::imMapNearest, // stable. No default
         ,Order
 #endif
+#ifdef FOAM_MESHTOMESH_WANTS_PROCMAP_PARAMETER
+        ,meshToMesh::procMapMethod::pmAABB
+#endif
 #ifndef FOAM_MESHTOMESH_OLD_STYLE
         ,false
 #endif
     );
+
+    // Info << shiftMesh.schemesDict().name() << endl;
+    // Info << shiftMesh.schemesDict() << endl;
+    // Info << shiftMesh.fvSchemes::subDict("gradSchemes")["grad(valsShift)"] << endl;
 
 #ifdef FOAM_NEW_MESH2MESH
 #if defined(FOAM_MESH2MESH_NO_2ND_ORDER_TENSOR) && !defined(FOAM_MESHTOMESH_MAPSRCTOTGT_REDUCE)

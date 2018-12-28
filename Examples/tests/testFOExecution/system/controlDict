@@ -37,7 +37,7 @@ writeFormat     ascii;
 
 writePrecision  6;
 
-writeCompression compressed;
+writeCompression yes;
 
 timeFormat      general;
 
@@ -62,6 +62,8 @@ functions
                 expression "interpolate(0)";
                 dimension [0 3 -1 0 0 0 0];
                 autowrite true;
+                outputControl timeStep;
+                outputInterval 1;
             }
         }
         else {
