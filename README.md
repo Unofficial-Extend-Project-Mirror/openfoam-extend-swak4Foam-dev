@@ -111,15 +111,16 @@ should compile the essential requirements before compiling
 ## Requirements
 
 -   Version 2.0 or higher of OpenFOAM and version 3.0 or higher of
-    Foam.  The `OpenFOAM-dev` is also supported but because this is
-    frequently changing compilation may fail. The branch
-    `feature/port_of-dev` of the development repository **may** work
-    better
+    Foam.
+
+    The oldest version that this is release has been tested with is
+    OpenFOAM 2.3
+
+    To see which versions this release has been tested with see
+    `Documentation/examplesCompatibilityMatrix.org`
 -   the compiler generators `bison` and `flex`
-    -   **bison:** `swak4Foam` is known to work with `bison` version 2.4 and
-        higher. Version 2.3 compiles but the plugin-functionality does
-        not work correctly.
-        Version 3.0 does **not** work
+    -   **bison:** `swak4Foam` is known to work with `bison` version 3.0 and
+        higher.
     -   **flex:** since the introduction of the plugin functions at least
         a flex version of `2.5.33` is required (`2.5.35` is the
         lowest **confirmed** version)
@@ -711,7 +712,7 @@ cases for `swak4Foam`, not *best practice* examples for OpenFOAM
 
 ### groovyBC
 
-The old `groovyBC`-Demos
+The old `groovyBC`-Demos and newer cases that use `groovyBC`
 
 
 #### pulsedPitzDaily
@@ -822,6 +823,11 @@ Example dictionary for `funkySetFields`
 
 Example dictionary for `funkySetBoundaryFields`. Sets nonsense
 boundary conditions for the world famous `damBreak`-case
+
+
+### ImmersedBC
+
+Cases that demonstrate the immersed boundary conditions of `foam-extend`
 
 
 ### InterFoamWithSources
@@ -1421,6 +1427,10 @@ Only if you got through Mercurial it can be ensured that your
 contribution is recognized (if you want to stay anonymous send
 patches).
 
+Before submitting the branch please add a description to the
+`README` (have a look at the `History`-part below). This will be
+merged
+
 
 ### Suggest reading
 
@@ -1444,7 +1454,24 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-### Special branches
+### Repository organization
+
+The organization of the repository is according to the Driessen
+branching model described here
+<https://nvie.com/posts/a-successful-git-branching-model/> . To
+enforce it this mercurial extension is recommended
+<https://bitbucket.org/yujiewu/hgflow/wiki/Home>
+For instance if a new feature `foo` should be added then a command
+
+    hg flow feature start foo
+
+creates a new branch `feature/foo` from the develop branch which
+later can be merged back with
+
+    hg flow feature finish
+
+
+#### Special branches
 
 Currently the main branches are:
 
@@ -6213,7 +6240,14 @@ capabilities of the `swakDynamicMesh`-library.
     has no `ACMI`
 
 
-## Next release - version number : 0.4.2
+## 2018-12-29 - version number : 0.4.2
+
+The Foam-versions that this release has been tested with are
+
+-   OpenFOAM 2.3
+-   OpenFOAM 6.0
+-   OpenFOAM+ v1806
+-   Foam-Extend 4.0
 
 
 ### New supported versions
@@ -6238,21 +6272,29 @@ Minor adaptions were required to make this compile by Mark Olesen
 
 Adaptions supplied by Mark Olesen. Adaptions needed after the release
 
+This is one of the versions that this release is tested with
+
 
 #### foam-extend 4.1
 
 This is a work in progress based on the `nextRelease`-branch as
 there is no release yet
 
+This is one of the versions that this release is tested with
+
 
 #### OpenFOAM 6
 
-Compiles. Is tested
+Compiles.
+
+This is one of the versions that this release is tested with
 
 
 #### OpenFOAM+ v1812
 
 Adaptions supplied by Mark Olesen.
+
+This will be the officially tested version after this release
 
 
 ### Incompatibilities
@@ -6555,3 +6597,9 @@ Immersed boundaries need special treatment because it is not a
 This old test-example has been upgraded to a full example to
 demonstrate the use of `groovyBC` with the `cyclicSlave`-option
 and the `groovyBCJump`-condition
+
+
+#### `ImmersedBC/pitzDaily` to demonstrate *immersed boundary conditions* in `foam-extend`
+
+This demonstrates that swak-evaluations can be used for the
+immersed boundary conditions in `foam-extend`
