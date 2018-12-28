@@ -70,17 +70,17 @@
   | other/topoSetDamBreak                                       | \checkmark | \checkmark | \checkmark | \checkmark |
   | Python3Integration/flowStatePitzDaily                       | \checkmark | \checkmark | \checkmark | \checkmark |
   | Python3Integration/python3ScriptedBCAngledDuct              | \checkmark | \checkmark | \checkmark | \checkmark |
-  | SimpleSurface/littleVolcano                                 | \sad       |            | \checkmark | \checkmark |
+  | SimpleSurface/littleVolcano                                 | \sad       | \checkmark | \checkmark | \checkmark |
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/luaIntegration                    | bug        | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/pythonIntegration                 | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/python3Integration                | \checkmark | \checkmark | \checkmark | \checkmark |
-  | tests/SearchableSurfaces/objectsTest                        | \checkmark |            | \checkmark | \checkmark |
-  | tests/SearchableSurfaces/operationsTest                     | \partial   |            | \partial   | \partial   |
-  | tests/SearchableSurfaces/operationsTestRotated              | \partial   |            | \partial   | \partial   |
-  | tests/SearchableSurfaces/scaledIglooWithFridges             | \checkmark |            | \checkmark | \checkmark |
+  | tests/SearchableSurfaces/objectsTest                        | \checkmark | \checkmark | \checkmark | \checkmark |
+  | tests/SearchableSurfaces/operationsTest                     | \partial   | \checkmark | \partial   | \partial   |
+  | tests/SearchableSurfaces/operationsTestRotated              | \partial   | \partial   | \partial   | \partial   |
+  | tests/SearchableSurfaces/scaledIglooWithFridges             | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/testFOExecution                                       | \checkmark | \checkmark | \checkmark | \checkmark |
 
 # Local Variables:
