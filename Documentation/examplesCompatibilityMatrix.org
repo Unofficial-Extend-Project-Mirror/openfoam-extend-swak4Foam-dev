@@ -63,9 +63,9 @@
   | LuaIntegration/raiseRelaxationPitzDaily                     | \checkmark | \dagger    | \checkmark | \dagger    |
   | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    | \checkmark | \checkmark |
   | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark | \dagger    | \checkmark | \checkmark |
-  | other/angledDuctImplicit                                    | \checkmark |            | \checkmark | \sad       |
+  | other/angledDuctImplicit                                    | \checkmark | \sad       | \checkmark | \sad       |
   | other/capillaryRise                                         | \checkmark | \sad       | \checkmark | \checkmark |
-  | other/counterFlowFlame2DInitialized                         | \partial   | \sad       | \partial   | \checkmark |
+  | other/counterFlowFlame2DInitialized                         | \partial   | \partial   | \partial   | \checkmark |
   | other/simpleBendedPipe                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | other/topoSetDamBreak                                       | \checkmark | \checkmark | \checkmark | \checkmark |
   | Python3Integration/flowStatePitzDaily                       | \checkmark | \checkmark | \checkmark | \checkmark |
