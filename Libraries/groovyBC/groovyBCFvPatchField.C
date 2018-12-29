@@ -227,12 +227,17 @@ tmp<Field<Type>> groovyBCFvPatchField<Type>::patchNeighbourField() const
         // reimplement the cyclicFvPatchField<Type>::patchNeighbourField()
 
         const cyclicFvPatch &cyclicPatch=dynamicCast<const cyclicFvPatch>(this->patch());
-        const Field<Type>& iField = this->primitiveField();
+        const Field<Type>& iField =
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+            this->primitiveField();
+#else
+            this->internalField();
+#endif
         const labelUList& nbrFaceCells =
             cyclicPatch.neighbPatch().faceCells();
 
         tmp<Field<Type>> tpnf(new Field<Type>(this->size()));
-        Field<Type>& pnf = tpnf.ref();
+        Field<Type>& pnf = const_cast<Field<Type>&>(tpnf()); //.ref();
 
         bool doTransform=!(cyclicPatch.parallel() || pTraits<Type>::rank==0);
         if (doTransform)
@@ -290,13 +295,21 @@ void groovyBCFvPatchField<Type>::updateCoeffs()
         isA<cyclicFvPatch>(this->patch())
         &&
         cyclicSlave_
+#ifndef FOAM_CYCLIC_FV_PATCH_FIELD_HAS_NEIGHBOUR_PATCH
+        &&
+        false
+#endif
     ) {
 #ifdef FOAM_CYCLIC_FV_PATCH_FIELD_HAS_NEIGHBOUR_PATCH
         const cyclicFvPatch &cyclicPatch=dynamicCast<const cyclicFvPatch>(this->patch());
         const GeometricField<Type, fvPatchField, volMesh>& fld =
             static_cast<const GeometricField<Type, fvPatchField, volMesh>&>
             (
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
                 this->primitiveField()
+#else
+                this->internalField()
+#endif
             );
 
         if(
@@ -326,10 +339,10 @@ void groovyBCFvPatchField<Type>::updateCoeffs()
         this->refGrad() = other.refGrad();
         this->valueFraction() = other.valueFraction();
 #else
-        FatalErrorInFunction
-            << "No patchNeighbourField in this OpenFOAM-version"
-                << endl
-                << exit(FatalError);
+        // FatalErrorInFunction
+        //     << "No patchNeighbourField in this OpenFOAM-version"
+        //         << endl
+        //         << exit(FatalError);
 #endif
     } else {
         driver_.clearVariables();

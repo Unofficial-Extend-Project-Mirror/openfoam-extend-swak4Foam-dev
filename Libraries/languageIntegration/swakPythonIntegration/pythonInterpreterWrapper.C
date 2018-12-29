@@ -252,7 +252,18 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
     if(useNumpy_) {
         Dbug << "Attempting to import numpy" << endl;
 
-        //        int fail=PyRun_SimpleString("import numpy");
+        static bool warnedNumpy=false;
+        if(!warnedNumpy) {
+            if(getEnv("FOAM_SIGFPE")!="false") {
+                WarningInFunction
+                    << "Attempting to import numpy. On some platforms that will raise a "
+                        << "(harmless) floating point exception. To avoid switch off "
+                        << "by setting the environment variable 'FOAM_SIGFPE' to 'false'"
+                        << endl;
+            }
+            warnedNumpy=true;
+        }
+
         int fail=!importLib("numpy");
         if(fail) {
             FatalErrorIn("pythonInterpreterWrapper::pythonInterpreterWrapper")

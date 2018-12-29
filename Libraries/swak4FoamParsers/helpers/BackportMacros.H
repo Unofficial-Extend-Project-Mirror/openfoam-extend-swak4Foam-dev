@@ -23,51 +23,44 @@ License
     along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Class
+
+
+Description
+    Backport macros that are not available in all OpenFOAM-versions
+
+SourceFiles
+
 Contributors/Copyright:
-    2008-2011, 2013, 2015-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "TimeManipulationWithInterpreterFunctionObject.H"
-#include "addToRunTimeSelectionTable.H"
+#ifndef SWAK_BACKPORT_MACROS_H
+#define SWAK_BACKPORT_MACROS_H
 
-#include "polyMesh.H"
-#include "IOmanip.H"
-#include "swakTime.H"
+#ifndef FUNCTION_NAME
+// Compiler provided function name string:
+//     for gcc-compatible compilers use __PRETTY_FUNCTION__
+//     otherwise use the standard __func__
+#ifdef __GNUC__
+    #define FUNCTION_NAME __PRETTY_FUNCTION__
+#else
+    #define FUNCTION_NAME __func__
+#endif
+#endif
 
-#include "DebugOStream.H"
+#ifndef FatalErrorInFunction
+#define FatalErrorInFunction FatalErrorIn(FUNCTION_NAME)
+#endif
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+#ifndef NotImplemented
+#define NotImplemented notImplemented(FUNCTION_NAME)
+#endif
 
-namespace Foam
-{
+#ifndef WarningInFunction
+#define WarningInFunction WarningIn(FUNCTION_NAME)
+#endif
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-template<class Wrapper>
-TimeManipulationWithInterpreterFunctionObject<Wrapper>::TimeManipulationWithInterpreterFunctionObject
-(
-    const word &name,
-    const Time& t,
-    const dictionary& dict
-)
-:
-    timeManipulationFunctionObject(name,t,dict),
-    Wrapper(
-        t.db(),
-        dict
-    )
-{
-    if(!this->parallelNoRun()) {
-        this->initEnvironment(t);
-
-        this->setRunTime(t);
-    }
-}
-
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-} // namespace Foam
-
-// ************************************************************************* //
+#endif

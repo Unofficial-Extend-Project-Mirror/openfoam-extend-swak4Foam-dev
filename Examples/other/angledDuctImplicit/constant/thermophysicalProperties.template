@@ -15,7 +15,11 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-// thermoType      hRhoThermo<pureMixture<sutherlandTransport<specieThermo<hConstThermo<perfectGas>>>>>;
+<!--(if foamFork=="extend")-->
+thermoType      hPsiThermo<pureMixture<sutherlandTransport<specieThermo<hConstThermo<perfectGas>>>>>;
+
+mixture         air 1 28.9 1007 0 1.4792e-06 116;
+<!--(else)-->
 thermoType      heRhoThermo<pureMixture<sutherland<hConst<perfectGas<specie>>,sensibleEnthalpy>>>;
 
 mixture
@@ -36,6 +40,7 @@ mixture
         Ts          116;
     }
 }
+<!--(end)-->
 
 
 // ************************************************************************* //

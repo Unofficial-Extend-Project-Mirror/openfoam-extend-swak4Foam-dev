@@ -594,6 +594,7 @@ Contributors/Copyright:
 
 #include "swakVersion.H"
 #include "DebugOStream.H"
+#include "BackportMacros.H"
 
 #endif
 

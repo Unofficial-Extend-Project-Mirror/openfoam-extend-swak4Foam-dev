@@ -49,6 +49,9 @@ runTimeModifiable yes;
 
 functions
 {
+    // whatIsThere {
+    //     type listRegisteredObjects;
+    // }
     pressureDrop
     {
         type patchExpression;
@@ -562,6 +565,7 @@ functions
         surface {
             type patch;
             patches ( outlet );
+            patchName outlet;
             //            triangulate      false;
         }
         verbose true;
@@ -623,7 +627,11 @@ functions
         }
         writeSetOnConstruction true;
         autoWriteSet true;
+<!--(if foamFork=="extend")-->
+        setFormat raw;
+<!--(else)-->
         setFormat vtk;
+<!--(end)-->
     }
     onlyHighPressure {
         type executeIfSwakExpression;
@@ -743,7 +751,11 @@ functions
         }
         writeSetOnConstruction true;
         autoWriteSet true;
+<!--(if foamFork=="extend")-->
+        setFormat raw;
+<!--(else)-->
         setFormat vtk;
+<!--(end)-->
         storedVariables (
             {
                 name pInit;
@@ -837,6 +849,10 @@ functions
         autowrite true;
         verbose true;
     }
+    // whatIsThere {
+    //     type listRegisteredObjects;
+    // }
+<!--(if foamFork!="extend")-->
     turbulence {
         type executeIfObjectExists;
         objectName k;
@@ -877,6 +893,7 @@ functions
             }
         }
     }
+<!--(end)-->
     surfaceIsoDist
     {
         type swakExpression;
@@ -1211,9 +1228,13 @@ functions
             end (0.141421 0.176777 0.025);
             nPoints 1000;
         }
-        writeSetOnConstruction true;
         autoWriteSet true;
+<!--(if foamFork=="extend")-->
+        setFormat raw;
+<!--(else)-->
+        writeSetOnConstruction true;
         setFormat vtk;
+<!--(end)-->
     }
     createMinMaxLineSet2
     {
@@ -1231,9 +1252,13 @@ functions
             end (0.141421 0.176777 0.025);
             nPoints 1000;
         }
-        writeSetOnConstruction true;
         autoWriteSet true;
+<!--(if foamFork=="extend")-->
+        setFormat raw;
+<!--(else)-->
+        writeSetOnConstruction true;
         setFormat vtk;
+<!--(end)-->
     }
     createMinMaxLineSet3
     {
@@ -1250,9 +1275,13 @@ functions
             end (0.141421 0.176777 0.025);
             nPoints 1000;
         }
-        writeSetOnConstruction true;
         autoWriteSet true;
+<!--(if foamFork=="extend")-->
+        setFormat raw;
+<!--(else)-->
+        writeSetOnConstruction true;
         setFormat vtk;
+<!--(end)-->
     }
     testLineSetNr{
         $testPlaneArea;

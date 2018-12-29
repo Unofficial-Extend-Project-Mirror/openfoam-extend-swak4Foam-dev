@@ -8,5 +8,7 @@ EXE_INC = \
     $(TRISURFACE_INC)
 
 LIB_LIBS = \
+    -L$(FOAM_USER_LIBBIN) \
     -lfiniteVolume \
+    -lswak4FoamParsers \
     -lmeshTools

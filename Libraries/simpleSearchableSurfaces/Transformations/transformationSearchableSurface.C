@@ -352,6 +352,7 @@ void Foam::transformationSearchableSurface::getRegion
     List<pointIndexHit> iInfo(info.size());
     forAll(info,i) {
         iInfo[i]=inverseTransform(info[i]);
+        //        Info << i << " : " << info[i] << " -> " << iInfo[i] << endl;
     }
 
     delegate().getRegion

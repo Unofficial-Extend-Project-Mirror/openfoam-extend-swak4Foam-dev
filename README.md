@@ -111,15 +111,16 @@ should compile the essential requirements before compiling
 ## Requirements
 
 -   Version 2.0 or higher of OpenFOAM and version 3.0 or higher of
-    Foam.  The `OpenFOAM-dev` is also supported but because this is
-    frequently changing compilation may fail. The branch
-    `feature/port_of-dev` of the development repository **may** work
-    better
+    Foam.
+
+    The oldest version that this is release has been tested with is
+    OpenFOAM 2.3
+
+    To see which versions this release has been tested with see
+    `Documentation/examplesCompatibilityMatrix.org`
 -   the compiler generators `bison` and `flex`
-    -   **bison:** `swak4Foam` is known to work with `bison` version 2.4 and
-        higher. Version 2.3 compiles but the plugin-functionality does
-        not work correctly.
-        Version 3.0 does **not** work
+    -   **bison:** `swak4Foam` is known to work with `bison` version 3.0 and
+        higher.
     -   **flex:** since the introduction of the plugin functions at least
         a flex version of `2.5.33` is required (`2.5.35` is the
         lowest **confirmed** version)
@@ -711,7 +712,7 @@ cases for `swak4Foam`, not *best practice* examples for OpenFOAM
 
 ### groovyBC
 
-The old `groovyBC`-Demos
+The old `groovyBC`-Demos and newer cases that use `groovyBC`
 
 
 #### pulsedPitzDaily
@@ -800,6 +801,14 @@ The old `groovyBC`-Demos
     condition
 
 
+#### jumpChannel
+
+-   **Solver:** icoFoam
+-   **Preparation:** run `pyFoamPrepareCase.py`
+-   **Description:** Demonstrates `groovyBC` on cyclic patches and
+    the `groovyBCJump`-condition
+
+
 ### FunkyDoCalc
 
 Example dictionaries for `funkyDoCalc`
@@ -814,6 +823,11 @@ Example dictionary for `funkySetFields`
 
 Example dictionary for `funkySetBoundaryFields`. Sets nonsense
 boundary conditions for the world famous `damBreak`-case
+
+
+### ImmersedBC
+
+Cases that demonstrate the immersed boundary conditions of `foam-extend`
 
 
 ### InterFoamWithSources
@@ -1413,6 +1427,10 @@ Only if you got through Mercurial it can be ensured that your
 contribution is recognized (if you want to stay anonymous send
 patches).
 
+Before submitting the branch please add a description to the
+`README` (have a look at the `History`-part below). This will be
+merged
+
 
 ### Suggest reading
 
@@ -1436,7 +1454,24 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-### Special branches
+### Repository organization
+
+The organization of the repository is according to the Driessen
+branching model described here
+<https://nvie.com/posts/a-successful-git-branching-model/> . To
+enforce it this mercurial extension is recommended
+<https://bitbucket.org/yujiewu/hgflow/wiki/Home>
+For instance if a new feature `foo` should be added then a command
+
+    hg flow feature start foo
+
+creates a new branch `feature/foo` from the develop branch which
+later can be merged back with
+
+    hg flow feature finish
+
+
+#### Special branches
 
 Currently the main branches are:
 
@@ -1596,6 +1631,18 @@ Foam-Distro
 
 Currently only the data from scalar fields can be correctly
 parsed. If `vector`-fields are specified the function object fails
+
+
+## Failing `Python2` and `Python3` integration if Floating Point Exception is enabled
+
+On some platforms if floating point exceptions are enabled then
+importing `numpy` fails because it seems to use FPEs to detect
+properties of the floating point implementation. This makes the
+whole program fail.
+
+Only known workaround is switching FPE-trapping off by
+
+    export FOAM_SIGFPE=false
 
 
 # History
@@ -6193,7 +6240,14 @@ capabilities of the `swakDynamicMesh`-library.
     has no `ACMI`
 
 
-## Next release - version number : 0.4.2
+## 2018-12-29 - version number : 0.4.2
+
+The Foam-versions that this release has been tested with are
+
+-   OpenFOAM 2.3
+-   OpenFOAM 6.0
+-   OpenFOAM+ v1806
+-   Foam-Extend 4.0
 
 
 ### New supported versions
@@ -6218,21 +6272,29 @@ Minor adaptions were required to make this compile by Mark Olesen
 
 Adaptions supplied by Mark Olesen. Adaptions needed after the release
 
+This is one of the versions that this release is tested with
+
 
 #### foam-extend 4.1
 
 This is a work in progress based on the `nextRelease`-branch as
 there is no release yet
 
+This is one of the versions that this release is tested with
+
 
 #### OpenFOAM 6
 
-Compiles. Is tested
+Compiles.
+
+This is one of the versions that this release is tested with
 
 
 #### OpenFOAM+ v1812
 
 Adaptions supplied by Mark Olesen.
+
+This will be the officially tested version after this release
 
 
 ### Incompatibilities
@@ -6299,6 +6361,45 @@ Fixed
 
 Because the reference was returned instead of the `tmp` some
 values were overwritten
+
+
+#### `patchFunctionObject` hangs with `processorCyclic` boundaries and regular expressions
+
+To enable `cyclic` boundary conditions on decomposed cases
+`processorCyclic` boundaries are created on **some**
+processors. Sometimes these boundaries are picked up by regular
+expressions in function objects derived from
+`patchFunctionObject` (for instance `patchExpression`). This
+makes the run hang
+
+This has been fixed by checking whether all processors have the
+same boundaries in the list and stopping if they haven't
+requesting the user to be more specific in the regular
+expressions
+
+
+#### Problem compiling on OF 5.0
+
+Fixed a compilation problem on 5.0 that was due to a wrong
+assumption about the change of an API in the `Random`-class (it
+happens one version later). Thanks for reporting it at
+<https://sourceforge.net/p/openfoam-extend/ticketsswak4foam/244/>
+to Daniel Pielmeier
+
+
+#### Failing `Python2` and `Python3` integration if Floating Point Exception is enabled
+
+On some platforms if floating point exceptions are enabled then
+importing `numpy` fails because it seems to use FPEs to detect
+properties of the floating point implementation. This makes the
+whole program fail.
+
+Only known workaround is switching FPE-trapping off by
+
+    export FOAM_SIGFPE=false
+
+Currently there is a warning issued the first time `numpy` is
+imported to guide the user to the fix
 
 
 ### Internals (for developers)
@@ -6410,6 +6511,13 @@ sometimes should make the intention clearer
 -   **none:** only `true` if everything is `false` (basically `not or`)
 
 
+#### `neighbourPatch`-function for expressions on `cyclic` patches
+
+The expression `neighbourPatch(foo)` on a cyclic patch gets the
+value of `foo` on the "other" side of the cyclic. For this the
+field has to be a `cyclic` or a subclass
+
+
 ### Enhancements
 
 
@@ -6459,6 +6567,69 @@ needed by the function objects
 objects causes a segmentation fault after the run
 finished. Probably because the function objects are inconsitently
 destroyed
+
+
+#### `groovyBCJump` now works for non-scalar boundary conditions
+
+Now the boundary condition works for non-scalar fields as well
+
+
+#### `groovyBC` now supports `neighbourField(foo)`
+
+If used on a cyclic patch then this will get the value of `foo`
+on the other side. Before this raise a `Not Implemented`-Error
+
+**Attention**: `foo` on the patch has to be a `groovyBC` for this
+ work (or any other BC that implements `patchNeighbourField()`
+
+
+#### `groovyBC` supports immersed boundary conditions in `Foam-extend 4.1`
+
+Immersed boundaries need special treatment because it is not a
+"real" boundary that should have a written value
+
+
+### Examples
+
+
+#### `groovyBC/jumpChannel` to demonstrate `groovyBC` on cyclic boundaries
+
+This old test-example has been upgraded to a full example to
+demonstrate the use of `groovyBC` with the `cyclicSlave`-option
+and the `groovyBCJump`-condition
+
+
+#### `ImmersedBC/pitzDaily` to demonstrate *immersed boundary conditions* in `foam-extend`
+
+This demonstrates that swak-evaluations can be used for the
+immersed boundary conditions in `foam-extend`
+
+
+## Next release - version number : 0.4.3
+
+
+### New supported versions
+
+
+### Incompatibilities
+
+
+### Bug fixes
+
+
+### Internals (for developers)
+
+
+### Infrastructure
+
+
+### Documentation
+
+
+### New features
+
+
+### Enhancements
 
 
 ### Examples

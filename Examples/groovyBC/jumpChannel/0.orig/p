@@ -38,7 +38,7 @@ boundaryField
     {
         type            groovyBCJump;
         patchType       cyclic;
-        jumpExpression  "(normal() & U)>0 ? -1 : 1";
+        jumpExpression  "0.1*((normal() & U)>0 ? -1 : 1)";
         value           uniform 0;
     }
     jump1_slave

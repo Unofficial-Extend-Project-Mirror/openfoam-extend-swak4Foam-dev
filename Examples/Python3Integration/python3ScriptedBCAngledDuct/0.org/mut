@@ -33,7 +33,7 @@ boundaryField
     }
     wall
     {
-        type            mutlWallFunction;
+        type            mutkWallFunction;
         value           uniform 0;
     }
     porosityWall
