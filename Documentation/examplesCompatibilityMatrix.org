@@ -30,15 +30,15 @@
         of technical constraints (missing solver etc)
    - no symbol :: This means that the case was not yet tested on this version
 * The Matrix
-  | Case name                                                   | 6 Fnd      | 4.1 Ext    |       1812 | 2.3        |
+  | Case name                                                   | 6 Fnd      | 4.1 Ext    | 1812       | 2.3        |
   |-------------------------------------------------------------+------------+------------+------------+------------|
-  | DynamicMesh/hecticInletACMI2D                               | \checkmark | \dagger    |            | \sad       |
-  | DynamicMesh/rotatingTank2D                                  | \checkmark | \checkmark |            | \checkmark |
-  | DynamicMesh/switchedInletACMI2D                             | \checkmark | \dagger    |            | \sad       |
-  | DynamicMesh/switchedTJunction                               | \sad       | \dagger    |            | \sad       |
-  | FiniteArea/planeTransport                                   | \dagger    | \checkmark |            | \dagger    |
-  | functionPlugins/chemPluginCounterFlowFlame2D                | \checkmark | \sad       |            | \sad       |
-  | functionPlugins/shiftCavity                                 | \checkmark | \sad       |            | \sad       |
+  | DynamicMesh/hecticInletACMI2D                               | \checkmark | \dagger    | \checkmark | \sad       |
+  | DynamicMesh/rotatingTank2D                                  | \checkmark | \checkmark | \checkmark | \checkmark |
+  | DynamicMesh/switchedInletACMI2D                             | \checkmark | \dagger    | \checkmark | \sad       |
+  | DynamicMesh/switchedTJunction                               | \sad       | \dagger    | \checkmark | \sad       |
+  | FiniteArea/planeTransport                                   | \dagger    | \checkmark | \checkmark | \dagger    |
+  | functionPlugins/chemPluginCounterFlowFlame2D                | \checkmark | \sad       | \checkmark | \sad       |
+  | functionPlugins/shiftCavity                                 | \checkmark | \sad       | \sad       | \sad       |
   | FvOptions/angledDuctWithSources                             | \checkmark | \dagger    |            | \checkmark |
   | FvOptions/heatExchangerSources                              | \partial   | \dagger    |            | \sad       |
   | groovyBC/average-t-junction                                 | \checkmark | \checkmark |            | \checkmark |
@@ -63,7 +63,7 @@
   | LuaIntegration/raiseRelaxationPitzDaily                     | \checkmark | \dagger    |            | \dagger    |
   | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    |            | \checkmark |
   | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark | \dagger    |            | \checkmark |
-  | other/angledDuctImplicit                                    | \checkmark | \sad       |            | \sad       |
+  | other/angledDuctImplicit                                    | \checkmark | \sad       | \checkmark | \sad       |
   | other/capillaryRise                                         | \checkmark | \sad       |            | \checkmark |
   | other/counterFlowFlame2DInitialized                         | \partial   | \partial   |            | \checkmark |
   | other/simpleBendedPipe                                      | \checkmark | \checkmark |            | \checkmark |
