@@ -171,7 +171,17 @@ python3InterpreterWrapper::python3InterpreterWrapper
     oldIPython_(false)
 {
     //    Py_Initialize();
-    if(generalInterpreterWrapper::debug>debug) {
+    const Foam::debug::controlSwitches<int>& generalDebug
+    (
+	generalInterpreterWrapper::debug
+    );
+
+    const Foam::debug::controlSwitches<int>& localDebug
+    (
+	debug
+    );
+
+    if(generalDebug>localDebug) {
         debug=1;
     }
     //    Pbug << "Version: " << Py_GetVersion() << endl;

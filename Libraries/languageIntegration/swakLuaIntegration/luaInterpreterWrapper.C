@@ -90,7 +90,17 @@ luaInterpreterWrapper::luaInterpreterWrapper
         dict.lookupOrDefault<bool>("wrapBoolLabelAsScalar",true)
     )
 {
-    if(generalInterpreterWrapper::debug>debug) {
+    const Foam::debug::controlSwitches<int>& generalDebug
+    (
+	generalInterpreterWrapper::debug
+    );
+
+    const Foam::debug::controlSwitches<int>& localDebug
+    (
+	debug
+    );
+
+    if(generalDebug>localDebug) {
         debug=1;
     }
 
