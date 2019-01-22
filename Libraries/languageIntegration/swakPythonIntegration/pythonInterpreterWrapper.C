@@ -158,17 +158,7 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
     triedIPython_(false),
     oldIPython_(false)
 {
-    const Foam::debug::controlSwitches<int>& generalDebug
-    (
-	generalInterpreterWrapper::debug
-    );
-
-    const Foam::debug::controlSwitches<int>& localDebug
-    (
-	debug
-    );
-
-    if(generalDebug>localDebug) {
+    if(generalInterpreterWrapper::debug>debug) {
         debug=1;
     }
 
