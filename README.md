@@ -6617,6 +6617,13 @@ immersed boundary conditions in `foam-extend`
 ### Bug fixes
 
 
+#### Compilation with `WM_LABEL_SIZE=64` for `foam-extend-4.1`
+
+Fix supplied by Danial Khazaei because compilation of `fe 4.1`
+broke when the `label` size was set to 64 bit. Now works with
+other distributions as well
+
+
 ### Internals (for developers)
 
 
