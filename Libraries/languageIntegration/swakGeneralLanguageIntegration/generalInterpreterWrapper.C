@@ -587,7 +587,7 @@ void generalInterpreterWrapper::scatterGlobals()
 
         //- do the scattering by ourself
         List<Pstream::commsStruct> comms;
-        if (Pstream::nProcs() < Pstream::nProcsSimpleSum)
+        if (int(Pstream::nProcs()) < Pstream::nProcsSimpleSum)
         {
             comms=Pstream::linearCommunication();
         }
