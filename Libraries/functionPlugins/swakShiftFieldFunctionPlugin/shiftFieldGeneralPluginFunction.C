@@ -93,7 +93,7 @@ void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
     );
     {
         const polyBoundaryMesh &origBound=origMesh.boundaryMesh();
-        List<polyPatch*> newBound(origBound.size(),NULL);
+        List<polyPatch*> newBound(origBound.size(), static_cast<polyPatch*>(NULL));
         forAll(origBound,patchI) {
             newBound[patchI]=origBound[patchI].clone(shiftMesh.boundaryMesh()).ptr();
         }
