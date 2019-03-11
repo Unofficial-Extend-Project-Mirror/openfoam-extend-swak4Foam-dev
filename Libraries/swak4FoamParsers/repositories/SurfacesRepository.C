@@ -155,17 +155,10 @@ sampledSurface &SurfacesRepository::getSurface(
         if(debug) {
             Pout << "SurfacesRepository: " << name << " does not exist" << endl;
         }
-        surfaces_.insert(
+        surfaces_.set
+        (
             name,
-            sampledSurface::New(
-                name,
-                mesh,
-                dict.subDict("surface")
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
-            )
-#else
-            ).ptr()
-#endif
+            sampledSurface::New(name, mesh, dict.subDict("surface")).ptr()
         );
 
         bool writeSurface=dict.lookupOrDefault<bool>("autoWriteSurface",false);

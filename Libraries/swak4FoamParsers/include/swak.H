@@ -573,7 +573,7 @@ Contributors/Copyright:
 #endif
 
 #if (OPENFOAM_COM >= 1803)
-#define FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+#define FOAM_HASH_PTR_TABLE_ACCEPTS_NO_RAW_POINTERS
 #endif
 
 #if (OPENFOAM_COM >= 1803)

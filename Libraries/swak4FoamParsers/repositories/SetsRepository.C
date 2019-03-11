@@ -140,18 +140,10 @@ sampledSet &SetsRepository::getSet(
         if(debug) {
             Pout << "SetsRepository: " << name << " does not exist" << endl;
         }
-        sets_.insert(
+        sets_.set
+        (
             name,
-            sampledSet::New(
-                name,
-                mesh,
-                getSearch(mesh),
-                dict.subDict("set")
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
-            )
-#else
-            ).ptr()
-#endif
+            sampledSet::New(name, mesh, getSearch(mesh), dict.subDict("set")).ptr()
         );
 
         if(debug) {
@@ -229,16 +221,7 @@ meshSearch &SetsRepository::getSearch(
         if(debug) {
             Pout << "SetsRepository: meshSearch for mesh " << name << " does not exist" << endl;
         }
-        meshSearches_.insert(
-            name,
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
-            autoPtr<meshSearch>(
-#endif
-                new meshSearch(mesh)
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
-            )
-#endif
-        );
+        meshSearches_.set(name, new meshSearch(mesh));
 
         return *meshSearches_[name];
     }
