@@ -138,6 +138,13 @@ public:
             return delegate().hasVolumeType();
         }
 
+        //- What is type of points outside bounds
+        virtual volumeType outsideVolumeType() const
+        {
+            return delegate().outsideVolumeType();
+        }
+
+
         // Multiple point queries.
 
             virtual void findNearest
