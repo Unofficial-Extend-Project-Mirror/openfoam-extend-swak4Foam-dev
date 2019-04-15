@@ -234,6 +234,10 @@ Contributors/Copyright:
 #define FOAM_SEARCHABLE_SURF_HAS_BOUND_METHOD
 #endif
 
+#if (OPENFOAM_COM >= 1902)
+#define FOAM_SEARCHABLE_SURFACE_HAS_OUTSIDEVOLUMETYPE
+#endif
+
 #ifndef FOAM_VERSION4SWAK_IS_EXTEND
 // points method of searchable surfaces now part of interface
 #define FOAM_SEARCHABLE_SURF_HAS_POINTS
