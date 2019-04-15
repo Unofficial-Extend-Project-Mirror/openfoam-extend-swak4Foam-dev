@@ -240,6 +240,12 @@ public:
             return a().hasVolumeType() && b().hasVolumeType();
         }
 
+        //- What is type of points outside bounds
+        virtual volumeType outsideVolumeType() const
+        {
+            return volumeType::OUTSIDE;
+        }
+
 
         // Multiple point queries.
 

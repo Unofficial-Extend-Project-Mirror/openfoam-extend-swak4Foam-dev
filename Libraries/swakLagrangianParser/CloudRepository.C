@@ -121,14 +121,7 @@ void CloudRepository::addUpdateableCloud(
                 << endl
                 << exit(FatalError);
     } else {
-        updateableClouds_.insert(
-            name,
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
-            c
-#else
-            c.ptr()
-#endif
-        );
+        updateableClouds_.set(name, c.ptr());
     }
 }
 
@@ -145,25 +138,14 @@ void CloudRepository::addCloud(
                 << exit(FatalError);
     }
 
-    if(clouds_.found(name)) {
+    if (clouds_.found(name))
+    {
         WarningIn("CloudRepository::addCloud")
             << "Repository of clouds already has an entry "
-                << name <<". Overwriting. Expect strange behaviour"
-                << endl;
-        clouds_.set(
-            name,
-            c.ptr()
-        );
-    } else {
-        clouds_.insert(
-            name,
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
-            c
-#else
-            c.ptr()
-#endif
-        );
+            << name <<". Overwriting. Expect strange behaviour"
+            << endl;
     }
+    clouds_.set(name, c.ptr());
 }
 
 void CloudRepository::updateRepo()

@@ -155,17 +155,10 @@ sampledSurface &SurfacesRepository::getSurface(
         if(debug) {
             Pout << "SurfacesRepository: " << name << " does not exist" << endl;
         }
-        surfaces_.insert(
+        surfaces_.set
+        (
             name,
-            sampledSurface::New(
-                name,
-                mesh,
-                dict.subDict("surface")
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
-            )
-#else
-            ).ptr()
-#endif
+            sampledSurface::New(name, mesh, dict.subDict("surface")).ptr()
         );
 
         bool writeSurface=dict.lookupOrDefault<bool>("autoWriteSurface",false);
@@ -178,7 +171,8 @@ sampledSurface &SurfacesRepository::getSurface(
             word format(dict.lookup("surfaceFormat"));
 
             // Just to check whether the format actually exists
-            autoPtr<scalarSurfaceWriter> theWriter(
+            autoPtr<scalarSurfaceWriter> surfWriter
+            (
                 scalarSurfaceWriter::New(format)
             );
 
@@ -191,7 +185,17 @@ sampledSurface &SurfacesRepository::getSurface(
                 sampledSurface &surf=*surfaces_[name];
                 surf.update();
 
-                theWriter->write
+#ifdef FOAM_UNIFIED_SURFACE_WRITERS
+                surfWriter->open
+                (
+                    surf,
+                    this->path() / name + "_geometry_AtCreation",
+                    false // serial
+                );
+
+                surfWriter->write();
+#else
+                surfWriter->write
                 (
                     this->path(),
                     name+"_geometry_AtCreation",
@@ -201,6 +205,7 @@ sampledSurface &SurfacesRepository::getSurface(
                     surf.points(), surf.faces()
 #endif
                 );
+#endif
             }
         }
 
@@ -224,11 +229,21 @@ bool SurfacesRepository::writeData(Ostream &f) const
 
         const sampledSurface &surf=*surfaces_[name];
 
-        autoPtr<scalarSurfaceWriter> theWriter(
+        autoPtr<scalarSurfaceWriter> surfWriter(
             scalarSurfaceWriter::New(format)
         );
 
-        theWriter->write
+#ifdef FOAM_UNIFIED_SURFACE_WRITERS
+        surfWriter->open
+        (
+            surf,
+            f.name().path() / name + "_geometry",
+            false // serial
+        );
+
+        surfWriter->write();
+#else
+        surfWriter->write
         (
             f.name().path(),
             name+"_geometry",
@@ -238,6 +253,7 @@ bool SurfacesRepository::writeData(Ostream &f) const
             surf.points(), surf.faces()
 #endif
         );
+#endif
     }
 
     return true;

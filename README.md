@@ -6611,6 +6611,11 @@ immersed boundary conditions in `foam-extend`
 ### New supported versions
 
 
+#### OpenFOAM+ v1906
+
+Adaptions supplied by Mark Olesen.
+
+
 ### Incompatibilities
 
 

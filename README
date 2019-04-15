@@ -4237,6 +4237,8 @@ S_{expl} + S_{impl} T
 # End:
 ** Next release - version number : 0.4.3
 *** New supported versions
+**** OpenFOAM+ v1906
+     Adaptions supplied by Mark Olesen.
 *** Incompatibilities
 *** Bug fixes
 **** Compilation with =WM_LABEL_SIZE=64= for =foam-extend-4.1=

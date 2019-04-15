@@ -114,16 +114,7 @@ void writeData(
     if(writeCsv) {
         if(!csvFiles.found(name)) {
             firstTime=true;
-            csvFiles.insert(
-                name,
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
-                autoPtr<OFstream>(
-#endif
-                    new OFstream(dataDir / name+".csv")
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
-                )
-#endif
-            );
+            csvFiles.set(name, new OFstream(dataDir / name+".csv"));
         }
     }
 

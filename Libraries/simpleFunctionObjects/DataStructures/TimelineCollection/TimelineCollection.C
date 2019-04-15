@@ -104,17 +104,10 @@ OFstream &TimelineCollection::operator()(
     if(!outputFilePtr_.found(usedName)) {
         Dbug << "File name" << usedName << "not in table" << endl;
         mkDir(outputDirectory_/timeName);
-        outputFilePtr_.insert(
+        outputFilePtr_.set
+        (
             usedName,
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
-            autoPtr<OFstream> (
-#endif
-                new OFstream(
-                    outputDirectory_/timeName/usedName
-                )
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
-            )
-#endif
+            new OFstream(outputDirectory_/timeName/usedName)
         );
         //        Pout << headerSpecs_ << endl;
         OFstream &o=*outputFilePtr_[usedName];

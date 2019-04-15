@@ -212,14 +212,7 @@ void StateMachineRepository::insert(
                 << endl
                 << exit(FatalError);
     } else {
-        allMachines_.insert(
-            name,
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
-            machine
-#else
-            machine.ptr()
-#endif
-        );
+        allMachines_.set(name, machine.ptr());
     }
     if(readFromRestart_.found(name)) {
         // Was read during restart. Use the read machine

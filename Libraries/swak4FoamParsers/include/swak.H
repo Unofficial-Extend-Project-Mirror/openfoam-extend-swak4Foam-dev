@@ -234,6 +234,10 @@ Contributors/Copyright:
 #define FOAM_SEARCHABLE_SURF_HAS_BOUND_METHOD
 #endif
 
+#if (OPENFOAM_COM >= 1902)
+#define FOAM_SEARCHABLE_SURFACE_HAS_OUTSIDEVOLUMETYPE
+#endif
+
 #ifndef FOAM_VERSION4SWAK_IS_EXTEND
 // points method of searchable surfaces now part of interface
 #define FOAM_SEARCHABLE_SURF_HAS_POINTS
@@ -573,7 +577,7 @@ Contributors/Copyright:
 #endif
 
 #if (OPENFOAM_COM >= 1803)
-#define FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+#define FOAM_HASH_PTR_TABLE_ACCEPTS_NO_RAW_POINTERS
 #endif
 
 #if (OPENFOAM_COM >= 1803)
@@ -586,6 +590,10 @@ Contributors/Copyright:
 
 #if (OPENFOAM_COM >= 1811)
 #define FOAM_MESHOBJECT_GRAVITY
+#endif
+
+#if (OPENFOAM_COM >= 1902)
+#define FOAM_UNIFIED_SURFACE_WRITERS
 #endif
 
 #if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(6,0,0))
