@@ -1387,30 +1387,45 @@ to make sure that there wasn't a problem with that.
 Contributions to to `swak4Foam` are most welcome. If you want to
 contribute clone the Mercurial archive of the sources
 
-    hg clone http://openfoam-extend.hg.sourceforge.net:8000/hgroot/openfoam-extend/swak4Foam
+    hg clone http://hg.code.sf.net/p/openfoam-extend/swak4Foam
 
-Change to the branch that you want to improve (usually `default`)
+or use the *Fork* link at
+<https://sourceforge.net/p/openfoam-extend/swak4Foam/ci/develop/tree/>
+to create your own fork and clone that (there is also copy of the
+repository at
+<https://bitbucket.org/bgschaid/swak4foam-temporary-replacement-for-original-repo-on>
+if you prefer that. But it does not receive pushes as often as the
+Sourceforge repository. Please avoid any `git`-clones of the
+repository. They are unsupported and contributions through them
+will take longer to be incorporated - if at all. The maintainer is
+aware that `git` is the Windows of the `DVCS`-world: used because
+it is the first thing people are exposed to. Not because of the
+technical merit)
+
+Change to the branch that you want to improve (usually `develop`)
 and create a new branch
 
     hg branch <branchName>
 
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
-`hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`). Don't
-work on the `default` branch or any other branches that are not
-"yours". Such contributions will not be merged
+`hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
+details see [6.2.2](#orgf30c476) below). Don't work on the
+`default` branch or any other branches that are not "yours". Such
+contributions will not be merged
 
-Once development on the branch is finished export the relevant
-changesets with
+Once development on the branch is finished you can either issue a
+*Pull request* (if you forked on SourceForge or BitBucket) or
+export the relevant changesets with
 
     hg export <nodeID>
 
 (`nodeID` being the ids of "your" changesets) and send them to the
 maintainer (or attach them to a bug report on Manits). The changes
-will be reviewed and merged into the `default` branch (do not
-attempt to do this yourself). Patches generated with `hg export`
-make sure that all changes are attributed to the original developer
-(you).
+will be reviewed and merged into the `develop` branch (do not
+attempt to do this yourself) and subsequently into the
+release. Patches generated with `hg export` make sure that all
+changes are attributed to the original developer (you).
 
 An alternative would be the `bundle` command. Just do
 
@@ -1419,9 +1434,6 @@ An alternative would be the `bundle` command. Just do
 and then send the `bundlefile`. This will include **all** commits
 that are not in the upstream repository and will allow similar
 inclusion in the upstream as `export`.
-
-Once you have proven by successfully submitting changesets via `hg
-   export` you can ask for write access to the mercurial repository.
 
 Only if you got through Mercurial it can be ensured that your
 contribution is recognized (if you want to stay anonymous send
@@ -1454,6 +1466,8 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
+<a id="orgf30c476"></a>
+
 ### Repository organization
 
 The organization of the repository is according to the Driessen
@@ -1482,23 +1496,6 @@ Currently the main branches are:
     `swak4Foam`. If somebody wants to "inherit" this: contact the
     maintainer
 -   **develop:** Actual development branch
-
-
-### Distributed bug-tracking
-
-As an experimental feature distributed bug-tracking was introduced
-using the *Artemis*-extension for *Mercurial* (see
-<http://hg.mrzv.org/Artemis/>). An up-to-date version can be
-installed by
-
-    hg clone http://hg.mrzv.org/Artemis/
-
-somewhere and installing the plugin by editing `.hgrc`.
-
-This is **not** the official bug-tracker for `swak4Foam`. It is used
-for keeping track of new features that are to be introduced to
-`swak4Foam` and may be discontinued if the experiment proves to be
-unsuccessful.
 
 
 ### Maintaining feature and hotfix-branches
@@ -6636,6 +6633,11 @@ other distributions as well
 
 
 ### Documentation
+
+
+#### Adapted contributors section in the README
+
+Removed outdated information, updated links
 
 
 ### New features
