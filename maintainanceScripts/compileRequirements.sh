@@ -14,7 +14,9 @@ if [ -e $requirementsDir/bin/bison ];
 then
     echo "Bison already installed/compiled"
 else
-    bisonTarball=bison-3.0.4.tar.gz
+    BISONVER=3.4
+
+    bisonTarball=bison-$BISONVER.tar.gz
     if [ -e  $requirementsDir/sources/$bisonTarball ];
     then
 	echo "$bisonTarball already downloaded"
@@ -24,7 +26,7 @@ else
     echo "Untarring bison-sources"
     ( cd $requirementsDir/compilation; tar xzf $requirementsDir/sources/$bisonTarball )
 
-    ( cd $requirementsDir/compilation/bison-3.0.4 ; ./configure --prefix=$requirementsDir; make; make install )
+    ( cd $requirementsDir/compilation/bison-$BISONVER ; ./configure --prefix=$requirementsDir; make; make install )
 
 fi
 
