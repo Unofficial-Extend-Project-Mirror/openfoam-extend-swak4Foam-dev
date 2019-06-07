@@ -687,7 +687,7 @@ void generalInterpreterWrapper::dictionariesToInterpreterStructs() {
             ? obr_
             : obr_.time().lookupObject<objectRegistry>(regionName);
 
-        const dictionary &source=obr.lookupObject<dictionary>(dictName);
+        const dictionary &source=obr.lookupObject<IOdictionary>(dictName);
 
         insertDictionary(
             name,
