@@ -36,7 +36,7 @@ Contributors/Copyright:
 %skeleton "lalr1.cc"
 /* %require "2.1a" */
 %defines
-%define parser_class_name {FieldValueExpressionParser}
+%define api.parser.class {FieldValueExpressionParser}
 
 // make reentrant to allow sub-parsers
 // %define api.pure full
@@ -98,7 +98,7 @@ Contributors/Copyright:
 };
 
 %debug
-%error-verbose
+%define parse.error verbose
 
 %union
 {
