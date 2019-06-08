@@ -93,7 +93,7 @@
      To see which versions this release has been tested with see
      =Documentation/examplesCompatibilityMatrix.org=
    - the compiler generators =bison= and =flex=
-     - bison :: =swak4Foam= is known to work with =bison= version 3.0 and
+     - bison :: =swak4Foam= is known to work with =bison= version 3.3 and
                 higher.
      - flex :: since the introduction of the plugin functions at least
                a flex version of =2.5.33= is required (=2.5.35= is the
@@ -4240,6 +4240,10 @@ S_{expl} + S_{impl} T
 **** OpenFOAM+ v1906
      Adaptions supplied by Mark Olesen.
 *** Incompatibilities
+**** Bison older than version 3.3 no longer supported
+     The removal of warnings in biosn 3.4 meant that bison 3.2 and
+     older are no longr able to generate C++ sources from the grammar
+     files
 *** Bug fixes
 **** Compilation with =WM_LABEL_SIZE=64= for =foam-extend-4.1=
      Fix supplied by Danial Khazaei because compilation of =fe 4.1=
@@ -4247,6 +4251,12 @@ S_{expl} + S_{impl} T
      other distributions as well
 *** Internals (for developers)
 *** Infrastructure
+**** Support for =bison= 3.4
+     The grammars have been adapted to generate C++-sources without
+     warnings with bison 3.4. The script to compile requirements has
+     been modified to download and compile this version.
+
+     This breaks compatibility with bison 3.2 and older
 *** Documentation
 **** Adapted contributors section in the README
      Removed outdated information, updated links
