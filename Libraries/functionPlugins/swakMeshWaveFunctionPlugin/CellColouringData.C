@@ -118,10 +118,10 @@ namespace Foam {
     )
         {
             const cell &c=mesh.cells()[thisCellI];
-            bool found=false;
+            //            bool found=false;
             forAll(c,i) {
                 if(c[i]==neighbourFaceI) {
-                    found=true;
+                    //                    found=true;
                     if(colours_[i]>=0) {
                         FatalErrorIn("CellColouringData::updateCell")
                             << "Face " << i << " already coloured." << nl
