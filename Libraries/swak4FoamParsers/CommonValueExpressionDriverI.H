@@ -346,12 +346,15 @@ namespace Foam {
                 }
                 break;
             case NEW:
-                WarningIn("CommonValueExpressionDriver::updateSet")
-                    << "State NEW shouldn't exist"
-                        << endl;
             case MEMORY:
             case CACHE:
                 {
+                    if(origin==NEW) {
+                        WarningIn("CommonValueExpressionDriver::updateSet")
+                            << "State NEW shouldn't exist"
+                                << endl;
+                    }
+
                     word sName=name;
                     if(mesh.thisDb().foundObject<T>(name)) {
                         if(debug) {
@@ -380,6 +383,7 @@ namespace Foam {
                     << T::typeName << " " << name << " is invalid"
                         << endl
                         << exit(FatalError);
+                break;
             default:
                 if(debug) {
                     Pout << "Origin " << int(origin) << " not implemented"
