@@ -117,4 +117,7 @@ ifndef FOAM_DEV
   endif
 endif
 
+# Switch off warnings for the flex-stuff that can't be avoided
+SWAK_FLEX_NO_WARNING=-Wno-unused-function -Wno-old-style-cast
+
 # -----------------------------------------------------------------------------
