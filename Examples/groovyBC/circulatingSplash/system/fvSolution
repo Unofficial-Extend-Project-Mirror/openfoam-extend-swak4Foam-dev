@@ -21,7 +21,7 @@ solvers
         solver PCG;
         preconditioner
         {
-            preconditioner   GAMG
+            preconditioner   GAMG;
             tolerance        1e-3;
             relTol           0;
 
@@ -71,7 +71,7 @@ solvers
         solver PCG;
         preconditioner
         {
-            preconditioner   GAMG
+            preconditioner   GAMG;
             tolerance        1e-8;
             relTol           0;
 
