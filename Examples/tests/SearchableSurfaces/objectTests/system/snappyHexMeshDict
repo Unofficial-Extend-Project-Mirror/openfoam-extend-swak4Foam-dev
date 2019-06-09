@@ -33,6 +33,11 @@ geometry
     plane
     {
         type plane;
+        planeType pointAndNormal;
+        pointAndNormalDict {
+            basePoint (2 2 2);
+            normalVector (2 2 2);
+        }
         plane {
             planeType pointAndNormal;
             pointAndNormalDict {
