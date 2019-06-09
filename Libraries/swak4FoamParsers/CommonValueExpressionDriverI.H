@@ -1229,7 +1229,7 @@ namespace Foam {
         buff << l;
         std::string place=" ";
         std::string place2="-";
-        for(unsigned int i=0;i<l.begin.column;i++) {
+        for(unsigned int i=0;i<l.begin.column-1;i++) {
             place+=" ";
             place2+="-";
         }
