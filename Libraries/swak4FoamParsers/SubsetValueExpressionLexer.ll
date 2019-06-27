@@ -64,7 +64,7 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 %%
 
 %{
-    typedef parserSubset::SubsetValueExpressionParser::token token;
+    //    typedef parserSubset::SubsetValueExpressionParser::token token;
 
     yylloc->step ();
 
@@ -339,7 +339,7 @@ void SubsetValueExpressionDriver::scan_begin ()
     }
 
     yylex_init(&scanner_);
-    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    struct yyguts_t * yyg = static_cast<struct yyguts_t*>(scanner_);
     yy_flex_debug = traceScanning();
     /* bufferSubset= */ yy_scan_string(content().c_str(),scanner_);
 
@@ -381,7 +381,7 @@ void SubsetValueExpressionDriver::startEatCharacters()
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
 
-    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    struct yyguts_t * yyg = static_cast<struct yyguts_t*>(scanner_);
     BEGIN(parsedByOtherParser);
 }
 
@@ -393,7 +393,7 @@ void SubsetValueExpressionDriver::startVectorComponent()
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
 
-    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    struct yyguts_t * yyg = static_cast<struct yyguts_t*>(scanner_);
     BEGIN(vectorcomponent);
 }
 
@@ -405,6 +405,6 @@ void SubsetValueExpressionDriver::startTensorComponent()
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
 
-    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    struct yyguts_t * yyg = static_cast<struct yyguts_t*>(scanner_);
     BEGIN(tensorcomponent);
 }

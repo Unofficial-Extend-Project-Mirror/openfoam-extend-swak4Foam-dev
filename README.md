@@ -119,7 +119,7 @@ should compile the essential requirements before compiling
     To see which versions this release has been tested with see
     `Documentation/examplesCompatibilityMatrix.org`
 -   the compiler generators `bison` and `flex`
-    -   **bison:** `swak4Foam` is known to work with `bison` version 3.0 and
+    -   **bison:** `swak4Foam` is known to work with `bison` version 3.3 and
         higher.
     -   **flex:** since the introduction of the plugin functions at least
         a flex version of `2.5.33` is required (`2.5.35` is the
@@ -1410,7 +1410,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orgf30c476) below). Don't work on the
+details see [6.2.2](#org7c263d1) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1466,7 +1466,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orgf30c476"></a>
+<a id="org7c263d1"></a>
 
 ### Repository organization
 
@@ -6616,6 +6616,13 @@ Adaptions supplied by Mark Olesen.
 ### Incompatibilities
 
 
+#### Bison older than version 3.3 no longer supported
+
+The removal of warnings in biosn 3.4 meant that bison 3.2 and
+older are no longr able to generate C++ sources from the grammar
+files
+
+
 ### Bug fixes
 
 
@@ -6630,6 +6637,15 @@ other distributions as well
 
 
 ### Infrastructure
+
+
+#### Support for `bison` 3.4
+
+The grammars have been adapted to generate C++-sources without
+warnings with bison 3.4. The script to compile requirements has
+been modified to download and compile this version.
+
+This breaks compatibility with bison 3.2 and older
 
 
 ### Documentation

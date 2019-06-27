@@ -37,7 +37,7 @@ Contributors/Copyright:
 %skeleton "lalr1.cc" /* -*- C++ -*- */
 %require "3.0.4"
 %defines
-%define parser_class_name {RawFoamDictionaryParser}
+%define api.parser.class {RawFoamDictionaryParser}
 
 %define api.token.constructor
 %define api.value.type variant

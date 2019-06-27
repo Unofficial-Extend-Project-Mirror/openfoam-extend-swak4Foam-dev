@@ -226,7 +226,7 @@ namespace Foam {
 
         clearResult();
 
-        Type(single_)=val;
+        single_.set(val);
 
         valType_=pTraits<Type>::typeName;
         valPtr_=static_cast<void *>(new Field<Type>(1,val));

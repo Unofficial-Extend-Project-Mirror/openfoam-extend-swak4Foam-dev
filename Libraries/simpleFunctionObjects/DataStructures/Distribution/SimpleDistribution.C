@@ -837,8 +837,8 @@ void SimpleDistribution<Type>::writeRaw(const fileName& filePrefix) const
 
         OFstream os(filePrefix + '_' + pTraits<Type>::componentNames[cmpt]);
 
-        Pair<label> limits = validLimits(cmpt);
-        Pair<label> limits2 = Distribution<Type>::validLimits(cmpt);
+        // Pair<label> limits = validLimits(cmpt);
+        // Pair<label> limits2 = Distribution<Type>::validLimits(cmpt);
 
         os  << "# key raw";
         if(minimum_.size()>cmpt && maximum_.size()>cmpt) {

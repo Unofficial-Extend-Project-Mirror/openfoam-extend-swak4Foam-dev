@@ -329,6 +329,7 @@ void conditionDrivenWritingFunctionObject::writeSimple()
                 << "State 'startCooldown' should not be reached here"
                     << endl
                     << exit(FatalError);
+            break;
         default:
             FatalErrorIn("conditionDrivenWritingFunctionObject::write")
                 << "Unsupported state"

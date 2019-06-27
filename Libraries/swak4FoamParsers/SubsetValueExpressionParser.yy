@@ -34,7 +34,7 @@ Contributors/Copyright:
 %skeleton "lalr1.cc"
 /* %require "2.1a" */
 %defines
-%define parser_class_name {SubsetValueExpressionParser}
+%define api.parser.class {SubsetValueExpressionParser}
 
 %{
 #include <volFields.H>
@@ -76,7 +76,7 @@ Contributors/Copyright:
 };
 
 %debug
-%error-verbose
+%define parse.error verbose
 
 %union
 {
