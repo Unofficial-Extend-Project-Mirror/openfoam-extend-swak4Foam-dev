@@ -606,7 +606,7 @@ void FieldValueExpressionDriver::scan_begin ()
     }
 
     yylex_init(&scanner_);
-    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    struct yyguts_t * yyg = static_cast<struct yyguts_t*>(scanner_);
     yy_flex_debug = traceScanning();
     yy_scan_string(content().c_str(),scanner_);
 //    if (!(yyin = fopen (file.c_str (), "r")))
@@ -652,7 +652,7 @@ void FieldValueExpressionDriver::startEatCharacters()
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
 
-    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    struct yyguts_t * yyg = static_cast<struct yyguts_t*>(scanner_);
     BEGIN(parsedByOtherParser);
 }
 
@@ -664,7 +664,7 @@ void FieldValueExpressionDriver::startVectorComponent()
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
 
-    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    struct yyguts_t * yyg = static_cast<struct yyguts_t*>(scanner_);
     BEGIN(vectorcomponent);
 }
 
@@ -676,6 +676,6 @@ void FieldValueExpressionDriver::startTensorComponent()
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
 
-    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    struct yyguts_t * yyg = static_cast<struct yyguts_t*>(scanner_);
     BEGIN(tensorcomponent);
 }

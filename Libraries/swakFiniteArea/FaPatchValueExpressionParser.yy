@@ -34,7 +34,7 @@ Contributors/Copyright:
 %skeleton "lalr1.cc"
 /* %require "2.1a" */
 %defines
-%define parser_class_name {FaPatchValueExpressionParser}
+%define api.parser.class {FaPatchValueExpressionParser}
 
 %{
 #include "swak.H"
@@ -83,7 +83,7 @@ Contributors/Copyright:
 };
 
 %debug
-%error-verbose
+%define parse.error verbose
 
 %union
 {

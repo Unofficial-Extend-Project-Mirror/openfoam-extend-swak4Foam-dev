@@ -113,6 +113,11 @@ geometry
         rotateTo   (0.2 0.2 0.9);
         surface {
             type plane;
+            planeType pointAndNormal;
+            pointAndNormalDict {
+                basePoint (0 0 0);
+                normalVector (0 0 1);
+            }
             plane {
                 planeType pointAndNormal;
                 pointAndNormalDict {

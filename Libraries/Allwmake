@@ -30,12 +30,20 @@ else
 fi
 
 BISONVER=$(bison -V | head -n 1| tr ' ' '\n' | tail -n 1)
+BISONMAJORVER=$(echo $BISONVER | tr '.' '\n' | head -n 1 )
+BISONMINORVER=$(echo $BISONVER | tr '.' '\n' | head -n 2 | tail -n 1)
 
-echo "Bison is version $BISONVER"
+echo "Bison at $BISONPATH is version $BISONVER (Major $BISONMAJORVER Minor $BISONMINORVER)"
 
-if [[ $BISONVER < 3 ]]; then
-    echo "swak4Foam only confirmed to work with Bison >= 3"
-    echo "Consider running ./maintainanceScripts/compileRequirements.sh for a local bison-installation"
+if [[ $BISONMAJORVER -lt 3 || ( $BISONMAJORVER -eq 3 && $BISONMINORVER -lt 3 ) ]]; then
+    echo "swak4Foam only confirmed to work with Bison >= 3.3"
+    if [ -e ../privateRequirements/bin/bison ];
+    then
+        echo "There seems to be a private installation of bison that is outdated"
+        echo "Remove with 'rm privateRequirements/bin/bison' and trigger a full compilation with './AllwmakeAll'"
+    else
+        echo "Consider running ./maintainanceScripts/compileRequirements.sh for a local bison-installation or trigger a full compilation with './AllwmakeAll'"
+    fi
     exit 42
 fi
 

@@ -379,6 +379,12 @@ void pythonInterpreterWrapper::initEnvironment(const Time &t)
         "    return os.path.join(d,name)\n"
     );
 
+    if(fail) {
+        WarningInFunction
+            << "Adding functions makeDataDir etc failed"
+                << endl;
+    }
+
     releaseInterpreter();
 }
 

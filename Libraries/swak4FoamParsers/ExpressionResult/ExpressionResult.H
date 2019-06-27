@@ -93,6 +93,13 @@ class ExpressionResult
         symmTensor symmTensor_;
         sphericalTensor sphericalTensor_;
         SingleUnion() { scalar_=0; }  // Keep gcc happy
+
+        void set(const bool &s) { bool_=s; }
+        void set(const scalar &s) { scalar_=s; }
+        void set(const vector &s) { vector_=s; }
+        void set(const tensor &s) { tensor_=s; }
+        void set(const symmTensor &s) { symmTensor_=s; }
+        void set(const sphericalTensor &s) { sphericalTensor_=s; }
     } single_;
 
     //- alternative if anything different than a plain field should be stored

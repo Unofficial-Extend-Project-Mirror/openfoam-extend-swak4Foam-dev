@@ -155,7 +155,6 @@ bool stateMachineFvSolutionFvSchemesFunctionObject::triggerMachine(
     word &current
 )
 {
-    bool triggered=false;
     const StateMachine &m=StateMachine::machine(machine);
 
     const word &state=m.stateName(m.currentState());
