@@ -114,6 +114,9 @@ ifndef FOAM_DEV
     ifeq "4" "$(word 1, $(sort 4 $(WM_PROJECT_VERSION)))"
       THERMOPHYSICALFUNCTIONS_LIB=
     endif
+    ifeq "7" "$(word 1, $(sort 7 $(WM_PROJECT_VERSION)))"
+      RADIATION_INC=-I$(LIB_SRC)/radiationModels/lnInclude
+    endif
   endif
 endif
 
