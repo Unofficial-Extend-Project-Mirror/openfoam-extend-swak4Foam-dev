@@ -217,7 +217,7 @@ void groovyBCPointPatchField<Type>::write(Ostream& os) const
     mixedPointPatchFieldType::write(os);
     groovyBCCommon<Type>::write(os);
 
-    this->writeEntry("value", os);
+    writeEntry(os, "value", *this);
 
     driver_.writeCommon(os,this->debug_ || debug);
 }

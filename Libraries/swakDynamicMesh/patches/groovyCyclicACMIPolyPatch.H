@@ -47,13 +47,21 @@ Contributors/Copyright:
 #if defined(FOAM_HAS_ACMI_INTERFACE) && !defined(FOAM_OLD_AMI_ACMI)
 
 #include "cyclicACMIPolyPatch.H"
+#ifdef FOAM_AMIINTERPOLATION_NOT_PATCH2PATCH
+#include "AMIInterpolation.H"
+#else
 #include "AMIPatchToPatchInterpolation.H"
+#endif
 #include "polyBoundaryMesh.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+
+#ifdef FOAM_AMIINTERPOLATION_NOT_PATCH2PATCH
+    typedef AMIInterpolation AMIPatchToPatchInterpolation;
+#endif
 
 /*---------------------------------------------------------------------------*\
                      Class groovyCyclicACMIPolyPatch Declaration

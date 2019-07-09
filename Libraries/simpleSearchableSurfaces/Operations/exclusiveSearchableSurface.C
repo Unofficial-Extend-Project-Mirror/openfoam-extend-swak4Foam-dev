@@ -99,15 +99,15 @@ void Foam::exclusiveSearchableSurface::getVolumeType
     forAll(volType,i) {
         if
             (
-                ( inA[i]==INSIDE && inB[i]==OUTSIDE )
+                ( inA[i]==VOLTYPE_INSIDE && inB[i]==VOLTYPE_OUTSIDE )
                 ||
-                ( inA[i]==OUTSIDE && inB[i]==INSIDE )
+                ( inA[i]==VOLTYPE_OUTSIDE && inB[i]==VOLTYPE_INSIDE )
             ) {
-            volType[i]=INSIDE;
-        } else if( inA[i]==UNKNOWN || inB[i]==UNKNOWN) {
-            volType[i]=UNKNOWN;
+            volType[i]=VOLTYPE_INSIDE;
+        } else if( inA[i]==VOLTYPE_UNKNOWN || inB[i]==VOLTYPE_UNKNOWN) {
+            volType[i]=VOLTYPE_UNKNOWN;
         } else {
-            volType[i]=OUTSIDE;
+            volType[i]=VOLTYPE_OUTSIDE;
         }
     }
 }
@@ -119,7 +119,7 @@ bool Foam::exclusiveSearchableSurface::revertNormalA(const pointIndexHit& h) con
 
     b().getVolumeType(pt,inside);
 
-    return inside[0]==INSIDE;
+    return inside[0]==VOLTYPE_INSIDE;
 }
 
 bool Foam::exclusiveSearchableSurface::revertNormalB(const pointIndexHit& h) const
@@ -129,7 +129,7 @@ bool Foam::exclusiveSearchableSurface::revertNormalB(const pointIndexHit& h) con
 
     a().getVolumeType(pt,inside);
 
-    return inside[0]==INSIDE;
+    return inside[0]==VOLTYPE_INSIDE;
 }
 
 // ************************************************************************* //

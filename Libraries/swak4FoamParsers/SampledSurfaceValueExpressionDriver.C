@@ -49,6 +49,9 @@ word SampledSurfaceValueExpressionDriver::driverName_="surface";
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSurfaceValueExpressionDriver, dictionary, surface);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSurfaceValueExpressionDriver, idName, surface);
 
+#ifdef FOAM_HAS_SAMPLEDSURFACES_NAMESPACE
+#define sampledIsoSurface sampledSurfaces::isoSurface
+#endif
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

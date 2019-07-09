@@ -44,7 +44,7 @@ Contributors/Copyright:
 
 #include "runTimeSelectionTables.H"
 
-#include "radiationModel.H"
+#include "swakRadiation.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -64,9 +64,9 @@ class swakRadiationModelPluginFunction
     swakRadiationModelPluginFunction(const swakRadiationModelPluginFunction &);
 
 protected:
-    static const radiation::radiationModel &radiationInternal(const fvMesh &reg);
+    static const swakRadiationModel &radiationInternal(const fvMesh &reg);
 
-    const radiation::radiationModel &radiation();
+    const swakRadiationModel &radiation();
 
 public:
     swakRadiationModelPluginFunction(

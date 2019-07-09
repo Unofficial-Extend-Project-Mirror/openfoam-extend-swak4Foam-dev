@@ -402,7 +402,7 @@ void Foam::unitCylinderSearchableSurface::getVolumeType
 ) const
 {
     volType.setSize(points.size());
-    volType = INSIDE;
+    volType = VOLTYPE_INSIDE;
 
     forAll(points, pointI)
     {
@@ -416,11 +416,11 @@ void Foam::unitCylinderSearchableSurface::getVolumeType
             (pt.x()*pt.x() + pt.y()*pt.y()) > 1
         )
         {
-            volType[pointI] = OUTSIDE;
+            volType[pointI] = VOLTYPE_OUTSIDE;
         }
         else
         {
-            volType[pointI] = INSIDE;
+            volType[pointI] = VOLTYPE_INSIDE;
         }
     }
 }

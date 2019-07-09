@@ -69,19 +69,19 @@ swakRadiationModelPluginFunction::swakRadiationModelPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-const radiation::radiationModel &swakRadiationModelPluginFunction::radiationInternal(
+const swakRadiationModel &swakRadiationModelPluginFunction::radiationInternal(
     const fvMesh &reg
 )
 {
-    static HashPtrTable<radiation::radiationModel> radiation_;
+    static HashPtrTable<swakRadiationModel> radiation_;
 
-    if(reg.foundObject<radiation::radiationModel>("radiationProperties")) {
+    if(reg.foundObject<swakRadiationModel>("radiationProperties")) {
         if(debug) {
             Info << "swakRadiationModelPluginFunction::radiationInternal: "
                 << "already in memory" << endl;
         }
         // Somebody else already registered this
-        return reg.lookupObject<radiation::radiationModel>("radiationProperties");
+        return reg.lookupObject<swakRadiationModel>("radiationProperties");
     }
     if(!radiation_.found(reg.name())) {
         if(debug) {
@@ -92,7 +92,7 @@ const radiation::radiationModel &swakRadiationModelPluginFunction::radiationInte
         // Create it ourself because nobody registered it
         radiation_.set(
                 reg.name(),
-                radiation::radiationModel::New(
+                swakRadiationModel::New(
                     reg.lookupObject<volScalarField>("T")
                 ).ptr()
         );
@@ -105,7 +105,7 @@ const radiation::radiationModel &swakRadiationModelPluginFunction::radiationInte
     return *(radiation_[reg.name()]);
 }
 
-const radiation::radiationModel &swakRadiationModelPluginFunction::radiation()
+const swakRadiationModel &swakRadiationModelPluginFunction::radiation()
 {
     return radiationInternal(mesh());
 }

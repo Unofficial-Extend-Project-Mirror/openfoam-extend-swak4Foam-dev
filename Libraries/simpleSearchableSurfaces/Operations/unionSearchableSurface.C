@@ -107,12 +107,12 @@ void Foam::unionSearchableSurface::getVolumeType
     volType.setSize(points.size());
 
     forAll(volType,i) {
-        if( inA[i]==INSIDE || inB[i]==INSIDE ) {
-            volType[i]=INSIDE;
-        } else if( inA[i]==OUTSIDE && inB[i]==OUTSIDE ) {
-            volType[i]=OUTSIDE;
+        if( inA[i]==VOLTYPE_INSIDE || inB[i]==VOLTYPE_INSIDE ) {
+            volType[i]=VOLTYPE_INSIDE;
+        } else if( inA[i]==VOLTYPE_OUTSIDE && inB[i]==VOLTYPE_OUTSIDE ) {
+            volType[i]=VOLTYPE_OUTSIDE;
         } else {
-            volType[i]=UNKNOWN;
+            volType[i]=VOLTYPE_UNKNOWN;
         }
         if(debug) {
             Info << "Point: " << points[i] << " A: " << inA[i]

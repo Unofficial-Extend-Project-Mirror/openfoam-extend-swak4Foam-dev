@@ -39,6 +39,11 @@ Contributors/Copyright:
 
 #include "fvMesh.H"
 
+#ifdef FOAM_SOLVER_PERFORMANCE_NOT_MEMBER_OF_DATA
+#include "SolverPerformance.H"
+#include "Residuals.H"
+#endif
+
 #ifdef FOAM_LDUMATRIX_SOLVER_PERFORMANCE
 typedef Foam::lduMatrix::solverPerformance solverPerformance;
 #endif
@@ -83,11 +88,20 @@ void Foam::solverPerformanceToGlobalVariables::addFieldToData(const word &name)
 {
     Dbug << "Getting solver performance for " << name << endl;
 
+#ifdef FOAM_SOLVER_PERFORMANCE_NOT_MEMBER_OF_DATA
+    List<SolverPerformance<T> > perf(
+        Residuals<T>::field(
+            dynamicCast<const polyMesh&>(obr_),
+            name
+        )
+    );
+#else
     const data &theData=dynamicCast<const fvMesh&>(obr_);
     //    Info << theData.solverPerformanceDict() << endl;
     List<SolverPerformance<T> > perf(
         theData.solverPerformanceDict()[name]
     );
+#endif
 
     setValue(name+"_nrOfPerformances",scalar(perf.size()));
     if(perf.size()==0) {
