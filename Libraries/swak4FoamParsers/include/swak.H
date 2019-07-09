@@ -604,6 +604,10 @@ Contributors/Copyright:
 #define FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(7,0,0))
+#define FOAM_WRITEENTRY_NOT_MEMBER_OF_LIST
+#endif
+
 #include "swakVersion.H"
 #include "DebugOStream.H"
 #include "BackportMacros.H"
