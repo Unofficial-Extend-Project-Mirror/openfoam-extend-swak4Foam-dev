@@ -612,6 +612,10 @@ Contributors/Copyright:
 #define FOAM_HAS_SAMPLEDSURFACES_NAMESPACE
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(7,0,0))
+#define FOAM_SOLVER_PERFORMANCE_NOT_MEMBER_OF_DATA
+#endif
+
 #include "swakVersion.H"
 #include "DebugOStream.H"
 #include "BackportMacros.H"
