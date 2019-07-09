@@ -132,7 +132,7 @@ void Foam::groovyFixedNormalSlipFvPatchField<Type>::write(Ostream& os) const
 {
     fixedNormalSlipFvPatchField<Type>::write(os);
 
-    this->writeEntry("value", os);
+    writeEntry(os, "value", *this);
 
     os.writeKeyword("fixedValueExpression")
         << fixedValueExpression_ << token::END_STATEMENT << nl;
