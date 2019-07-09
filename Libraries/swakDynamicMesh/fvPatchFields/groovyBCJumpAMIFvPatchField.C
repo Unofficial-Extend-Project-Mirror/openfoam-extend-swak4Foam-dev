@@ -210,7 +210,11 @@ void groovyBCJumpAMIFvPatchField<Type>::write(Ostream& os) const
 
     driver_.writeCommon(os,debug);
 
+#ifdef FOAM_WRITEENTRY_NOT_MEMBER_OF_LIST
     writeEntry(os, "value", *this);
+#else
+    this->writeEntry("value",os);
+#endif
 }
 
 
