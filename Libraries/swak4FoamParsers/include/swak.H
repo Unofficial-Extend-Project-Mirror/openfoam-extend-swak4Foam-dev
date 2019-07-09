@@ -620,6 +620,10 @@ Contributors/Copyright:
 #define FOAM_WRITECONTROL_IN_TIME_CHANGED
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(7,0,0))
+#define FOAM_AMIINTERPOLATION_NOT_PATCH2PATCH
+#endif
+
 #include "swakVersion.H"
 #include "DebugOStream.H"
 #include "BackportMacros.H"
