@@ -1410,7 +1410,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org7c263d1) below). Don't work on the
+details see [6.2.2](#orgd91d02e) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1466,7 +1466,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org7c263d1"></a>
+<a id="orgd91d02e"></a>
 
 ### Repository organization
 
@@ -6611,6 +6611,11 @@ immersed boundary conditions in `foam-extend`
 #### OpenFOAM+ v1906
 
 Adaptions supplied by Mark Olesen.
+
+
+#### OpenFOAM 7
+
+Compiles. Not fully tested
 
 
 ### Incompatibilities
