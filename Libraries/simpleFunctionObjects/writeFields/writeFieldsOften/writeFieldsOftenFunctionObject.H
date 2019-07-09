@@ -61,6 +61,12 @@ Contributors/Copyright:
 #include "writeFieldsGeneralFunctionObject.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#ifdef FOAM_WRITECONTROL_IN_TIME_CHANGED
+typedef Foam::Time::writeControl TimeWriteControl;
+#else
+typedef Foam::Time::writeControls TimeWriteControl;
+#endif
+
 namespace Foam
 {
 
@@ -86,7 +92,7 @@ protected:
     virtual bool outputTime(const bool forceWrite);
 
     //- how writting is controlled
-    Time::writeControls writeControl_;
+    TimeWriteControl writeControl_;
 
     //- how often we write
     scalar writeInterval_;
