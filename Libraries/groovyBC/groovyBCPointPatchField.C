@@ -217,7 +217,11 @@ void groovyBCPointPatchField<Type>::write(Ostream& os) const
     mixedPointPatchFieldType::write(os);
     groovyBCCommon<Type>::write(os);
 
-    this->writeEntry("value", os);
+#ifdef FOAM_WRITEENTRY_NOT_MEMBER_OF_LIST
+    writeEntry(os, "value", *this);
+#else
+    this->writeEntry("value",os);
+#endif
 
     driver_.writeCommon(os,this->debug_ || debug);
 }

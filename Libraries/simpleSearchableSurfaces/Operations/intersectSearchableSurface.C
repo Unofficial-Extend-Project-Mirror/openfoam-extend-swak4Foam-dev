@@ -104,12 +104,12 @@ void Foam::intersectSearchableSurface::getVolumeType
     volType.setSize(points.size());
 
     forAll(volType,i) {
-        if( inA[i]==INSIDE && inB[i]==INSIDE ) {
-            volType[i]=INSIDE;
-        } else if( inA[i]==UNKNOWN || inB[i]==UNKNOWN) {
-            volType[i]=UNKNOWN;
+        if( inA[i]==VOLTYPE_INSIDE && inB[i]==VOLTYPE_INSIDE ) {
+            volType[i]=VOLTYPE_INSIDE;
+        } else if( inA[i]==VOLTYPE_UNKNOWN || inB[i]==VOLTYPE_UNKNOWN) {
+            volType[i]=VOLTYPE_UNKNOWN;
         } else {
-            volType[i]=OUTSIDE;
+            volType[i]=VOLTYPE_OUTSIDE;
         }
     }
 }

@@ -1903,15 +1903,35 @@ string CommonValueExpressionDriver::outputEntry()
 
     word rType=getResultType();
     if(rType==pTraits<scalar>::typeName) {
+#ifdef FOAM_WRITEENTRY_NOT_MEMBER_OF_LIST
+        writeEntry(o,result_.getResult<scalar>(true)());
+#else
         result_.getResult<scalar>(true)().writeEntry("",o);
+#endif
     } else if(rType==pTraits<vector>::typeName) {
+#ifdef FOAM_WRITEENTRY_NOT_MEMBER_OF_LIST
+        writeEntry(o,result_.getResult<vector>(true)());
+#else
         result_.getResult<vector>(true)().writeEntry("",o);
+#endif
     } else if(rType==pTraits<tensor>::typeName) {
+#ifdef FOAM_WRITEENTRY_NOT_MEMBER_OF_LIST
+        writeEntry(o,result_.getResult<tensor>(true)());
+#else
         result_.getResult<tensor>(true)().writeEntry("",o);
+#endif
     } else if(rType==pTraits<symmTensor>::typeName) {
+#ifdef FOAM_WRITEENTRY_NOT_MEMBER_OF_LIST
+        writeEntry(o,result_.getResult<symmTensor>(true)());
+#else
         result_.getResult<symmTensor>(true)().writeEntry("",o);
+#endif
     } else if(rType==pTraits<sphericalTensor>::typeName) {
+#ifdef FOAM_WRITEENTRY_NOT_MEMBER_OF_LIST
+        writeEntry(o,result_.getResult<sphericalTensor>(true)());
+#else
         result_.getResult<sphericalTensor>(true)().writeEntry("",o);
+#endif
     } else {
         o << "No implementation for " << rType << ";";
     }

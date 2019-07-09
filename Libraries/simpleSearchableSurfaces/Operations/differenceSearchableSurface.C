@@ -107,13 +107,13 @@ void Foam::differenceSearchableSurface::getVolumeType
     volType.setSize(points.size());
 
     forAll(volType,i) {
-        if( inA[i]==UNKNOWN || inB[i]==UNKNOWN ) {
-            volType[i]=UNKNOWN;
+        if( inA[i]==VOLTYPE_UNKNOWN || inB[i]==VOLTYPE_UNKNOWN ) {
+            volType[i]=VOLTYPE_UNKNOWN;
         }
-        if( inA[i]==INSIDE && inB[i]==OUTSIDE ) {
-            volType[i]=INSIDE;
+        if( inA[i]==VOLTYPE_INSIDE && inB[i]==VOLTYPE_OUTSIDE ) {
+            volType[i]=VOLTYPE_INSIDE;
         } else {
-            volType[i]=OUTSIDE;
+            volType[i]=VOLTYPE_OUTSIDE;
         }
     }
 }

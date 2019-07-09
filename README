@@ -4239,6 +4239,8 @@ S_{expl} + S_{impl} T
 *** New supported versions
 **** OpenFOAM+ v1906
      Adaptions supplied by Mark Olesen.
+**** OpenFOAM 7
+     Compiles. Not fully tested
 *** Incompatibilities
 **** Bison older than version 3.3 no longer supported
      The removal of warnings in biosn 3.4 meant that bison 3.2 and

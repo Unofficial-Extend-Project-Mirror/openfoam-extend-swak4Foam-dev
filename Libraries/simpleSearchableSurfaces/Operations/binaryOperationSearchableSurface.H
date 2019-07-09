@@ -243,7 +243,7 @@ public:
         //- What is type of points outside bounds
         virtual volumeType outsideVolumeType() const
         {
-            return volumeType::OUTSIDE;
+            return VOLTYPE_OUTSIDE;
         }
 
 

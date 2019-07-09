@@ -27,45 +27,28 @@ Class
 
 
 Description
-    Define types for searchableSurfaces that changed
+    Define radiation types that were renamed
 
 SourceFiles
 
 Contributors/Copyright:
-    2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef SwakSurfaceTypesMacroHeader_H
-#define SwakSurfaceTypesMacroHeader_H
+#ifndef SwakRadiationMacroHeader_H
+#define SwakRadiationMacroHeader_H
 
 #include "swak.H"
 
-#ifdef FOAM_VOLUMETYPE_IS_TYPE
+#include "radiationModel.H"
 
 #if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(7,0,0))
-#define FOAM_VOLUMETYPE_ENUM_LOWERCASE
-#endif
-
-#ifdef FOAM_VOLUMETYPE_ENUM_LOWERCASE
-    #define VOLTYPE_INSIDE volumeType::inside
-    #define VOLTYPE_OUTSIDE volumeType::outside
-    #define VOLTYPE_UNKNOWN volumeType::unknown
-    #define VOLTYPE_MIXED volumeType::mixed
+#define swakRadiationModel Foam::radiationModel
 #else
-    #define VOLTYPE_INSIDE volumeType::INSIDE
-    #define VOLTYPE_OUTSIDE volumeType::OUTSIDE
-    #define VOLTYPE_UNKNOWN volumeType::UNKNOWN
-    #define VOLTYPE_MIXED volumeType::MIXED
+#define swakRadiationModel Foam::radiation::radiationModel
 #endif
-
-#endif
-
-#if FOAM_VERSION4SWAK > VERSION_NR2(2,2) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)
-#define FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
-#endif
-
 
 #endif
 
