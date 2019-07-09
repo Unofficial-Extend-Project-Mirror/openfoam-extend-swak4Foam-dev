@@ -600,6 +600,10 @@ Contributors/Copyright:
 #define FOAM_TIME_HAS_SEPARATE_SETDELTAT_NOADJUST
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(7,0,0))
+#define FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+#endif
+
 #include "swakVersion.H"
 #include "DebugOStream.H"
 #include "BackportMacros.H"

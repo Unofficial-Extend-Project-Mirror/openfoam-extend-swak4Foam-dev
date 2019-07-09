@@ -4397,7 +4397,11 @@ psexp:  TOKEN_point '(' scalar ')'            {
         | psexp '*' psexp 		    {
             sameSize($1,$3);
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                $1->primitiveField() * $3->primitiveField()
+#else
                 $1->internalField() * $3->internalField()
+#endif
             ).ptr();
             delete $1; delete $3;
           }
@@ -4469,194 +4473,324 @@ psexp:  TOKEN_point '(' scalar ')'            {
             delete $1; delete $3;}
         | TOKEN_pow '(' psexp ',' scalar ')' {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::pow($3->primitiveField(),$5)()
+#else
                 Foam::pow($3->internalField(),$5)()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_pow '(' psexp ',' psexp ')' {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::pow($3->primitiveField(),$5->primitiveField())()
+#else
                 Foam::pow($3->internalField(),$5->internalField())()
+#endif
             ).ptr();
             delete $3; delete $5;
           }
         | TOKEN_log '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::log($3->primitiveField())()
+#else
                 Foam::log($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_exp '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::exp($3->primitiveField())()
+#else
                 Foam::exp($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_sqr '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::sqr($3->primitiveField())()
+#else
                 Foam::sqr($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_sqrt '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::sqrt($3->primitiveField())()
+#else
                 Foam::sqrt($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_sin '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::sin($3->primitiveField())()
+#else
                 Foam::sin($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_cos '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::cos($3->primitiveField())()
+#else
                 Foam::cos($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_tan '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::tan($3->primitiveField())()
+#else
                 Foam::tan($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_log10 '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::log10($3->primitiveField())()
+#else
                 Foam::log10($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_asin '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(Foam::asin(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                $3->primitiveField())()
+#else
                 $3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_acos '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::acos($3->primitiveField())()
+#else
                 Foam::acos($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_atan '(' psexp ')'            {
-            $$ = driver.makePointField<Foam::pointScalarField>(Foam::atan(
-                $3->internalField())()
+            $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::atan($3->primitiveField())()
+#else
+                Foam::atan($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_atan2 '(' psexp ',' psexp ')'  {
-            $$ = driver.makePointField<Foam::pointScalarField>(Foam::atan2(
-                $3->internalField(),$5->internalField())()
+            $$ = driver.makePointField<Foam::pointScalarField>(
+                Foam::atan2(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                    $3->primitiveField(),$5->primitiveField()
+#else
+                    $3->internalField(),$5->internalField()
+#endif
+                )()
             ).ptr();
             delete $3;
             delete $5;
           }
         | TOKEN_sinh '(' psexp ')'            {
-            $$ = driver.makePointField<Foam::pointScalarField>(Foam::sinh(
-                $3->internalField())()
+            $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::sinh($3->primitiveField())()
+#else
+                Foam::sinh($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_cosh '(' psexp ')'            {
-            $$ = driver.makePointField<Foam::pointScalarField>(Foam::cosh(
-                $3->internalField())()
+            $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::cosh($3->primitiveField())()
+#else
+                Foam::cosh($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_tanh '(' psexp ')'            {
-            $$ = driver.makePointField<Foam::pointScalarField>(Foam::tanh(
-                $3->internalField())()
+            $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::tanh($3->primitiveField())()
+#else
+                Foam::tanh($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_asinh '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::asinh($3->primitiveField())()
+#else
                 Foam::asinh($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_acosh '(' psexp ')'            {
-            $$ = driver.makePointField<Foam::pointScalarField>(Foam::acosh(
-                $3->internalField())()
+            $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::acosh($3->primitiveField())()
+#else
+                Foam::acosh($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_atanh '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::atanh($3->primitiveField())()
+#else
                 Foam::atanh($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_erf '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::erf($3->primitiveField())()
+#else
                 Foam::erf($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_erfc '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::erfc($3->primitiveField())()
+#else
                 Foam::erfc($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_lgamma '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::lgamma($3->primitiveField())()
+#else
                 Foam::lgamma($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_besselJ1 '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::j1($3->primitiveField())()
+#else
                 Foam::j1($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_besselJ0 '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::j0($3->primitiveField())()
+#else
                 Foam::j0($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_besselY0 '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::y0($3->primitiveField())()
+#else
                 Foam::y0($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_besselY1 '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::y1($3->primitiveField())()
+#else
                 Foam::y1($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_sign '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::sign($3->primitiveField())()
+#else
                 Foam::sign($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_pos '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::pos($3->primitiveField())()
+#else
                 Foam::pos($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_neg '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::neg($3->primitiveField())()
+#else
                 Foam::neg($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_min '(' psexp ',' psexp  ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::min($3->primitiveField(),$5->primitiveField())
+#else
                 Foam::min($3->internalField(),$5->internalField())
+#endif
             ).ptr();
             delete $3; delete $5;
           }
         | TOKEN_max '(' psexp ',' psexp  ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::max($3->primitiveField(),$5->primitiveField())
+#else
                 Foam::max($3->internalField(),$5->internalField())
+#endif
             ).ptr();
             delete $3; delete $5;
           }
@@ -4686,7 +4820,11 @@ psexp:  TOKEN_point '(' scalar ')'            {
           }
         | '-' psexp %prec TOKEN_NEG          {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                -$2->primitiveField()
+#else
                 -$2->internalField()
+#endif
             ).ptr();
             delete $2;
           }
@@ -4816,37 +4954,61 @@ psexp:  TOKEN_point '(' scalar ')'            {
           }
         | TOKEN_tr '(' ptexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::tr($3->primitiveField())()
+#else
                 Foam::tr($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_tr '(' pyexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::tr($3->primitiveField())()
+#else
                 Foam::tr($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_tr '(' phexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::tr($3->primitiveField())()
+#else
                 Foam::tr($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_det '(' ptexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::det($3->primitiveField())()
+#else
                 Foam::det($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_det '(' pyexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::det($3->primitiveField())()
+#else
                 Foam::det($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_det '(' phexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::det($3->primitiveField())()
+#else
                 Foam::det($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
@@ -4967,33 +5129,53 @@ pvexp:  pvector                            { $$ = $1; }
             delete $1; delete $3;}
         | '-' pvexp %prec TOKEN_NEG          {
             $$ = driver.makePointField<Foam::pointVectorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                -$2->primitiveField()
+#else
                 -$2->internalField()
+#endif
             ).ptr();
             delete $2;
           }
         | '*' ptexp %prec TOKEN_HODGE 	        {
             $$ = driver.makePointField<Foam::pointVectorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                *($2->primitiveField())
+#else
                 *($2->internalField())
+#endif
             ).ptr();
             delete $2;
           }
         | '*' pyexp %prec TOKEN_HODGE 	        {
             $$ = driver.makePointField<Foam::pointVectorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                *($2->primitiveField())
+#else
                 *($2->internalField())
+#endif
             ).ptr();
             delete $2;
           }
         | '(' pvexp ')'		           { $$ = $2; }
         | TOKEN_eigenValues '(' ptexp ')'       {
             $$ = driver.makePointField<Foam::pointVectorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::eigenValues($3->primitiveField())
+#else
                 Foam::eigenValues($3->internalField())
+#endif
             ).ptr();
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
         | TOKEN_eigenValues '(' pyexp ')'       {
             $$ = driver.makePointField<Foam::pointVectorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::eigenValues($3->primitiveField())
+#else
                 Foam::eigenValues($3->internalField())
+#endif
             ).ptr();
             delete $3;
             driver.setCalculatedPatches(*$$);
@@ -5058,7 +5240,11 @@ pvexp:  pvector                            { $$ = $1; }
         | TOKEN_min '(' pvexp ',' pvexp  ')'            {
             $$ = driver.makePointField<Foam::pointVectorField>(
                 Foam::min(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                    $3->primitiveField(),$5->primitiveField()
+#else
                     $3->internalField(),$5->internalField()
+#endif
                 )
             ).ptr();
             delete $3; delete $5;
@@ -5066,7 +5252,11 @@ pvexp:  pvector                            { $$ = $1; }
         | TOKEN_max '(' pvexp ',' pvexp  ')'            {
             $$ = driver.makePointField<Foam::pointVectorField>(
                 Foam::max(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                    $3->primitiveField(),$5->primitiveField()
+#else
                     $3->internalField(),$5->internalField()
+#endif
                 )
             ).ptr();
             delete $3; delete $5;
@@ -5317,7 +5507,11 @@ ptexp:   ptensor                  { $$ = $1; }
           }
         | '-' ptexp %prec TOKEN_NEG          {
             $$ = driver.makePointField<Foam::pointTensorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                -$2->primitiveField()
+#else
                 -$2->internalField()
+#endif
             ).ptr();
             delete $2;
           }
@@ -5384,7 +5578,11 @@ ptexp:   ptensor                  { $$ = $1; }
         | TOKEN_min '(' ptexp ',' ptexp  ')'            {
             $$ = driver.makePointField<Foam::pointTensorField>(
                 Foam::min(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                    $3->primitiveField(),$5->primitiveField()
+#else
                     $3->internalField(),$5->internalField()
+#endif
                 )
             ).ptr();
             delete $3; delete $5;
@@ -5392,7 +5590,11 @@ ptexp:   ptensor                  { $$ = $1; }
         | TOKEN_max '(' ptexp ',' ptexp  ')'            {
             $$ = driver.makePointField<Foam::pointTensorField>(
                 Foam::max(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                    $3->primitiveField(),$5->primitiveField()
+#else
                     $3->internalField(),$5->internalField()
+#endif
                 )
             ).ptr();
             delete $3; delete $5;
@@ -5559,7 +5761,11 @@ pyexp:   psymmTensor                  { $$ = $1; }
           }
         | '-' pyexp %prec TOKEN_NEG          {
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                -$2->primitiveField()
+#else
                 -$2->internalField()
+#endif
             ).ptr();
             delete $2;
           }
@@ -5567,31 +5773,51 @@ pyexp:   psymmTensor                  { $$ = $1; }
           }
         | TOKEN_symm '(' ptexp ')'            {
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::symm($3->primitiveField())()
+#else
                 Foam::symm($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_symm '(' pyexp ')'            {
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::symm($3->primitiveField())()
+#else
                 Foam::symm($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_twoSymm '(' ptexp ')'            {
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::twoSymm($3->primitiveField())()
+#else
                 Foam::twoSymm($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_twoSymm '(' pyexp ')'            {
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::twoSymm($3->primitiveField())()
+#else
                 Foam::twoSymm($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_inv '(' pyexp ')'            {
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::inv($3->primitiveField())()
+#else
                 Foam::inv($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
@@ -5605,19 +5831,31 @@ pyexp:   psymmTensor                  { $$ = $1; }
           }
         | TOKEN_dev '(' pyexp ')'            {
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::dev($3->primitiveField())()
+#else
                 Foam::dev($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_dev2 '(' pyexp ')'            {
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::dev2($3->primitiveField())()
+#else
                 Foam::dev2($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_sqr '(' pvexp ')'            {
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::sqr($3->primitiveField())()
+#else
                 Foam::sqr($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
@@ -5637,14 +5875,22 @@ pyexp:   psymmTensor                  { $$ = $1; }
           }
         | TOKEN_min '(' pyexp ',' pyexp  ')'            {
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::min($3->primitiveField(),$5->primitiveField())
+#else
                 Foam::min($3->internalField(),$5->internalField())
+#endif
             ).ptr();
             delete $3; delete $5;
           }
         | TOKEN_max '(' pyexp ',' pyexp  ')'            {
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
                 Foam::max(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                    $3->primitiveField(),$5->primitiveField()
+#else
                     $3->internalField(),$5->internalField()
+#endif
                 )
             ).ptr();
             delete $3; delete $5;
@@ -5751,32 +5997,52 @@ phexp:   psphericalTensor                  { $$ = $1; }
           }
         | '-' phexp %prec TOKEN_NEG          {
             $$ = driver.makePointField<Foam::pointSphericalTensorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                -$2->primitiveField()
+#else
                 -$2->internalField()
+#endif
             ).ptr();
             delete $2;
           }
         | '(' phexp ')'		        { $$ = $2; }
         | TOKEN_sph '(' ptexp ')'              {
             $$ = driver.makePointField<Foam::pointSphericalTensorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::sph($3->primitiveField())
+#else
                 Foam::sph($3->internalField())
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_sph '(' pyexp ')'              {
             $$ = driver.makePointField<Foam::pointSphericalTensorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::sph($3->primitiveField())
+#else
                 Foam::sph($3->internalField())
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_sph '(' phexp ')'              {
             $$ = driver.makePointField<Foam::pointSphericalTensorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::sph($3->primitiveField())
+#else
                 Foam::sph($3->internalField())
+#endif
             ).ptr();
             delete $3;
           }
         | TOKEN_inv '(' phexp ')'            {
             $$ = driver.makePointField<Foam::pointSphericalTensorField>(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                Foam::inv($3->primitiveField())()
+#else
                 Foam::inv($3->internalField())()
+#endif
             ).ptr();
             delete $3;
           }
@@ -5797,7 +6063,11 @@ phexp:   psphericalTensor                  { $$ = $1; }
         | TOKEN_min '(' phexp ',' phexp  ')'            {
             $$ = driver.makePointField<Foam::pointSphericalTensorField>(
                 Foam::min(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                    $3->primitiveField(),$5->primitiveField()
+#else
                     $3->internalField(),$5->internalField()
+#endif
                 )
             ).ptr();
             delete $3; delete $5;
@@ -5805,7 +6075,11 @@ phexp:   psphericalTensor                  { $$ = $1; }
         | TOKEN_max '(' phexp ',' phexp  ')'            {
             $$ = driver.makePointField<Foam::pointSphericalTensorField>(
                 Foam::max(
+#ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
+                    $3->primitiveField(),$5->primitiveField()
+#else
                     $3->internalField(),$5->internalField()
+#endif
                 )
             ).ptr();
             delete $3; delete $5;
