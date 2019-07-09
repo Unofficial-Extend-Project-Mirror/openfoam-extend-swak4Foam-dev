@@ -823,7 +823,7 @@ void  Foam::binaryOperationSearchableSurface::inside
 
     forAll(vol,i) {
         //        in[i]=(vol[i]==INSIDE || vol[i]==UNKNOWN);
-        in[i]=(vol[i]==INSIDE);
+        in[i]=(vol[i]==VOLTYPE_INSIDE);
     }
 
     if(debug) {
@@ -833,13 +833,13 @@ void  Foam::binaryOperationSearchableSurface::inside
                 cntIn++;
             }
             switch(vol[i]) {
-                case INSIDE:
+                case VOLTYPE_INSIDE:
                     cntInside++; break;
-                case OUTSIDE:
+                case VOLTYPE_OUTSIDE:
                     cntOutside++; break;
-                case MIXED:
+                case VOLTYPE_MIXED:
                     cntMixed++; break;
-                case UNKNOWN:
+                case VOLTYPE_UNKNOWN:
                     cntUnknown++; break;
             }
         }

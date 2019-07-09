@@ -116,7 +116,7 @@ public:
 #ifdef FOAM_SEARCHABLE_SURFACE_HAS_OUTSIDEVOLUMETYPE
             return delegate().outsideVolumeType();
 #else
-            return volumeType::UNKNOWN;
+            return VOLTYPE_UNKNOWN;
 #endif
         }
 

@@ -82,10 +82,10 @@ void Foam::invertSearchableSurface::getVolumeType
         );
 
     forAll(volType,i) {
-        if(volType[i]==INSIDE) {
-            volType[i]=OUTSIDE;
-        } else if(volType[i]==OUTSIDE) {
-            volType[i]=INSIDE;
+        if(volType[i]==VOLTYPE_INSIDE) {
+            volType[i]=VOLTYPE_OUTSIDE;
+        } else if(volType[i]==VOLTYPE_OUTSIDE) {
+            volType[i]=VOLTYPE_INSIDE;
         }
     }
 }

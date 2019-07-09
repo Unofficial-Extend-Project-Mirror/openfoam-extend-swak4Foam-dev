@@ -44,16 +44,28 @@ Contributors/Copyright:
 
 #ifdef FOAM_VOLUMETYPE_IS_TYPE
 
-#define INSIDE volumeType::INSIDE
-#define OUTSIDE volumeType::OUTSIDE
-#define UNKNOWN volumeType::UNKNOWN
-#define MIXED volumeType::MIXED
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(7,0,0))
+#define FOAM_VOLUMETYPE_ENUM_LOWERCASE
+#endif
+
+#ifdef FOAM_VOLUMETYPE_ENUM_LOWERCASE
+    #define VOLTYPE_INSIDE volumeType::inside
+    #define VOLTYPE_OUTSIDE volumeType::outside
+    #define VOLTYPE_UNKNOWN volumeType::unknown
+    #define VOLTYPE_MIXED volumeType::mixed
+#else
+    #define VOLTYPE_INSIDE volumeType::INSIDE
+    #define VOLTYPE_OUTSIDE volumeType::OUTSIDE
+    #define VOLTYPE_UNKNOWN volumeType::UNKNOWN
+    #define VOLTYPE_MIXED volumeType::MIXED
+#endif
 
 #endif
 
 #if FOAM_VERSION4SWAK > VERSION_NR2(2,2) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)
 #define FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
 #endif
+
 
 #endif
 

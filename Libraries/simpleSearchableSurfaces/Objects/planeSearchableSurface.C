@@ -214,7 +214,7 @@ void Foam::planeSearchableSurface::getVolumeType
 ) const
 {
     volType.setSize(points.size());
-    volType = INSIDE;
+    volType = VOLTYPE_INSIDE;
 
     forAll(points, pointI)
     {
@@ -222,11 +222,11 @@ void Foam::planeSearchableSurface::getVolumeType
 
         if ( ((pt - plane_.refPoint()) & plane_.normal()) < 0 )
         {
-            volType[pointI] = INSIDE;
+            volType[pointI] = VOLTYPE_INSIDE;
         }
         else
         {
-            volType[pointI] = OUTSIDE;
+            volType[pointI] = VOLTYPE_OUTSIDE;
         }
     }
 }
