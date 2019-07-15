@@ -809,6 +809,14 @@ The old `groovyBC`-Demos and newer cases that use `groovyBC`
     the `groovyBCJump`-condition
 
 
+#### nonBreakingDam
+
+-   **Solver:** interFoam
+-   **Preparation:** run `pyFoamPrepareCase.py`
+-   **Description:** OpenFOAM macro-expansion inside of expression
+    strings
+
+
 ### FunkyDoCalc
 
 Example dictionaries for `funkyDoCalc`
@@ -1410,7 +1418,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orgd91d02e) below). Don't work on the
+details see [6.2.2](#org926bd54) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1466,7 +1474,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orgd91d02e"></a>
+<a id="org926bd54"></a>
 
 ### Repository organization
 
@@ -6668,3 +6676,9 @@ Removed outdated information, updated links
 
 
 ### Examples
+
+
+#### `groovyBC/nonBreakingDam` to demonstrate macro expansion
+
+This example demonstrates OpenFOAM macro-expansion inside of
+expression strings

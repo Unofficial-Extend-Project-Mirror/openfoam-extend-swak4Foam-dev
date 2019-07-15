@@ -51,6 +51,7 @@
   | groovyBC/fillingTheDam                                      | \checkmark | \sad       | \checkmark | \checkmark |
   | groovyBC/jumpChannel                                        | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/movingConeDistorted                                | \checkmark | \checkmark | \checkmark | \checkmark |
+  | groovyBC/nonBreakingDam                                     |            |            | \checkmark     |            |
   | groovyBC/pulsedPitzDaily                                    | \checkmark | \sad       | \checkmark | \checkmark |
   | groovyBC/wobbler                                            | \checkmark | \checkmark | \checkmark | \checkmark |
   | ImmersedBC/pitzDailyImmersed                                | \dagger    | \checkmark | \dagger    | \dagger    |
@@ -82,7 +83,7 @@
   | tests/languageIntegration/luaIntegration                    | bug        | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/pythonIntegration                 | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/python3Integration                | \checkmark | \checkmark | \sad       | \checkmark |
-  | tests/mappingChannels                             |            |            | \checkmark |            |
+  | tests/mappingChannels                                       |            |            | \checkmark |            |
   | tests/mappingChannelsNonUniform                             |            |            | \checkmark |            |
   | tests/SearchableSurfaces/objectsTest                        | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/SearchableSurfaces/operationsTest                     | \partial   | \checkmark | \checkmark | \partial   |

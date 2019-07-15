@@ -578,6 +578,11 @@ S_{expl} + S_{impl} T
      - Preparation :: run =pyFoamPrepareCase.py=
      - Description :: Demonstrates =groovyBC= on cyclic patches and
                       the =groovyBCJump=-condition
+**** nonBreakingDam
+     - Solver :: interFoam
+     - Preparation :: run =pyFoamPrepareCase.py=
+     - Description :: OpenFOAM macro-expansion inside of expression
+                      strings
 *** FunkyDoCalc
     Example dictionaries for =funkyDoCalc=
 *** FunkySetFields
@@ -4265,3 +4270,6 @@ S_{expl} + S_{impl} T
 *** New features
 *** Enhancements
 *** Examples
+**** =groovyBC/nonBreakingDam= to demonstrate macro expansion
+     This example demonstrates OpenFOAM macro-expansion inside of
+     expression strings
