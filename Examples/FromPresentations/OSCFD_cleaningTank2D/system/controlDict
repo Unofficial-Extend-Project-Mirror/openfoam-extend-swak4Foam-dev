@@ -76,14 +76,17 @@ functions {
             closed {
                 valueType scalar;
                 value 0;
+                isSingleValue yes;
             }
             airReachedOutletTime {
                 valueType scalar;
                 value -1;
+                isSingleValue yes;
             }
             shutdownTime {
                 valueType scalar;
                 value 1;
+                isSingleValue yes;
             }
         }
     }
@@ -93,6 +96,9 @@ functions {
         expression "1*alpha1";
         fieldName fraction;
         autowrite true;
+        aliases {
+            alpha1 alpha.water;
+        }
     }
     velocity {
         // paraview can't read the delayed variables stuff
@@ -150,6 +156,7 @@ functions {
             min
             max
         );
+        interpolationType cellPoint;
     }
     printStateSensor {
         type swakExpression;
@@ -163,6 +170,9 @@ functions {
             outletState
         );
         verbose true;
+        aliases {
+            alpha1 alpha.water;
+        }
     }
     openIfSensorReached {
         type calculateGlobalVariables;
@@ -184,10 +194,13 @@ functions {
         variables (
             "state=average(alpha1);"
             "thresA=0.9;"
-            "opening=(closed>0.5 && state>thresA)?1:0;"
-            "closed=(opening>0.5) ? 0 : closed;"
-            "airReachedOutletTime=(opening>0.5) ? -1 : airReachedOutletTime;"
+            "opening=average((closed>0.5 && state>thresA) ? 1 : 0);"
+            "closed=average((opening>0.5) ? 0 : closed);"
+            "airReachedOutletTime=average((opening>0.5) ? -1 : airReachedOutletTime);"
         );
+        aliases {
+            alpha1 alpha.water;
+        }
     }
     closeIfBottomReached {
         type calculateGlobalVariables;
@@ -207,9 +220,10 @@ functions {
             "reached=(closed<0.5 && minHeight<thresY && airReachedOutletTime<0)?1:0;"
             "closing=(airReachedOutletTime>=0 && (airReachedOutletTime+shutdownTime)<time())?1:0;"
             "airReachedOutletTime=reached>0.5 ? time() : airReachedOutletTime;"
-            "closed=closing>0.5 ? 1 : closed;"
+            "closed=average(closing>0.5 ? 1 : closed);"
             "airReachedOutletTime=closing>0.5 ? -1 : airReachedOutletTime;"
         );
+        interpolationType cellPoint;
     }
     muField {
         // paraview can't read the delayed variables stuff
@@ -244,6 +258,9 @@ functions {
         accumulations (
             average
         );
+        aliases {
+            alpha1 alpha.water;
+        }
     }
     outVelocity {
         type patchExpression;
@@ -298,6 +315,9 @@ functions {
 
         expression "0";
         mask "alpha1<0.01";
+        aliases {
+            alpha1 alpha.water;
+        }
     }
     tracerFraction {
         type swakExpression;
@@ -319,6 +339,9 @@ functions {
         variables (
             "sumAlpha=sum(vol()*alpha1);"
         );
+        aliases {
+            alpha1 alpha.water;
+        }
     }
 };
 

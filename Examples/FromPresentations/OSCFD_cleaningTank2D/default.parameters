@@ -1,0 +1,24 @@
+// -*- c++ -*-
+
+mesh {
+    description "Meshing parameters";
+    values {
+        dx {
+            default 0.5;
+            description "Meshing size";
+        }
+    }
+}
+
+geometry {
+    description "Geometry";
+
+    values {
+        hIn 10;
+
+        inY 5;
+        channelH 5;
+
+        outSize 5;
+    }
+}

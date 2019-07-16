@@ -97,6 +97,8 @@ subModels
 
     surfaceFilmModel none;
 
+    stochasticCollisionModel none;
+
     particleForces
     {
         gravity         on;
@@ -205,21 +207,27 @@ cloudFunctions
 {
     patchPostProcessing
     {
+        type patchPostProcessing;
         maxStoredParcels 10000;
         patches ( outlet atmosphere inlet );
     }
     particleTracks {
+        type particleTracks;
         trackInterval 10;
         maxSamples 10000;
         resetOnWrite true;
     }
     voidFraction {
+        type voidFraction;
     }
     particleTrap {
+        type particleTrap;
         alphaName trap;
         threshold 0.5;
     }
     particleErosion {
+        type particleErosion;
+
         p 2.7e9;
         patches (
             wall

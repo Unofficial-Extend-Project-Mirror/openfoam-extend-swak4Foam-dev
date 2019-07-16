@@ -9,8 +9,8 @@ variables (
     "volFlow=sum(targetVelIn*area());"
     "volFlow=mag(volFlow)<1e-15 ? 1e-15 : volFlow;"
     "flowFraction=outflow>1e-15 ? outflow/volFlow : 0;"
-    "fraction=max(minFrac,flowFraction);"
-    "fillHeight=minHeight+fraction*(maxHeight-minHeight);"
+    "fractionVar=max(minFrac,flowFraction);"
+    "fillHeight=minHeight+fractionVar*(maxHeight-minHeight);"
     "filled=pos().y<=fillHeight ? 1 : 0;"
     "filledArea=sum(filled*area());"
     "velIn=filled>0.5 ? outflow/max(filledArea,1e-15) : 0;"
@@ -25,3 +25,7 @@ delayedVariables (
         startupValue "0";
     }
 );
+
+aliases {
+    alpha1 alpha.water;
+}
