@@ -42,6 +42,7 @@ solution
         T               cell;
         Cp              cell;
         p               cell;
+        DUcDt           cell;
     }
 
     integrationSchemes
@@ -107,6 +108,7 @@ subModels
         // };
         sphereDrag;
         // virtualMass     off;
+
         pressureGradient {
             U wallDist;
         };
@@ -150,12 +152,19 @@ subModels
 
     patchInjectionCoeffs
     {
+        type patchInjection;
         patchName atmosphere;
+        patch $patchName;
         U0              ( 0 -1 0 );
 
         $ConeInjectionCoeffs;
     }
 
+    injectionModels {
+        model1 {
+            $...patchInjectionCoeffs;
+        }
+    }
     reboundCoeffs
     {
         UFactor 1.1;
@@ -223,6 +232,7 @@ cloudFunctions
     particleTrap {
         type particleTrap;
         alphaName trap;
+        alpha $alphaName;
         threshold 0.5;
     }
     particleErosion {

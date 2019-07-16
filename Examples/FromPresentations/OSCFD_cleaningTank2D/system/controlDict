@@ -17,7 +17,7 @@ FoamFile
 
 application     interFoam;
 
-startFrom       startTime;
+startFrom       latestTime;
 
 startTime       0;
 
@@ -117,6 +117,7 @@ functions {
         expression "dist()<dCut ? strength*grad(dist())*(dCut-dist())/dCut : vector(0,0,0)";
         fieldName wallDist;
         autowrite true;
+        dimensions [0 1 -1 0 0 0 0];
     }
     createInterface
     {
@@ -127,9 +128,12 @@ functions {
         surface {
             type isoSurfaceCell;
             isoField fraction; // use instead of alpha1 to avoid surface at outlet
-            isoValue 0.5;
+            isoValue 0.1;
             interpolate true;
         }
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     createMeasurment
     {
@@ -144,6 +148,9 @@ functions {
                 (0.45 0.1 0.025)
             );
         }
+        writeSetOnConstruction true;
+        autoWriteSet true;
+        setFormat vtk;
     }
     height
     {
@@ -155,6 +162,7 @@ functions {
         accumulations (
             min
             max
+            size
         );
         interpolationType cellPoint;
     }
@@ -164,6 +172,7 @@ functions {
         setName sensor;
         expression "alpha1";
         accumulations (
+            size
             average
         );
         globalScopes (
@@ -194,9 +203,9 @@ functions {
         variables (
             "state=average(alpha1);"
             "thresA=0.9;"
-            "opening=average((closed>0.5 && state>thresA) ? 1 : 0);"
-            "closed=average((opening>0.5) ? 0 : closed);"
-            "airReachedOutletTime=average((opening>0.5) ? -1 : airReachedOutletTime);"
+            "opening=(closed>0.5 && state>thresA) ? 1 : 0;"
+            "closed=(opening>0.5) ? 0 : closed;"
+            "airReachedOutletTime=(opening>0.5) ? -1 : average(airReachedOutletTime);"
         );
         aliases {
             alpha1 alpha.water;
@@ -220,7 +229,7 @@ functions {
             "reached=(closed<0.5 && minHeight<thresY && airReachedOutletTime<0)?1:0;"
             "closing=(airReachedOutletTime>=0 && (airReachedOutletTime+shutdownTime)<time())?1:0;"
             "airReachedOutletTime=reached>0.5 ? time() : airReachedOutletTime;"
-            "closed=average(closing>0.5 ? 1 : closed);"
+            "closed=closing>0.5 ? 1 : closed;"
             "airReachedOutletTime=closing>0.5 ? -1 : airReachedOutletTime;"
         );
         interpolationType cellPoint;
@@ -245,7 +254,7 @@ functions {
     }
     printStateWaitingForShut {
         $printStateSensor;
-        expression "airReachedOutletTime>=0 ? 1 : 0";
+        expression "average(airReachedOutletTime)>=0 ? 1 : 0";
     }
     patchFlows {
         type patchExpression;
