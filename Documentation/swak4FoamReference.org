@@ -154,19 +154,19 @@ hide circle
 
   #+CAPTION: Selection names for the parsers
   #+LABEL: tab:selectionNames
-  | name              | Description                                     |
-  |-------------------+-------------------------------------------------|
-  | =internalField=   | Calculation on the internal values of a field   |
-  | =patch=           | Calculation on a boundary patch                 |
-  | =faceZone=        | On a =faceZone= of the mesh                     |
-  | =faceSet=         | On a =faceSet=                                  |
-  | =cellZone=        | Calculation on a =cellZone=                     |
-  | =cellSet=         | Set of cells                                    |
-  | =set=             | Calculation on a =sampledSet=                   |
-  | =surface=         | Calculation on a =sampledSurface=               |
-  | =cloud=           | Calculation on a cloud of lagrangian particles  |
-  | =internalFaField= | Internal values of a FAM-field (=1.6-ext= only) |
-  | =faPatch=         | Boundary patch of a FAM-field (=1.6-ext= only)  |
+  | name              | Description                                    |
+  |-------------------+------------------------------------------------|
+  | =internalField=   | Calculation on the internal values of a field  |
+  | =patch=           | Calculation on a boundary patch                |
+  | =faceZone=        | On a =faceZone= of the mesh                    |
+  | =faceSet=         | On a =faceSet=                                 |
+  | =cellZone=        | Calculation on a =cellZone=                    |
+  | =cellSet=         | Set of cells                                   |
+  | =set=             | Calculation on a =sampledSet=                  |
+  | =surface=         | Calculation on a =sampledSurface=              |
+  | =cloud=           | Calculation on a cloud of lagrangian particles |
+  | =internalFaField= | Internal values of a FAM-field (not all forks) |
+  | =faPatch=         | Boundary patch of a FAM-field (not all forks)  |
 
   In principle new parsers for different entities can be implemented
   and selected at run-time (as for instance are the /FAM/-parsers

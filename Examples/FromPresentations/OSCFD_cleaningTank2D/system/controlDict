@@ -57,6 +57,7 @@ libs (
     "libsimpleSwakFunctionObjects.so"
     "libswakFunctionObjects.so"
     "libsimpleLagrangianFunctionObjects.so"
+    "libswakCloudFunctionObjects.so"
 );
 
 functions {
@@ -109,6 +110,7 @@ functions {
     }
     wallRepell {
         type expressionField;
+
         //        expression "grad(dist())";
         variables (
             "dCut=0.02;"
@@ -235,7 +237,6 @@ functions {
         interpolationType cellPoint;
     }
     muField {
-        // paraview can't read the delayed variables stuff
         type expressionField;
         expression "nu*rho";
         fieldName muField;
@@ -247,6 +248,19 @@ functions {
         rhoName rho;
         UName U;
         muName muField;
+    }
+    dirtHeight {
+        type swakExpression;
+        accumulations (
+            min
+            average
+            weightedAverage
+            max
+        );
+        verbose true;
+        valueType cloud;
+        expression "pos().y";
+        cloudName dirt;
     }
     printStateClosed {
         $printStateSensor;
@@ -353,5 +367,13 @@ functions {
         }
     }
 };
+
+profiling
+{
+    active      true;
+    cpuInfo     true;
+    memInfo     false;
+    sysInfo     true;
+}
 
 // ************************************************************************* //

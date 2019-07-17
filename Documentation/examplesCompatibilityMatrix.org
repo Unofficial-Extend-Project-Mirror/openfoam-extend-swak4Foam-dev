@@ -41,7 +41,7 @@
   | DynamicMesh/switchedInletACMI2D                             | \checkmark | \dagger    | \checkmark | \sad       |
   | DynamicMesh/switchedTJunction                               | \sad       | \dagger    | \checkmark | \sad       |
   | FiniteArea/planeTransport                                   | \dagger    | \checkmark | \checkmark | \dagger    |
-  | FromPresentations/OSCFD_cleaningTank2D                      |            |            | \partial   |            |
+  | FromPresentations/OSCFD_cleaningTank2D                      |            |            | \checkmark |            |
   | functionPlugins/chemPluginCounterFlowFlame2D                | \checkmark | \sad       | \checkmark | \sad       |
   | functionPlugins/shiftCavity                                 | \checkmark | \sad       | \sad       | \sad       |
   | FvOptions/angledDuctWithSources                             | \checkmark | \dagger    | \checkmark | \checkmark |

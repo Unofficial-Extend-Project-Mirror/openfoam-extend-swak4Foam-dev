@@ -243,6 +243,14 @@ cloudFunctions
             wall
         );
     }
+    eraseOnOutlet {
+        // eliminating parcels before the oulet to avoid the rebound effect
+        type eliminateBySwakExpression;
+        eliminatePre false;
+        eliminatePost true;
+        eliminationExpression "pos().y<-0.08";
+    }
 }
+
 
 // ************************************************************************* //

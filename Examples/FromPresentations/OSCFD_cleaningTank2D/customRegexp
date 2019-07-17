@@ -1,3 +1,5 @@
+// -*- c++ -*-
+
 alphaFrac{
    expr "Phase-1 volume fraction = (%f%)";
    theTitle "Volume fraction";
@@ -12,6 +14,16 @@ nrParticles {
    theTitle "Number of particles";
    expr "Current number of parcels       = (%f%)";
    titles ( nr );
+}
+dirtHeight {
+    theTitle "Height of the particles";
+    expr "Expression dirtHeight :  min=(.+) average=(.+) weightedAverage=(.+) max=(.+)";
+    titles (
+        min
+        average
+        "weighted average"
+        max
+    );
 }
 printStates {
    theTitle "States";
