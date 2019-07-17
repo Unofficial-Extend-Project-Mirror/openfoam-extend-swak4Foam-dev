@@ -533,6 +533,26 @@ hide circle
      - faceAverage(faceExpr) :: Average of the face values(F, FF)
      - reconstruct(faceScalar) :: Reconstruct a vector field from the
           face fluxes (F)
+
+#+begin_src dot :file interpolating.png :cmdline -Tpng :exports none :results silent
+digraph G {
+    rankdir=LR;
+
+    cell -> face [label="interpolate"];
+    cell -> point [label="interpolateToPoint"];
+    point -> cell [label="interpolateToCell"];
+    patchFace -> patchPoint [label="toPoint"];
+    patchPoint -> patchFace [label="toFace"];
+    face -> cell [label="integrate"];
+    face -> cell [label="surfSum"];
+    face -> cell [label="faceAverage"];
+    face -> cell [label="reconstruct"];
+}
+#+end_src
+    #+NAME: fig:interpolationValues
+    #+CAPTION: Interpolating functions
+    [[./interpolating.png]]
+
      These two functions are for quickly generating constant fields:
      - surf(scalar) :: Generate a constant face-field (no
                        interpolation necessary) (F, FF)
