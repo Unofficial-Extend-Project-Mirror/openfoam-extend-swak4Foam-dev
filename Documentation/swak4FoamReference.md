@@ -101,6 +101,9 @@ abstract classes.
 As all drivers are derived from *Common* there is a set of options
 that is available in all drivers/parser.
 
+The hierarchy fo the `Cloud` parsers goes on below `ThermalCloud`
+but further clouds have been omitted for brevity
+
 ![img](parserRelationships.png "Inheritance relation of the Parsers")
 
 Usually the parser used is determined by the using entity (for
@@ -109,7 +112,7 @@ the `swakExpression`-function object) the used parser can by
 selected by name. These names and a description of the entity the
 parser works on are given in table \ref{tab:selectionNames}.
 
-<table id="org589e940" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org588ec8f" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 1:</span> Selection names for the parsers</caption>
 
 <colgroup>
@@ -256,7 +259,7 @@ structure if necessary (for instance `toPoint(1)` to use the
 constant `1` on the vertexes of a patch). Table
 \ref{tab:structures} gives an overview of the structures.
 
-<table id="orge97b945" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="orgddf4f75" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 2:</span> Structures for the different parsers</caption>
 
 <colgroup>
@@ -422,7 +425,7 @@ In addition there are two unary operators:
     x-component of the field `U`). Table \ref{tab:components} gives
     an overview of the components of the various types
 
-    <table id="org763bef2" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+    <table id="org5c20fd5" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
     <caption class="t-above"><span class="table-number">Table 3:</span> Component names for the data types</caption>
 
     <colgroup>
@@ -568,7 +571,7 @@ but help identify certain entities:
 -   **weight:** The "natural" weight according to table
     \ref{tab:naturalWeights} for the current parser
 
-<table id="org7733c35" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="orgff3a188" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 4:</span> "Natural" weights for different parsers</caption>
 
 <colgroup>
@@ -663,7 +666,7 @@ sense for face zones. Calling this function will result in an
 error message). Table \ref{tab:parsershorthand} lists the short
 descriptions.
 
-<table id="org526d80a" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org33af4f5" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 5:</span> Shorthand for the parsers</caption>
 
 <colgroup>
@@ -1693,7 +1696,7 @@ to the name. The added accumulations are:
     entity. Usually the volume oder the area of it.
 
 
-<a id="org6202329"></a>
+<a id="org1382a11"></a>
 
 ### Logical accumulations
 
@@ -2029,7 +2032,7 @@ parameters:
     -   **condition:** a swak-expression. This is the condition that is
         tested. If it is `true` the machine switches to a new state
     -   **logicalAccumulation:** Boils down the array of logical values
-        to one logical decision. See [5.1.1](#org6202329) above
+        to one logical decision. See [5.1.1](#org1382a11) above
     -   **to:** name of the state the machine moves to if `condition` is
         `true` according to `logicalAccumulation`
     -   **description:** A descriptive text that is printed out at every

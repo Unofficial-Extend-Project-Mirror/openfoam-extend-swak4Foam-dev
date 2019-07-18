@@ -102,6 +102,8 @@ Lexer .> GrammarParser
   As all drivers are derived from /Common/ there is a set of options
   that is available in all drivers/parser.
 
+  The hierarchy fo the =Cloud= parsers goes on below =ThermalCloud=
+  but further clouds have been omitted for brevity
 #+begin_src plantuml :file parserRelationships.png
 package swak4FoamParsers {
 Common <|-- Field
@@ -132,7 +134,9 @@ class FaPatch << grammar >>
 
 package swakLagrangianParser {
 Common <|-- Cloud
-
+Cloud <|-- ParticleCloud
+ParticleCloud <|-- KinematicCloud
+KinematicCloud <|-- ThermalCloud
 class Cloud << grammar >>
 }
 
