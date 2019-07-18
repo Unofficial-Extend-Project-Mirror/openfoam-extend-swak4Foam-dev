@@ -14,25 +14,25 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-convertToMeters 0.01;
+convertToMeters |-geometryScaling-|;
 
-$$ x0=-20
+$$ x0=-inXLength
 $$ x1=0
-$$ x2=30
+$$ x2=outStart
 $$ x3=x2+outSize
-$$ x4=50
+$$ x4=x3+afterOut
 
-$$ y0=-10
+$$ y0=-outDepth
 $$ y1=0
 $$ y2=inY
 $$ y3=y2+channelH
-$$ y4=25
+$$ y4=y3+overInlet
 $$ yh1=y2+hIn
 $$ yh2=y3+hIn
 $$ x0h=x0+hIn*float(y3-y2)/(x1-x0)
 
 $$ z0=0
-$$ z1=5
+$$ z1=thickness
 
 vertices
 (

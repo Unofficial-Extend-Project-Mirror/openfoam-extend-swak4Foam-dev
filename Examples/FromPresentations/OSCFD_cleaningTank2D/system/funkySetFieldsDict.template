@@ -15,19 +15,21 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+waterExpression "pos().y<|-waterBaseHeight*geometryScaling-|+|-waterWaveHeight*geometryScaling-|*(sin(|-waterWaveFreq*geometryScaling-|*pos().z)+cos(|-waterWaveFreq*geometryScaling-|*pos().x))";
+
 expressions (
     setWaves
     {
         field alpha1;
         keepPatches true;
         expression "1";
-        condition "pos().y<0.15+0.005*(sin(20*pos().z)+cos(20*pos().x))";
+        condition $waterExpression;
     }
     setWaves2 {
         field alpha.water;
         keepPatches true;
         expression "1";
-        condition "pos().y<0.15+0.005*(sin(20*pos().z)+cos(20*pos().x))";
+        condition $waterExpression;
     }
     buildTrap
     {
@@ -35,6 +37,21 @@ expressions (
         create true;
         expression "pos().x<0 ? 0 : 1";
         //        expression "pos().y>0.2 ? 1 : 0";
+    }
+    wallRepell {
+        field wallDist;
+        create true;
+        variables (
+            "dCut=|-repellDistance*geometryScaling-|;"
+            "strength=|--repellStrength-|;"
+        );
+        expression "dist()<dCut ? strength*grad(dist())*(dCut-dist())/dCut : vector(0,0,0)";
+        dimension [0 1 -1 0 0 0 0];
+    }
+    outletCells {
+        field escapeZone;
+        create true;
+        expression "meshLayersFromPatch(outlet)<=|-nrOutletLayers-| ? 1 : 0";
     }
 );
 

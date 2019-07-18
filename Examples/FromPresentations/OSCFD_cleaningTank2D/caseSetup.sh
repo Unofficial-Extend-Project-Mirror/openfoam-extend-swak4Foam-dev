@@ -1,3 +1,3 @@
 #! /bin/sh
 
-funkySetFields -time 0
+funkySetFields -functionPlugins MeshWave -time 0

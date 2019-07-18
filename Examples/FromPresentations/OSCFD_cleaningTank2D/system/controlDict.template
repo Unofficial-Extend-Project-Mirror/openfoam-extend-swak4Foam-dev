@@ -23,13 +23,13 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         100;
+endTime         |-endTime-|;
 
 deltaT          0.001;
 
 writeControl    adjustableRunTime;
 
-writeInterval   0.5;
+writeInterval   |-writeInterval-|;
 
 purgeWrite      0;
 
@@ -65,6 +65,8 @@ functions {
         type readAndUpdateFields;
         fields (
             trap
+            wallDist
+            escapeZone
         );
     }
     defineState {
@@ -130,7 +132,7 @@ functions {
         surface {
             type isoSurfaceCell;
             isoField fraction; // use instead of alpha1 to avoid surface at outlet
-            isoValue 0.1;
+            isoValue |-surfaceThreshold-|;
             interpolate true;
         }
         writeSurfaceOnConstruction true;
@@ -147,7 +149,7 @@ functions {
             type cloud;
             axis x;
             points (
-                (0.45 0.1 0.025)
+                (|-sensorX*geometryScaling-| |-sensorY*geometryScaling-| |-0.5*thickness*geometryScaling-|)
             );
         }
         writeSetOnConstruction true;
@@ -227,7 +229,7 @@ functions {
         );
         variables (
             "minHeight=min(pos().y);"
-            "thresY=-0.095;"
+            "thresY=-|-outDepth*geometryScaling*outletThreshold-|;"
             "reached=(closed<0.5 && minHeight<thresY && airReachedOutletTime<0)?1:0;"
             "closing=(airReachedOutletTime>=0 && (airReachedOutletTime+shutdownTime)<time())?1:0;"
             "airReachedOutletTime=reached>0.5 ? time() : airReachedOutletTime;"
