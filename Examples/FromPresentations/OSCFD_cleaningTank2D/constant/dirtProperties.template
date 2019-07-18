@@ -43,6 +43,7 @@ solution
         Cp              cell;
         p               cell;
         DUcDt           cell;
+        gradAlpha       cellPoint;
     }
 
     integrationSchemes
@@ -58,8 +59,8 @@ constantProperties
 
     rhoMin           1e-15;
     minParticleMass  1e-15;
-    //    rho0             1500;
-    rho0             4500;
+    rho0             1500;
+    //    rho0             4500;
     T0             400;
     TMin             300;
     Cp0              900;
@@ -109,9 +110,16 @@ subModels
         sphereDrag;
         // virtualMass     off;
 
-        pressureGradient {
-            U wallDist;
+        // pressureGradient {
+        //     U wallDist;
+        // };
+        virtualMass {
+            Cvm 0.5;
         };
+        interface {
+            alpha alpha.water;
+            C 1;
+        }
     }
 
     ConeInjectionCoeffs

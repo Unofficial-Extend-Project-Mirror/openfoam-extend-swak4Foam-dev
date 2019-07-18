@@ -110,19 +110,6 @@ functions {
         fieldName velocity;
         autowrite true;
     }
-    wallRepell {
-        type expressionField;
-
-        //        expression "grad(dist())";
-        variables (
-            "dCut=0.02;"
-            "strength=-1e2;"
-        );
-        expression "dist()<dCut ? strength*grad(dist())*(dCut-dist())/dCut : vector(0,0,0)";
-        fieldName wallDist;
-        autowrite true;
-        dimensions [0 1 -1 0 0 0 0];
-    }
     createInterface
     {
         type createSampledSurface;
