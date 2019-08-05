@@ -1418,7 +1418,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org926bd54) below). Don't work on the
+details see [6.2.2](#org74935b8) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1474,7 +1474,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org926bd54"></a>
+<a id="org74935b8"></a>
 
 ### Repository organization
 
@@ -6659,6 +6659,23 @@ warnings with bison 3.4. The script to compile requirements has
 been modified to download and compile this version.
 
 This breaks compatibility with bison 3.2 and older
+
+
+#### `swakConfiguation.automatic` allows specification of Python version
+
+Now if before compiling a command like
+
+    export SWAK_PYTHON3VERSION=6
+
+is executed then Python 3.6 is used even if a "better" Python
+like 3.7 is found. THe same is true for
+
+    export SWAK_PYTHON2VERSION=5
+
+(or similar).
+
+If these variables are not set the highest possible Python is
+used (like it was before)
 
 
 ### Documentation
