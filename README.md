@@ -1432,7 +1432,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org2d9b546) below). Don't work on the
+details see [6.2.2](#orga10e356) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1488,7 +1488,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org2d9b546"></a>
+<a id="orga10e356"></a>
 
 ### Repository organization
 
@@ -6709,7 +6709,12 @@ There now is a run-time trigger `swakExpression` that allows
 switching the runtime-control (for instance stopping the run)
 depending on a swak-expression.
 
-This works only for the ESI-fork
+This works only for the ESI-fork. It **should** work with versions
+starting at 3.0+ but is currently only available starting with
+v1906 (modify `swak.H` if you want to enable/test it for older
+versions)
+
+The trigger is found in the `swakFunctionObjects`-library
 
 
 ### Enhancements

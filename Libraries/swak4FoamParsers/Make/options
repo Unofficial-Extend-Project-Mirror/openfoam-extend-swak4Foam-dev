@@ -25,7 +25,6 @@ EXE_INC = -I$(OBJECTS_DIR) \
     -I$(LIB_SRC)/lagrangian/basic/lnInclude \
     -I$(LIB_SRC)/surfMesh/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \
-    -I$(LIB_SRC)/functionObjects/utilities/lnInclude \
     $(ADDITIONALFILES_INC)
 
 LIB_LIBS = -lfiniteVolume \
