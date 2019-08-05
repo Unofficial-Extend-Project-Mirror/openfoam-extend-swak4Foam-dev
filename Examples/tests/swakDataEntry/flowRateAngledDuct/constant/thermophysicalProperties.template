@@ -9,49 +9,38 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    location    "0";
-    object      alphat;
+    class       dictionary;
+    location    "constant";
+    object      thermophysicalProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [1 -1 -1 0 0 0 0];
+<!--(if foamFork=="extend")-->
+thermoType      hPsiThermo<pureMixture<sutherlandTransport<specieThermo<hConstThermo<perfectGas>>>>>;
 
-internalField   uniform 0;
+mixture         air 1 28.9 1007 0 1.4792e-06 116;
+<!--(else)-->
+thermoType      heRhoThermo<pureMixture<sutherland<hConst<perfectGas<specie>>,sensibleEnthalpy>>>;
 
-boundaryField
+mixture
 {
-    front
+    specie
     {
-        type            alphatWallFunction;
-        value           uniform 0;
+        nMoles      1;
+        molWeight   28.9;
     }
-    back
+    thermodynamics
     {
-        type            alphatWallFunction;
-        value           uniform 0;
+        Cp          1007;
+        Hf          0;
     }
-    wall
+    transport
     {
-        type            alphatWallFunction;
-        value           uniform 0;
-    }
-    porosityWall
-    {
-        type            alphatWallFunction;
-        value           uniform 0;
-    }
-    inlet
-    {
-        type            calculated;
-        value           uniform 0;
-    }
-    outlet
-    {
-        type            calculated;
-        value           uniform 0;
+        As          1.4792e-06;
+        Ts          116;
     }
 }
+<!--(end)-->
 
 
 // ************************************************************************* //

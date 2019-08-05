@@ -956,7 +956,7 @@ digraph G {
      value can be used in the /local/ parser. This evaluation of
      /external expressions/ is triggered by ={}= after the variable
      name like this:
-: varName{parserType'name/regionName}=expression
+: varName{parserType'name/regionName}=expression;
      This means that =expression= is evaluated with the parser
      specified between ={}=. The form given above is the most general
      form. The specification of the =regionName= is only needed in
@@ -967,7 +967,7 @@ digraph G {
      instance the patch name or the name of the cell set). If the
      =parserType= is =patch= then it can be omitted and the
      specification of the patch name is sufficient:
-: varName{patchName}=expression
+: varName{patchName}=expression;
      evaluates the =expression= on patch =patchName=.
 
      In the general case it is only possible to use external

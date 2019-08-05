@@ -90,6 +90,7 @@
   | tests/SearchableSurfaces/operationsTest                     | \partial   | \checkmark | \checkmark | \partial   |
   | tests/SearchableSurfaces/operationsTestRotated              | \partial   | \partial   | \partial   | \partial   |
   | tests/SearchableSurfaces/scaledIglooWithFridges             | \checkmark | \checkmark | \checkmark | \checkmark |
+  | tests/swakDataEntry/flowRateAngledDuct                      |            |            | \checkmark |            |
   | tests/testFOExecution                                       | \checkmark | \checkmark | \checkmark | \checkmark |
 
 # Local Variables:

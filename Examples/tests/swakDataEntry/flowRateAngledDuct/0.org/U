@@ -44,12 +44,14 @@ boundaryField
     {
         type            flowRateInletVelocity;
         //        type            groovyFlowRateInletVelocity;
-        flowRateExpression "0.1";
-        flowRate        swak { 
-            expression "0.1";
+        flowRateExpression "t<1 ? 0.1*t : 0.1";
+        flowRate        swak {
+            expression $flowRateExpression;
             valueType patch;
             patchName inlet;
+            independentVariableName t;
         };
+        volumetricFlowRate $flowRate;
         //        flowRate        constant 0.1;
         value           uniform (0 0 0);
     }
