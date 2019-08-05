@@ -61,7 +61,7 @@
   | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/LanguageIntegration/angledDuctWithLuaInject      | \checkmark | \checkmark | \checkmark | \sad       |
   | Lagrangian/LanguageIntegration/angledDuctWithPython2Inject  | \checkmark | \checkmark | \checkmark | \sad       |
-  | Lagrangian/LanguageIntegration/angledDuctWithPython3Inject  | \checkmark | \checkmark | \sect      | \sad       |
+  | Lagrangian/LanguageIntegration/angledDuctWithPython3Inject  | \checkmark | \checkmark | \checkmark | \sad       |
   | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/parser/simplifiedSiwek                           | \sad       | \sad       | \sad       | \checkmark |
   | LuaIntegration/flowStatePitzDaily                           | \checkmark | \checkmark | \checkmark | \checkmark |
@@ -74,8 +74,8 @@
   | other/counterFlowFlame2DInitialized                         | \partial   | \partial   | \checkmark | \checkmark |
   | other/simpleBendedPipe                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | other/topoSetDamBreak                                       | \checkmark | \checkmark | \checkmark | \checkmark |
-  | Python3Integration/flowStatePitzDaily                       | \checkmark | \checkmark | \sect      | \checkmark |
-  | Python3Integration/python3ScriptedBCAngledDuct              | \checkmark | \checkmark | \sect      | \checkmark |
+  | Python3Integration/flowStatePitzDaily                       | \checkmark | \checkmark | \checkmark | \checkmark |
+  | Python3Integration/python3ScriptedBCAngledDuct              | \checkmark | \checkmark | \checkmark | \checkmark |
   | SimpleSurface/littleVolcano                                 | \sad       | \checkmark | \sad       | \checkmark |
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
