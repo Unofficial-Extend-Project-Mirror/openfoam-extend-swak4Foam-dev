@@ -76,6 +76,7 @@
   | other/topoSetDamBreak                                       | \checkmark | \checkmark | \checkmark | \checkmark |
   | Python3Integration/flowStatePitzDaily                       | \checkmark | \checkmark | \checkmark | \checkmark |
   | Python3Integration/python3ScriptedBCAngledDuct              | \checkmark | \checkmark | \checkmark | \checkmark |
+  | runTimeCondition/simpleSwakCar                              | \dagger    | \dagger    | \checkmark | \dagger    |
   | SimpleSurface/littleVolcano                                 | \sad       | \checkmark | \sad       | \checkmark |
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |

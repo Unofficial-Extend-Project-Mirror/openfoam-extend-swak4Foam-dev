@@ -81,4 +81,6 @@ plugins/FaceZoneValuePluginFunction.C
 plugins/SampledSetValuePluginFunction.C
 plugins/SampledSurfaceValuePluginFunction.C
 
+runTimeCondition/swakExpressionCondition.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswak4FoamParsers

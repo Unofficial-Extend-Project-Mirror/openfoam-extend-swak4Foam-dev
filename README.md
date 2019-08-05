@@ -1297,6 +1297,20 @@ replaced by an expression
 -   **Demonstrates:** The `groovyCyclicACMI` patch type. State machines. `funkyWarpMesh` utility
 
 
+### runTimeControl
+
+Demonstrating the run-time trigger
+
+
+#### simpleSwakCar
+
+Simple modification of the `simpleCar`-case
+
+-   **Solver:** `simpleFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+-   **Demonstrates:** the run-time trigger with expressions.
+
+
 ### tests
 
 Simple test cases for specific features. The names of the
@@ -1418,7 +1432,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org74935b8) below). Don't work on the
+details see [6.2.2](#org2d9b546) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1474,7 +1488,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org74935b8"></a>
+<a id="org2d9b546"></a>
 
 ### Repository organization
 
@@ -6689,6 +6703,15 @@ Removed outdated information, updated links
 ### New features
 
 
+#### Expression run-time trigger for runtime-control in ESI-fork
+
+There now is a run-time trigger `swakExpression` that allows
+switching the runtime-control (for instance stopping the run)
+depending on a swak-expression.
+
+This works only for the ESI-fork
+
+
 ### Enhancements
 
 
@@ -6699,3 +6722,9 @@ Removed outdated information, updated links
 
 This example demonstrates OpenFOAM macro-expansion inside of
 expression strings
+
+
+#### `runTimeCondition/simpleSwakCar` to demonstrate runtime-control in the ESI fork
+
+This example demonstrates the runtime-control for function
+objects that exists in the ESI-fork
