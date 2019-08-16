@@ -23,9 +23,6 @@ License
     along with swak4Foam; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-Class
-
-
 Description
     Backport macros that are not available in all OpenFOAM-versions
 
@@ -33,6 +30,7 @@ SourceFiles
 
 Contributors/Copyright:
     2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2019 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -63,4 +61,32 @@ Contributors/Copyright:
 #define WarningInFunction WarningIn(FUNCTION_NAME)
 #endif
 
+// As per OpenFOAM-v1912
+//
+//- Report an error message using Foam::FatalError
+//  about unknown lookup type in table
+#ifndef FatalErrorInLookup
+#define FatalErrorInLookup(lookupTag, lookupName, lookupTable)                 \
+    ::Foam::FatalError(FUNCTION_NAME, __FILE__, __LINE__)                      \
+    << "Unknown " << (lookupTag) << " type " << (lookupName)                   \
+    << "\n\nValid " << (lookupTag) << " types :\n"                             \
+    << ((lookupTable).sortedToc()) << '\n'
 #endif
+
+
+//- Report an error message using Foam::FatalIOError
+//  about unknown lookup type in table
+#ifndef FatalIOErrorInLookup
+#define FatalIOErrorInLookup(ios, lookupTag, lookupName, lookupTable)          \
+    ::Foam::FatalIOError(FUNCTION_NAME, __FILE__, __LINE__, (ios))             \
+    << "Unknown " << (lookupTag) << " type " << (lookupName)                   \
+    << "\n\nValid " << (lookupTag) << " types :\n"                             \
+    << ((lookupTable).sortedToc()) << '\n'
+#endif
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif
+
+// ************************************************************************* //
