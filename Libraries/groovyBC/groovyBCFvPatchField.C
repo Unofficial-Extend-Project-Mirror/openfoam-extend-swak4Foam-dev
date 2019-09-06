@@ -220,7 +220,7 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-tmp<Field<Type>> groovyBCFvPatchField<Type>::patchNeighbourField() const
+tmp<Field<Type> > groovyBCFvPatchField<Type>::patchNeighbourField() const
 {
     if(isA<cyclicFvPatch>(this->patch())) {
 #ifdef FOAM_CYCLIC_FV_PATCH_FIELD_HAS_NEIGHBOUR_PATCH
@@ -236,7 +236,7 @@ tmp<Field<Type>> groovyBCFvPatchField<Type>::patchNeighbourField() const
         const labelUList& nbrFaceCells =
             cyclicPatch.neighbPatch().faceCells();
 
-        tmp<Field<Type>> tpnf(new Field<Type>(this->size()));
+        tmp<Field<Type> > tpnf(new Field<Type>(this->size()));
         Field<Type>& pnf = const_cast<Field<Type>&>(tpnf()); //.ref();
 
         bool doTransform=!(cyclicPatch.parallel() || pTraits<Type>::rank==0);
