@@ -1410,7 +1410,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orgd91d02e) below). Don't work on the
+details see [6.2.2](#org66aaebb) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1466,7 +1466,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orgd91d02e"></a>
+<a id="org66aaebb"></a>
 
 ### Repository organization
 
@@ -6651,6 +6651,12 @@ warnings with bison 3.4. The script to compile requirements has
 been modified to download and compile this version.
 
 This breaks compatibility with bison 3.2 and older
+
+
+#### Update `lua` version to 5.3.5
+
+This is the latest stable release and only a bug-fix
+release. `luarocks` was upgraded as well
 
 
 ### Documentation

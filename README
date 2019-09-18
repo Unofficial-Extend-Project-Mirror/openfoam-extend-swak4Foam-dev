@@ -4259,6 +4259,9 @@ S_{expl} + S_{impl} T
      been modified to download and compile this version.
 
      This breaks compatibility with bison 3.2 and older
+**** Update =lua= version to 5.3.5
+     This is the latest stable release and only a bug-fix
+     release. =luarocks= was upgraded as well
 *** Documentation
 **** Adapted contributors section in the README
      Removed outdated information, updated links
