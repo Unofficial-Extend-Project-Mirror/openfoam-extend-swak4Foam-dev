@@ -61,7 +61,7 @@ functions {
         outputControl timeStep;
         outputInterval 1;
         valueType patch;
-        patchName atmosphere;
+        patchName top;
         toGlobalNamespace inletPos;
         toGlobalVariables (
             inletCenter
@@ -74,7 +74,7 @@ functions {
         }
 <!--(end)-->
         variables (
-            "r1=0.25*(max(pts().x)-min(pts().x));"
+            "r1=0.375*(max(pts().x)-min(pts().x));"
             //            "ratioR=0.2;"
             "ratioR=0.15;"
             //            "varR=0.5;"
@@ -103,7 +103,7 @@ functions {
         verbose true;
         accumulations (average );
         valueType patch;
-        patchName atmosphere;
+        patchName top;
         globalScopes ( inletPos );
         ignore_unimplemented_simpleFunctionObject::updateMesh true;
     }
@@ -130,7 +130,7 @@ functions {
         verbose true;
         accumulations (average );
         valueType patch;
-        patchName atmosphere;
+        patchName top;
         globalScopes ( inletPos );
         ignore_unimplemented_simpleFunctionObject::updateMesh true;
     }
@@ -144,7 +144,7 @@ functions {
         verbose true;
         accumulations (average );
         valueType patch;
-        patchName atmosphere;
+        patchName top;
 <!--(if foamFork!="extend")-->
         aliases {
             alpha1 alpha.water;

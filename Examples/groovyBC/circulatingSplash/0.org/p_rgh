@@ -63,7 +63,13 @@ boundaryField
         gamma           1;
     }
 
-    atmosphere
+    atmosphere {
+        //        $spill;
+        type    fixedFluxPressure;
+        value           uniform 0;
+    }
+
+    top
     {
         //        type            buoyantPressure;
         // type            totalPressure;

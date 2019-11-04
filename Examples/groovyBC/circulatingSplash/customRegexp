@@ -2,7 +2,8 @@
 
 GridSize
 {
-  expr "Selected %f% cells for refinement out of (%f%).";
+    //  expr "Selected (%f%) cells for refinement out of (%f%).";
+  expr ".*efined from %f% to (.+) cells";
   theTitle "Grid size";
   titles
     (
