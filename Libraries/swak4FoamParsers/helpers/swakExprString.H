@@ -31,7 +31,7 @@ Description
     that dictionary variables get expanded
 
 SourceFiles
-    exprString.C
+    swakExprString.C
 
 Contributors/Copyright:
     2014-2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
@@ -39,8 +39,8 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef exprString_H
-#define exprString_H
+#ifndef swak_exprString_H
+#define swak_exprString_H
 
 #include "swakString.H"
 #include "dictionary.H"

@@ -29,7 +29,7 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "exprString.H"
+#include "swakExprString.H"
 
 #include "CommonValueExpressionDriver.H"
 

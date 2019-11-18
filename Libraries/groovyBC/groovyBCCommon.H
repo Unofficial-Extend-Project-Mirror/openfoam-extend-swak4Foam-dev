@@ -44,7 +44,7 @@ Contributors/Copyright:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "dictionary.H"
-#include "exprString.H"
+#include "swakExprString.H"
 
 namespace Foam
 {

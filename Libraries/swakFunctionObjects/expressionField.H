@@ -52,7 +52,7 @@ Contributors/Copyright:
 
 #include "swak.H"
 
-#include "exprString.H"
+#include "swakExprString.H"
 
 namespace Foam
 {
