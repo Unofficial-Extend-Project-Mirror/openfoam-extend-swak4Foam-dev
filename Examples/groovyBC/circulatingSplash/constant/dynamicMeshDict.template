@@ -55,7 +55,8 @@ dynamicRefineFvMeshCoeffs
     maxRefinement 2;
 
     // Maximum cell limit (approximate)
-    maxCells 500000;
+    //    maxCells 500000;
+    maxCells 2000000;
 
     // Fluxes to correct and variable they can be interpolated from
     correctFluxes (

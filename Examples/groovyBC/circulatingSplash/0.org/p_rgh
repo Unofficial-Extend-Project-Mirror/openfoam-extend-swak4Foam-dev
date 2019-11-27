@@ -62,6 +62,10 @@ boundaryField
 //         psi             none;
         gamma           1;
     }
+    sideSpill
+    {
+        type symmetry;
+    }
 
     atmosphere {
         //        $spill;

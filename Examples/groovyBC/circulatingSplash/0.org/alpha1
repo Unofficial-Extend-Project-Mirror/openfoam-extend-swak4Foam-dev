@@ -42,6 +42,11 @@ boundaryField
         value           uniform 0;
     }
 
+    sideSpill
+    {
+        type symmetry;
+    }
+
     atmosphere {
         //        $spill;
         type zeroGradient;

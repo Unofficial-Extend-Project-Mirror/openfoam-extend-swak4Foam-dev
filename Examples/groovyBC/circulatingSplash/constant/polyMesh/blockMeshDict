@@ -79,14 +79,17 @@ patches
         (12 3 2 13)
         (14 15 6 7)
     )
-    patch spill
+    symmetry sideSpill
     (
         (10 18 16 14)
+        (20 13 9 22)
+    )
+    patch spill
+    (
         (18 19 17 16)
         (17 24 25 19)
         (24 21 23 25)
         (21 20 22 23)
-        (20 13 9 22)
     )
     wall floor
     (
