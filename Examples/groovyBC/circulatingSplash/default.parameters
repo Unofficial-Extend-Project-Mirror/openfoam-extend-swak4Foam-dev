@@ -1,0 +1,10 @@
+// -*- c++ -*-
+
+solver {
+    default interFoam;
+    description "Solver used";
+    options (
+        interFoam
+        interIsoFoam
+    );
+}
