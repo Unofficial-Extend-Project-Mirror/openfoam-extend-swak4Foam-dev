@@ -49,6 +49,46 @@ InletVelocity
     titles ( v );
     progress "v_in: $0";
 }
+ActualInletVelocity
+{
+    theTitle "Actual inlet velocity";
+    expr "Expression printActualVelocityAbs :  weightedAverage=(.+) max=(.+)";
+    titles (
+        average
+        max
+    );
+}
+ActualInletInternalVelocity
+{
+    type slave;
+    master ActualInletVelocity;
+    expr "Expression printActualVelocityInternalAbs :  weightedAverage=(.+) max=(.+)";
+    titles (
+        "internal average"
+        "internal max"
+    );
+}
+ActualInletInternalVelocityNorm
+{
+    type slave;
+    master ActualInletVelocity;
+    expr "Expression printActualVelocityInternalNorm :  min=(.+) weightedAverage=(.+) max=(.+)";
+    titles (
+        "normal max"
+        "normal average"
+        "normal max"
+    );
+}
+ActualInletInternalVelocityTang
+{
+    type slave;
+    master ActualInletVelocity;
+    expr "Expression printActualVelocityInternalTang :  weightedAverage=(.+) max=(.+)";
+    titles (
+        "tangential average"
+        "tangential max"
+    );
+}
 Area
 {
     expr "Expression idealArea :  average=(%f%)";

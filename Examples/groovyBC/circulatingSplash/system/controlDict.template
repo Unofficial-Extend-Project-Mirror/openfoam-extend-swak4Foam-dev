@@ -115,6 +115,35 @@ functions {
         $printInletRadius;
         expression "inletVelocity";
     }
+    printActualVelocityAbs {
+        $printInletRadius;
+        accumulations (
+            weightedAverage
+            max
+        );
+        expression "mag(U)";
+    }
+    printActualVelocityNorm {
+        $printInletRadius;
+        accumulations (
+            min
+            weightedAverage
+            max
+        );
+        expression "U & normal()";
+    }
+    printActualVelocityInternalAbs {
+        $printActualVelocityAbs;
+        expression "mag(internalField(U))";
+    }
+    printActualVelocityInternalNorm {
+        $printActualVelocityNorm;
+        expression "internalField(U) & normal()";
+    }
+    printActualVelocityInternalTang {
+        $printActualVelocityInternalAbs;
+        expression "mag(internalField(U)-(internalField(U) & normal())*normal())";
+    }
     divergenceArea {
         type swakExpression;
 <!--(if foamFork!="extend")-->
