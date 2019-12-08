@@ -36,4 +36,6 @@ solveLaplacianPDEFunctionObject.C
 solveTransportPDE.C
 solveTransportPDEFunctionObject.C
 
+runTimeCondition/swakExpressionCondition.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswakFunctionObjects

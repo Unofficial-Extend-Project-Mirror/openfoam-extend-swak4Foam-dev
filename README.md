@@ -809,6 +809,14 @@ The old `groovyBC`-Demos and newer cases that use `groovyBC`
     the `groovyBCJump`-condition
 
 
+#### nonBreakingDam
+
+-   **Solver:** interFoam
+-   **Preparation:** run `pyFoamPrepareCase.py`
+-   **Description:** OpenFOAM macro-expansion inside of expression
+    strings
+
+
 ### FunkyDoCalc
 
 Example dictionaries for `funkyDoCalc`
@@ -1289,6 +1297,20 @@ replaced by an expression
 -   **Demonstrates:** The `groovyCyclicACMI` patch type. State machines. `funkyWarpMesh` utility
 
 
+### runTimeControl
+
+Demonstrating the run-time trigger
+
+
+#### simpleSwakCar
+
+Simple modification of the `simpleCar`-case
+
+-   **Solver:** `simpleFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+-   **Demonstrates:** the run-time trigger with expressions.
+
+
 ### tests
 
 Simple test cases for specific features. The names of the
@@ -1410,7 +1432,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orgd91d02e) below). Don't work on the
+details see [6.2.2](#orgb5f8bc4) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1466,7 +1488,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orgd91d02e"></a>
+<a id="orgb5f8bc4"></a>
 
 ### Repository organization
 
@@ -6653,6 +6675,23 @@ been modified to download and compile this version.
 This breaks compatibility with bison 3.2 and older
 
 
+#### `swakConfiguation.automatic` allows specification of Python version
+
+Now if before compiling a command like
+
+    export SWAK_PYTHON3VERSION=6
+
+is executed then Python 3.6 is used even if a "better" Python
+like 3.7 is found. THe same is true for
+
+    export SWAK_PYTHON2VERSION=5
+
+(or similar).
+
+If these variables are not set the highest possible Python is
+used (like it was before)
+
+
 ### Documentation
 
 
@@ -6664,7 +6703,33 @@ Removed outdated information, updated links
 ### New features
 
 
+#### Expression run-time trigger for runtime-control in ESI-fork
+
+There now is a run-time trigger `swakExpression` that allows
+switching the runtime-control (for instance stopping the run)
+depending on a swak-expression.
+
+This works only for the ESI-fork. It **should** work with versions
+starting at 3.0+ but is currently only available starting with
+v1906 (modify `swak.H` if you want to enable/test it for older
+versions)
+
+The trigger is found in the `swakFunctionObjects`-library
+
+
 ### Enhancements
 
 
 ### Examples
+
+
+#### `groovyBC/nonBreakingDam` to demonstrate macro expansion
+
+This example demonstrates OpenFOAM macro-expansion inside of
+expression strings
+
+
+#### `runTimeCondition/simpleSwakCar` to demonstrate runtime-control in the ESI fork
+
+This example demonstrates the runtime-control for function
+objects that exists in the ESI-fork

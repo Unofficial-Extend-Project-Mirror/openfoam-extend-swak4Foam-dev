@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     interFoam;
+application     replayTransientBC;
 
 startFrom       latestTime;
 
