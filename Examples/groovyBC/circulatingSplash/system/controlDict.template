@@ -14,7 +14,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application interFoam;
+application     |-solver-|;
 
 startFrom       latestTime;
 
@@ -61,7 +61,7 @@ functions {
         outputControl timeStep;
         outputInterval 1;
         valueType patch;
-        patchName atmosphere;
+        patchName top;
         toGlobalNamespace inletPos;
         toGlobalVariables (
             inletCenter
@@ -74,15 +74,21 @@ functions {
         }
 <!--(end)-->
         variables (
-            "r1=0.25*(max(pts().x)-min(pts().x));"
-            "inletRadius=r1*0.2*(1-0.5*cos(54*time()));"
+            "r1=0.375*(max(pts().x)-min(pts().x));"
+            //            "ratioR=0.2;"
+            "ratioR=0.15;"
+            //            "varR=0.5;"
+            "varR=0.25;"
+            "freqR=54;"
+            "freqC=15;"
+            "inletRadius=r1*ratioR*(1-varR*cos(freqR*time()));"
             "r0=r1*0.2*0.5;"
             "idealArea=inletRadius*inletRadius*pi;"
             "realArea=sum(area()*alpha1);"
             "currentArea=0.5*(realArea+idealArea);"
             //            "targetMassFlow=5*idealArea;"
             "targetMassFlow=5*r0*r0*pi;"
-            "inletCenter=vector(r1*sin(10*time()),max(pos().y),r1*cos(15*time()));"
+            "inletCenter=vector(r1*sin(10*time()),max(pos().y),r1*cos(freqC*time()));"
             "inletVelocity=targetMassFlow/currentArea;"
         );
 
@@ -97,7 +103,7 @@ functions {
         verbose true;
         accumulations (average );
         valueType patch;
-        patchName atmosphere;
+        patchName top;
         globalScopes ( inletPos );
         ignore_unimplemented_simpleFunctionObject::updateMesh true;
     }
@@ -108,6 +114,35 @@ functions {
     printInletVelocity {
         $printInletRadius;
         expression "inletVelocity";
+    }
+    printActualVelocityAbs {
+        $printInletRadius;
+        accumulations (
+            weightedAverage
+            max
+        );
+        expression "mag(U)";
+    }
+    printActualVelocityNorm {
+        $printInletRadius;
+        accumulations (
+            min
+            weightedAverage
+            max
+        );
+        expression "U & normal()";
+    }
+    printActualVelocityInternalAbs {
+        $printActualVelocityAbs;
+        expression "mag(internalField(U))";
+    }
+    printActualVelocityInternalNorm {
+        $printActualVelocityNorm;
+        expression "internalField(U) & normal()";
+    }
+    printActualVelocityInternalTang {
+        $printActualVelocityInternalAbs;
+        expression "mag(internalField(U)-(internalField(U) & normal())*normal())";
     }
     divergenceArea {
         type swakExpression;
@@ -124,7 +159,7 @@ functions {
         verbose true;
         accumulations (average );
         valueType patch;
-        patchName atmosphere;
+        patchName top;
         globalScopes ( inletPos );
         ignore_unimplemented_simpleFunctionObject::updateMesh true;
     }
@@ -138,7 +173,7 @@ functions {
         verbose true;
         accumulations (average );
         valueType patch;
-        patchName atmosphere;
+        patchName top;
 <!--(if foamFork!="extend")-->
         aliases {
             alpha1 alpha.water;

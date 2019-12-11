@@ -14,9 +14,10 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-numberOfSubdomains 4;
+numberOfSubdomains |-numberOfProcessors-|;
 
-method          metis;
+method scotch;
+//method          metis;
 //method          hierarchical;
 
 simpleCoeffs
@@ -42,7 +43,7 @@ manualCoeffs
 
 distributed     no;
 
-roots           
+roots
 (
 );
 

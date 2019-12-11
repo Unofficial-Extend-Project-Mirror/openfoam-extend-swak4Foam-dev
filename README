@@ -4268,7 +4268,8 @@ S_{expl} + S_{impl} T
      been modified to download and compile this version.
 
      This breaks compatibility with bison 3.2 and older
-**** =swakConfiguation.automatic= allows specification of Python version
+     This is the latest stable release and only a bug-fix
+     release. =luarocks= was upgraded as well
      Now if before compiling a command like
 : export SWAK_PYTHON3VERSION=6
      is executed then Python 3.6 is used even if a "better" Python

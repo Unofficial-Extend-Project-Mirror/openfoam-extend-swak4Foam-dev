@@ -1432,7 +1432,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orgb5f8bc4) below). Don't work on the
+details see [6.2.2](#org66aaebb) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1488,7 +1488,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orgb5f8bc4"></a>
+<a id="org66aaebb"></a>
 
 ### Repository organization
 
@@ -6675,21 +6675,10 @@ been modified to download and compile this version.
 This breaks compatibility with bison 3.2 and older
 
 
-#### `swakConfiguation.automatic` allows specification of Python version
+#### Update `lua` version to 5.3.5
 
-Now if before compiling a command like
-
-    export SWAK_PYTHON3VERSION=6
-
-is executed then Python 3.6 is used even if a "better" Python
-like 3.7 is found. THe same is true for
-
-    export SWAK_PYTHON2VERSION=5
-
-(or similar).
-
-If these variables are not set the highest possible Python is
-used (like it was before)
+This is the latest stable release and only a bug-fix
+release. `luarocks` was upgraded as well
 
 
 ### Documentation
