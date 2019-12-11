@@ -1,0 +1,71 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1906                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+g {
+    #include "$FOAM_CASE/constant/g"
+}
+
+control {
+        #include "$FOAM_CASE/system/controlDict";
+}
+
+boundaryField
+{
+    leftWall
+    {
+        type            noSlip;
+    }
+    rightWall
+    {
+        type            noSlip;
+    }
+    lowerWall
+    {
+        // type            noSlip;
+        type groovyBC;
+        value $internalField;
+        valueExpression "-doIt*100*down*(alphaW>0.1 ? 1 : 0)";
+        variables (
+            "g=$[(vector):g.value];"
+            "down=g/mag(g);"
+            "normalPart=normal() & down;"
+            "down=down-normal()*normalPart;"
+            "end=$[:control.endTime];"
+            "doIt=time()<end*$endRatio ? 1 : 0;"
+        );
+        aliases {
+            alphaW alpha.water;
+        }
+        endRatio 0.6;
+    }
+    atmosphere
+    {
+        type            pressureInletOutletVelocity;
+        value           uniform (0 0 0);
+    }
+    defaultFaces
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

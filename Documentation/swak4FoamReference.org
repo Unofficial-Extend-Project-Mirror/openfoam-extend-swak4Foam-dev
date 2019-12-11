@@ -102,6 +102,8 @@ Lexer .> GrammarParser
   As all drivers are derived from /Common/ there is a set of options
   that is available in all drivers/parser.
 
+  The hierarchy fo the =Cloud= parsers goes on below =ThermalCloud=
+  but further clouds have been omitted for brevity
 #+begin_src plantuml :file parserRelationships.png
 package swak4FoamParsers {
 Common <|-- Field
@@ -132,7 +134,9 @@ class FaPatch << grammar >>
 
 package swakLagrangianParser {
 Common <|-- Cloud
-
+Cloud <|-- ParticleCloud
+ParticleCloud <|-- KinematicCloud
+KinematicCloud <|-- ThermalCloud
 class Cloud << grammar >>
 }
 
@@ -154,19 +158,19 @@ hide circle
 
   #+CAPTION: Selection names for the parsers
   #+LABEL: tab:selectionNames
-  | name              | Description                                     |
-  |-------------------+-------------------------------------------------|
-  | =internalField=   | Calculation on the internal values of a field   |
-  | =patch=           | Calculation on a boundary patch                 |
-  | =faceZone=        | On a =faceZone= of the mesh                     |
-  | =faceSet=         | On a =faceSet=                                  |
-  | =cellZone=        | Calculation on a =cellZone=                     |
-  | =cellSet=         | Set of cells                                    |
-  | =set=             | Calculation on a =sampledSet=                   |
-  | =surface=         | Calculation on a =sampledSurface=               |
-  | =cloud=           | Calculation on a cloud of lagrangian particles  |
-  | =internalFaField= | Internal values of a FAM-field (=1.6-ext= only) |
-  | =faPatch=         | Boundary patch of a FAM-field (=1.6-ext= only)  |
+  | name              | Description                                    |
+  |-------------------+------------------------------------------------|
+  | =internalField=   | Calculation on the internal values of a field  |
+  | =patch=           | Calculation on a boundary patch                |
+  | =faceZone=        | On a =faceZone= of the mesh                    |
+  | =faceSet=         | On a =faceSet=                                 |
+  | =cellZone=        | Calculation on a =cellZone=                    |
+  | =cellSet=         | Set of cells                                   |
+  | =set=             | Calculation on a =sampledSet=                  |
+  | =surface=         | Calculation on a =sampledSurface=              |
+  | =cloud=           | Calculation on a cloud of lagrangian particles |
+  | =internalFaField= | Internal values of a FAM-field (not all forks) |
+  | =faPatch=         | Boundary patch of a FAM-field (not all forks)  |
 
   In principle new parsers for different entities can be implemented
   and selected at run-time (as for instance are the /FAM/-parsers
@@ -533,6 +537,26 @@ hide circle
      - faceAverage(faceExpr) :: Average of the face values(F, FF)
      - reconstruct(faceScalar) :: Reconstruct a vector field from the
           face fluxes (F)
+
+#+begin_src dot :file interpolating.png :cmdline -Tpng :exports none :results silent
+digraph G {
+    rankdir=LR;
+
+    cell -> face [label="interpolate"];
+    cell -> point [label="interpolateToPoint"];
+    point -> cell [label="interpolateToCell"];
+    patchFace -> patchPoint [label="toPoint"];
+    patchPoint -> patchFace [label="toFace"];
+    face -> cell [label="integrate"];
+    face -> cell [label="surfSum"];
+    face -> cell [label="faceAverage"];
+    face -> cell [label="reconstruct"];
+}
+#+end_src
+    #+NAME: fig:interpolationValues
+    #+CAPTION: Interpolating functions
+    [[./interpolating.png]]
+
      These two functions are for quickly generating constant fields:
      - surf(scalar) :: Generate a constant face-field (no
                        interpolation necessary) (F, FF)
@@ -932,7 +956,7 @@ hide circle
      value can be used in the /local/ parser. This evaluation of
      /external expressions/ is triggered by ={}= after the variable
      name like this:
-: varName{parserType'name/regionName}=expression
+: varName{parserType'name/regionName}=expression;
      This means that =expression= is evaluated with the parser
      specified between ={}=. The form given above is the most general
      form. The specification of the =regionName= is only needed in
@@ -943,7 +967,7 @@ hide circle
      instance the patch name or the name of the cell set). If the
      =parserType= is =patch= then it can be omitted and the
      specification of the patch name is sufficient:
-: varName{patchName}=expression
+: varName{patchName}=expression;
      evaluates the =expression= on patch =patchName=.
 
      In the general case it is only possible to use external

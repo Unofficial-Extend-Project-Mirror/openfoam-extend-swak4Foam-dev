@@ -809,6 +809,14 @@ The old `groovyBC`-Demos and newer cases that use `groovyBC`
     the `groovyBCJump`-condition
 
 
+#### nonBreakingDam
+
+-   **Solver:** interFoam
+-   **Preparation:** run `pyFoamPrepareCase.py`
+-   **Description:** OpenFOAM macro-expansion inside of expression
+    strings
+
+
 ### FunkyDoCalc
 
 Example dictionaries for `funkyDoCalc`
@@ -1287,6 +1295,20 @@ replaced by an expression
 -   **Solver:** `compressibleInterDyMFoam`
 -   **Case setup:** `pyFoamPrepareCase`
 -   **Demonstrates:** The `groovyCyclicACMI` patch type. State machines. `funkyWarpMesh` utility
+
+
+### runTimeControl
+
+Demonstrating the run-time trigger
+
+
+#### simpleSwakCar
+
+Simple modification of the `simpleCar`-case
+
+-   **Solver:** `simpleFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+-   **Demonstrates:** the run-time trigger with expressions.
 
 
 ### tests
@@ -6670,7 +6692,33 @@ Removed outdated information, updated links
 ### New features
 
 
+#### Expression run-time trigger for runtime-control in ESI-fork
+
+There now is a run-time trigger `swakExpression` that allows
+switching the runtime-control (for instance stopping the run)
+depending on a swak-expression.
+
+This works only for the ESI-fork. It **should** work with versions
+starting at 3.0+ but is currently only available starting with
+v1906 (modify `swak.H` if you want to enable/test it for older
+versions)
+
+The trigger is found in the `swakFunctionObjects`-library
+
+
 ### Enhancements
 
 
 ### Examples
+
+
+#### `groovyBC/nonBreakingDam` to demonstrate macro expansion
+
+This example demonstrates OpenFOAM macro-expansion inside of
+expression strings
+
+
+#### `runTimeCondition/simpleSwakCar` to demonstrate runtime-control in the ESI fork
+
+This example demonstrates the runtime-control for function
+objects that exists in the ESI-fork

@@ -1,26 +1,48 @@
 # -*- shell-script -*-
 
-for p2 in 7 6
-do
-    WHICHPATH=$(which 2>/dev/null python2.$p2-config)
-    if [[ $? == 0 ]]; then
-        export SWAK_PYTHON2_INCLUDE="$(python2.$p2-config --cflags)"
-        export SWAK_PYTHON2_LINK="$(python2.$p2-config --ldflags)"
-        echo "Using python2.$p2 at $WHICHPATH for python2"
-        break
-    fi
-done
+if [[ -z "$SWAK_PYTHON2VERSION" ]] ; then
+    echo "Looking for Python 2"
+    for p2 in 7 6
+    do
+        WHICHPATH=$(which 2>/dev/null python2.$p2-config)
+        if [[ $? == 0 ]]; then
+            echo "Found Python 2.$p2"
+            SWAK_PYTHON2VERSION=$p2
+            break
+        fi
+    done
+else
+    echo "Python 2 preset to 2.$SWAK_PYTHON2VERSION"
+fi
 
-for p3 in 9 8 7 6 5 4 3
-do
-    WHICHPATH=$(which 2>/dev/null python3.$p3-config)
-    if [[ $? == 0 ]]; then
-        export SWAK_PYTHON3_INCLUDE="$(python3.$p3-config --cflags)"
-        export SWAK_PYTHON3_LINK="$(python3.$p3-config --ldflags)"
-        echo "Using python3.$p3 at $WHICHPATH for python3"
-        break
-    fi
-done
+if [[ -n "$SWAK_PYTHON2VERSION" ]] ; then
+    echo "Configuring Python 2.$SWAK_PYTHON2VERSION"
+    export SWAK_PYTHON2_INCLUDE="$(python2.$SWAK_PYTHON2VERSION-config --cflags)"
+    export SWAK_PYTHON2_LINK="$(python2.$SWAK_PYTHON2VERSION-config --ldflags)"
+    echo "Using python2.$SWAK_PYTHON2VERSION at $WHICHPATH for python2"
+fi
+
+if [[ -z "$SWAK_PYTHON3VERSION" ]] ; then
+    echo "Looking for Python 3"
+    for p3 in 9 8 7 6 5 4 3
+    do
+        WHICHPATH=$(which 2>/dev/null python3.$p3-config)
+        if [[ $? == 0 ]]; then
+            echo "Found Python 3.$p3"
+            SWAK_PYTHON3VERSION=$p3
+            break
+        fi
+    done
+else
+    echo "Python 3 preset to 3.$SWAK_PYTHON3VERSION"
+fi
+
+if [[ -n "$SWAK_PYTHON3VERSION" ]] ; then
+    echo "Configuring Python 3.$SWAK_PYTHON3VERSION"
+    export SWAK_PYTHON3_INCLUDE="$(python3.$SWAK_PYTHON3VERSION-config --cflags)"
+    export SWAK_PYTHON3_LINK="$(python3.$SWAK_PYTHON3VERSION-config --ldflags)"
+    echo "Using python3.$SWAK_PYTHON3VERSION at $WHICHPATH for python3"
+fi
 
 swakDir=$(pwd)
 requirementsDir=$swakDir/privateRequirements

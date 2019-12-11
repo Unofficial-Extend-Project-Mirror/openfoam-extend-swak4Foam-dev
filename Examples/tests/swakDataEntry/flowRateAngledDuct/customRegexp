@@ -1,0 +1,21 @@
+// -*- c++ -*-
+massFlows {
+    type dynamic;
+    idNr 1;
+    expr "Expression massFlow on (.+):  sum=(.+)";
+    titles (
+        flow
+    );
+    alternateAxis (
+        deficit
+    );
+    theTitle "Mass Flow";
+}
+massFlowDeficit {
+    type slave;
+    master massFlows;
+    expr "Expression massFlowDeficit :  average=(.+)";
+    titles (
+        deficit
+    );
+}

@@ -625,6 +625,11 @@ Contributors/Copyright:
 #define FOAM_AMIINTERPOLATION_NOT_PATCH2PATCH
 #endif
 
+// this exists since 3.0+ but I'm to lazy to test it on older versions
+#if (OPENFOAM_COM >= 1906)
+#define FOAM_RUNTIME_CONDITION
+#endif
+
 #include "swakVersion.H"
 #include "DebugOStream.H"
 #include "BackportMacros.H"

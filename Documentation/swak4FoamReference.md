@@ -101,6 +101,9 @@ abstract classes.
 As all drivers are derived from *Common* there is a set of options
 that is available in all drivers/parser.
 
+The hierarchy fo the `Cloud` parsers goes on below `ThermalCloud`
+but further clouds have been omitted for brevity
+
 ![img](parserRelationships.png "Inheritance relation of the Parsers")
 
 Usually the parser used is determined by the using entity (for
@@ -109,7 +112,7 @@ the `swakExpression`-function object) the used parser can by
 selected by name. These names and a description of the entity the
 parser works on are given in table \ref{tab:selectionNames}.
 
-<table id="org00856e5" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org2b26e5f" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 1:</span> Selection names for the parsers</caption>
 
 <colgroup>
@@ -181,13 +184,13 @@ parser works on are given in table \ref{tab:selectionNames}.
 
 <tr>
 <td class="org-left">`internalFaField`</td>
-<td class="org-left">Internal values of a FAM-field (`1.6-ext` only)</td>
+<td class="org-left">Internal values of a FAM-field (not all forks)</td>
 </tr>
 
 
 <tr>
 <td class="org-left">`faPatch`</td>
-<td class="org-left">Boundary patch of a FAM-field (`1.6-ext` only)</td>
+<td class="org-left">Boundary patch of a FAM-field (not all forks)</td>
 </tr>
 </tbody>
 </table>
@@ -256,7 +259,7 @@ structure if necessary (for instance `toPoint(1)` to use the
 constant `1` on the vertexes of a patch). Table
 \ref{tab:structures} gives an overview of the structures.
 
-<table id="org1bd0f26" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="orgb8d7425" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 2:</span> Structures for the different parsers</caption>
 
 <colgroup>
@@ -422,7 +425,7 @@ In addition there are two unary operators:
     x-component of the field `U`). Table \ref{tab:components} gives
     an overview of the components of the various types
 
-    <table id="org2dab7a5" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+    <table id="orgd9ebe5d" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
     <caption class="t-above"><span class="table-number">Table 3:</span> Component names for the data types</caption>
 
     <colgroup>
@@ -568,7 +571,7 @@ but help identify certain entities:
 -   **weight:** The "natural" weight according to table
     \ref{tab:naturalWeights} for the current parser
 
-<table id="orgd30eb26" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="orgd361a48" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 4:</span> "Natural" weights for different parsers</caption>
 
 <colgroup>
@@ -663,7 +666,7 @@ sense for face zones. Calling this function will result in an
 error message). Table \ref{tab:parsershorthand} lists the short
 descriptions.
 
-<table id="org9e41f33" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org46f9bd0" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 5:</span> Shorthand for the parsers</caption>
 
 <colgroup>
@@ -843,6 +846,8 @@ descriptions.
     -   **faceAverage(faceExpr):** Average of the face values(F, FF)
     -   **reconstruct(faceScalar):** Reconstruct a vector field from the
         face fluxes (F)
+
+    ![img](./interpolating.png "Interpolating functions")
 
     These two functions are for quickly generating constant fields:
 
@@ -1311,7 +1316,7 @@ and set names:
     *external expressions* is triggered by `{}` after the variable
     name like this:
 
-        varName{parserType'name/regionName}=expression
+        varName{parserType'name/regionName}=expression;
 
     This means that `expression` is evaluated with the parser
     specified between `{}`. The form given above is the most general
@@ -1324,7 +1329,7 @@ and set names:
     `parserType` is `patch` then it can be omitted and the
     specification of the patch name is sufficient:
 
-        varName{patchName}=expression
+        varName{patchName}=expression;
 
     evaluates the `expression` on patch `patchName`.
 
@@ -1691,7 +1696,7 @@ to the name. The added accumulations are:
     entity. Usually the volume oder the area of it.
 
 
-<a id="org665e56c"></a>
+<a id="org2bbd02f"></a>
 
 ### Logical accumulations
 
@@ -2027,7 +2032,7 @@ parameters:
     -   **condition:** a swak-expression. This is the condition that is
         tested. If it is `true` the machine switches to a new state
     -   **logicalAccumulation:** Boils down the array of logical values
-        to one logical decision. See [5.1.1](#org665e56c) above
+        to one logical decision. See [5.1.1](#org2bbd02f) above
     -   **to:** name of the state the machine moves to if `condition` is
         `true` according to `logicalAccumulation`
     -   **description:** A descriptive text that is printed out at every
