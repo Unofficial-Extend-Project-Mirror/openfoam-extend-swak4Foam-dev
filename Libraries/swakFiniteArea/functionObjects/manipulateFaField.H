@@ -35,7 +35,7 @@ SourceFiles
 Contributors/Copyright:
     2011, 2013-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef manipulateFaField_H
@@ -50,7 +50,7 @@ Contributors/Copyright:
 
 #include "swak.H"
 
-#include "exprString.H"
+#include "swakExprString.H"
 
 namespace Foam
 {

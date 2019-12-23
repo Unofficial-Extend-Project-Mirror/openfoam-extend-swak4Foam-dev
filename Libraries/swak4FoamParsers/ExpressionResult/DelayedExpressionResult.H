@@ -45,7 +45,7 @@ Contributors/Copyright:
 #include "ExpressionResult.H"
 #include "Tuple2.H"
 
-#include "exprString.H"
+#include "swakExprString.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

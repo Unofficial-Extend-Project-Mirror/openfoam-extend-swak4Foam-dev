@@ -45,7 +45,7 @@ Contributors/Copyright:
 #include "point.H"
 
 #include "CommonValueExpressionDriver.H"
-#include "exprString.H"
+#include "swakExprString.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

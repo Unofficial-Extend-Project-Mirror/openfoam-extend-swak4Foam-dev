@@ -43,7 +43,7 @@ Contributors/Copyright:
 #define StoredExpressionResult_H
 
 #include "ExpressionResult.H"
-#include "exprString.H"
+#include "swakExprString.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

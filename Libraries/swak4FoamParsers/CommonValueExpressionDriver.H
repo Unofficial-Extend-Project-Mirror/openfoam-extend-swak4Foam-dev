@@ -58,7 +58,7 @@ Contributors/Copyright:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "exprString.H"
+#include "swakExprString.H"
 
 #include "ExpressionResult.H"
 #include "StoredExpressionResult.H"

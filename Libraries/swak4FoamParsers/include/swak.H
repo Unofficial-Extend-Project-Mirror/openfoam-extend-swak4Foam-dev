@@ -35,7 +35,7 @@ SourceFiles
 Contributors/Copyright:
     2012-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2015-2016 Bruno Santos <wyldckat@gmail.com>
-    2016-2018 Mark Olesen <Mark.Olesen@esi-group.com>
+    2016-2019 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -200,11 +200,11 @@ Contributors/Copyright:
 #define FOAM_FVOPTIONS_IN_FV
 #endif
 
-#if defined(FOAM_VERSION4SWAK_IS_COM) || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(2,2))
+#if defined(OPENFOAM_COM) || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(2,2))
 #define FOAM_HAS_ACMI_INTERFACE
 #endif
 
-#if defined(FOAM_VERSION4SWAK_IS_COM) || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(2,2))
+#if defined(OPENFOAM_COM) || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>VERSION_NR2(2,2))
 #define FOAM_HAS_AMI_INTERFACE
 #endif
 
@@ -447,7 +447,7 @@ Contributors/Copyright:
 #define FOAM_LDUMATRIX_SOLVERPERFORMANCE
 #endif
 
-#if (defined(FOAM_VERSION4SWAK_IS_COM) && OPENFOAM_COM < 1612)      \
+#if (defined(OPENFOAM_COM) && OPENFOAM_COM < 1612)      \
         || (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK<VERSION_NR(5,0,0))
 #define FOAM_SOLVERPERFORMANCE_NITERATIONS_NO_VECTOR
 #endif

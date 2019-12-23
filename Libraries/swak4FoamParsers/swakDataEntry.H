@@ -43,7 +43,7 @@ Contributors/Copyright:
 #include "foamVersion4swak.H"
 
 #include "CommonValueExpressionDriver.H"
-#include "exprString.H"
+#include "swakExprString.H"
 
 #ifdef FOAM_DATAENTRY_IS_NOW_FUNCTION1
 #include "Function1.H"
