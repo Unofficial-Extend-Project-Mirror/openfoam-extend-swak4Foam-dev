@@ -308,7 +308,13 @@ void Foam::trackDictionaryFunctionObject::initializeDictionaryList()
             Pout << "trackDictionaryFunctionObject::initializeDictionaryList: dictionaryName: " << dictionaryName << endl;
         }
 
-        if(Foam::fileStat(dictionaryName).isValid())
+        if(
+#ifdef FOAM_FILESTAT_HAS_NO_ISVALID_METHOD
+            Foam::fileStat(dictionaryName).valid()
+#else
+            Foam::fileStat(dictionaryName).isValid()
+#endif
+        )
         {
             dictionaries_.set
                 (

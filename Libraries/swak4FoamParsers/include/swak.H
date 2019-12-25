@@ -625,6 +625,10 @@ Contributors/Copyright:
 #define FOAM_AMIINTERPOLATION_NOT_PATCH2PATCH
 #endif
 
+#if (OPENFOAM_COM >= 1911)
+#define FOAM_FILESTAT_HAS_NO_ISVALID_METHOD
+#endif
+
 // this exists since 3.0+ but I'm to lazy to test it on older versions
 #if (OPENFOAM_COM >= 1906)
 #define FOAM_RUNTIME_CONDITION
