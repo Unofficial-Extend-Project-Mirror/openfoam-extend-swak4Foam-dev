@@ -118,13 +118,13 @@ void Foam::CloudMoveStatistics<CloudType>::preEvolve()
     faceHitCounter_.clear();
 
     // Initialize with zero to make sure that particles that don't hit faces are counted as well
-    forAllConstIter(typename CloudType, this->owner(), iter) {
+    forAllConstIter(typename IDLList<typename CloudType::particleType>, this->owner(), iter) {
         const typename CloudType::parcelType& p = iter();
         faceHitCounter_.insert(labelPair(p.origProc(), p.origId()), 0);
     }
 
     movesCounter_.clear();
-    forAllConstIter(typename CloudType, this->owner(), iter) {
+    forAllConstIter(typename IDLList<typename CloudType::particleType>, this->owner(), iter) {
         const typename CloudType::parcelType& p = iter();
         movesCounter_.insert(labelPair(p.origProc(), p.origId()), 0);
     }
