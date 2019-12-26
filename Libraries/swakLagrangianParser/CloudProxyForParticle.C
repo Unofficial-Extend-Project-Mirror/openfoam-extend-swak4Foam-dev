@@ -402,7 +402,7 @@ tmp<Field<RType> > CloudProxyForParticle<CloudType>::mapToParticles(
     );
     Field<RType> &result=const_cast<Field<RType>&>(tResult());
     label i=0;
-    forAllConstIter(typename CloudType,theCloud(),it)
+    forAllConstIter(typename IDLList<particleType>,theCloud(),it)
     {
 	const particleType &p=(*it);
         result[i]=f(&p);

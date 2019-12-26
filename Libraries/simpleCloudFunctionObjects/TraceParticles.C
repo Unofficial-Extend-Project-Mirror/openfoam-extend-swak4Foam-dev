@@ -107,7 +107,7 @@ template<class CloudType>
 void Foam::TraceParticles<CloudType>::preEvolve()
 {
     label cnt=0;
-    forAllConstIter(typename CloudType, this->owner(), iter) {
+    forAllConstIter(typename IDLList<typename CloudType::particleType>, this->owner(), iter) {
         const typename CloudType::parcelType& p = iter();
         if(ids_.found(labelPair(p.origProc(), p.origId()))) {
             writeParticle(
@@ -146,7 +146,7 @@ template<class CloudType>
 void Foam::TraceParticles<CloudType>::postEvolve()
 {
     label cnt=0;
-    forAllConstIter(typename CloudType, this->owner(), iter) {
+    forAllConstIter(typename IDLList<typename CloudType::particleType>, this->owner(), iter) {
         const typename CloudType::parcelType& p = iter();
         if(ids_.found(labelPair(p.origProc(), p.origId()))) {
             writeParticle(

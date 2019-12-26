@@ -211,14 +211,16 @@ CloudProxyForKinematicParcel<CloudType>::~CloudProxyForKinematicParcel()
 template<class CloudType>
 tmp<Field<scalar> > CloudProxyForKinematicParcel<CloudType>::weights() const
 {
+    typedef typename CloudProxyForKinematicParcel<CloudType>::particleType particleType;
+
     tmp<Field<scalar> > tWeight(
         new Field<scalar>(this->theCloud().size())
     );
     Field<scalar> &weight=const_cast<Field<scalar>&>(tWeight());
     label i=0;
-    forAllConstIter(typename CloudType,this->theCloud(),it)
+    forAllConstIter(typename IDLList<particleType>,this->theCloud(),it)
     {
-	const typename CloudProxyForKinematicParcel<CloudType>::particleType &p=(*it);
+	const particleType &p=(*it);
         weight[i]=p.nParticle()*p.mass();
         i++;
     }

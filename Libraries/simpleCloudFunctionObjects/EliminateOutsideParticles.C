@@ -256,7 +256,7 @@ Foam::label Foam::EliminateOutsideParticles<CloudType>::checkInside(Cloud<parcel
     label cnt=0;
     label outCnt=0;
 
-    forAllIter(typename CloudType,this->owner(),iter) {
+    forAllIter(typename IDLList<parcelType>,this->owner(),iter) {
         parcelType &p=iter();
         label oldCellI=p.cell();
         label cellI=search_.findCell(

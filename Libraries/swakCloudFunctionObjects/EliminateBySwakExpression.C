@@ -271,7 +271,7 @@ Foam::label Foam::EliminateBySwakExpression<CloudType>::checkExpression(Cloud<pa
     label cnt=0;
     label nr=0;
 
-    forAllIter(typename CloudType,this->owner(),iter) {
+    forAllIter(typename IDLList<parcelType>,this->owner(),iter) {
         parcelType &p=iter();
         if(
             conditionField[nr]

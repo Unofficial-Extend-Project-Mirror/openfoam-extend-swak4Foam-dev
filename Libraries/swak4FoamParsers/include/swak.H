@@ -361,7 +361,8 @@ Contributors/Copyright:
 #define FOAM_MESH2MESH_NO_2ND_ORDER_TENSOR
 #endif
 
-#if FOAM_VERSION4SWAK > VERSION_NR2(2,2) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#if (FOAM_VERSION4SWAK > VERSION_NR2(2,2) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)) || \
+    (FOAM_VERSION4SWAK > VERSION_NR(4,0,9) && defined(FOAM_VERSION4SWAK_IS_EXTEND))
 #define FOAM_VOLUMETYPE_IS_TYPE
 #endif
 
@@ -623,6 +624,10 @@ Contributors/Copyright:
 
 #if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(7,0,0))
 #define FOAM_AMIINTERPOLATION_NOT_PATCH2PATCH
+#endif
+
+#if (OPENFOAM_COM >= 1911)
+#define FOAM_FILESTAT_HAS_NO_ISVALID_METHOD
 #endif
 
 // this exists since 3.0+ but I'm to lazy to test it on older versions
