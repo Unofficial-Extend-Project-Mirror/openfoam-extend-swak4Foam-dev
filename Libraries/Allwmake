@@ -117,6 +117,8 @@ wmake libso simpleSearchableSurfaces
 
 wmake libso simpleSwakFunctionObjects
 
+wmake libso simpleRegionSolvers
+
 wmake libso swakTopoSources
 
 wmake libso swakDynamicMesh

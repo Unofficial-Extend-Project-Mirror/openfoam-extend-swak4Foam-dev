@@ -25,6 +25,8 @@ wclean simpleLagrangianFunctionObjects
 
 wclean simpleSearchableSurfaces
 
+wclean simpleRegionSolvers
+
 wclean swakTopoSources
 
 wclean swakSourceFields

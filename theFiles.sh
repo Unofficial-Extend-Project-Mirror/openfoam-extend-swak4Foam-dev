@@ -7,6 +7,7 @@ export SWAKLIBS=(groovyBC \
     simpleSwakFunctionObjects \
     simpleLagrangianFunctionObjects \
     simpleSearchableSurfaces \
+    simpleRegionSolvers \
     swakTopoSources \
     swak4FoamParsers \
     swakLagrangianParser \

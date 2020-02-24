@@ -1,0 +1,14 @@
+include $(OBJECTS_DIR)/../../../rules/versionOptions
+
+EXE_INC = \
+    $(FOAM_DEV_OPTION) \
+    -I../swak4FoamParsers/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    $(TRISURFACE_INC)
+
+LIB_LIBS = \
+    -L$(FOAM_USER_LIBBIN) \
+    -lfiniteVolume \
+    -lswak4FoamParsers \
+    -lmeshTools
