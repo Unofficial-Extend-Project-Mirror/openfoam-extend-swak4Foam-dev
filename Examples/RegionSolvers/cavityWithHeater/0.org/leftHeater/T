@@ -40,8 +40,11 @@ boundaryField
         $top;
         Ta              uniform 400;
     }
-    right {
-        type zeroGradient;
+    leftHeater_to_cavity {
+        type            compressible::turbulentTemperatureCoupledBaffleMixed;
+        value           $internalField;
+        Tnbr            T;
+        kappaMethod     solidThermo;
     }
     // solid_to_gas
     // {

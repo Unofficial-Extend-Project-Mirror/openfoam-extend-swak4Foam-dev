@@ -47,13 +47,17 @@ boundary
             (3 7 6 2)
         );
     }
-    fixedWallLeft
+    // fixedWallLeft
+    cavity_to_leftHeater
     {
-        type wall;
+        type mappedWall;
         faces
         (
             (0 4 7 3)
         );
+        sampleMode      nearestPatchFace;
+        sampleRegion    leftHeater;
+        samplePatch     leftHeater_to_cavity;
     }
     fixedWallRight
     {

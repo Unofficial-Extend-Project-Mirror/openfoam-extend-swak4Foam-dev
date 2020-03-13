@@ -10,3 +10,20 @@ heaterTemperature {
         max
     );
 }
+temperatureCavity {
+    type slave;
+    master heaterTemperature;
+    expr "Expression cavityTemperature :  min=(.+) max=(.+)";
+    titles (
+        "min cavity"
+        "max cavity"
+    );
+}
+pressureCavity {
+    theTitle "Pressure";
+    expr "Expression cavityPressure :  min=(.+) max=(.+)";
+    titles (
+        min
+        max
+    );
+}

@@ -33,6 +33,10 @@ boundaryField
         value           $internalField;
     }
 
+    cavity_to_leftHeater {
+        $fixedWallBottom;
+    }
+
     frontAndBack
     {
         type            empty;

@@ -34,6 +34,10 @@ boundaryField
         value           uniform (0 0 0);
     }
 
+    cavity_to_leftHeater {
+        $fixedWallBottom;
+    }
+
     frontAndBack
     {
         type            empty;

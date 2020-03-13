@@ -55,13 +55,16 @@ boundary
             (0 4 7 3)
         );
     }
-    right
+    leftHeater_to_cavity
     {
-        type patch;
+        type mappedPatch;
         faces
         (
             (2 6 5 1)
         );
+        sampleMode      nearestPatchFace;
+        sampleRegion    region0;
+        samplePatch     cavity_to_leftHeater;
     }
     bottom
     {

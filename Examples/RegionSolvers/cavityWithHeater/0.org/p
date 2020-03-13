@@ -30,6 +30,10 @@ boundaryField
         type            zeroGradient;
     }
 
+    cavity_to_leftHeater {
+        $fixedWallBottom;
+    }
+
     frontAndBack
     {
         type            empty;
