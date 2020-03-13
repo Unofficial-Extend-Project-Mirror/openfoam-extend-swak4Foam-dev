@@ -61,6 +61,10 @@ functions {
         type heatConductionRegionSolver;
         meshRegion leftHeater;
     }
+    solveRightHeater {
+        type heatConductionRegionSolver;
+        meshRegion rightHeater;
+    }
     cavityTemperature {
         type swakExpression;
         valueType internalField;

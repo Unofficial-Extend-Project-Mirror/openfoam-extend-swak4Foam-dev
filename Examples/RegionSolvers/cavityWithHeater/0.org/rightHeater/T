@@ -10,44 +10,49 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
+    location    "0/solid";
     object      T;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 1 0 0 0];
+dimensions      [ 0 0 0 1 0 0 0 ];
 
 internalField   uniform 300;
 
 boundaryField
 {
-    movingWall
-    {
-        type            zeroGradient;
-    }
+    #includeEtc "caseDicts/setConstraintTypes"
 
-    "fixedWall.*"
+    top
     {
-        type            zeroGradient;
+        type            externalWallHeatFluxTemperature;
+        kappaMethod     solidThermo;
+        mode            coefficient;
+        h               uniform 1e3;
+        Ta              $internalField;
+        value           $internalField;
     }
-
-    cavity_to_leftHeater {
+    bottom
+    {
+        $top;
+    }
+    right {
+        type zeroGradient;
+    }
+    rightHeater_to_cavity {
         type            compressible::turbulentTemperatureCoupledBaffleMixed;
         value           $internalField;
         Tnbr            T;
-        kappaMethod     fluidThermo;
+        kappaMethod     solidThermo;
     }
-
-    cavity_to_rightHeater {
-        type            compressible::turbulentTemperatureCoupledBaffleMixed;
-        value           $internalField;
-        Tnbr            T;
-        kappaMethod     fluidThermo;
-    }
-
-    frontAndBack
-    {
-        type            empty;
-    }
+    // solid_to_gas
+    // {
+    //     type            compressible::turbulentTemperatureCoupledBaffleMixed;
+    //     value           $internalField;
+    //     Tnbr            T;
+    //     kappaMethod     solidThermo;
+    // }
 }
+
 
 // ************************************************************************* //

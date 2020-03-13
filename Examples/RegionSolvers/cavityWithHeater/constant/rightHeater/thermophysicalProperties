@@ -9,44 +9,43 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      T;
+    class       dictionary;
+    object      thermophysicalProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 1 0 0 0];
-
-internalField   uniform 300;
-
-boundaryField
+thermoType
 {
-    movingWall
+    type            heSolidThermo;
+    mixture         pureMixture;
+    transport       constIso;
+    thermo          hConst;
+    equationOfState rhoConst;
+    specie          specie;
+    energy          sensibleEnthalpy;
+}
+
+mixture
+{
+    specie
     {
-        type            zeroGradient;
+        molWeight   50;
     }
 
-    "fixedWall.*"
+    transport
     {
-        type            zeroGradient;
+        kappa   80;
     }
 
-    cavity_to_leftHeater {
-        type            compressible::turbulentTemperatureCoupledBaffleMixed;
-        value           $internalField;
-        Tnbr            T;
-        kappaMethod     fluidThermo;
-    }
-
-    cavity_to_rightHeater {
-        type            compressible::turbulentTemperatureCoupledBaffleMixed;
-        value           $internalField;
-        Tnbr            T;
-        kappaMethod     fluidThermo;
-    }
-
-    frontAndBack
+    thermodynamics
     {
-        type            empty;
+        Hf      0;
+        Cp      450;
+    }
+
+    equationOfState
+    {
+        rho     8000;
     }
 }
 

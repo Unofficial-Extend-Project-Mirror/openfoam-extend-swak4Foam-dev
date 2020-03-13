@@ -579,6 +579,12 @@ be able to handle these libraries
 Libraries that integrate various scripting languages with swak4Foam
 
 
+### `simpleRegionSolvers`
+
+Library that has function objects that allow solving an equation
+independently in a different region
+
+
 #### `swakGeneralLanguageIntegration`
 
 This library implements a common interface for the actual
@@ -1311,6 +1317,22 @@ Simple modification of the `simpleCar`-case
 -   **Demonstrates:** the run-time trigger with expressions.
 
 
+### RegionSolvers
+
+Demonstrating the function objects that emulate solvers in
+different regions
+
+
+#### cavityWithHeater
+
+A driven cavity that has to solid heat conduction zones at the
+sides with which it interacts
+
+-   **Solver:** `rhoPimpleFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+-   **Demonstrates:** different heat conductions
+
+
 ### tests
 
 Simple test cases for specific features. The names of the
@@ -1432,7 +1454,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org67eb0db) below). Don't work on the
+details see [6.2.2](#orgf816699) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1488,7 +1510,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org67eb0db"></a>
+<a id="orgf816699"></a>
 
 ### Repository organization
 
@@ -6720,6 +6742,20 @@ v1906 (modify `swak.H` if you want to enable/test it for older
 versions)
 
 The trigger is found in the `swakFunctionObjects`-library
+
+
+#### Library for solving physical systems in separate regions
+
+The library `simpleRegionSolvers` holds some function objects
+which solve a physical system in a separate region. This region
+can be coupled with the main region to get more realistic
+boundary conditions (for instance heat conduction in the
+boundary)
+
+Currently implemented function objects are
+
+-   **`heatConductionRegionSolver`:** Solves the heat conduction in a
+    solid (modeled on the solid regions in `chtMultiRegionFoam`)
 
 
 ### Enhancements

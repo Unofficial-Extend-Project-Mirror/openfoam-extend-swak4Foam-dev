@@ -9,44 +9,39 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      T;
+    class       dictionary;
+    object      fvSolution;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 1 0 0 0];
-
-internalField   uniform 300;
-
-boundaryField
+solvers
 {
-    movingWall
+    h
     {
-        type            zeroGradient;
+        solver           PCG;
+        preconditioner   DIC;
+        tolerance        1e-06;
+        relTol           0.1;
     }
 
-    "fixedWall.*"
+    hFinal
     {
-        type            zeroGradient;
+        $h;
+        tolerance        1e-06;
+        relTol           0;
     }
+}
 
-    cavity_to_leftHeater {
-        type            compressible::turbulentTemperatureCoupledBaffleMixed;
-        value           $internalField;
-        Tnbr            T;
-        kappaMethod     fluidThermo;
-    }
+PIMPLE
+{
+    nNonOrthogonalCorrectors 0;
+}
 
-    cavity_to_rightHeater {
-        type            compressible::turbulentTemperatureCoupledBaffleMixed;
-        value           $internalField;
-        Tnbr            T;
-        kappaMethod     fluidThermo;
-    }
-
-    frontAndBack
+relaxationFactors
+{
+    equations
     {
-        type            empty;
+        //        h               0.7;
     }
 }
 

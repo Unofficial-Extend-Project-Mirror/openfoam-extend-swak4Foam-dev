@@ -34,6 +34,9 @@ boundaryField
     cavity_to_leftHeater {
         $fixedWallBottom;
     }
+    cavity_to_rightHeater {
+        $cavity_to_leftHeater;
+    }
     frontAndBack
     {
         type            empty;

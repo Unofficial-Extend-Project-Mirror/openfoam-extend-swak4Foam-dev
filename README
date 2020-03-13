@@ -434,6 +434,9 @@ S_{expl} + S_{impl} T
      be able to handle these libraries
 *** =languageIntegration=
     Libraries that integrate various scripting languages with swak4Foam
+*** =simpleRegionSolvers=
+    Library that has function objects that allow solving an equation
+    independently in a different region
 **** =swakGeneralLanguageIntegration=
      This library implements a common interface for the actual
      language integrations.
@@ -877,6 +880,15 @@ S_{expl} + S_{impl} T
      - Solver :: =simpleFoam=
      - Case setup :: =pyFoamPrepareCase=
      - Demonstrates :: the run-time trigger with expressions.
+*** RegionSolvers
+    Demonstrating the function objects that emulate solvers in
+    different regions
+**** cavityWithHeater
+     A driven cavity that has to solid heat conduction zones at the
+     sides with which it interacts
+     - Solver :: =rhoPimpleFoam=
+     - Case setup :: =pyFoamPrepareCase=
+     - Demonstrates :: different heat conductions
 *** tests
     Simple test cases for specific features. The names of the
     directories should give you a hint what is tested there. Most of
@@ -4298,6 +4310,16 @@ S_{expl} + S_{impl} T
      versions)
 
      The trigger is found in the =swakFunctionObjects=-library
+**** Library for solving physical systems in separate regions
+     The library =simpleRegionSolvers= holds some function objects
+     which solve a physical system in a separate region. This region
+     can be coupled with the main region to get more realistic
+     boundary conditions (for instance heat conduction in the
+     boundary)
+
+     Currently implemented function objects are
+     - =heatConductionRegionSolver= :: Solves the heat conduction in a
+       solid (modeled on the solid regions in =chtMultiRegionFoam=)
 *** Enhancements
 *** Examples
 **** =groovyBC/nonBreakingDam= to demonstrate macro expansion
