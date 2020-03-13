@@ -85,7 +85,7 @@ class SimpleRegionSolverFunctionObject
     const objectRegistry& obr_;
 
     //- the mesh
-    fvMesh& mesh_;
+    autoPtr<fvMesh> mesh_;
 
 #ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
     //- make sure that execute is not called twice at one time-step
@@ -94,7 +94,7 @@ class SimpleRegionSolverFunctionObject
 
 protected:
 
-    fvMesh &mesh() { return mesh_; }
+    fvMesh &mesh() { return mesh_(); }
 
     const fvMesh &mesh() const { return mesh_; }
 

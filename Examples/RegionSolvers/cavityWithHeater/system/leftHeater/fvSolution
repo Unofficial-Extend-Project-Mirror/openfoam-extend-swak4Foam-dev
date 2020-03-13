@@ -10,55 +10,38 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    location    "system";
-    object      controlDict;
+    object      fvSolution;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     rhoPimpleFoam;
+solvers
+{
+    h
+    {
+        solver           PCG;
+        preconditioner   DIC;
+        tolerance        1e-06;
+        relTol           0.1;
+    }
 
-startFrom       startTime;
+    hFinal
+    {
+        $h;
+        tolerance        1e-06;
+        relTol           0;
+    }
+}
 
-startTime       0;
+PIMPLE
+{
+    nNonOrthogonalCorrectors 0;
+}
 
-stopAt          endTime;
-
-endTime         10;
-
-deltaT          0.01;
-
-writeControl    runTime;
-
-writeInterval   1;
-
-purgeWrite      0;
-
-writeFormat     ascii;
-
-writePrecision  10;
-
-writeCompression on;
-
-timeFormat      general;
-
-timePrecision   6;
-
-runTimeModifiable true;
-
-adjustTimeStep  no;
-
-maxCo           0.3;
-
-maxDeltaT       1;
-
-libs (
-    "libsimpleRegionSolvers.so"
-);
-
-functions {
-    solveLeftHeater {
-        type heatConductionRegionSolver;
-        meshRegion leftHeater;
+relaxationFactors
+{
+    equations
+    {
+        h               0.7;
     }
 }
 

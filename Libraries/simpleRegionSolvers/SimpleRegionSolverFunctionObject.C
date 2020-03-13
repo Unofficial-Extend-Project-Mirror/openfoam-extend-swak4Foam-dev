@@ -42,8 +42,6 @@ Contributors/Copyright:
 # include "uniformDimensionedFields.H"
 #endif
 
-#include "MeshesRepository.H"
-
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -74,10 +72,15 @@ SimpleRegionSolverFunctionObject::SimpleRegionSolverFunctionObject
     ),
     obr_(t.lookupObject<objectRegistry>(masterRegion_)),
     mesh_(
-        MeshesRepository::getRepository().addCoupledMesh(
-            meshRegion_,
-            masterRegion_,
-            meshRegion_
+        new fvMesh
+        (
+            IOobject
+            (
+                meshRegion_,
+                t.timeName(),
+                t,
+                Foam::IOobject::MUST_READ
+            )
         )
     )
 #ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
@@ -107,13 +110,8 @@ bool SimpleRegionSolverFunctionObject::execute(bool forceWrite)
         return false;
     }
 #endif
-    if(
-        obr().time().outputTime()
-        ||
-        forceWrite
-    ) {
-        solveRegion();
-    }
+
+    solveRegion();
 
     return true;
 }

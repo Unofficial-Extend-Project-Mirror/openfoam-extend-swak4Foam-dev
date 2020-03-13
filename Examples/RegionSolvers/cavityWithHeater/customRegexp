@@ -1,0 +1,12 @@
+// -*- c++ -*
+
+heaterTemperature {
+    type dynamic;
+    theTitle "Temperature";
+    idNr 1;
+    expr "(.+) Min/max T:(.+) (.+)";
+    titles (
+        min
+        max
+    );
+}
