@@ -26,7 +26,7 @@ License
 Contributors/Copyright:
     2010, 2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "expressionFieldFunctionObject.H"
