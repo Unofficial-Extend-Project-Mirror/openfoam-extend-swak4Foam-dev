@@ -4320,6 +4320,18 @@ S_{expl} + S_{impl} T
      Currently implemented function objects are
      - =heatConductionRegionSolver= :: Solves the heat conduction in a
        solid (modeled on the solid regions in =chtMultiRegionFoam=)
+**** A =fvOption= to set the energy according to a temperature expression
+     In the =swakSourceFields=-library there is a =fvOption= named
+     =swakSetTemperature= that specifies the temperature in a region
+     which is then converted to the correct energy in the specified
+     cells.
+
+     Note: in the =expressions= dictionary the name of the emergy
+     field that is solved for (usually =h= or =he=) has to be
+     specified. *Not* the temperature
+
+     An example can be found in
+     =Examples/RegionSolvers/cavityWithHeater=
 *** Enhancements
 *** Examples
 **** =groovyBC/nonBreakingDam= to demonstrate macro expansion

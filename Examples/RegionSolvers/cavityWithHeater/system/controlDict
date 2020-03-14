@@ -23,7 +23,7 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         100;
+endTime         200;
 
 deltaT          0.01;
 
@@ -55,7 +55,8 @@ libs (
     "libsimpleRegionSolvers.so"
     "libsimpleSwakFunctionObjects.so"
     "libswakFunctionObjects.so"
-    "libswakTopoSources.so"
+    //    "libswakTopoSources.so"
+    "libswakSourceFields.so"
 );
 
 functions {
@@ -76,20 +77,20 @@ functions {
     //     loadPointSets false;
     //     writeSets true;
     // }
-    coolT {
-        type expressionField;
-        fieldName TCooler;
-        region rightHeater;
-        autowrite yes;
-        expression "time()<20 ? 300-time() : 280";
-    }
-    createCoolerSet {
-        type manipulateCellSet;
-        cellSetName coolRegion;
-        region rightHeater;
-        createMissing true;
-        mask "mag(pos()-vector(0.15,0.05+0.05*sin(time()/20),0.005)) < 0.01";
-    }
+    // coolT {
+    //     type expressionField;
+    //     fieldName TCooler;
+    //     region rightHeater;
+    //     autowrite yes;
+    //     expression "time()<20 ? 300-time() : 280";
+    // }
+    // createCoolerSet {
+    //     type manipulateCellSet;
+    //     cellSetName coolRegion;
+    //     region rightHeater;
+    //     createMissing true;
+    //     mask "mag(pos()-vector(0.15,0.05+0.05*sin(time()/20),0.005)) < 0.01";
+    // }
     cavityTemperature {
         type swakExpression;
         valueType internalField;

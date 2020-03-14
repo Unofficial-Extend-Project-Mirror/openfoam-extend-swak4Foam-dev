@@ -1454,7 +1454,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orgf816699) below). Don't work on the
+details see [6.2.2](#orgee06515) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1510,7 +1510,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orgf816699"></a>
+<a id="orgee06515"></a>
 
 ### Repository organization
 
@@ -6756,6 +6756,21 @@ Currently implemented function objects are
 
 -   **`heatConductionRegionSolver`:** Solves the heat conduction in a
     solid (modeled on the solid regions in `chtMultiRegionFoam`)
+
+
+#### A `fvOption` to set the energy according to a temperature expression
+
+In the `swakSourceFields`-library there is a `fvOption` named
+`swakSetTemperature` that specifies the temperature in a region
+which is then converted to the correct energy in the specified
+cells.
+
+Note: in the `expressions` dictionary the name of the emergy
+field that is solved for (usually `h` or `he`) has to be
+specified. **Not** the temperature
+
+An example can be found in
+`Examples/RegionSolvers/cavityWithHeater`
 
 
 ### Enhancements

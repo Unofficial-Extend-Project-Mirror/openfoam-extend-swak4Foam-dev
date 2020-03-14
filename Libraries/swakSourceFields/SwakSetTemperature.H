@@ -23,13 +23,13 @@ License
     along with swak4Foam.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::SwakSetValue
+    Foam::SwakSetTemperature
 
 Description
-    Fixes field values according to an expression
+    Fixes energy values according to an expression of temperature values
 
 SourceFiles
-    SwakSetValue.C
+    SwakSetTemperature.C
 
 Contributors/Copyright:
     2010, 2012-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
@@ -37,10 +37,10 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef SwakSetValue_H
-#define SwakSetValue_H
+#ifndef SwakSetTemperature_H
+#define SwakSetTemperature_H
 
-#include "SwakBasicSourceCommon.H"
+#include "SwakSetValue.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -48,49 +48,38 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class SwakSetValue Declaration
+                           Class SwakSetTemperature Declaration
 \*---------------------------------------------------------------------------*/
 
 #ifdef FOAM_HAS_FVOPTIONS
     namespace fv {
 #endif
 
-template<class T>
-class SwakSetValue
+class SwakSetTemperature
 :
-    public SwakBasicSourceCommon<T>
+    public SwakSetValue<scalar>
 {
     // Private data
 
-    SwakSetValue(const SwakSetValue&);
-
-    bool useMaskExpression_;
-
-    exprString maskExpression_;
+    SwakSetTemperature(const SwakSetTemperature&);
 
 protected:
 
-    bool getMask(DynamicList<label> &,const word &psi);
-
-    bool useMaskExpression() const {
-        return useMaskExpression_;
-    }
-
     virtual void setValueInternal(
         const DynamicList<label> &cellIDs,
-        const typename SwakSetValue<T>::resultField &result,
-        fvMatrix<T>& eqn
+        const typename SwakSetValue<scalar>::resultField &result,
+        fvMatrix<scalar>& eqn
     );
 
 public:
 
     //- Runtime type information
-    TypeName("SwakSetValue");
+    TypeName("SwakSetTemperature");
 
     // Constructors
 
         //- Construct from a dictionary
-        SwakSetValue
+        SwakSetTemperature
         (
             const word& name,
             const word& modelType,
@@ -100,17 +89,8 @@ public:
 
     // Destructor
 
-        virtual ~SwakSetValue();
+        virtual ~SwakSetTemperature();
 
-        // Evaluation
-
-            //- Set value on vector field
-            virtual void setValue(fvMatrix<T>& eqn, const label fieldI);
-
-            //- in newer versions setValue was renamed
-            virtual void constrain(fvMatrix<T>& eqn, const label fieldI) {
-                setValue(eqn,fieldI);
-            }
 };
 
 
@@ -121,9 +101,6 @@ public:
 
 } // End namespace Foam
 
-#ifdef NoRepository
-#   include "SwakSetValue.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

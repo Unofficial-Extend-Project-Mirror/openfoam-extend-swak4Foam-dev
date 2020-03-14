@@ -190,6 +190,19 @@ void SwakSetValue<T>::setValue
         cellIDs=this->cells_;
     }
 
+    setValueInternal(
+        cellIDs,
+        result,
+        eqn
+    );
+}
+
+template<class T>
+void SwakSetValue<T>::setValueInternal(
+        const DynamicList<label> &cellIDs,
+        const typename SwakSetValue<T>::resultField &result,
+        fvMatrix<T>& eqn
+) {
     List<T> values(cellIDs.size());
 
     //    UIndirectList<Type>(values, cells_) = injectionRate_[fieldI];
