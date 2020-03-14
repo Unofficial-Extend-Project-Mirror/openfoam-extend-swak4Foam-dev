@@ -54,6 +54,8 @@ maxDeltaT       1;
 libs (
     "libsimpleRegionSolvers.so"
     "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
+    "libswakTopoSources.so"
 );
 
 functions {
@@ -64,6 +66,29 @@ functions {
     solveRightHeater {
         type heatConductionRegionSolver;
         meshRegion rightHeater;
+    }
+    // getTheSets {
+    //     type loadTopoSets;
+    //     region rightHeater;
+    //     forceLoading true;
+    //     loadCellSets true;
+    //     loadFaceSets false;
+    //     loadPointSets false;
+    //     writeSets true;
+    // }
+    coolT {
+        type expressionField;
+        fieldName TCooler;
+        region rightHeater;
+        autowrite yes;
+        expression "time()<20 ? 300-time() : 280";
+    }
+    createCoolerSet {
+        type manipulateCellSet;
+        cellSetName coolRegion;
+        region rightHeater;
+        createMissing true;
+        mask "mag(pos()-vector(0.15,0.05+0.05*sin(time()/20),0.005)) < 0.01";
     }
     cavityTemperature {
         type swakExpression;

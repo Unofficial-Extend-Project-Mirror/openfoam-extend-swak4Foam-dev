@@ -150,7 +150,13 @@ void loadTopoSetsFunctionObject::loadAllSets(wordHashSet &names)
 #else
     word setsInstance = mesh.time().findInstance
         (
-            polyMesh::meshSubDir/"sets",
+            (
+                mesh.name()!=polyMesh::defaultRegion
+                ?
+                mesh.name()/polyMesh::meshSubDir/"sets"
+                :
+                polyMesh::meshSubDir/"sets"
+            ),
             word::null,
             IOobject::MUST_READ,
             mesh.facesInstance()
