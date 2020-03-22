@@ -68,6 +68,9 @@ class HeatConductionRegionSolverFunctionObject
     //- Disallow default bitwise assignment
     void operator=(const HeatConductionRegionSolverFunctionObject&);
 
+    //- keep our own temperature field so that the solidThermo doesn't update it
+    volScalarField T_;
+
     //- thermo
     autoPtr<solidThermo> thermo_;
 

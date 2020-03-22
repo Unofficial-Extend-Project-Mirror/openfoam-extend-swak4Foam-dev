@@ -24,6 +24,10 @@ solvers
         relTol           0.1;
     }
 
+    T {
+        $h;
+    }
+
     hFinal
     {
         $h;

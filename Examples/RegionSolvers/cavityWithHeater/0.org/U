@@ -34,12 +34,8 @@ boundaryField
         value           uniform (0 0 0);
     }
 
-    cavity_to_leftHeater {
+    "cavity_to_(.+)Heater" {
         $fixedWallBottom;
-    }
-
-    cavity_to_rightHeater {
-        $cavity_to_leftHeater;
     }
 
     frontAndBack

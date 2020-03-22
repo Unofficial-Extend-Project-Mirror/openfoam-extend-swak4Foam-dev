@@ -18,14 +18,14 @@ scale   0.1;
 
 vertices
 (
-    (0 0 0)
+    (0 -1 0)
+    (1 -1 0)
     (1 0 0)
-    (1 1 0)
-    (0 1 0)
-    (0 0 0.1)
+    (0 0 0)
+    (0 -1 0.1)
+    (1 -1 0.1)
     (1 0 0.1)
-    (1 1 0.1)
-    (0 1 0.1)
+    (0 0 0.1)
 );
 
 blocks
@@ -39,47 +39,40 @@ edges
 
 boundary
 (
-    movingWall
+    right
     {
-        type wall;
-        faces
-        (
-            (3 7 6 2)
-        );
-    }
-    // fixedWallLeft
-    cavity_to_leftHeater
-    {
-        type mappedWall;
-        faces
-        (
-            (0 4 7 3)
-        );
-        sampleMode      nearestPatchFace;
-        sampleRegion    leftHeater;
-        samplePatch     leftHeater_to_cavity;
-    }
-    cavity_to_rightHeater
-    {
-        type mappedWall;
+        type patch;
         faces
         (
             (2 6 5 1)
         );
-        sampleMode      nearestPatchFace;
-        sampleRegion    rightHeater;
-        samplePatch     rightHeater_to_cavity;
     }
-    cavity_to_bottomHeater
+    left
     {
-        type mappedWall;
+        type patch;
+        faces
+        (
+            (0 4 7 3)
+        );
+    }
+    bottomHeater_to_cavity
+    {
+        type mappedPatch;
+        faces
+        (
+            (3 7 6 2)
+        );
+        sampleMode      nearestPatchFace;
+        sampleRegion    region0;
+        samplePatch     cavity_to_bottomHeater;
+    }
+    bottom
+    {
+        type patch;
         faces
         (
             (1 5 4 0)
         );
-        sampleMode      nearestPatchFace;
-        sampleRegion    bottomHeater;
-        samplePatch     bottomHeater_to_cavity;
     }
     frontAndBack
     {

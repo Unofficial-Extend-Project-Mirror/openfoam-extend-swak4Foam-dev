@@ -31,11 +31,8 @@ boundaryField
         type            kqRWallFunction;
         value           uniform 0.00325;
     }
-    cavity_to_leftHeater {
+    "cavity_to_(.+)Heater" {
         $fixedWallBottom;
-    }
-    cavity_to_rightHeater {
-        $cavity_to_leftHeater;
     }
     frontAndBack
     {

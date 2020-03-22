@@ -10,41 +10,60 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    object      fvSchemes;
+    object      thermophysicalProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-ddtSchemes
+thermoType
 {
-    default         steadyState;
+    type            heSolidThermo;
+    mixture         multiComponentMixture;
+    transport       constIso;
+    thermo          hConst;
+    equationOfState rhoConst;
+    specie          specie;
+    energy          sensibleEnthalpy;
 }
 
-gradSchemes
-{
-    default         Gauss linear;
+species (
+    copper
+    alumina
+);
+
+copper {
+    specie
+    {
+        molWeight 1;
+    }
+    equationOfState
+    {
+        rho 8960;
+    }
+    thermodynamics
+    {
+        Cp    390;
+        Hf 0;
+    }
+    transport {
+        kappa 401;
+    }
 }
-
-divSchemes
-{
-    default         none;
+alumina {
+    specie
+    {
+        molWeight 1;
+    }
+    equationOfState
+    {
+        rho 3987;
+    }
+    thermodynamics
+    {
+        Cp   880;
+        Hf 0;
+    }
+    transport {
+        kappa 30;
+    }
 }
-
-laplacianSchemes
-{
-    default             none;
-    laplacian(alpha,h)  Gauss linear corrected;
-    laplacian(alpha,T)  Gauss linear corrected;
-}
-
-interpolationSchemes
-{
-    default         linear;
-}
-
-snGradSchemes
-{
-    default         corrected;
-}
-
-
 // ************************************************************************* //

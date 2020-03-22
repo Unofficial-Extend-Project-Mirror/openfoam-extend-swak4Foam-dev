@@ -74,6 +74,17 @@ HeatConductionRegionSolverFunctionObject::HeatConductionRegionSolverFunctionObje
         t,
         dict
     ),
+    T_(
+        IOobject
+        (
+            "T",
+            mesh().time().timeName(),
+            mesh(),
+            IOobject::MUST_READ,
+            IOobject::AUTO_WRITE
+        ),
+        mesh()
+    ),
     thermo_(
         solidThermo::New(this->mesh())
     ),
@@ -200,8 +211,6 @@ bool HeatConductionRegionSolverFunctionObject::solveRegion() {
             );
     }
 
-    volScalarField& h = thermo().he();
-
     const volScalarField& betav = betav_();
 
     fv::options& fvOptions = fvOptions_;
@@ -219,31 +228,33 @@ bool HeatConductionRegionSolverFunctionObject::solveRegion() {
 
         for (int nonOrth=0; nonOrth<=nNonOrthCorr; ++nonOrth)
         {
-            fvScalarMatrix hEqn
+            fvScalarMatrix TEqn
                 (
-                    fvm::ddt(betav*rho, h)
+                    fvm::ddt(betav*rho, T_)
                     - (
                         thermo().isotropic()
-                        ? fvm::laplacian(betav*thermo().alpha(), h, "laplacian(alpha,h)")
-                        : fvm::laplacian(betav*taniAlpha(), h, "laplacian(alpha,h)")
+                        ? fvm::laplacian(betav*thermo().alpha(), T_, "laplacian(alpha,T)")
+                        : fvm::laplacian(betav*taniAlpha(), T_, "laplacian(alpha,T)")
                     )
                     ==
-                    fvOptions(rho, h)
+                    fvOptions(rho, T_)
                 );
 
-            hEqn.relax();
+            TEqn.relax();
 
-            fvOptions.constrain(hEqn);
+            fvOptions.constrain(TEqn);
 
-            hEqn.solve(mesh().solver(h.name()));
+            TEqn.solve(mesh().solver(T_.name()));
 
-            fvOptions.correct(h);
+            fvOptions.correct(T_);
         }
 
+        thermo().he()=thermo().he(thermo().p(),T_);
+        // properties get updated if they are T-dependent
         thermo().correct();
 
-        Info<< meshRegion() << " Min/max T:" << min(thermo().T()).value() << ' '
-            << max(thermo().T()).value() << endl;
+        Info<< meshRegion() << " Min/max T:" << min(T_).value() << ' '
+            << max(T_).value() << endl;
     }
 
     // if (finalIter)

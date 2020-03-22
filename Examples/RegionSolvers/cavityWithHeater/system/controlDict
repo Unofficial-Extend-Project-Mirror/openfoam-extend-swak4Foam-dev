@@ -68,6 +68,10 @@ functions {
         type heatConductionRegionSolver;
         meshRegion rightHeater;
     }
+    solvebottomHeater {
+        type heatConductionRegionSolver;
+        meshRegion bottomHeater;
+    }
     // getTheSets {
     //     type loadTopoSets;
     //     region rightHeater;
