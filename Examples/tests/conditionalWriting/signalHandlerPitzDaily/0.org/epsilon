@@ -24,7 +24,7 @@ boundaryField
     inlet
     {
         type            groovyBC;
-        valueExpression "time()<13 ? 14.855 : 0";
+        valueExpression "time()<33 ? 14.855 : 0";
         value           uniform 14.855;
     }
     outlet

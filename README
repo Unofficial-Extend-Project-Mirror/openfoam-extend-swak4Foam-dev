@@ -4299,7 +4299,7 @@ S_{expl} + S_{impl} T
      (or similar).
 
      If these variables are not set the highest possible Python is
-     used (like it was before)
+     used (like it was before
 *** Documentation
 **** Adapted contributors section in the README
      Removed outdated information, updated links
@@ -4338,6 +4338,12 @@ S_{expl} + S_{impl} T
      An example can be found in
      =Examples/RegionSolvers/cavityWithHeater=
 *** Enhancements
+**** =writeOldTimeStepsOnSignal= now also writes when a =FatalError= happens
+     By intercepting the =ABRT= signal the function object now writes
+     all stored timesteps when a =FatalError= is encountered in the code
+**** =provokeSignal= now also simulates a FatalError
+     The function object now has a special 'signal' =FoamFatal= that
+     instead of raising a signal does a =FatalError=
 *** Examples
 **** =groovyBC/nonBreakingDam= to demonstrate macro expansion
      This example demonstrates OpenFOAM macro-expansion inside of

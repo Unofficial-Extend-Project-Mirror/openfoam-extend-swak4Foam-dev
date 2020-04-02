@@ -63,6 +63,13 @@ functions {
         outputInterval 1;
         fieldName nowTime;
     }
+    suddenDeath {
+        type provokeSignal;
+        // signalToRaise SEGV;
+        signalToRaise FoamFatal;
+        timeToRaise 17;
+        processorsToRaiseSignal ( 1 );
+    }
     sigHandler {
         type writeOldTimesOnSignal;
         numberOfTimestepsToStore 5;

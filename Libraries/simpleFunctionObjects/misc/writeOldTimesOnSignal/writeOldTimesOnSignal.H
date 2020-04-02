@@ -128,6 +128,7 @@ class writeOldTimesOnSignalFunctionObject
     bool sigQUIT_;
     bool sigUSR1_;
     bool sigUSR2_;
+    bool sigABRT_;
 
     bool alreadyDumped_;
 

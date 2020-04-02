@@ -79,7 +79,8 @@ public:
         sigTERM,
         sigQUIT,
         sigUSR1,
-        sigUSR2
+        sigUSR2,
+        FoamFatal
     };
 
 private:
@@ -90,7 +91,7 @@ private:
 
     bool raiseOnThisProc_;
 
-    static const NamedEnum<possibleSignals,7> possibleSignalsNames_;
+    static const NamedEnum<possibleSignals,8> possibleSignalsNames_;
 
 public:
 

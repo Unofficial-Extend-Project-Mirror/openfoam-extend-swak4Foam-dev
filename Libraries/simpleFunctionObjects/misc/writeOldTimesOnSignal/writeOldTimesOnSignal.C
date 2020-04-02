@@ -73,6 +73,7 @@ writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject
     sigQUIT_(dict.lookupOrDefault<bool>("sigQUIT",false)),
     sigUSR1_(dict.lookupOrDefault<bool>("sigUSR1",false)),
     sigUSR2_(dict.lookupOrDefault<bool>("sigUSR2",false)),
+    sigABRT_(dict.lookupOrDefault<bool>("sigABRT",false)),
     alreadyDumped_(false),
     itWasMeWhoReraised_(false),
 #ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
@@ -105,6 +106,20 @@ writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject
         WarningIn("writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject")
             << "sigTERM unset. Setting it to true so that signal is propagated to other processors"
                 << nl << "If this is undesired explicitly set 'sigTERM false;' in "
+                << dict.name()
+                << endl;
+    }
+    if(
+        Pstream::parRun()
+        &&
+        !dict.found("sigABRT")
+        &&
+        !sigABRT_
+    ) {
+        sigABRT_=true;
+        WarningIn("writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject")
+            << "sigABRT unset. Setting it to true so that FoamFatalError also causes a writing of fields"
+                << nl << "If this is undesired explicitly set 'sigABRT false;' in "
                 << dict.name()
                 << endl;
     }
@@ -275,6 +290,16 @@ bool writeOldTimesOnSignalFunctionObject::start()
         );
     } else {
         Info << "To catch the USR2-signal set 'sigUSR2 true;'" << endl;
+    }
+    if(sigABRT_) {
+        handlers_.append(
+            SignalHandlerInfo(
+                "SIGABRT",
+                SIGABRT
+            )
+        );
+    } else {
+        Info << "To catch the ABRT-signal (and FoamFatalError) set 'sigABRT true;'" << endl;
     }
 
     handlers_.shrink();

@@ -1454,7 +1454,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orge43fd19) below). Don't work on the
+details see [6.2.2](#org5cf6c3a) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1510,7 +1510,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orge43fd19"></a>
+<a id="org5cf6c3a"></a>
 
 ### Repository organization
 
@@ -6724,7 +6724,7 @@ like 3.7 is found. THe same is true for
 (or similar).
 
 If these variables are not set the highest possible Python is
-used (like it was before)
+used (like it was before
 
 
 ### Documentation
@@ -6782,6 +6782,18 @@ An example can be found in
 
 
 ### Enhancements
+
+
+#### `writeOldTimeStepsOnSignal` now also writes when a `FatalError` happens
+
+By intercepting the `ABRT` signal the function object now writes
+all stored timesteps when a `FatalError` is encountered in the code
+
+
+#### `provokeSignal` now also simulates a FatalError
+
+The function object now has a special 'signal' `FoamFatal` that
+instead of raising a signal does a `FatalError`
 
 
 ### Examples
