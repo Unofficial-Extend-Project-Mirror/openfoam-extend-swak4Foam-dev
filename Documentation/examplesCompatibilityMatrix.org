@@ -82,6 +82,7 @@
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
+  | tests/conditionalWriting/signalHandlerPitzDaily             |            |            | \checkmark |            |
   | tests/delayedMappingChannels                                |            |            | \checkmark |            |
   | tests/languageIntegration/luaIntegration                    | bug        | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/pythonIntegration                 | \checkmark | \checkmark | \checkmark | \checkmark |

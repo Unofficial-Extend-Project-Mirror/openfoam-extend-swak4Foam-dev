@@ -65,8 +65,8 @@ functions {
     }
     sigHandler {
         type writeOldTimesOnSignal;
-        numberOfTimestepsToStore 3;
-        writeCurrent false;
+        numberOfTimestepsToStore 5;
+        writeCurrent true;
         // sigFPE false;
         // sigSEGV false;
         sigINT true;

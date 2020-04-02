@@ -59,6 +59,7 @@ writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject
 )
 :
     functionObject(name),
+    dict_(dict),
     times_(dict),
     theTime_(t),
     writeCurrent_(
@@ -73,7 +74,11 @@ writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject
     sigUSR1_(dict.lookupOrDefault<bool>("sigUSR1",false)),
     sigUSR2_(dict.lookupOrDefault<bool>("sigUSR2",false)),
     alreadyDumped_(false),
-    itWasMeWhoReraised_(false)
+    itWasMeWhoReraised_(false),
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    needsInit_(true),
+#endif
+    lastStepExecute_(-1)
 {
     if(writeCurrent_) {
         WarningIn("writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject")
@@ -197,6 +202,8 @@ void writeOldTimesOnSignalFunctionObject::sigHandler(int sig) {
 
 bool writeOldTimesOnSignalFunctionObject::start()
 {
+    Info << "Setting signal handlers according to " << dict_.name() << endl;
+
     if(sigFPE_) {
         handlers_.append(
             SignalHandlerInfo(
@@ -282,7 +289,21 @@ bool writeOldTimesOnSignalFunctionObject::execute()
 bool writeOldTimesOnSignalFunctionObject::execute(const bool forceWrite)
 #endif
 {
-    times_.copy(theTime_);
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    if(needsInit_) {
+        start();
+        needsInit_ = false;
+    }
+#endif
+    if(
+        lastStepExecute_
+        !=
+        theTime_.timeIndex()
+    ) {
+        Info << "Saving fields for t=" << theTime_.timeName() << endl;
+        times_.copy(theTime_);
+        lastStepExecute_ = theTime_.timeIndex();
+    }
 
     return true;
 }

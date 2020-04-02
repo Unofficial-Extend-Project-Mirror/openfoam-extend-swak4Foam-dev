@@ -74,6 +74,8 @@ class writeOldTimesOnSignalFunctionObject
     //- Disallow default bitwise assignment
     void operator=(const writeOldTimesOnSignalFunctionObject&);
 
+    const dictionary &dict_;
+
     TimeCloneList times_;
 
     const Time &theTime_;
@@ -130,6 +132,12 @@ class writeOldTimesOnSignalFunctionObject
     bool alreadyDumped_;
 
     bool itWasMeWhoReraised_;
+
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    bool needsInit_;
+#endif
+
+    label lastStepExecute_;
 
 public:
 
