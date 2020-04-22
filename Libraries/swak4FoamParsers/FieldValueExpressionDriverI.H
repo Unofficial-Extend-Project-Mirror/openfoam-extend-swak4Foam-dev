@@ -666,9 +666,11 @@ inline tmp<FType> FieldValueExpressionDriver::makeConstantFieldInternal(
     buff << "constant" << pTraits<typename FType::value_type>::typeName;
 
     word defaultBC="calculated";
+#ifndef FOAM_INCOMPLETE_OPERATORS
     if(pTraits<typename FType::PatchFieldType>::typeName=="fvPatchField") {
         defaultBC="zeroGradient";
     }
+#endif
     if(makeValuePatches) {
         defaultBC="fixedValue";
     }
@@ -689,9 +691,11 @@ inline tmp<FType> FieldValueExpressionDriver::makeConstantFieldInternal(
             defaultBC
         )
     );
+#ifndef FOAM_INCOMPLETE_OPERATORS
     if(pTraits<typename FType::PatchFieldType>::typeName=="fvsPatchField") {
         setCalculatedPatches(f(),val);
     }
+#endif
 
     return f;
 }

@@ -81,7 +81,7 @@ Contributors/Copyright:
 #endif
 
 // Certain OpenFOAM-versions don't have all tensor operations defined
-#if FOAM_VERSION4SWAK < VERSION_NR(1,7,0)
+#if FOAM_VERSION4SWAK < VERSION_NR(1,7,2)
 #define FOAM_INCOMPLETE_OPERATORS
 #endif
 

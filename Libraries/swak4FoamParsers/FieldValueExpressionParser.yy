@@ -5363,7 +5363,13 @@ pyexp:   psymmTensor                  { $$ = $1; }
           }
         | pyexp '+' phexp 		          {
             sameSize($1,$3);
+#ifdef FOAM_INCOMPLETE_OPERATORS
+            $$ = driver.makePointField<Foam::pointSymmTensorField>(
+                $1->internalField() + $3->internalField()
+            ).ptr();
+#else
             $$ = new Foam::pointSymmTensorField(*$1 + *$3);
+#endif
             delete $1; delete $3;
             driver.setCalculatedPatches(*$$);
           }
