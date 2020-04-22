@@ -105,7 +105,7 @@ NumericAccumulationNamedEnum::readAccumulations(
     List<accuSpecification> accus(aNames.size());
 
     forAll(aNames,i) {
-        scalar value=-HUGE;
+        scalar value=pTraits<scalar>::min;
         bool hasValue=false;
 
         string aName;
@@ -157,7 +157,7 @@ word NumericAccumulationNamedEnum::toString(const accuSpecification &accu)
 {
     OStringStream o;
     o << NumericAccumulationNamedEnum::names[accu.first()];
-    if(accu.second()>-HUGE) {
+    if(accu.second()>pTraits<scalar>::min) {
         o << accu.second();
     }
     return word(o.str());

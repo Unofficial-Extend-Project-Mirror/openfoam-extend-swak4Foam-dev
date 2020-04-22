@@ -677,8 +677,8 @@ void  Foam::binaryOperationSearchableSurface::whose
     const scalar farTolerance=1e-5;
 
     forAll(whom,i) {
-        scalar distA=HUGE;
-        scalar distB=HUGE;
+        scalar distA=pTraits<scalar>::max;
+        scalar distB=pTraits<scalar>::max;
         if(nearestA[i].hit()) {
             distA=mag(samples[i]-nearestA[i].hitPoint());
         }

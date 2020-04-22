@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "writeAndEndFieldRangeFunctionObject.H"
@@ -65,8 +65,8 @@ writeAndEndFieldRangeFunctionObject::writeAndEndFieldRangeFunctionObject
 :
     writeAndEndFunctionObject(name,t,dict),
     fieldName_(""),
-    maximum_(HUGE),
-    minimum_(-HUGE)
+    maximum_(pTraits<scalar>::max),
+    minimum_(pTraits<scalar>::min)
 {
 }
 

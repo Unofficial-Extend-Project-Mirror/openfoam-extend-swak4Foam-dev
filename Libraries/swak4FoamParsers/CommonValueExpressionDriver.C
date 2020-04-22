@@ -1881,8 +1881,8 @@ vector getExtremePosition(
 ) {
     assert(vals.size()==locs.size());
 
-    vector pos(HUGE,HUGE,HUGE);
-    scalar val=op(1,-1) ? -HUGE : HUGE;
+    vector pos(pTraits<scalar>::max,pTraits<scalar>::max,pTraits<scalar>::max);
+    scalar val=op(1,-1) ? pTraits<scalar>::min : pTraits<scalar>::max;
     forAll(vals,i) {
         if(op(vals[i],val)) {
             val=vals[i];
