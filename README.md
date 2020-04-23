@@ -1333,6 +1333,18 @@ sides with which it interacts
 -   **Demonstrates:** different heat conductions
 
 
+#### pitzDailyWithPotential
+
+A pitzDaily case with two channels bolted on the inlet and outlet
+where the potential flow is calculated. Pressure and velocity are
+mapped between these regions
+
+-   **Solver:** `simpleFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+-   **Demonstrates:** demonstrates using the flow as an extnded
+    boundary condition
+
+
 ### tests
 
 Simple test cases for specific features. The names of the
@@ -1454,7 +1466,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org5cf6c3a) below). Don't work on the
+details see [6.2.2](#org9b12596) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1510,7 +1522,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org5cf6c3a"></a>
+<a id="org9b12596"></a>
 
 ### Repository organization
 
@@ -6764,6 +6776,8 @@ Currently implemented function objects are
 
 -   **`heatConductionRegionSolver`:** Solves the heat conduction in a
     solid (modeled on the solid regions in `chtMultiRegionFoam`)
+-   **`potentialFlowRegionSolver`:** Solves the potential flow in the
+    region (basically port of `potentialFoam`)
 
 
 #### A `fvOption` to set the energy according to a temperature expression
