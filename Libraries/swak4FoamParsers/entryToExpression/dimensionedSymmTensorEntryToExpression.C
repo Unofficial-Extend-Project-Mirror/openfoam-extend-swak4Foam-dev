@@ -26,7 +26,7 @@ License
 Contributors/Copyright:
     2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: dimensionedSymmTensorEntryToExpression.C,v 909e3e73dc26 2018-06-04 10:14:09Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #include "dimensionedSymmTensorEntryToExpression.H"
@@ -61,7 +61,8 @@ dimensionedSymmTensorEntryToExpression::~dimensionedSymmTensorEntryToExpression(
 
 string dimensionedSymmTensorEntryToExpression::toExpr(const entry &e)
 {
-    dimensionedSymmTensor val(e.stream());
+    const primitiveEntry &pe=dynamicCast<const primitiveEntry&>(e);
+    dimensionedSymmTensor val(pe);
 
     return toStr(val.value(),"symmTensor");
 }

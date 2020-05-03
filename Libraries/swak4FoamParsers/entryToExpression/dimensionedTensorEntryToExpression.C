@@ -26,7 +26,7 @@ License
 Contributors/Copyright:
     2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: dimensionedTensorEntryToExpression.C,v 909e3e73dc26 2018-06-04 10:14:09Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #include "dimensionedTensorEntryToExpression.H"
@@ -61,7 +61,8 @@ dimensionedTensorEntryToExpression::~dimensionedTensorEntryToExpression()
 
 string dimensionedTensorEntryToExpression::toExpr(const entry &e)
 {
-    dimensionedTensor val(e.stream());
+    const primitiveEntry &pe=dynamicCast<const primitiveEntry&>(e);
+    dimensionedTensor val(pe);
 
     return toStr(val.value(),"tensor");
 }

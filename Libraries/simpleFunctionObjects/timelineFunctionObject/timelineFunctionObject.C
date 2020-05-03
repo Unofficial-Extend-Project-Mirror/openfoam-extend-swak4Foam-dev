@@ -26,7 +26,7 @@ License
 Contributors/Copyright:
     2008-2013, 2015-2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: timelineFunctionObject.C,v 93dddbfe713a 2019-03-11 11:50:39Z Mark $
 \*---------------------------------------------------------------------------*/
 
 #include "timelineFunctionObject.H"
@@ -46,6 +46,15 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+const Enum<Foam::timelineFunctionObject::outputFileMode>
+timelineFunctionObject::outputFileModeNames_
+({
+    {outputFileMode::ofmFoam,"foam"},
+    {outputFileMode::ofmRaw,"raw"},
+    {outputFileMode::ofmCsv,"csv"}
+});
+#else
 template<>
 const char* NamedEnum<Foam::timelineFunctionObject::outputFileMode,3>::names[]=
 {
@@ -54,6 +63,7 @@ const char* NamedEnum<Foam::timelineFunctionObject::outputFileMode,3>::names[]=
     "csv"
 };
 const NamedEnum<timelineFunctionObject::outputFileMode,3> timelineFunctionObject::outputFileModeNames_;
+#endif
 
 timelineFunctionObject::timelineFunctionObject
 (

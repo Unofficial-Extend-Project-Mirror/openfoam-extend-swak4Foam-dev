@@ -34,13 +34,19 @@ SourceFiles
 Contributors/Copyright:
     2012-2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: LogicalAccumulationNamedEnum.H,v 909e3e73dc26 2018-06-04 10:14:09Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #ifndef LogicalAccumulationNamedEnum_H
 #define LogicalAccumulationNamedEnum_H
 
+#include "swak.H"
+
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+#include "Enum.H"
+#else
 #include "NamedEnum.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -66,7 +72,11 @@ public:
     };
 
     //- String representation of order enums
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+    static const Enum<value> names;
+#else
     static const NamedEnum<value, 5> names;
+#endif
 
 };
 

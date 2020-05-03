@@ -36,7 +36,7 @@ Contributors/Copyright:
     2011, 2013-2014, 2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2013 Bruno Santos <wyldckat@gmail.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: solvePDECommon.H,v 922e6f8c2ee0 2019-12-11 16:33:30Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #ifndef solvePDECommon_H
@@ -44,10 +44,15 @@ Contributors/Copyright:
 
 #include "primitiveFieldsFwd.H"
 #include "pointFieldFwd.H"
-#include "NamedEnum.H"
 #include "volFields.H"
 
 #include "swak.H"
+
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+#include "Enum.H"
+#else
+#include "NamedEnum.H"
+#endif
 
 #include "swakExprString.H"
 
@@ -143,7 +148,12 @@ protected:
     //- write specific data
     virtual void writeData() = 0;
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+    static const Enum<solveAt> solveAtNames_;
+#else
     static const NamedEnum<solveAt,4> solveAtNames_;
+#endif
+
     solveAt solveAt_;
 
     //- should the fields before and after be written?

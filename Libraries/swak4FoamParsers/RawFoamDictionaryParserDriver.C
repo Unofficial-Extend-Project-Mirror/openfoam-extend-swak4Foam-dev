@@ -41,6 +41,15 @@ Contributors/Copyright:
 
 namespace Foam {
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+    const Enum<RawFoamDictionaryParserDriver::ErrorMode>
+    RawFoamDictionaryParserDriver::errorModeNames
+    ({
+        {ErrorMode::SilentError,"silent"},
+        {ErrorMode::FailError,"fail"},
+        {ErrorMode::WarnError,"warn"}
+    });
+#else
     template<>
     const char* NamedEnum
     <
@@ -55,6 +64,7 @@ namespace Foam {
 
     const NamedEnum<RawFoamDictionaryParserDriver::ErrorMode, 3>
         RawFoamDictionaryParserDriver::errorModeNames;
+#endif
 
     RawFoamDictionaryParserDriver::RawFoamDictionaryParserDriver(
         ErrorMode mode

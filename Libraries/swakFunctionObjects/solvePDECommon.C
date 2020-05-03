@@ -38,6 +38,16 @@ namespace Foam {
     defineTypeNameAndDebug(solvePDECommon,0);
 }
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+const Foam::Enum<Foam::solvePDECommon::solveAt>
+Foam::solvePDECommon::solveAtNames_
+({
+    {solveAt::saStartup,"startup"},
+    {solveAt::saTimestep,"timestep"},
+    {solveAt::saWrite,"write"},
+    {solveAt::saNever,"never"}
+});
+#else
 template<>
 const char* Foam::NamedEnum<Foam::solvePDECommon::solveAt,4>::names[]=
 {
@@ -48,6 +58,7 @@ const char* Foam::NamedEnum<Foam::solvePDECommon::solveAt,4>::names[]=
 };
 
 const Foam::NamedEnum<Foam::solvePDECommon::solveAt,4> Foam::solvePDECommon::solveAtNames_;
+#endif
 
 Foam::solvePDECommon::solvePDECommon
 (

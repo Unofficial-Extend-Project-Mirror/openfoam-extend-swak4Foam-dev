@@ -37,7 +37,7 @@ Contributors/Copyright:
     2015-2016 Bruno Santos <wyldckat@gmail.com>
     2016-2019 Mark Olesen <Mark.Olesen@esi-group.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: swak.H,v 34f9da9317e6 2019-12-25 15:22:32Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #ifndef SwakMacroHeader_H
@@ -628,6 +628,10 @@ Contributors/Copyright:
 
 #if (OPENFOAM_COM >= 1911)
 #define FOAM_FILESTAT_HAS_NO_ISVALID_METHOD
+#endif
+
+#if (OPENFOAM_COM >= 1911)
+#define FOAM_PREFERS_ENUM_TO_NAMED_ENUM
 #endif
 
 // this exists since 3.0+ but I'm to lazy to test it on older versions
