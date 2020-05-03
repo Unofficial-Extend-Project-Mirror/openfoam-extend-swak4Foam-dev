@@ -32,7 +32,7 @@ Description
 Contributors/Copyright:
     2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: funkyWarpMesh.C,v 909e3e73dc26 2018-06-04 10:14:09Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 
     const word oldInstance = mesh.pointsInstance();
 
-    bool overwrite    = args.optionFound("overwrite");
+    bool overwrite    = args.options().found("overwrite");
     bool relative     = false;
 
     pointField newPoints;
@@ -88,15 +88,15 @@ int main(int argc, char *argv[])
         runTime++;
     }
 
-    if(args.optionFound("expression")) {
-        if(args.optionFound("dictExt")) {
+    if(args.options().found("expression")) {
+        if(args.options().found("dictExt")) {
             FatalErrorIn(args.executable())
                 << "Can't specify 'dictExt' and 'expression' at the same time"
                     << endl
                     << exit(FatalError);
 
         }
-        relative=args.optionFound("relative");
+        relative=args.options().found("relative");
         exprString expression(
             args.options()["expression"],
             dictionary::null
@@ -119,14 +119,14 @@ int main(int argc, char *argv[])
         newPoints=driver.getResult<pointVectorField>().internalField();
     } else {
         Info << "Dictionary mode" << nl << endl;
-        if(args.optionFound("relative")) {
+        if(args.options().found("relative")) {
             FatalErrorIn(args.executable())
                 << "Option 'relative' not allowed in dictionary-mode"
                     << endl
                     << exit(FatalError);
         }
         word dictName("funkyWarpMeshDict");
-        if(args.optionFound("dictExt")) {
+        if(args.options().found("dictExt")) {
             dictName+="."+word(args.options()["dictExt"]);
         }
         IOdictionary warpDict
