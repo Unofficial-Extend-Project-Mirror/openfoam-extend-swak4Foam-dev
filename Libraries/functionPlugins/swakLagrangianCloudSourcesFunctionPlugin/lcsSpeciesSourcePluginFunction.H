@@ -34,7 +34,7 @@ SourceFiles
 Contributors/Copyright:
     2012-2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: lcsSpeciesSourcePluginFunction.H,v 909e3e73dc26 2018-06-04 10:14:09Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #ifndef lcsSpeciesSourcePluginFunction_H
@@ -93,7 +93,7 @@ public:
         const speciesTable &spec=                                       \
             getCloudAs<neededType,usedType>().mcCarrierThermo ().species(); \
         speciesList=spec;                                               \
-        if(spec.contains(speciesName_)) {                               \
+        if(spec.found(speciesName_)) {                                  \
             return spec[speciesName_];                                  \
         }                                                               \
     }
@@ -103,7 +103,7 @@ public:
         const speciesTable &spec=                                       \
             getCloudAs<neededType,usedType>().thermo().carrier().species(); \
         speciesList=spec;                                               \
-        if(spec.contains(speciesName_)) {                               \
+        if(spec.found(speciesName_)) {                                  \
             return spec[speciesName_];                                  \
         }                                                               \
     }
