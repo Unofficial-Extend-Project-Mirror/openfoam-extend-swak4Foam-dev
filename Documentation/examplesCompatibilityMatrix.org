@@ -63,10 +63,10 @@
   | Lagrangian/LanguageIntegration/angledDuctWithPython2Inject  | \checkmark | \checkmark | \checkmark | \sad       |
   | Lagrangian/LanguageIntegration/angledDuctWithPython3Inject  | \checkmark | \checkmark | \checkmark | \sad       |
   | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark | \checkmark | \checkmark |
-  | Lagrangian/parser/simplifiedSiwek                           | \sad       | \sad       |            | \checkmark |
+  | Lagrangian/parser/simplifiedSiwek                           | \sad       | \sad       | \sad       | \checkmark |
   | LuaIntegration/flowStatePitzDaily                           | \checkmark | \checkmark | \checkmark | \checkmark |
   | LuaIntegration/luaScriptedBCAngledDuct                      | \checkmark | \checkmark | \checkmark | \checkmark |
-  | LuaIntegration/raiseRelaxationPitzDaily                     | \checkmark | \dagger    |            | \dagger    |
+  | LuaIntegration/raiseRelaxationPitzDaily                     | \checkmark | \dagger    | \checkmark | \dagger    |
   | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    | \checkmark | \checkmark |
   | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark | \dagger    | \checkmark | \checkmark |
   | other/angledDuctImplicit                                    | \checkmark | \sad       | \checkmark | \sad       |
