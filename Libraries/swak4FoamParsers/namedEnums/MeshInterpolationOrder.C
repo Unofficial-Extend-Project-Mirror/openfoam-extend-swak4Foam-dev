@@ -26,7 +26,7 @@ License
 Contributors/Copyright:
     2012-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: MeshInterpolationOrder.C,v 909e3e73dc26 2018-06-04 10:14:09Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #include "swak.H"
@@ -39,6 +39,15 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+const Enum<MeshInterpolationOrder::value>
+MeshInterpolationOrder::names
+({
+    {meshToMesh::order::map,"map"},
+    {meshToMesh::order::interpolate,"interpolate"},
+    {meshToMesh::order::cell_point_interpolate,"cell_point_interpolate"}
+});
+#else
 template<>
 const char* NamedEnum
 <
@@ -53,6 +62,7 @@ const char* NamedEnum
 
 const NamedEnum<MeshInterpolationOrder::value, 3>
     MeshInterpolationOrder::names;
+#endif
 
 
 

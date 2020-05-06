@@ -12,7 +12,7 @@
    names in the column titles):
    - 6 Fnd :: The OpenFOAM.org 6 release
    - 4.1 Ext :: The Foam-Extend 4.1 release
-   - 1906 :: The OpenFOAM.com 1906 release
+   - 1912 :: The OpenFOAM.com 1906 release
    - 2.3 :: The OpenFOAM 2.3 release (this is the oldest release
         tested)
 ** Symbols in the tables
@@ -34,7 +34,7 @@
         of technical constraints (missing solver etc)
    - no symbol :: This means that the case was not yet tested on this version
 * The Matrix
-  | Case name                                                   | 6 Fnd      | 4.1 Ext    | 1906       | 2.3        |
+  | Case name                                                   | 6 Fnd      | 4.1 Ext    | 1912       | 2.3        |
   |-------------------------------------------------------------+------------+------------+------------+------------|
   | DynamicMesh/hecticInletACMI2D                               | \checkmark | \dagger    | \checkmark | \sad       |
   | DynamicMesh/rotatingTank2D                                  | \checkmark | \checkmark | \checkmark | \checkmark |
@@ -77,14 +77,14 @@
   | Python3Integration/flowStatePitzDaily                       | \checkmark | \checkmark | \checkmark | \checkmark |
   | Python3Integration/python3ScriptedBCAngledDuct              | \checkmark | \checkmark | \checkmark | \checkmark |
   | runTimeCondition/simpleSwakCar                              | \dagger    | \dagger    | \checkmark | \dagger    |
-  | SimpleSurface/littleVolcano                                 | \sad       | \checkmark | \sad       | \checkmark |
+  | SimpleSurface/littleVolcano                                 | \sad       | \checkmark | \checkmark | \checkmark |
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/delayedMappingChannels                                |            |            | \checkmark |            |
   | tests/languageIntegration/luaIntegration                    | bug        | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/pythonIntegration                 | \checkmark | \checkmark | \checkmark | \checkmark |
-  | tests/languageIntegration/python3Integration                | \checkmark | \checkmark | \sad       | \checkmark |
+  | tests/languageIntegration/python3Integration                | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/mappingChannels                                       |            |            | \checkmark |            |
   | tests/mappingChannelsNonUniform                             |            |            | \checkmark |            |
   | tests/SearchableSurfaces/objectsTest                        | \checkmark | \checkmark | \checkmark | \checkmark |

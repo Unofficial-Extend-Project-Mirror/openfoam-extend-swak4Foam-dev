@@ -27,7 +27,7 @@ Contributors/Copyright:
     2012-2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2017-2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: NumericAccumulationNamedEnum.C,v 909e3e73dc26 2018-06-04 10:14:09Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #include "NumericAccumulationNamedEnum.H"
@@ -37,6 +37,32 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+const Enum<NumericAccumulationNamedEnum::value>
+NumericAccumulationNamedEnum::names
+({
+    {value::numMin,"min"},
+    {value::numMax,"max"},
+    {value::numAverage,"average"},
+    {value::numWeightedAverage,"weightedAverage"},
+    {value::numSum,"sum"},
+    {value::numSumMag,"sumMag"},
+    {value::numWeightedSum,"weightedSum"},
+    {value::numIntegrate,"integrate"},
+    {value::numMedian,"median"},
+    {value::numWeightedMedian,"weightedMedian"},
+    {value::numQuantile,"quantile"},
+    {value::numWeightedQuantile,"weightedQuantile"},
+    {value::numRange,"range"},
+    {value::numWeightedRange,"weightedRange"},
+    {value::numSmaller,"smaller"},
+    {value::numWeightedSmaller,"weightedSmaller"},
+    {value::numBigger,"bigger"},
+    {value::numWeightedBigger,"weightedBigger"},
+    {value::numWeightSum,"weightSum"},
+    {value::numSize,"size"},
+});
+#else
 template<>
 const char* NamedEnum
 <
@@ -65,9 +91,9 @@ const char* NamedEnum
     "weightSum",
     "size",             // 20
 };
-
 const NamedEnum<NumericAccumulationNamedEnum::value, 20>
-    NumericAccumulationNamedEnum::names;
+NumericAccumulationNamedEnum::names;
+#endif
 
 
 List<NumericAccumulationNamedEnum::accuSpecification>

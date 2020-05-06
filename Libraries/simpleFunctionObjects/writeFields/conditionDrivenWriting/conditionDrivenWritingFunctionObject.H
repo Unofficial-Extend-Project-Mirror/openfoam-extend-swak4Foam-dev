@@ -44,7 +44,11 @@ Contributors/Copyright:
 
 #include "simpleFunctionObject.H"
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+#include "Enum.H"
+#else
 #include "NamedEnum.H"
+#endif
 
 #include "TimeCloneList.H"
 
@@ -66,14 +70,14 @@ public:
         scmWriteAlways,
         scmWriteNTimesteps,
         scmWriteIntervall,
-        scmWriteUntilSwitch
+        scmWriteUntilSwitch,
     };
 
     enum cooldownModeType {
         cdmNoCooldown,
         cdmNTimesteps,
         cdmIntervall,
-        cdmRetrigger
+        cdmRetrigger,
     };
 
 private:
@@ -89,13 +93,21 @@ private:
         stateWaiting,
         stateWriting,
         stateStartCooldown,
-        stateCooldown
+        stateCooldown,
     };
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+    static const Enum<writeControlModeType> writeControlModeTypeNames_;
+#else
     static const NamedEnum<writeControlModeType,4> writeControlModeTypeNames_;
+#endif
     writeControlModeType writeControlMode_;
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+    static const Enum<cooldownModeType> cooldownModeTypeNames_;
+#else
     static const NamedEnum<cooldownModeType,4> cooldownModeTypeNames_;
+#endif
     cooldownModeType cooldownMode_;
 
     bool storeAndWritePreviousState_;

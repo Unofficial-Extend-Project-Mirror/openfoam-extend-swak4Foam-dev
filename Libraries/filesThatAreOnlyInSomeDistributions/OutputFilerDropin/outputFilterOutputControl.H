@@ -38,7 +38,14 @@ SourceFiles
 
 #include "dictionary.H"
 #include "Time.H"
+
+#include "swak.H"
+
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+#include "Enum.H"
+#else
 #include "NamedEnum.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -77,7 +84,11 @@ private:
         const word prefix_;
 
         //- String representation of outputControls enums
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+        static const Enum<outputControls> outputControlNames_;
+#else
         static const NamedEnum<outputControls, 7> outputControlNames_;
+#endif
 
         //- Type of output
         outputControls outputControl_;

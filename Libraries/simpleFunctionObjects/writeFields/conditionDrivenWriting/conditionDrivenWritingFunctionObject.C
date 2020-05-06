@@ -44,6 +44,25 @@ namespace Foam
 {
     defineTypeNameAndDebug(conditionDrivenWritingFunctionObject, 0);
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+    const Enum<Foam::conditionDrivenWritingFunctionObject::writeControlModeType>
+    conditionDrivenWritingFunctionObject::writeControlModeTypeNames_
+    ({
+        {writeControlModeType::scmWriteAlways,"always"},
+        {writeControlModeType::scmWriteNTimesteps,"timesteps"},
+        {writeControlModeType::scmWriteIntervall,"intervall"},
+        {writeControlModeType::scmWriteUntilSwitch,"untilSwitch"}
+    });
+
+    const Enum<Foam::conditionDrivenWritingFunctionObject::cooldownModeType>
+    conditionDrivenWritingFunctionObject::cooldownModeTypeNames_
+    ({
+        {cooldownModeType::cdmNoCooldown,"no"},
+        {cooldownModeType::cdmNTimesteps,"timesteps"},
+        {cooldownModeType::cdmIntervall,"intervall"},
+        {cooldownModeType::cdmRetrigger,"retrigger"}
+    });
+#else
     template<>
     const char* NamedEnum<Foam::conditionDrivenWritingFunctionObject::writeControlModeType,4>::names[]=
     {
@@ -63,6 +82,7 @@ namespace Foam
         "retrigger"
     };
     const NamedEnum<conditionDrivenWritingFunctionObject::cooldownModeType,4> conditionDrivenWritingFunctionObject::cooldownModeTypeNames_;
+#endif
 
 
 

@@ -6,7 +6,26 @@ scaling {
     titles ( val );
     logscale yes;
 }
-averagePResidual {
+scaledRelaxation {
+    theTitle "Scaled relaxation";
+    expr "Scaling relaxation of (.+) from (.+) to (.+)";
+    type dynamic;
+    idNr 1;
+    titles (
+        from
+        to
+    );
+}
+scalingResiduals {
+    theTitle "Residuals for scaling";
+    expr "Scaling residuals .+:(.+)[<>](.+)";
+    titles (
+        left
+        right
+    );
+    logscale yes;
+}
+averagePresidual {
     expr "Average p-Residual (.+)";
     theTitle "Average Residual of p";
     titles ( val );

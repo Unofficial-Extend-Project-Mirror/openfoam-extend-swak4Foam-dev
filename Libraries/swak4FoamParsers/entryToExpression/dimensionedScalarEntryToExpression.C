@@ -26,7 +26,7 @@ License
 Contributors/Copyright:
     2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: dimensionedScalarEntryToExpression.C,v 909e3e73dc26 2018-06-04 10:14:09Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #include "dimensionedScalarEntryToExpression.H"
@@ -61,7 +61,8 @@ dimensionedScalarEntryToExpression::~dimensionedScalarEntryToExpression()
 
 string dimensionedScalarEntryToExpression::toExpr(const entry &e)
 {
-    dimensionedScalar val(e.stream());
+    const primitiveEntry &pe=dynamicCast<const primitiveEntry&>(e);
+    dimensionedScalar val(pe);
     OStringStream o;
 
     o << val.value();
