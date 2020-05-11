@@ -997,7 +997,11 @@ functions
         valueType surface;
         surfaceName testIsoSurfaceCell;
         surface {
-            type isoSurfaceCell;
+<!--(if foamFork=="openfoam" and foamVersion>6)-->
+        type isoSurface;
+<!--(else)-->
+        type isoSurfaceCell;
+<!--(end)-->
             isoField distanceFromZero;
             isoValue 0.1;
             interpolate false;
@@ -1054,7 +1058,11 @@ functions
         valueType surface;
         surfaceName testIsoU45b;
         surface {
-            type isoSurfaceCell;
+<!--(if foamFork=="openfoam" and foamVersion>6)-->
+        type isoSurface;
+<!--(else)-->
+        type isoSurfaceCell;
+<!--(end)-->
             isoField magU;
             isoValue 45;
             interpolate true;
