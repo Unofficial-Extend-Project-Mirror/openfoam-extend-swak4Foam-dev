@@ -61,8 +61,9 @@ dimensionedSymmTensorEntryToExpression::~dimensionedSymmTensorEntryToExpression(
 
 string dimensionedSymmTensorEntryToExpression::toExpr(const entry &e)
 {
-    const primitiveEntry &pe=dynamicCast<const primitiveEntry&>(e);
-    dimensionedSymmTensor val(pe);
+    // const primitiveEntry &pe=dynamicCast<const primitiveEntry&>(e);
+    // dimensionedSymmTensor val(pe);
+    dimensionedSymmTensor val(e.stream());
 
     return toStr(val.value(),"symmTensor");
 }

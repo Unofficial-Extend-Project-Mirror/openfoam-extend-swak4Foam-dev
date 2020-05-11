@@ -61,8 +61,9 @@ dimensionedScalarEntryToExpression::~dimensionedScalarEntryToExpression()
 
 string dimensionedScalarEntryToExpression::toExpr(const entry &e)
 {
-    const primitiveEntry &pe=dynamicCast<const primitiveEntry&>(e);
-    dimensionedScalar val(pe);
+    // const primitiveEntry &pe=dynamicCast<const primitiveEntry&>(e);
+    // dimensionedScalar val(pe);
+    dimensionedScalar val(e.stream());
     OStringStream o;
 
     o << val.value();

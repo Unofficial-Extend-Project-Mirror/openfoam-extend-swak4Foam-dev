@@ -61,8 +61,9 @@ dimensionedVectorEntryToExpression::~dimensionedVectorEntryToExpression()
 
 string dimensionedVectorEntryToExpression::toExpr(const entry &e)
 {
-    const primitiveEntry &pe=dynamicCast<const primitiveEntry&>(e);
-    dimensionedVector val(pe);
+    // const primitiveEntry &pe=dynamicCast<const primitiveEntry&>(e);
+    // dimensionedVector val(pe);
+    dimensionedVector val(e.stream());
 
     return toStr(val.value(),"vector");
 }

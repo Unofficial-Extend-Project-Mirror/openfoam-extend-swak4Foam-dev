@@ -61,8 +61,9 @@ dimensionedTensorEntryToExpression::~dimensionedTensorEntryToExpression()
 
 string dimensionedTensorEntryToExpression::toExpr(const entry &e)
 {
-    const primitiveEntry &pe=dynamicCast<const primitiveEntry&>(e);
-    dimensionedTensor val(pe);
+    // const primitiveEntry &pe=dynamicCast<const primitiveEntry&>(e);
+    // dimensionedTensor val(pe);
+    dimensionedTensor val(e.stream());
 
     return toStr(val.value(),"tensor");
 }

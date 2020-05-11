@@ -61,8 +61,9 @@ dimensionedSphericalTensorEntryToExpression::~dimensionedSphericalTensorEntryToE
 
 string dimensionedSphericalTensorEntryToExpression::toExpr(const entry &e)
 {
-    const primitiveEntry &pe=dynamicCast<const primitiveEntry&>(e);
-    dimensionedSphericalTensor val(pe);
+    // const primitiveEntry &pe=dynamicCast<const primitiveEntry&>(e);
+    // dimensionedSphericalTensor val(pe);
+    dimensionedSphericalTensor val(e.stream());
 
     return toStr(val.value(),"sphericalTensor");
 }
