@@ -15,7 +15,11 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+<!--(if foamFork=="openfoam" and foamVersion>6)-->
+application     compressibleInterFoam;
+<!--(else)-->
 application     compressibleInterDyMFoam;
+<!--(end)-->
 
 startFrom       startTime;
 

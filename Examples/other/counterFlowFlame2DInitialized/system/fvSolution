@@ -64,6 +64,10 @@ solvers
     {
         $hFinal;
     }
+    YiFinal
+    {
+        $Yi;
+    }
     CH4 {
         $Yi;
     }
