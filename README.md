@@ -680,6 +680,21 @@ Utility to write fields with subfields from boundary conditions
 like `refValue` for post-processing
 
 
+### `makeAxialMesh`
+
+A utility that converts a planar (pseudo-2d) grid to an
+axial-symmetric mesh (used to be a separate project but was moved
+here for maintenance)
+
+Contributors of previous versions were
+
+-   David P. Schmidt
+-   E David Huckaby
+-   Dominik Christ (Porting to 1.5)
+
+See: <http://openfoamwiki.net/index.php/Contrib_MakeAxialMesh>
+
+
 ## Examples
 
 If not otherwise noted cases are prepared by a simple
@@ -1311,6 +1326,19 @@ Simple modification of the `simpleCar`-case
 -   **Demonstrates:** the run-time trigger with expressions.
 
 
+### MakeAxialMesh
+
+Cases hee demonstrate the `makeAxialMesh`-utility
+
+
+#### axialCavity
+
+The usual `cavity` case with the axis outside the geometry
+
+-   **Solver:** `icoFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+
+
 ### tests
 
 Simple test cases for specific features. The names of the
@@ -1432,7 +1460,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orgcfb42fc) below). Don't work on the
+details see [6.2.2](#orgabd6435) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1488,7 +1516,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orgcfb42fc"></a>
+<a id="orgabd6435"></a>
 
 ### Repository organization
 
