@@ -73,72 +73,74 @@ typedef line<point,point> linie;
 // right now it assumes parallel to XY
 
 plane getPlane(pointField& points) {
-  scalar x=0,y=0,z=0;
-  label  n=0;
+    scalar x=0,y=0,z=0;
+    label  n=0;
 
-  forAll(points,pointI) {
-    point &pt=points[pointI];
-    x += pt.x();    y += pt.y();    z += pt.z();
-    n ++;
-  }
+    forAll(points,pointI) {
+        const point &pt=points[pointI];
+        x += pt.x();
+        y += pt.y();
+        z += pt.z();
+        n ++;
+    }
 
-  plane result(point(x/n,y/n,z/n),vector(0,0,1));
+    plane result(point(x/n,y/n,z/n),vector(0,0,1));
 
-  return result;
+    return result;
 }
 
 // calculate the symmetry axis from the "symmetry patch"
 // by finding the two points that are farthest apart
 
-linie getAxis(const polyPatch &axis,plane &pl) {
-  scalar dist=0;
-  int cnt=0;
-  point pt1(0,0,0),pt2(0,0,0);
-  const pointField &pts=axis.localPoints();
+linie getAxis(const polyPatch &axis,const plane &pl) {
+    scalar dist=0;
+    int cnt=0;
+    point pt1(0,0,0),pt2(0,0,0);
+    const pointField &pts=axis.localPoints();
 
-  forAll(pts,pointI) {
-    switch(cnt) {
-    case 0:
-      pt1=pl.nearestPoint(pts[pointI]);
-      break;
-    case 1:
-      pt2=pl.nearestPoint(pts[pointI]);
-      dist=mag(pt1-pt2);
-      break;
-    default:
-      point pt=pl.nearestPoint(pts[pointI]);
-      if( mag(pt-pt1)>dist || mag(pt-pt2)>dist) {
-	if( mag(pt-pt1) > mag(pt-pt2)) {
-	  pt2=pt;
-	} else {
-	  pt1=pt;
-	}
-	dist=mag(pt1-pt2);
-      }
+    forAll(pts,pointI) {
+        switch(cnt) {
+            case 0:
+                pt1=pl.nearestPoint(pts[pointI]);
+                break;
+            case 1:
+                pt2=pl.nearestPoint(pts[pointI]);
+                dist=mag(pt1-pt2);
+                break;
+            default:
+                point pt=pl.nearestPoint(pts[pointI]);
+                if( mag(pt-pt1)>dist || mag(pt-pt2)>dist) {
+                    if( mag(pt-pt1) > mag(pt-pt2)) {
+                        pt2=pt;
+                    } else {
+                        pt1=pt;
+                    }
+                    dist=mag(pt1-pt2);
+                }
+        }
+        cnt++;
     }
-    cnt++;
-  }
 
-  return linie(pt1,pt2);
+    return linie(pt1,pt2);
 }
 
 scalar getDistance(const polyPatch &axisPatch,linie &axisLine) {
-  const pointField &pts=axisPatch.localPoints();
-  vector axisDir = axisLine.vec()/axisLine.mag();
+    const pointField &pts=axisPatch.localPoints();
+    vector axisDir = axisLine.vec()/axisLine.mag();
 
-  scalar distance=0;
+    scalar distance=0;
 
-  forAll(pts,pointI) {
-    const point &pt=pts[pointI];
+    forAll(pts,pointI) {
+        const point &pt=pts[pointI];
 
-    point axisPoint = axisLine.start() + axisDir * (axisDir & (pt-axisLine.start()));
-    scalar radius=mag( axisPoint - pt );
-    if(radius>distance) {
-        distance=radius;
+        point axisPoint = axisLine.start() + axisDir * (axisDir & (pt-axisLine.start()));
+        scalar radius=mag( axisPoint - pt );
+        if(radius>distance) {
+            distance=radius;
+        }
     }
-  }
 
-  return distance;
+    return distance;
 }
 
 // angle (as suggested in the OpenFOAM-Userguide)
@@ -170,254 +172,256 @@ const scalar defaultAngle=5;   //DPS the plane is rotated +2.5 degrees and -2.5 
             direction of "axisLine", "axisDir".
         "radius" is the radial coordinate of the cartesian point, in the plane
             perpendicular to the rotation axis.
-	"radiusBasedPoint" is the basePoint coordinates relative to the axisPoint.
-	    It is used if revolve = true to intruduce the factorRadius in order to
-	    revolve the mesh instead of projecting it on wedges
+        "radiusBasedPoint" is the basePoint coordinates relative to the axisPoint.
+            It is used if revolve = true to intruduce the factorRadius in order to
+            revolve the mesh instead of projecting it on wedges
 
 */
 
 void changeCoordinates(
     polyMesh &mesh,
-    plane cutPlane,
-    linie &axisLine,
+    const plane &cutPlane,
+    const linie &axisLine,
     scalar offset,
     const scalar wedgeAngle,
     bool revolve)
 {
-  if (revolve)    Info << "Revolving nodes" << endl;
-  else 		  Info << "Projecting nodes" << endl;
-  const scalar angle=wedgeAngle/2;
-
-  repatchPolyTopoChanger topo(mesh);
-
-  pointField oldPoints=mesh.points();                //DPS the old points will be rotated too
-  pointField newPoints(oldPoints.size());
-
-  const scalar factor=std::sin(angle/180.*constant::mathematical::pi);
-  const scalar factorRadius=std::cos(angle/180.*constant::mathematical::pi);
-  vector axisDir = axisLine.vec()/axisLine.mag();
-
-  scalar minRadius=1e10,maxRadius=-1e10;
-
-  scalar dist1=mag(axisLine.start()-cutPlane.nearestPoint(axisLine.start()));
-  scalar dist2=mag(axisLine.end()-cutPlane.nearestPoint(axisLine.end()));
-
-  if(dist1>SMALL || dist2>SMALL) {
-      Warning << " End points of axis " << axisLine << " are " << dist1
-          << " and " << dist2 << " away from plane "  << cutPlane << endl;
-  }
-
-  forAll(oldPoints,pointI) {
-      //    point oldPoint=oldPoints[pointI];
-    const point &oldPoint=oldPoints[pointI];
-    point basePoint=cutPlane.nearestPoint(oldPoint);
-
-    scalar radius=GREAT;
-
-    point axisPoint = axisLine.start() + axisDir * (axisDir & (basePoint-axisLine.start()));
-    radius=mag( axisPoint - basePoint )+offset;
-    point radiusBasedPoint = factorRadius * (basePoint - axisPoint);
-
-    if(radius>maxRadius) {
-        maxRadius=radius;
+    if (revolve) {
+        Info << "Revolving nodes" << endl;
+    } else {
+        Info << "Projecting nodes" << endl;
     }
-    if(radius<minRadius) {
-        minRadius=radius;
+
+    const scalar angle=wedgeAngle/2;
+
+    repatchPolyTopoChanger topo(mesh);
+
+    pointField oldPoints=mesh.points();                //DPS the old points will be rotated too
+    pointField newPoints(oldPoints.size());
+
+    const scalar factor=std::sin(angle/180.*constant::mathematical::pi);
+    const scalar factorRadius=std::cos(angle/180.*constant::mathematical::pi);
+    vector axisDir = axisLine.vec()/axisLine.mag();
+
+    scalar minRadius=1e10,maxRadius=-1e10;
+
+    scalar dist1=mag(axisLine.start()-cutPlane.nearestPoint(axisLine.start()));
+    scalar dist2=mag(axisLine.end()-cutPlane.nearestPoint(axisLine.end()));
+
+    if(dist1>SMALL || dist2>SMALL) {
+        Warning << " End points of axis " << axisLine << " are " << dist1
+            << " and " << dist2 << " away from plane "  << cutPlane << endl;
     }
-    vector dir(oldPoint-basePoint);
-    if(revolve) {
-        newPoints[pointI] = axisPoint + radiusBasedPoint + factor * radius * dir/mag(dir);
+
+    forAll(oldPoints,pointI) {
+        //    point oldPoint=oldPoints[pointI];
+        const point &oldPoint=oldPoints[pointI];
+        point basePoint=cutPlane.nearestPoint(oldPoint);
+
+        scalar radius=GREAT;
+
+        point axisPoint = axisLine.start() + axisDir * (axisDir & (basePoint-axisLine.start()));
+        radius=mag( axisPoint - basePoint )+offset;
+        point radiusBasedPoint = factorRadius * (basePoint - axisPoint);
+
+        if(radius>maxRadius) {
+            maxRadius=radius;
+        }
+        if(radius<minRadius) {
+            minRadius=radius;
+        }
+        vector dir(oldPoint-basePoint);
+        if(revolve) {
+            newPoints[pointI] = axisPoint + radiusBasedPoint + factor * radius * dir/mag(dir);
+        } else {
+            newPoints[pointI] = basePoint + factor * radius * dir/mag(dir);
+        }
+        //    oldPoints[pointI] = basePoint - factor *radius * dir/mag(dir);  //DPS rotating original plane
     }
-    else newPoints[pointI] = basePoint + factor * radius * dir/mag(dir);
-    //    oldPoints[pointI] = basePoint - factor *radius * dir/mag(dir);  //DPS rotating original plane
-  }
 
-  Info << "Radius to axis: min = " << minRadius << " max = " << maxRadius << endl;
+    Info << "Radius to axis: min = " << minRadius << " max = " << maxRadius << endl;
 
-  // needed because 2.3.x does not clear it automatically
-  mesh.clearGeom();
+    // needed because 2.3.x does not clear it automatically
+    mesh.clearGeom();
 
-  //  mesh.movePoints(oldPoints);
-  mesh.movePoints(newPoints);
-
+    //  mesh.movePoints(oldPoints);
+    mesh.movePoints(newPoints);
 }
 
 // Split the wedge-patch into two patches
 
 void splitWedge(polyMesh &mesh,word wname,plane pl) {
-  repatchPolyTopoChanger topo(mesh);
+    repatchPolyTopoChanger topo(mesh);
 
-  const polyBoundaryMesh& patches = mesh.boundaryMesh();
-  const polyPatch &wedge=patches[patches.findPatchID(wname)];
+    const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    const polyPatch &wedge=patches[patches.findPatchID(wname)];
 
-  const vectorField::subField 	& fcs=wedge.faceCentres ();
+    const vectorField::subField         & fcs=wedge.faceCentres ();
 
-  faceSet facesPos(mesh,"set1_"+wname,fcs.size()/2,IOobject::NO_WRITE);
-  faceSet facesNeg(mesh,"set2_"+wname,fcs.size()/2,IOobject::NO_WRITE);
+    faceSet facesPos(mesh,"set1_"+wname,fcs.size()/2,IOobject::NO_WRITE);
+    faceSet facesNeg(mesh,"set2_"+wname,fcs.size()/2,IOobject::NO_WRITE);
 
-  // assign faces to the two patches
-  forAll(fcs,faceI) {
-    vector center=fcs[faceI];
+    // assign faces to the two patches
+    forAll(fcs,faceI) {
+        vector center=fcs[faceI];
 
-    scalar dir=pl.normal() & (center-pl.nearestPoint(center));
-    if( dir >0 ) {
-      // This offset is dirty, there must be a better way
-      facesPos.insert(faceI-wedge.whichFace(0));
-    } else {
-      facesNeg.insert(faceI-wedge.whichFace(0));
+        scalar dir=pl.normal() & (center-pl.nearestPoint(center));
+        if( dir >0 ) {
+            // This offset is dirty, there must be a better way
+            facesPos.insert(faceI-wedge.whichFace(0));
+        } else {
+            facesNeg.insert(faceI-wedge.whichFace(0));
+        }
     }
-  }
 
-  Info << " Copying patches " << endl;
+    Info << " Copying patches " << endl;
 
-  // the rest is stolen from createPatch (others might say inspired by)
+    // the rest is stolen from createPatch (others might say inspired by)
 
-  List<polyPatch*> newPatches(patches.size() + 2);
+    List<polyPatch*> newPatches(patches.size() + 2);
 
-  forAll(patches, patchI)
+    forAll(patches, patchI)
     {
-      const polyPatch& pp = patches[patchI];
+        const polyPatch& pp = patches[patchI];
 
-      newPatches[patchI] =
-	pp.clone
-	(
-	 patches,
-	 patchI,
-	 pp.size(),
-	 pp.start()
-	 ).ptr();
-
+        newPatches[patchI] =
+            pp.clone
+            (
+                patches,
+                patchI,
+                pp.size(),
+                pp.start()
+            ).ptr();
     }
 
-  label patchPos = newPatches.size() - 2;
-  label patchNeg = newPatches.size() - 1;
+    label patchPos = newPatches.size() - 2;
+    label patchNeg = newPatches.size() - 1;
 
-  Info << " Creating Patches" << endl;
+    Info << " Creating Patches" << endl;
 
-  newPatches[patchPos] =
-    polyPatch::New
-    (
-     "empty",
-     wname+"_pos",
-     0,
-     mesh.nFaces(),
-     patchPos,
-     patches
-     ).ptr();
+    newPatches[patchPos] =
+        polyPatch::New
+        (
+            "empty",
+            wname+"_pos",
+            0,
+            mesh.nFaces(),
+            patchPos,
+            patches
+        ).ptr();
 
-   newPatches[patchNeg] =
-     polyPatch::New
-     (
-      "empty",
-      wname+"_neg",
-      0,
-      mesh.nFaces(),
-      patchNeg,
-      patches
-      ).ptr();
+    newPatches[patchNeg] =
+        polyPatch::New
+        (
+            "empty",
+            wname+"_neg",
+            0,
+            mesh.nFaces(),
+            patchNeg,
+            patches
+        ).ptr();
 
+    // Actually add new list of patches
+    topo.changePatches(newPatches);
 
-  // Actually add new list of patches
-  topo.changePatches(newPatches);
+    Info << " Creating Pos-patch " << endl;
 
-  Info << " Creating Pos-patch " << endl;
+    labelList faceLabelsPos(facesPos.toc());
 
-  labelList faceLabelsPos(facesPos.toc());
+    SortableList<label> patchFacesPos(faceLabelsPos);
 
-  SortableList<label> patchFacesPos(faceLabelsPos);
-
-  forAll(patchFacesPos, i)
+    forAll(patchFacesPos, i)
     {
-      label faceI = patchFacesPos[i];
+        label faceI = patchFacesPos[i];
 
-      if (mesh.isInternalFace(faceI))
-	{
-	  FatalErrorIn("SplitWedge")
-	    << "Face " << faceI << " specified in set " << facesPos.name()
-	    << " is not an external face of the mesh." << endl
-	    << "This application can only repatch existing boundary"
-	    << " faces."
-	    << exit(FatalError);
-	}
+        if (mesh.isInternalFace(faceI))
+        {
+            FatalErrorIn("SplitWedge")
+                << "Face " << faceI << " specified in set " << facesPos.name()
+                    << " is not an external face of the mesh." << endl
+                    << "This application can only repatch existing boundary"
+                    << " faces."
+                    << exit(FatalError);
+        }
 
-      topo.changePatchID(patchFacesPos[i], patchPos);
+        topo.changePatchID(patchFacesPos[i], patchPos);
     }
 
-  Info << " Creating Neg-patch " << endl;
+    Info << " Creating Neg-patch " << endl;
 
-  labelList faceLabelsNeg(facesNeg.toc());
+    labelList faceLabelsNeg(facesNeg.toc());
 
-  SortableList<label> patchFacesNeg(faceLabelsNeg);
+    SortableList<label> patchFacesNeg(faceLabelsNeg);
 
-  forAll(patchFacesNeg, i)
+    forAll(patchFacesNeg, i)
     {
-      label faceI = patchFacesNeg[i];
+        label faceI = patchFacesNeg[i];
 
-      if (mesh.isInternalFace(faceI))
-	{
-	  FatalErrorIn("SplitWedge")
-	    << "Face " << faceI << " specified in set " << facesNeg.name()
-	    << " is not an external face of the mesh." << endl
-	    << "This application can only repatch existing boundary"
-	    << " faces."
-	    << exit(FatalError);
-	}
+        if (mesh.isInternalFace(faceI))
+        {
+            FatalErrorIn("SplitWedge")
+                << "Face " << faceI << " specified in set " << facesNeg.name()
+                    << " is not an external face of the mesh." << endl
+                    << "This application can only repatch existing boundary"
+                    << " faces."
+                    << exit(FatalError);
+        }
 
-      topo.changePatchID(patchFacesNeg[i], patchNeg);
+        topo.changePatchID(patchFacesNeg[i], patchNeg);
     }
 
-  Info << " Changing patches\n" << endl;
+    Info << " Changing patches\n" << endl;
 
-  topo.repatch();
+    topo.repatch();
 }
 
 void changeTypes(polyMesh &mesh,word wedge,word axis,bool hasOffset) {
-  repatchPolyTopoChanger topo(mesh);
-  const polyBoundaryMesh& patches = mesh.boundaryMesh();
+    repatchPolyTopoChanger topo(mesh);
+    const polyBoundaryMesh& patches = mesh.boundaryMesh();
 
-  List<polyPatch*> newPatches(patches.size());
+    List<polyPatch*> newPatches(patches.size());
 
-  forAll(patches, patchI)
+    forAll(patches, patchI)
     {
-      const polyPatch& pp = patches[patchI];
+        const polyPatch& pp = patches[patchI];
 
-      if(pp.name()==axis && !hasOffset) {
-          Info << " Changing " << axis << " to symmetryPlane" << endl;
-          newPatches[patchI] =
-              polyPatch::New(
-                  "symmetryPlane",
-                  pp.name(),
-                  pp.size(),
-                  pp.start(),
-                  patchI,
-                  patches
-              ).ptr();
-      } else if(pp.name()==wedge+"_pos" || pp.name()==wedge+"_neg"){
-          Info << " Changing " << pp.name() << " to wedge" << endl;
-          newPatches[patchI] =
-              polyPatch::New(
-                  "wedge",
-                  pp.name(),
-                  pp.size(),
-                  pp.start(),
-                  patchI,
-                  patches
-              ).ptr();
-      } else {
-          newPatches[patchI] =
-              pp.clone
-              (
-                  patches,
-                  patchI,
-                  pp.size(),
-                  pp.start()
-              ).ptr();
-      }
+        if(pp.name()==axis && !hasOffset) {
+            Info << " Changing " << axis << " to symmetryPlane" << endl;
+            newPatches[patchI] =
+                polyPatch::New(
+                    "symmetryPlane",
+                    pp.name(),
+                    pp.size(),
+                    pp.start(),
+                    patchI,
+                    patches
+                ).ptr();
+        } else if(pp.name()==wedge+"_pos" || pp.name()==wedge+"_neg"){
+            Info << " Changing " << pp.name() << " to wedge" << endl;
+            newPatches[patchI] =
+                polyPatch::New(
+                    "wedge",
+                    pp.name(),
+                    pp.size(),
+                    pp.start(),
+                    patchI,
+                    patches
+                ).ptr();
+        } else {
+            newPatches[patchI] =
+                pp.clone
+                (
+                    patches,
+                    patchI,
+                    pp.size(),
+                    pp.start()
+                ).ptr();
+        }
     }
 
-  Info << endl;
+    Info << endl;
 
-  topo.changePatches(newPatches);
+    topo.changePatches(newPatches);
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -465,71 +469,75 @@ int main(int argc, char *argv[])
     bool overwrite = args.options().found("overwrite");
 
     if(args.options().found("axis") && args.options().found("wedge")) {
-      oldMode=true;
-      Info << " Using old mode. Dictionary not used" << endl;
-      axisName=args.options()["axis"];
-      wedgeName=args.options()["wedge"];
+        oldMode=true;
+        Info << " Using old mode. Dictionary not used" << endl;
+        axisName=args.options()["axis"];
+        wedgeName=args.options()["wedge"];
 
-      if(args.options().found("offset")) {
-	offset=readScalar(IStringStream(args.options()["offset"])());
-      }
+        if(args.options().found("offset")) {
+            offset=readScalar(IStringStream(args.options()["offset"])());
+        }
     } else if(args.options().found("axis") || args.options().found("wedge")) {
         FatalErrorIn(args.executable())
             << " axis and wedge options have to be specified for legacy mode "
-            << exit(FatalError);
+                << exit(FatalError);
     } else {
         IOdictionary rotationalDict
-	  (
-	   IOobject
-	   (
-	    "rotationDict",
-	    runTime.system(),
-	    mesh,
-	    IOobject::MUST_READ,
-	    IOobject::NO_WRITE
-	    )
-	   );
+            (
+                IOobject
+                (
+                    "rotationDict",
+                    runTime.system(),
+                    mesh,
+                    IOobject::MUST_READ,
+                    IOobject::NO_WRITE
+                )
+            );
 
-	revolve = readBool(rotationalDict.lookup("revolve"));
+        revolve = readBool(rotationalDict.lookup("revolve"));
 
-	if(rotationalDict.found("makeAxialOldMode") &&
-	   readBool(rotationalDict.lookup("makeAxialOldMode"))) {
-	  oldMode=true;
-	  Info << "Using old mode" << endl;
+        if(
+            rotationalDict.found("makeAxialOldMode")
+            &&
+            readBool(rotationalDict.lookup("makeAxialOldMode"))
+        ) {
+            oldMode=true;
+            Info << "Using old mode" << endl;
 
-	  if(rotationalDict.found("makeAxialOffset")) {
-	    offset=readScalar(rotationalDict["makeAxialOffset"]);
-	  }
-	} else {
-	  rotation=rotationalDict.lookup("rotationVector");
-	  origin=rotationalDict.lookup("originVector");
-	}
+            if(rotationalDict.found("makeAxialOffset")) {
+                offset=readScalar(rotationalDict["makeAxialOffset"]);
+            }
+        } else {
+            rotation=rotationalDict.lookup("rotationVector");
+            origin=rotationalDict.lookup("originVector");
+        }
         axisName=word(rotationalDict.lookup("makeAxialAxisPatch"));
 
-	wedgeName=word(rotationalDict["makeAxialWedgePatch"]);
+        wedgeName=word(rotationalDict["makeAxialWedgePatch"]);
 
         if( axisName == wedgeName) {
             FatalErrorIn(args.executable())
-                << "Patch " << axisName << " can't be used as axis and wedge patch" << endl
+                << "Patch " << axisName
+                    << " can't be used as axis and wedge patch" << endl
                     << exit(FatalError);
         }
 
         if(rotationalDict.found("wedgeAngle")) {
-	    wedgeAngle=readScalar(rotationalDict["wedgeAngle"]);
+            wedgeAngle=readScalar(rotationalDict["wedgeAngle"]);
         }
     }
 
     if(args.options().found("wedgeAngle")) {
-	wedgeAngle=readScalar(IStringStream(args.options()["wedgeAngle"])());
+        wedgeAngle=readScalar(IStringStream(args.options()["wedgeAngle"])());
     }
 
     if(offset<0) {
-      FatalErrorIn(args.executable())
-	<< "Offset " << offset << " smaller than 0" << endl
-	<< exit(FatalError);
+        FatalErrorIn(args.executable())
+            << "Offset " << offset << " smaller than 0" << endl
+                << exit(FatalError);
     }
     if(offset>0) {
-	Info << " Adding offset " << offset << endl;
+        Info << " Adding offset " << offset << endl;
     }
 
     pointField& points = const_cast<pointField&>(mesh.points());
@@ -542,33 +550,34 @@ int main(int argc, char *argv[])
     const polyBoundaryMesh& patches = mesh.boundaryMesh();
 
     if (patches.findPatchID(wedgeName) == -1)
-      {
-	FatalErrorIn(args.executable())
-	  << "Patch " << wedgeName << " does not exists in mesh" << endl
-	  << "Patches are " << patches.names()
-	  << exit(FatalError);
-      }
+    {
+        FatalErrorIn(args.executable())
+            << "Patch " << wedgeName << " does not exists in mesh" << endl
+                << "Patches are " << patches.names()
+                << exit(FatalError);
+    }
 
     if(oldMode) {
-      if (patches.findPatchID(axisName) == -1)
-	{
-	  FatalErrorIn(args.executable())
-            << "Patch " << axisName << " does not exists in mesh" << endl
-            << "Patches are " << patches.names()
-            << exit(FatalError);
-	}
+        if (patches.findPatchID(axisName) == -1)
+        {
+            FatalErrorIn(args.executable())
+                << "Patch " << axisName << " does not exists in mesh" << endl
+                    << "Patches are " << patches.names()
+                    << exit(FatalError);
+        }
 
-      const polyPatch &axisPatch=patches[patches.findPatchID(axisName)];
+        const polyPatch &axisPatch=patches[patches.findPatchID(axisName)];
 
-      theAxis=getAxis(axisPatch,approx);
+        theAxis=getAxis(axisPatch,approx);
     } else {
-      theAxis=linie(origin,origin+rotation);
-      offset=0;
+        theAxis=linie(origin,origin+rotation);
+        offset=0;
     }
 
     Info << "The rotation-axis: " << theAxis << "\n" << endl;
 
-    Info << "Creating wedge with an opening angle of " << wedgeAngle << " degrees\n" << endl;
+    Info << "Creating wedge with an opening angle of "
+        << wedgeAngle << " degrees\n" << endl;
 
     changeCoordinates(
         mesh,
@@ -576,7 +585,7 @@ int main(int argc, char *argv[])
         theAxis,
         offset,
         wedgeAngle,
-	revolve
+        revolve
     );
 
     scalar distance=offset;
@@ -605,9 +614,7 @@ int main(int argc, char *argv[])
     if (!overwrite)
     {
         runTime++;
-    }
-    else
-    {
+    } else {
         mesh.setInstance(oldInstance);
     }
 
