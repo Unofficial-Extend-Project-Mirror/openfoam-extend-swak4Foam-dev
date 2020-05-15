@@ -1432,7 +1432,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org67eb0db) below). Don't work on the
+details see [6.2.2](#orgcfb42fc) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1488,7 +1488,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org67eb0db"></a>
+<a id="orgcfb42fc"></a>
 
 ### Repository organization
 
@@ -6695,6 +6695,14 @@ like 3.7 is found. THe same is true for
 
 If these variables are not set the highest possible Python is
 used (like it was before)
+
+
+#### Generate files for `clangd` if `bear` is installed
+
+If [Bear](https://github.com/rizsotto/Bear) is installed then it is used to generate the files that
+the `clang` tools use to find out how files are compiled. This
+allows using LSP-based tools during editing (the necessary
+settings for Emacs have been added)
 
 
 ### Documentation

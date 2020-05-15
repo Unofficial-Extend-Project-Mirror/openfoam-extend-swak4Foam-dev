@@ -4283,6 +4283,11 @@ S_{expl} + S_{impl} T
 
      If these variables are not set the highest possible Python is
      used (like it was before)
+**** Generate files for =clangd= if =bear= is installed
+     If [[https://github.com/rizsotto/Bear][Bear]] is installed then it is used to generate the files that
+     the =clang= tools use to find out how files are compiled. This
+     allows using LSP-based tools during editing (the necessary
+     settings for Emacs have been added)
 *** Documentation
 **** Adapted contributors section in the README
      Removed outdated information, updated links
