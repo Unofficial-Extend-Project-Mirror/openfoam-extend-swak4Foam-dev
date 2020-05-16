@@ -894,6 +894,12 @@ S_{expl} + S_{impl} T
      The usual =cavity= case with the axis outside the geometry
      - Solver :: =icoFoam=
      - Case setup :: =pyFoamPrepareCase=
+**** axialPitzDaily
+     The usual =pitzDaily= case with the top is an axis of rotation
+     - Solver :: =simpleFoam=
+     - Case setup :: =pyFoamPrepareCase=
+     Note: =checkMesh= complains *after* the =collapseEdges=-utility
+     was used and the case converges badly
 *** tests
     Simple test cases for specific features. The names of the
     directories should give you a hint what is tested there. Most of

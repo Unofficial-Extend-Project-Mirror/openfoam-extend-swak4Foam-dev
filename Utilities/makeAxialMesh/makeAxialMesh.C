@@ -386,17 +386,27 @@ void changeTypes(polyMesh &mesh,word wedge,word axis,bool hasOffset) {
         const polyPatch& pp = patches[patchI];
 
         if(pp.name()==axis && !hasOffset) {
-            Info << " Changing " << axis << " to symmetryPlane" << endl;
+          // Info << " Changing " << axis << " to symmetryPlane" << endl;
+          // newPatches[patchI] =
+          //     polyPatch::New(
+          //         "symmetryPlane",
+          //         pp.name(),
+          //         pp.size(),
+          //         pp.start(),
+          //         patchI,
+          //         patches
+          //     ).ptr();
+            Info << " Changing " << axis << " to symmetry" << endl;
             newPatches[patchI] =
-                polyPatch::New(
-                    "symmetryPlane",
-                    pp.name(),
-                    pp.size(),
-                    pp.start(),
-                    patchI,
-                    patches
-                ).ptr();
-        } else if(pp.name()==wedge+"_pos" || pp.name()==wedge+"_neg"){
+               polyPatch::New(
+                   "symmetry",
+                   pp.name(),
+                   pp.size(),
+                   pp.start(),
+                   patchI,
+                   patches
+               ).ptr();
+        } else if (pp.name() == wedge + "_pos" || pp.name() == wedge + "_neg") {
             Info << " Changing " << pp.name() << " to wedge" << endl;
             newPatches[patchI] =
                 polyPatch::New(

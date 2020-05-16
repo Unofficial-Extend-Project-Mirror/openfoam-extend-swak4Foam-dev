@@ -68,6 +68,7 @@
   | LuaIntegration/luaScriptedBCAngledDuct                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | LuaIntegration/raiseRelaxationPitzDaily                     | \checkmark | \dagger    | \checkmark | \dagger    |
   | MakeAxialMesh/axialCavity                                   |            |            | \checkmark |            |
+  | MakeAxialMesh/axialPitzDaily                                |            |            | \checkmark |            |
   | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    | \checkmark | \checkmark |
   | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark | \dagger    | \checkmark | \checkmark |
   | other/angledDuctImplicit                                    | \sad       | \sad       | \checkmark | \sad       |

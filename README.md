@@ -1339,6 +1339,17 @@ The usual `cavity` case with the axis outside the geometry
 -   **Case setup:** `pyFoamPrepareCase`
 
 
+#### axialPitzDaily
+
+The usual `pitzDaily` case with the top is an axis of rotation
+
+-   **Solver:** `simpleFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+
+Note: `checkMesh` complains **after** the `collapseEdges`-utility
+was used and the case converges badly
+
+
 ### tests
 
 Simple test cases for specific features. The names of the
@@ -1460,7 +1471,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orgabd6435) below). Don't work on the
+details see [6.2.2](#orgc2893e7) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1516,7 +1527,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orgabd6435"></a>
+<a id="orgc2893e7"></a>
 
 ### Repository organization
 
