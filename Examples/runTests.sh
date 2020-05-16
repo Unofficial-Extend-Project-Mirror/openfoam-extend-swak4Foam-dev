@@ -53,6 +53,7 @@ runIt Lagrangian/parser/simplifiedSiwek
 runIt LuaIntegration/flowStatePitzDaily
 runIt LuaIntegration/luaScriptedBCAngledDuct
 runIt LuaIntegration/raiseRelaxationPitzDaily
+runIt MakeAxialMesh/axialCavity
 runIt manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched
 runIt manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched
 runIt other/angledDuctImplicit

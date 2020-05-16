@@ -67,6 +67,8 @@
   | LuaIntegration/flowStatePitzDaily                           | \checkmark | \checkmark | \checkmark | \checkmark |
   | LuaIntegration/luaScriptedBCAngledDuct                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | LuaIntegration/raiseRelaxationPitzDaily                     | \checkmark | \dagger    | \checkmark | \dagger    |
+  | MakeAxialMesh/axialCavity                                   |            |            | \checkmark |            |
+  | MakeAxialMesh/axialPitzDaily                                |            |            | \checkmark |            |
   | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    | \checkmark | \checkmark |
   | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark | \dagger    | \checkmark | \checkmark |
   | other/angledDuctImplicit                                    | \sad       | \sad       | \checkmark | \sad       |
@@ -82,7 +84,7 @@
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/delayedMappingChannels                                |            |            | \checkmark |            |
-  | tests/languageIntegration/luaIntegration                    | \checkmark  | \checkmark | \checkmark | \checkmark |
+  | tests/languageIntegration/luaIntegration                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/pythonIntegration                 | \sad       | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/python3Integration                | \sad       | \checkmark | \checkmark | \checkmark |
   | tests/mappingChannels                                       |            |            | \checkmark |            |

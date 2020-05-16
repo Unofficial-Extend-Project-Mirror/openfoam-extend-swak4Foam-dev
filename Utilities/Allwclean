@@ -19,3 +19,5 @@ wclean funkyPythonPostproc
 wclean funkySetLagrangianField
 
 wclean funkyWarpMesh
+
+wclean makeAxialMesh
