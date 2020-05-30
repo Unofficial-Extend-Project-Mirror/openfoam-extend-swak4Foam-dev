@@ -62,6 +62,7 @@ Contributors/Copyright:
 #include "faceSet.H"
 #include "SortableList.H"
 #include "SubField.H"
+#include "IOdictionary.H"
 
 #include "mathematicalConstants.H"
 
