@@ -16,6 +16,17 @@ end     (-0.0205 0.0251 0.00001);
 fields  (p k U);
 U       U;
 
+direction       both;
+
+seedSampleSet
+{
+    type            lineUniform;
+    start           (-0.0205 0.001  0.00001);
+    end             (-0.0205 0.0251 0.00001);
+    nPoints         10;
+    axis            x;
+}
+
 // Must be last entry
 #includeEtc "caseDicts/postProcessing/visualization/streamlines.cfg"
 

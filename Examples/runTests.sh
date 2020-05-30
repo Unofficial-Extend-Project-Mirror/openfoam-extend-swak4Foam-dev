@@ -54,6 +54,7 @@ runIt LuaIntegration/flowStatePitzDaily
 runIt LuaIntegration/luaScriptedBCAngledDuct
 runIt LuaIntegration/raiseRelaxationPitzDaily
 runIt MakeAxialMesh/axialCavity
+runIt MakeAxialMesh/axialPitzDaily
 runIt manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched
 runIt manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched
 runIt other/angledDuctImplicit
