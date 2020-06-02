@@ -29,7 +29,7 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "Time.H"
+#include "swakTime.H"
 
 #include "lcsSpeciesSourcePluginFunction.H"
 

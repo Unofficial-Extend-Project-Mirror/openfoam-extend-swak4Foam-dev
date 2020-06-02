@@ -30,7 +30,7 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "Time.H"
+#include "swakTime.H"
 #include "StateMachine.H"
 
 #include "StateMachineRepository.H"
