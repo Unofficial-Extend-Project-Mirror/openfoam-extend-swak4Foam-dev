@@ -29,6 +29,8 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "Time.H"
+
 #include "lcsSpeciesSourcePluginFunction.H"
 
 #include "addToRunTimeSelectionTable.H"

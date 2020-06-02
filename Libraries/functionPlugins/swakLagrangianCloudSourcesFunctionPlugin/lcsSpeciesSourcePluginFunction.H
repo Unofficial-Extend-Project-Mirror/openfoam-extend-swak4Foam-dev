@@ -44,6 +44,8 @@ Contributors/Copyright:
 
 #include "swakCloudTypes.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -87,13 +89,19 @@ public:
 
 };
 
+#ifdef FOAM_HASH_WORD_LIST_CONTAINS_DEPRECATED
+#define foundOrContains found
+#else
+#define foundOrContains contains
+#endif
+
 #ifdef FOAM_REACTINGCLOUD_TEMPLATED
 #define getSpeciesIndex(neededType,usedType)                                \
     if(hasCloudAs<neededType>()) {                                      \
         const speciesTable &spec=                                       \
             getCloudAs<neededType,usedType>().mcCarrierThermo ().species(); \
         speciesList=spec;                                               \
-        if(spec.found(speciesName_)) {                                  \
+        if(spec.foundOrContains(speciesName_)) {                        \
             return spec[speciesName_];                                  \
         }                                                               \
     }
@@ -103,7 +111,7 @@ public:
         const speciesTable &spec=                                       \
             getCloudAs<neededType,usedType>().thermo().carrier().species(); \
         speciesList=spec;                                               \
-        if(spec.found(speciesName_)) {                                  \
+        if(spec.foundOrContains(speciesName_)) {                        \
             return spec[speciesName_];                                  \
         }                                                               \
     }

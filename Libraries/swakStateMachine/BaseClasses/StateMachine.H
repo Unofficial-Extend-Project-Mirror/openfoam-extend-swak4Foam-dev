@@ -199,7 +199,11 @@ public:
     }
 
     inline bool hasState(word name) const {
-        return names_.found(name);
+#ifdef FOAM_HASH_WORD_LIST_CONTAINS_DEPRECATED
+      return names_.found(name);
+#else
+      return names_.contains(name);
+#endif
     }
 
     inline const word &stateName(label stateCode) const {
