@@ -152,6 +152,10 @@ namespace Foam {
 #define FOAM_IOPOSITION_IS_TEMPLATE_OF_PARTICLE
 #endif
 
+#if (OPENFOAM_COM >= 2004)
+#define FOAM_PARTICLE_STREAM_CONSTRUCTOR_WITH_NEW_FORMAT
+#endif
+
 #include "DebugOStream.H"
 
 #endif
