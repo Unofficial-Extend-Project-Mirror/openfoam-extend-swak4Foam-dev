@@ -195,9 +195,15 @@ int main(int argc, char *argv[])
     (
        !runTime.objectRegistry::writeObject
         (
-            runTime.writeFormat(),
-            IOstream::currentVersion,
-            runTime.writeCompression()
+#ifdef FOAM_HAS_IO_STREAM_OPTION_CLASS
+            IOstreamOption(
+#endif
+                runTime.writeFormat(),
+                IOstream::currentVersion,
+                runTime.writeCompression()
+#ifdef FOAM_HAS_IO_STREAM_OPTION_CLASS
+            )
+#endif
 #ifdef FOAM_REGIOOBJECT_WRITEOBJECT_WITH_VALID
             ,true
 #endif

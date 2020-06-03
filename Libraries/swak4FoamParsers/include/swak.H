@@ -648,6 +648,10 @@ Contributors/Copyright:
 #define FOAM_EIGEN_VALUES_VECTOR_IS_COMPLEX
 #endif
 
+#if (OPENFOAM_COM >= 2004)
+#define FOAM_HAS_IO_STREAM_OPTION_CLASS
+#endif
+
 #include "swakVersion.H"
 #include "DebugOStream.H"
 #include "BackportMacros.H"
