@@ -644,6 +644,10 @@ Contributors/Copyright:
 #define FOAM_RUNTIME_CONDITION
 #endif
 
+#if (OPENFOAM_COM >= 2004)
+#define FOAM_EIGEN_VALUES_VECTOR_IS_COMPLEX
+#endif
+
 #include "swakVersion.H"
 #include "DebugOStream.H"
 #include "BackportMacros.H"
