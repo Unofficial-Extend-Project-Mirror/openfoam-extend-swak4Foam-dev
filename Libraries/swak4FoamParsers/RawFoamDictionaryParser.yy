@@ -29,7 +29,7 @@ Description
     Won't be able to read all possible OF-dictionaries
 
 Contributors/Copyright:
-    2017-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2017-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -37,7 +37,7 @@ Contributors/Copyright:
 %skeleton "lalr1.cc" /* -*- C++ -*- */
 %require "3.0.4"
 %defines
-%define parser_class_name {RawFoamDictionaryParser}
+%define api.parser.class {RawFoamDictionaryParser}
 
 %define api.token.constructor
 %define api.value.type variant

@@ -21,7 +21,7 @@ solvers
         solver PCG;
         preconditioner
         {
-            preconditioner   GAMG
+            preconditioner   GAMG;
             tolerance        1e-3;
             relTol           0;
 
@@ -51,7 +51,7 @@ solvers
         tolerance        1e-8;
         relTol           0.05;
 
-        smoother         GaussSeidel;
+        smoother         DICGaussSeidel;
         nPreSweeps       0;
         nPostSweeps      2;
         nFinestSweeps    2;
@@ -71,7 +71,7 @@ solvers
         solver PCG;
         preconditioner
         {
-            preconditioner   GAMG
+            preconditioner   GAMG;
             tolerance        1e-8;
             relTol           0;
 
@@ -99,7 +99,8 @@ solvers
 
     U
     {
-        solver smoothSolver;
+        //        solver smoothSolver;
+        solver    PBiCGStab;
         smoother         GaussSeidel;
         tolerance        1e-6;
         relTol           0;

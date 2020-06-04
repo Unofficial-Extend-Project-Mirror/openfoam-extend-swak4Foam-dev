@@ -24,9 +24,10 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2013, 2015-2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2013, 2015-2016, 2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2019 Mark Olesen <Mark.Olesen@esi-group.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: timelineFunctionObject.C,v 93dddbfe713a 2019-03-11 11:50:39Z Mark $
 \*---------------------------------------------------------------------------*/
 
 #include "timelineFunctionObject.H"
@@ -46,6 +47,15 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+const Enum<Foam::timelineFunctionObject::outputFileMode>
+timelineFunctionObject::outputFileModeNames_
+({
+    {outputFileMode::ofmFoam,"foam"},
+    {outputFileMode::ofmRaw,"raw"},
+    {outputFileMode::ofmCsv,"csv"}
+});
+#else
 template<>
 const char* NamedEnum<Foam::timelineFunctionObject::outputFileMode,3>::names[]=
 {
@@ -54,6 +64,7 @@ const char* NamedEnum<Foam::timelineFunctionObject::outputFileMode,3>::names[]=
     "csv"
 };
 const NamedEnum<timelineFunctionObject::outputFileMode,3> timelineFunctionObject::outputFileModeNames_;
+#endif
 
 timelineFunctionObject::timelineFunctionObject
 (
@@ -124,7 +135,7 @@ void timelineFunctionObject::closeAllFiles()
 
     forAllIter(HashPtrTable<OFstream>, filePtrs_, iter)
     {
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+#ifdef FOAM_HASH_PTR_TABLE_ACCEPTS_NO_RAW_POINTERS
         filePtrs_.remove(iter);
 #else
         delete filePtrs_.remove(iter);
@@ -150,7 +161,7 @@ bool timelineFunctionObject::start()
                 Dbug << "Closing file " << iter.key() << endl;
 
                 // Field has been removed. Close file
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
+#ifdef FOAM_HASH_PTR_TABLE_ACCEPTS_NO_RAW_POINTERS
                 filePtrs_.remove(iter);
 #else
                 delete filePtrs_.remove(iter);
@@ -180,16 +191,7 @@ bool timelineFunctionObject::start()
                 }
                 OFstream* sPtr = new OFstream(theDir/fldName+fileExtension_);
 
-                filePtrs_.insert(
-                    fldName,
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
-                    autoPtr<OFstream>(
-#endif
-                        sPtr
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
-                    )
-#endif
-                );
+                filePtrs_.set(fldName, sPtr);
 
                 OFstream &s=*sPtr;
 

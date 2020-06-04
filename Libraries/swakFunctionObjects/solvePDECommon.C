@@ -24,7 +24,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013-2014, 2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013-2014, 2016, 2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2013 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id:  $
@@ -38,6 +38,16 @@ namespace Foam {
     defineTypeNameAndDebug(solvePDECommon,0);
 }
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+const Foam::Enum<Foam::solvePDECommon::solveAt>
+Foam::solvePDECommon::solveAtNames_
+({
+    {solveAt::saStartup,"startup"},
+    {solveAt::saTimestep,"timestep"},
+    {solveAt::saWrite,"write"},
+    {solveAt::saNever,"never"}
+});
+#else
 template<>
 const char* Foam::NamedEnum<Foam::solvePDECommon::solveAt,4>::names[]=
 {
@@ -48,6 +58,7 @@ const char* Foam::NamedEnum<Foam::solvePDECommon::solveAt,4>::names[]=
 };
 
 const Foam::NamedEnum<Foam::solvePDECommon::solveAt,4> Foam::solvePDECommon::solveAtNames_;
+#endif
 
 Foam::solvePDECommon::solvePDECommon
 (

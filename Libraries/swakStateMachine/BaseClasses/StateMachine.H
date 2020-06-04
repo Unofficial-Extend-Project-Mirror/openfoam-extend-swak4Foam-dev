@@ -36,9 +36,9 @@ SourceFiles
     StateMachine.C
 
 Contributors/Copyright:
-    2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2016-2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: StateMachine.H,v 909e3e73dc26 2018-06-04 10:14:09Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #ifndef StateMachine_H
@@ -199,7 +199,11 @@ public:
     }
 
     inline bool hasState(word name) const {
-        return names_.contains(name);
+#ifdef FOAM_HASH_WORD_LIST_CONTAINS_DEPRECATED
+      return names_.found(name);
+#else
+      return names_.contains(name);
+#endif
     }
 
     inline const word &stateName(label stateCode) const {

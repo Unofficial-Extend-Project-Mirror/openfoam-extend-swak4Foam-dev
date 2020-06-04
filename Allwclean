@@ -13,4 +13,7 @@ fi
 
 find . -name "*.dep" -print -exec rm {} \;
 
+find . -name compile_commands.json -print0 | xargs --null rm -f
+find . -name .clangd -print0 | xargs --null rm -r
+
 rm -f foamVersionThisIsCompiledFor

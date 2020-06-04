@@ -34,6 +34,19 @@ License
 
 namespace Foam
 {
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+    const Enum<outputFilterOutputControl::outputControls>
+    outputFilterOutputControl::outputControlNames_
+    ({
+        {outputControls::ocTimeStep, "timeStep"},
+        {outputControls::ocOutputTime, "outputTime"},
+        {outputControls::ocAdjustableTime, "adjustableTime"},
+        {outputControls::ocRunTime, "runTime"},
+        {outputControls::ocClockTime, "clockTime"},
+        {outputControls::ocCpuTime, "cpuTime"},
+        {outputControls::ocNone, "none"},
+    });
+#else
     template<>
     const char* NamedEnum<outputFilterOutputControl::outputControls, 7>::
     names[] =
@@ -46,10 +59,11 @@ namespace Foam
         "cpuTime",
         "none"
     };
+    const NamedEnum<outputFilterOutputControl::outputControls, 7>
+    outputFilterOutputControl::outputControlNames_;
+#endif
 }
 
-const Foam::NamedEnum<Foam::outputFilterOutputControl::outputControls, 7>
-    Foam::outputFilterOutputControl::outputControlNames_;
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

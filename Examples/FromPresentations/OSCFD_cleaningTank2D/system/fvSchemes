@@ -27,13 +27,16 @@ gradSchemes
 
 divSchemes
 {
+    div(rhoPhi,U)  Gauss linearUpwind grad(U);
+
     div(rho*phi,U)  Gauss limitedLinearV 1;
     div(phi,alpha)  Gauss vanLeer;
     div(phirb,alpha) Gauss interfaceCompression;
     div((muEff*dev(T(grad(U))))) Gauss linear;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
 
     div((interpolate(rho)*phi),tracer) Gauss vanLeer01;
-    div(phi,tracer) Gauss vanLeer01;
+    "div\(phi.*,tracer\)" Gauss vanLeer01;
 }
 
 laplacianSchemes
@@ -59,5 +62,9 @@ fluxRequired
     alpha1;
 }
 
+wallDist
+{
+    method meshWave;
+}
 
 // ************************************************************************* //

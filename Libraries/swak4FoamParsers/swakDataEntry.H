@@ -33,6 +33,7 @@ SourceFiles
 
 Contributors/Copyright:
     2011, 2013, 2015-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2019 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -43,7 +44,7 @@ Contributors/Copyright:
 #include "foamVersion4swak.H"
 
 #include "CommonValueExpressionDriver.H"
-#include "exprString.H"
+#include "swakExprString.H"
 
 #ifdef FOAM_DATAENTRY_IS_NOW_FUNCTION1
 #include "Function1.H"

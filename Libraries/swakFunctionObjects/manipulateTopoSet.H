@@ -34,6 +34,7 @@ SourceFiles
 
 Contributors/Copyright:
     2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2019 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -45,7 +46,7 @@ Contributors/Copyright:
 #include "autoPtr.H"
 #include "dictionary.H"
 
-#include "exprString.H"
+#include "swakExprString.H"
 #include "scalarField.H"
 #include "pointField.H"
 

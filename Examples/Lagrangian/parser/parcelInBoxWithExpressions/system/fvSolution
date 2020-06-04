@@ -76,7 +76,7 @@ solvers
         $pFinal;
     }
 
-    "(Yi|O2|N2|H2O)"
+    "(Yi|O2|N2|H2O|YiFinal)"
     {
         $hFinal;
     }

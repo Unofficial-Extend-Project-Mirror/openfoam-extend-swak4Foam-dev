@@ -42,7 +42,17 @@ boundaryField
         value           uniform 0;
     }
 
-    atmosphere
+    sideSpill
+    {
+        type symmetry;
+    }
+
+    atmosphere {
+        //        $spill;
+        type zeroGradient;
+    }
+
+    top
     {
         type            groovyBC;
         globalScopes ( inletPos inletPosInit );

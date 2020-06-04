@@ -1,7 +1,7 @@
 ../filesThatAreOnlyInSomeDistributions/OutputFilerDropin/outputFilterOutputControl.C
 
 helpers/printSwakVersion.C
-helpers/exprString.C
+helpers/swakExprString.C
 helpers/switchableNotImplemented.C
 helpers/DebugOStream.C
 

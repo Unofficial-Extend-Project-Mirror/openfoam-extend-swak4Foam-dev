@@ -23,7 +23,7 @@ License
     along with swak4Foam.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2011, 2013-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013-2014, 2016-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -132,7 +132,11 @@ void Foam::groovyFixedNormalSlipFvPatchField<Type>::write(Ostream& os) const
 {
     fixedNormalSlipFvPatchField<Type>::write(os);
 
-    this->writeEntry("value", os);
+#ifdef FOAM_WRITEENTRY_NOT_MEMBER_OF_LIST
+    writeEntry(os, "value", *this);
+#else
+    this->writeEntry("value",os);
+#endif
 
     os.writeKeyword("fixedValueExpression")
         << fixedValueExpression_ << token::END_STATEMENT << nl;

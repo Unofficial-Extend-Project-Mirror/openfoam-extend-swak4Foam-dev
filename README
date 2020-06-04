@@ -56,13 +56,15 @@
      - Bugfix for segmentation faults in parallel
    - Matti Rauter ::
      - Spell-checking the compilation scripts
+   - Danial Khazaei ::
+     - Fixed problem with 64 bit labels
    If anyone is forgotten: let me know
 
    According to the commits in the =mercurial=-repository (and the
    repositories of the projects from which swak emerged) contributors
    are (ordered by the year of their first contribution. EMail is the
    latest under which this author submitted):
-   - 2006-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+   - 2006-2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
    - 2008 Hannes Kroeger (hannes@kroegeronline.net)
    - 2008-2009, 2012 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
    - 2010 Marianne Mataln <mmataln@ice-sf.at>
@@ -75,7 +77,8 @@
    - 2014 David Huckaby <e.david.huckaby@netl.doe.gov>
    - 2015 Domink Christ <d.christ@wikki.co.uk>
    - 2015 Alexey Matveichev <alexey.matveichev@gmail.com>
-   - 2016-2018 Mark Olesen <Mark.Olesen@esi-group.com>
+   - 2016-2019 Mark Olesen <Mark.Olesen@esi-group.com>
+   - 2019 Danial Khazaei <shadowfax@shell.sf.net>
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
@@ -93,7 +96,7 @@
      To see which versions this release has been tested with see
      =Documentation/examplesCompatibilityMatrix.org=
    - the compiler generators =bison= and =flex=
-     - bison :: =swak4Foam= is known to work with =bison= version 3.0 and
+     - bison :: =swak4Foam= is known to work with =bison= version 3.3 and
                 higher.
      - flex :: since the introduction of the plugin functions at least
                a flex version of =2.5.33= is required (=2.5.35= is the
@@ -491,6 +494,17 @@ S_{expl} + S_{impl} T
 *** =writeBoundarySubfields=
     Utility to write fields with subfields from boundary conditions
     like =refValue= for post-processing
+*** =makeAxialMesh=
+    A utility that converts a planar (pseudo-2d) grid to an
+    axial-symmetric mesh (used to be a separate project but was moved
+    here for maintenance)
+
+    Contributors of previous versions were
+    - David P. Schmidt
+    - E David Huckaby
+    - Dominik Christ (Porting to 1.5)
+
+    See: http://openfoamwiki.net/index.php/Contrib_MakeAxialMesh
 ** Examples
    If not otherwise noted cases are prepared by a simple
    =blockMesh=-call.
@@ -578,6 +592,11 @@ S_{expl} + S_{impl} T
      - Preparation :: run =pyFoamPrepareCase.py=
      - Description :: Demonstrates =groovyBC= on cyclic patches and
                       the =groovyBCJump=-condition
+**** nonBreakingDam
+     - Solver :: interFoam
+     - Preparation :: run =pyFoamPrepareCase.py=
+     - Description :: OpenFOAM macro-expansion inside of expression
+                      strings
 *** FunkyDoCalc
     Example dictionaries for =funkyDoCalc=
 *** FunkySetFields
@@ -865,6 +884,25 @@ S_{expl} + S_{impl} T
      - Solver :: =compressibleInterDyMFoam=
      - Case setup :: =pyFoamPrepareCase=
      - Demonstrates :: The =groovyCyclicACMI= patch type. State machines. =funkyWarpMesh= utility
+*** runTimeControl
+    Demonstrating the run-time trigger
+**** simpleSwakCar
+     Simple modification of the =simpleCar=-case
+     - Solver :: =simpleFoam=
+     - Case setup :: =pyFoamPrepareCase=
+     - Demonstrates :: the run-time trigger with expressions.
+*** MakeAxialMesh
+    Cases hee demonstrate the =makeAxialMesh=-utility
+**** axialCavity
+     The usual =cavity= case with the axis outside the geometry
+     - Solver :: =icoFoam=
+     - Case setup :: =pyFoamPrepareCase=
+**** axialPitzDaily
+     The usual =pitzDaily= case with the top is an axis of rotation
+     - Solver :: =simpleFoam=
+     - Case setup :: =pyFoamPrepareCase=
+     Note: =checkMesh= complains *after* the =collapseEdges=-utility
+     was used and the case converges badly
 *** tests
     Simple test cases for specific features. The names of the
     directories should give you a hint what is tested there. Most of
@@ -925,34 +963,46 @@ S_{expl} + S_{impl} T
 ** Development
    Contributions to to =swak4Foam= are most welcome. If you want to
    contribute clone the Mercurial archive of the sources
-: hg clone http://openfoam-extend.hg.sourceforge.net:8000/hgroot/openfoam-extend/swak4Foam
-   Change to the branch that you want to improve (usually =default=)
+: hg clone http://hg.code.sf.net/p/openfoam-extend/swak4Foam
+   or use the /Fork/ link at
+   [[https://sourceforge.net/p/openfoam-extend/swak4Foam/ci/develop/tree/]]
+   to create your own fork and clone that (there is also copy of the
+   repository at
+   [[https://bitbucket.org/bgschaid/swak4foam-temporary-replacement-for-original-repo-on]]
+   if you prefer that. But it does not receive pushes as often as the
+   Sourceforge repository. Please avoid any =git=-clones of the
+   repository. They are unsupported and contributions through them
+   will take longer to be incorporated - if at all. The maintainer is
+   aware that =git= is the Windows of the =DVCS=-world: used because
+   it is the first thing people are exposed to. Not because of the
+   technical merit)
+
+   Change to the branch that you want to improve (usually =develop=)
    and create a new branch
 : hg branch <branchName>
    where =<branchname>= is an easily identifiable name that makes the
    purpose of the branch clear (for instance
-   =hotfix/WrongRandomFunction= or =feature/HyperbolicFunctions=). Don't
-   work on the =default= branch or any other branches that are not
-   "yours". Such contributions will not be merged
+   =hotfix/WrongRandomFunction= or =feature/HyperbolicFunctions=. For
+   details see [[Repository organization]] below). Don't work on the
+   =default= branch or any other branches that are not "yours". Such
+   contributions will not be merged
 
-   Once development on the branch is finished export the relevant
-   changesets with
+   Once development on the branch is finished you can either issue a
+   /Pull request/ (if you forked on SourceForge or BitBucket) or
+   export the relevant changesets with
 : hg export <nodeID>
    (=nodeID= being the ids of "your" changesets) and send them to the
    maintainer (or attach them to a bug report on Manits). The changes
-   will be reviewed and merged into the =default= branch (do not
-   attempt to do this yourself). Patches generated with =hg export=
-   make sure that all changes are attributed to the original developer
-   (you).
+   will be reviewed and merged into the =develop= branch (do not
+   attempt to do this yourself) and subsequently into the
+   release. Patches generated with =hg export= make sure that all
+   changes are attributed to the original developer (you).
 
    An alternative would be the =bundle= command. Just do
 : hg bundle <bundlefile>
    and then send the =bundlefile=. This will include *all* commits
    that are not in the upstream repository and will allow similar
    inclusion in the upstream as =export=.
-
-   Once you have proven by successfully submitting changesets via =hg
-   export= you can ask for write access to the mercurial repository.
 
    Only if you got through Mercurial it can be ensured that your
    contribution is recognized (if you want to stay anonymous send
@@ -998,18 +1048,6 @@ S_{expl} + S_{impl} T
           =swak4Foam=. If somebody wants to "inherit" this: contact the
           maintainer
      - develop :: Actual development branch
-*** Distributed bug-tracking
-    As an experimental feature distributed bug-tracking was introduced
-    using the /Artemis/-extension for /Mercurial/ (see
-    [[http://hg.mrzv.org/Artemis/]]). An up-to-date version can be
-    installed by
-: hg clone http://hg.mrzv.org/Artemis/
-    somewhere and installing the plugin by editing =.hgrc=.
-
-    This is *not* the official bug-tracker for =swak4Foam=. It is used
-    for keeping track of new features that are to be introduced to
-    =swak4Foam= and may be discontinued if the experiment proves to be
-    unsuccessful.
 *** Maintaining feature and hotfix-branches
     The repository comes with a =.hgflow=-file that is set for the
     =hgflow=-extension found at
@@ -4232,6 +4270,79 @@ S_{expl} + S_{impl} T
 **** =ImmersedBC/pitzDaily= to demonstrate /immersed boundary conditions/ in =foam-extend=
      This demonstrates that swak-evaluations can be used for the
      immersed boundary conditions in =foam-extend=
+** 2020-06-04 - version number : 2020.06
+   Moved from /semantic version numbers/ (that didn't make sense
+   anymore) to a /date based/ version number.
+*** New supported versions
+**** OpenFOAM+ v1906
+     Adaptions supplied by Mark Olesen.
+
+     This is currently the tested version in the ESI/OpenFOAM+ family
+**** OpenFOAM 7
+     Compiles. Not fully tested
+**** OpenFOAM+ v1912
+     Adaptions supplied by Mark Olesen.
+*** Incompatibilities
+**** Bison older than version 3.3 no longer supported
+     The removal of warnings in biosn 3.4 meant that bison 3.2 and
+     older are no longr able to generate C++ sources from the grammar
+     files
+*** Bug fixes
+**** Compilation with =WM_LABEL_SIZE=64= for =foam-extend-4.1=
+     Fix supplied by Danial Khazaei because compilation of =fe 4.1=
+     broke when the =label= size was set to 64 bit. Now works with
+     other distributions as well
+*** Infrastructure
+**** Support for =bison= 3.4
+     The grammars have been adapted to generate C++-sources without
+     warnings with bison 3.4. The script to compile requirements has
+     been modified to download and compile this version.
+
+     This breaks compatibility with bison 3.2 and older
+     This is the latest stable release and only a bug-fix
+     release. =luarocks= was upgraded as well
+     Now if before compiling a command like
+: export SWAK_PYTHON3VERSION=6
+     is executed then Python 3.6 is used even if a "better" Python
+     like 3.7 is found. THe same is true for
+: export SWAK_PYTHON2VERSION=5
+     (or similar).
+
+     If these variables are not set the highest possible Python is
+     used (like it was before)
+**** Generate files for =clangd= if =bear= is installed
+     If [[https://github.com/rizsotto/Bear][Bear]] is installed then it is used to generate the files that
+     the =clang= tools use to find out how files are compiled. This
+     allows using LSP-based tools during editing (the necessary
+     settings for Emacs have been added)
+*** Documentation
+**** Adapted contributors section in the README
+     Removed outdated information, updated links
+*** New features
+**** Expression run-time trigger for runtime-control in ESI-fork
+     There now is a run-time trigger =swakExpression= that allows
+     switching the runtime-control (for instance stopping the run)
+     depending on a swak-expression.
+
+     This works only for the ESI-fork. It *should* work with versions
+     starting at 3.0+ but is currently only available starting with
+     v1906 (modify =swak.H= if you want to enable/test it for older
+     versions)
+
+     The trigger is found in the =swakFunctionObjects=-library
+**** =makeAxialMesh= added
+     This (rather old) utility has been added to swak4Foam. Main
+     reason is that this is the easiest way to maintain this utility
+     for new OpenFOAM versions
+*** Examples
+**** =groovyBC/nonBreakingDam= to demonstrate macro expansion
+     This example demonstrates OpenFOAM macro-expansion inside of
+     expression strings
+**** =runTimeCondition/simpleSwakCar= to demonstrate runtime-control in the ESI fork
+     This example demonstrates the runtime-control for function
+     objects that exists in the ESI-fork
+
+
 # Local Variables:
 # eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
 # End:

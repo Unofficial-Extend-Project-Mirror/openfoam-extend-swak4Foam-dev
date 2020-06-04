@@ -24,7 +24,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -226,7 +226,7 @@ namespace Foam {
 
         clearResult();
 
-        Type(single_)=val;
+        single_.set(val);
 
         valType_=pTraits<Type>::typeName;
         valPtr_=static_cast<void *>(new Field<Type>(1,val));

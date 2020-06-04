@@ -33,7 +33,7 @@ SourceFiles
     groovyBCFvPatchField.C
 
 Contributors/Copyright:
-    2009-2011, 2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2009-2011, 2013, 2016-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -141,7 +141,7 @@ public:
 
     // Member functions
 
-    virtual tmp<Field<Type>> patchNeighbourField() const;
+    virtual tmp<Field<Type> > patchNeighbourField() const;
 
     //- Update the coefficients associated with the patch field
     virtual void updateCoeffs();

@@ -26,7 +26,7 @@ Description
 
 
 Contributors/Copyright:
-    2009-2013, 2015-2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2009-2013, 2015-2016, 2018-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -344,7 +344,7 @@ void PatchValueExpressionDriver::scan_begin ()
     }
 
     yylex_init(&scanner_);
-    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    struct yyguts_t * yyg = static_cast<struct yyguts_t*>(scanner_);
     yy_flex_debug = traceScanning();
     /* bufferPatch= */ yy_scan_string(content().c_str(),scanner_);
 
@@ -386,7 +386,7 @@ void PatchValueExpressionDriver::startEatCharacters()
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
 
-    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    struct yyguts_t * yyg = static_cast<struct yyguts_t*>(scanner_);
     BEGIN(parsedByOtherParser);
 }
 
@@ -398,7 +398,7 @@ void PatchValueExpressionDriver::startVectorComponent()
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
 
-    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    struct yyguts_t * yyg = static_cast<struct yyguts_t*>(scanner_);
     BEGIN(vectorcomponent);
 }
 
@@ -410,6 +410,6 @@ void PatchValueExpressionDriver::startTensorComponent()
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
 
-    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    struct yyguts_t * yyg = static_cast<struct yyguts_t*>(scanner_);
     BEGIN(tensorcomponent);
 }

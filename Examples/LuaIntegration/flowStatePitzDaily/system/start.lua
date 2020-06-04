@@ -26,8 +26,13 @@ end
 
 function printStates(s)
    print("Summary of states")
-   for i,nr in pairs(s) do
-      print("  "..i.." -> "..nr)
+   a={}
+   for n in pairs(s) do
+      table.insert(a,n)
+   end
+   table.sort(a)
+   for i,nr in ipairs(a) do
+      print("  "..nr.." -> "..s[nr])
    end
 end
 

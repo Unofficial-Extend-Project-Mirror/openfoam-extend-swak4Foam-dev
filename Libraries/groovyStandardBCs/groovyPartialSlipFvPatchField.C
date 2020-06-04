@@ -23,7 +23,7 @@ License
     along with swak4Foam.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2011, 2013-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013-2014, 2016-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -133,7 +133,11 @@ void Foam::groovyPartialSlipFvPatchField<Type>::write(Ostream& os) const
     os.writeKeyword("fractionExpression")
         << valueFractionExpression_ << token::END_STATEMENT << nl;
 
-    this->writeEntry("value", os);
+#ifdef FOAM_WRITEENTRY_NOT_MEMBER_OF_LIST
+    writeEntry(os, "value", *this);
+#else
+    this->writeEntry("value",os);
+#endif
 
     driver_.writeCommon(os,debug);
 }

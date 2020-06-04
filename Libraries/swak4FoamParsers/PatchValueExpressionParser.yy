@@ -26,7 +26,7 @@ Description
 
 
 Contributors/Copyright:
-    2009-2013, 2015-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2009-2013, 2015-2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -34,7 +34,7 @@ Contributors/Copyright:
 %skeleton "lalr1.cc"
 /* %require "2.1a" */
 %defines
-%define parser_class_name {PatchValueExpressionParser}
+%define api.parser.class {PatchValueExpressionParser}
 
 %{
 #include <volFields.H>
@@ -76,7 +76,7 @@ Contributors/Copyright:
 };
 
 %debug
-%error-verbose
+%define parse.error verbose
 
 %union
 {
@@ -655,7 +655,14 @@ vexp:   vector                  { $$ = $1; }
           }
         | '(' vexp ')'		        { $$ = $2; }
         | TOKEN_eigenValues '(' texp ')'       {
+#ifndef FOAM_EIGEN_VALUES_VECTOR_IS_COMPLEX
             $$ = new Foam::vectorField(Foam::eigenValues(*$3));
+#else
+            FatalErrorInFunction
+                << "function 'eigenValues' gives a complex value in this Foam-version"
+                    << Foam::endl
+                    << exit(Foam::FatalError);
+#endif
             delete $3;
           }
         | TOKEN_eigenValues '(' yexp ')'       {
@@ -1490,7 +1497,14 @@ texp:   tensor                  { $$ = $1; }
             delete $3;
           }
         | TOKEN_eigenVectors '(' texp ')'       {
+#ifndef FOAM_EIGEN_VALUES_VECTOR_IS_COMPLEX
             $$ = new Foam::tensorField(Foam::eigenVectors(*$3));
+#else
+            FatalErrorInFunction
+                << "function 'eigenVectors' gives a complex value in this Foam-version"
+                    << Foam::endl
+                    << exit(Foam::FatalError);
+#endif
             delete $3;
           }
         | TOKEN_eigenVectors '(' yexp ')'       {
@@ -2089,7 +2103,14 @@ pvexp:  pvector     { $$ = $1; }
             delete $2;
           }
         | TOKEN_eigenValues '(' ptexp ')'       {
+#ifndef FOAM_EIGEN_VALUES_VECTOR_IS_COMPLEX
             $$ = new Foam::vectorField(Foam::eigenValues(*$3));
+#else
+            FatalErrorInFunction
+                << "function 'eigenValues' gives a complex value in this Foam-version"
+                    << Foam::endl
+                    << exit(Foam::FatalError);
+#endif
             delete $3;
           }
         | TOKEN_eigenValues '(' pyexp ')'       {
@@ -2614,7 +2635,14 @@ ptexp:  ptensor    { $$ = $1; }
             delete $3;
           }
         | TOKEN_eigenVectors '(' ptexp ')'       {
+#ifndef FOAM_EIGEN_VALUES_VECTOR_IS_COMPLEX
             $$ = new Foam::tensorField(Foam::eigenVectors(*$3));
+#else
+            FatalErrorInFunction
+                << "function 'eigenVectors' gives a complex value in this Foam-version"
+                    << Foam::endl
+                    << exit(Foam::FatalError);
+#endif
             delete $3;
           }
         | TOKEN_eigenVectors '(' pyexp ')'       {

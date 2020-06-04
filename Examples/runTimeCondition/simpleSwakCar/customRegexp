@@ -1,0 +1,12 @@
+// -*- c++ -*-
+
+CdValue {
+    theTitle "Cd";
+    expr " *Cd *: (.+) *\(pressure: (.+) *viscous: (.+) *porous: (.+)\)";
+    titles (
+        total
+        pressure
+        viscious
+        porous
+    );
+}

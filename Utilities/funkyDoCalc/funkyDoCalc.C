@@ -30,6 +30,7 @@ Description
 
 Contributors/Copyright:
     2011-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2019 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -114,16 +115,7 @@ void writeData(
     if(writeCsv) {
         if(!csvFiles.found(name)) {
             firstTime=true;
-            csvFiles.insert(
-                name,
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
-                autoPtr<OFstream>(
-#endif
-                    new OFstream(dataDir / name+".csv")
-#ifdef FOAM_HASH_PTR_LIST_ACCEPTS_NO_RAW_POINTERS
-                )
-#endif
-            );
+            csvFiles.set(name, new OFstream(dataDir / name+".csv"));
         }
     }
 

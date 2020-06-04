@@ -26,7 +26,7 @@ Description
 
 
 Contributors/Copyright:
-    2011-2013, 2015-2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2013, 2015-2016, 2018-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -362,7 +362,7 @@ void FaFieldValueExpressionDriver::scan_begin ()
     }
 
     yylex_init(&scanner_);
-    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    struct yyguts_t * yyg = static_cast<struct yyguts_t*>(scanner_);
     yy_flex_debug = traceScanning();
     yy_scan_string(content().c_str(),scanner_);
 
@@ -409,7 +409,7 @@ void FaFieldValueExpressionDriver::startEatCharacters()
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
 
-    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    struct yyguts_t * yyg = static_cast<struct yyguts_t*>(scanner_);
     BEGIN(parsedByOtherParser);
 }
 
@@ -422,7 +422,7 @@ void FaFieldValueExpressionDriver::startVectorComponent()
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
 
-    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    struct yyguts_t * yyg = static_cast<struct yyguts_t*>(scanner_);
     BEGIN(vectorcomponent);
 }
 
@@ -434,6 +434,6 @@ void FaFieldValueExpressionDriver::startTensorComponent()
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
 
-    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    struct yyguts_t * yyg = static_cast<struct yyguts_t*>(scanner_);
     BEGIN(tensorcomponent);
 }

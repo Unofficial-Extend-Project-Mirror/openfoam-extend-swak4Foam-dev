@@ -27,7 +27,7 @@ boundaryField
         value           uniform 0;
     }
 
-    sides       
+    sides
     {
         //        type            totalPressure;
       //        type            buoyantPressure;
@@ -45,7 +45,7 @@ boundaryField
         gamma           1;
     }
 
-    spill       
+    spill
     {
         //        type            buoyantPressure;
         type            zeroGradient;
@@ -62,12 +62,23 @@ boundaryField
 //         psi             none;
         gamma           1;
     }
+    sideSpill
+    {
+        type symmetry;
+    }
 
-    atmosphere
+    atmosphere {
+        //        $spill;
+        type    fixedFluxPressure;
+        value           uniform 0;
+    }
+
+    top
     {
         //        type            buoyantPressure;
         // type            totalPressure;
         type fixedValue;
+        globalScopes ( inletPos inletPosInit );
         p0              uniform 0;
         U               U;
         phi             phi;
@@ -78,7 +89,8 @@ boundaryField
         // type groovyBC;
          valueExpression "0";
          gradientExpression "0";
-         fractionExpression "(gamma>0.01) ? 1 : 0";
+         //         fractionExpression "(gamma>0.01) ? 1 : 0";
+         fractionExpression "mag(pos()-inletCenter)<inletRadius ? 1 : 0";
     }
 }
 

@@ -24,10 +24,10 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013, 2015-2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013, 2015-2016, 2018-2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: writeFieldsOftenFunctionObject.C,v 45163b34f052 2019-07-09 10:42:58Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #include "writeFieldsOftenFunctionObject.H"
@@ -53,8 +53,18 @@ namespace Foam
 
     // copied from Time.C because the original is protected
     // to work the order of values in writeControls must not change
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+const Enum<TimeWriteControl> writeControlNames
+({
+    {TimeWriteControl::wcTimeStep, "timeStep"},
+    {TimeWriteControl::wcRunTime, "runTime"},
+    {TimeWriteControl::wcAdjustableRunTime, "adjustableRunTime"},
+    {TimeWriteControl::wcClockTime, "clockTime"},
+    {TimeWriteControl::wcCpuTime, "cpuTime"},
+});
+#else
 template<>
-const char* NamedEnum<Foam::Time::writeControls, 5>::names[] =
+const char* NamedEnum<TimeWriteControl, 5>::names[] =
 {
     "timeStep",
     "runTime",
@@ -63,7 +73,22 @@ const char* NamedEnum<Foam::Time::writeControls, 5>::names[] =
     "cpuTime"
 };
 
-const NamedEnum<Foam::Time::writeControls, 5> writeControlNames;
+const NamedEnum<TimeWriteControl, 5> writeControlNames;
+#endif
+
+#ifdef FOAM_WRITECONTROL_IN_TIME_CHANGED
+        #define wcTimeStep Time::writeControl::timeStep
+        #define wcRunTime Time::writeControl::runTime
+        #define wcAdjustableRunTime Time::writeControl::adjustableRunTime
+        #define wcClockTime Time::writeControl::clockTime
+        #define wcCpuTime Time::writeControl::cpuTime
+#else
+        #define wcTimeStep Time::writeControls::wcTimeStep
+        #define wcRunTime Time::writeControls::wcRunTime
+        #define wcAdjustableRunTime Time::writeControls::wcAdjustableRunTime
+        #define wcClockTime Time::writeControls::wcClockTime
+        #define wcCpuTime Time::writeControls::wcCpuTime
+#endif
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -75,7 +100,7 @@ writeFieldsOftenFunctionObject::writeFieldsOftenFunctionObject
 )
 :
     writeFieldsGeneralFunctionObject(name,t,dict),
-    writeControl_(Time::wcTimeStep),
+    writeControl_(wcTimeStep),
     writeInterval_(GREAT),
     outputTimeIndex_(0)
 {
@@ -90,7 +115,7 @@ bool writeFieldsOftenFunctionObject::start()
     writeControl_ = writeControlNames[wcName];
 
     writeInterval_ = readScalar(dict_.lookup("writeIntervall"));
-    if(writeControl_ == Time::wcTimeStep && label(writeInterval_) <1) {
+    if(writeControl_ == wcTimeStep && label(writeInterval_) <1) {
         WarningIn("bool writeFieldsOftenFunctionObject::start()")
             << "writeInterval " << writeInterval_
                 << " < 1 for writeControl timeStep. Reseting to 1 "<< endl;
@@ -100,7 +125,7 @@ bool writeFieldsOftenFunctionObject::start()
     Info << "Additional fields " << fieldNames() << " will be written "
         << "with writeControl " << wcName << " and interval " << writeInterval_ << endl;
 
-    if(writeControl_ == Time::wcAdjustableRunTime) {
+    if(writeControl_ == wcAdjustableRunTime) {
         WarningIn("bool writeFieldsOftenFunctionObject::start()")
             << "Cant adjust the run-time. Defaulting to runTime" << endl;
 
@@ -125,12 +150,12 @@ bool writeFieldsOftenFunctionObject::outputTime(const bool forceWrite)
 
     // lifted from Time::operator++
     switch(writeControl_){
-        case Time::wcTimeStep:
+        case wcTimeStep:
             writeNow = !(time().timeIndex()%label(writeInterval_));
             break;
 
-        case Time::wcRunTime:
-        case Time::wcAdjustableRunTime:
+        case wcRunTime:
+        case wcAdjustableRunTime:
             {
                 label outputTimeIndex =
                     label(((time().time().value() - time().startTime().value()) + 0.5*time().deltaT().value())/writeInterval_);
@@ -147,7 +172,7 @@ bool writeFieldsOftenFunctionObject::outputTime(const bool forceWrite)
             }
         break;
 
-        case Time::wcCpuTime:
+        case wcCpuTime:
             {
                 label outputTimeIndex =
                     label(time().elapsedCpuTime()/writeInterval_);
@@ -164,7 +189,7 @@ bool writeFieldsOftenFunctionObject::outputTime(const bool forceWrite)
             }
         break;
 
-        case Time::wcClockTime:
+        case wcClockTime:
             {
                 label outputTimeIndex = label(time().elapsedClockTime()/writeInterval_);
                 if (outputTimeIndex > outputTimeIndex_)

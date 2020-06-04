@@ -24,7 +24,8 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2019 Danial Khazaei <shadowfax@shell.sf.net>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -378,6 +379,12 @@ void pythonInterpreterWrapper::initEnvironment(const Time &t)
         "    makeDataDir(d)\n"
         "    return os.path.join(d,name)\n"
     );
+
+    if(fail) {
+        WarningInFunction
+            << "Adding functions makeDataDir etc failed"
+                << endl;
+    }
 
     releaseInterpreter();
 }

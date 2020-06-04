@@ -114,7 +114,16 @@ ifndef FOAM_DEV
     ifeq "4" "$(word 1, $(sort 4 $(WM_PROJECT_VERSION)))"
       THERMOPHYSICALFUNCTIONS_LIB=
     endif
+    ifeq "7" "$(word 1, $(sort 7 $(WM_PROJECT_VERSION)))"
+      RADIATION_INC=-I$(LIB_SRC)/radiationModels/lnInclude
+    endif
   endif
 endif
+
+# Switch off warnings for the flex-stuff that can't be avoided
+SWAK_FLEX_NO_WARNING=-Wno-unused-function -Wno-old-style-cast
+
+# Switch off warnings in the Python-headers
+SWAP_PYTHON_NO_WARNINGS=-Wno-old-style-cast -Wno-deprecated-register
 
 # -----------------------------------------------------------------------------

@@ -30,12 +30,20 @@ else
 fi
 
 BISONVER=$(bison -V | head -n 1| tr ' ' '\n' | tail -n 1)
+BISONMAJORVER=$(echo $BISONVER | tr '.' '\n' | head -n 1 )
+BISONMINORVER=$(echo $BISONVER | tr '.' '\n' | head -n 2 | tail -n 1)
 
-echo "Bison is version $BISONVER"
+echo "Bison at $BISONPATH is version $BISONVER (Major $BISONMAJORVER Minor $BISONMINORVER)"
 
-if [[ $BISONVER < 3 ]]; then
-    echo "swak4Foam only confirmed to work with Bison >= 3"
-    echo "Consider running ./maintainanceScripts/compileRequirements.sh for a local bison-installation"
+if [[ $BISONMAJORVER -lt 3 || ( $BISONMAJORVER -eq 3 && $BISONMINORVER -lt 3 ) ]]; then
+    echo "swak4Foam only confirmed to work with Bison >= 3.3"
+    if [ -e ../privateRequirements/bin/bison ];
+    then
+        echo "There seems to be a private installation of bison that is outdated"
+        echo "Remove with 'rm privateRequirements/bin/bison' and trigger a full compilation with './AllwmakeAll'"
+    else
+        echo "Consider running ./maintainanceScripts/compileRequirements.sh for a local bison-installation or trigger a full compilation with './AllwmakeAll'"
+    fi
     exit 42
 fi
 
@@ -86,7 +94,7 @@ echo
 
 wmakeLnInclude simpleFunctionObjects
 
-wmake libso swak4FoamParsers
+$BEAR_COMPILE_PREFIX wmake libso swak4FoamParsers
 
 PARSERSOK=$?
 
@@ -95,34 +103,34 @@ if [[ $PARSERSOK != 0 ]]; then
     exit 42
 fi
 
-wmake libso swakLagrangianParser
+$BEAR_COMPILE_PREFIX wmake libso swakLagrangianParser
 
-wmake libso groovyBC
+$BEAR_COMPILE_PREFIX wmake libso groovyBC
 
-wmake libso swakFunctionObjects
+$BEAR_COMPILE_PREFIX wmake libso swakFunctionObjects
 
-wmake libso simpleFunctionObjects
+$BEAR_COMPILE_PREFIX wmake libso simpleFunctionObjects
 
-wmake libso simpleLagrangianFunctionObjects
+$BEAR_COMPILE_PREFIX wmake libso simpleLagrangianFunctionObjects
 
-wmake libso simpleSearchableSurfaces
+$BEAR_COMPILE_PREFIX wmake libso simpleSearchableSurfaces
 
-wmake libso simpleSwakFunctionObjects
+$BEAR_COMPILE_PREFIX wmake libso simpleSwakFunctionObjects
 
-wmake libso swakTopoSources
+$BEAR_COMPILE_PREFIX wmake libso swakTopoSources
 
-wmake libso swakDynamicMesh
+$BEAR_COMPILE_PREFIX wmake libso swakDynamicMesh
 
 if [[ $of_version_major == 2 && $of_version_minor == 0 ]]; then
-  wmake libso swakSourceFields Make.20
+  $BEAR_COMPILE_PREFIX wmake libso swakSourceFields Make.20
 else
-  wmake libso swakSourceFields
+  $BEAR_COMPILE_PREFIX wmake libso swakSourceFields
 fi
 
 if [[ $WM_PROJECT_VERSION > 2.2 && "$FOAM_DEV" == "" ]]
 then
     echo "Compiling swakFvOptions"
-    wmake libso swakFvOptions
+    $BEAR_COMPILE_PREFIX wmake libso swakFvOptions
 fi
 
 if [[ "$FOAM_DEV" != "" || ( ${WM_PROJECT_VERSION:0:1} == "v" && ${WM_PROJECT_VERSION:1} -gt 1707 ) ]]
@@ -138,16 +146,16 @@ then
 	fi
     done
 
-    wmake libso swakFiniteArea
+    $BEAR_COMPILE_PREFIX wmake libso swakFiniteArea
 fi
 
-wmake libso swakStateMachine
+$BEAR_COMPILE_PREFIX wmake libso swakStateMachine
 
-wmake libso groovyStandardBCs
+$BEAR_COMPILE_PREFIX wmake libso groovyStandardBCs
 
-(cd languageIntegration/; wmake all)
+(cd languageIntegration/; $BEAR_COMPILE_PREFIX wmake all)
 
-(cd functionPlugins; wmake all)
+(cd functionPlugins; $BEAR_COMPILE_PREFIX wmake all)
 
 if [ "$SWAK_USER_PLUGINS" != "" ]
 then
@@ -155,8 +163,8 @@ then
 
     for plug in $plugins
     do
-	echo "Compiling user function-plugin $plug"
-	wmake libso $plugins
+        echo "Compiling user function-plugin $plug"
+        wmake libso $plugins
     done
 else
     echo
@@ -166,6 +174,6 @@ fi
 
 if [ "$FOAM_DEV" == "" ]
 then
-    wmake libso simpleCloudFunctionObjects
-    wmake libso swakCloudFunctionObjects
+    $BEAR_COMPILE_PREFIX wmake libso simpleCloudFunctionObjects
+    $BEAR_COMPILE_PREFIX wmake libso swakCloudFunctionObjects
 fi

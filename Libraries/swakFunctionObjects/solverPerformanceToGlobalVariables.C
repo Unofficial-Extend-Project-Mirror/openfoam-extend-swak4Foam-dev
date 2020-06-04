@@ -24,7 +24,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2014, 2016-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2013, 2015 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id:  $
@@ -38,6 +38,11 @@ Contributors/Copyright:
 #include "GlobalVariablesRepository.H"
 
 #include "fvMesh.H"
+
+#ifdef FOAM_SOLVER_PERFORMANCE_NOT_MEMBER_OF_DATA
+#include "SolverPerformance.H"
+#include "Residuals.H"
+#endif
 
 #ifdef FOAM_LDUMATRIX_SOLVER_PERFORMANCE
 typedef Foam::lduMatrix::solverPerformance solverPerformance;
@@ -83,11 +88,20 @@ void Foam::solverPerformanceToGlobalVariables::addFieldToData(const word &name)
 {
     Dbug << "Getting solver performance for " << name << endl;
 
+#ifdef FOAM_SOLVER_PERFORMANCE_NOT_MEMBER_OF_DATA
+    List<SolverPerformance<T> > perf(
+        Residuals<T>::field(
+            dynamicCast<const polyMesh&>(obr_),
+            name
+        )
+    );
+#else
     const data &theData=dynamicCast<const fvMesh&>(obr_);
     //    Info << theData.solverPerformanceDict() << endl;
     List<SolverPerformance<T> > perf(
         theData.solverPerformanceDict()[name]
     );
+#endif
 
     setValue(name+"_nrOfPerformances",scalar(perf.size()));
     if(perf.size()==0) {

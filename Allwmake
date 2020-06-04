@@ -67,6 +67,14 @@ else
     echo "hg info: $mercurialVersion"
 fi
 
+BEARPATH=$(which bear)
+if [[ $? == 0 ]]; then
+    echo "Using ${BEARPATH} to build compilation database"
+    export BEAR_COMPILE_PREFIX="bear --append --cdb=$(pwd)/compile_commands.json"
+else
+    echo "No 'bear' installed"
+fi
+
 (cd Libraries; wmake all )
 
 if [ $? != 0 ]; then
@@ -80,7 +88,7 @@ fi
   #revert back to the default Gcc compiler, due to some problems that Icc has
   #with overly complex classes
   [ "$WM_COMPILER" = "Icc" ] && export WM_COMPILER=Gcc
-  cd Utilities; wmake all
+  cd Utilities; $BEAR_COMPILE_PREFIX wmake all
 )
 
 # (cd Examples/tests/fluIntegration/libRegistered; wmake)

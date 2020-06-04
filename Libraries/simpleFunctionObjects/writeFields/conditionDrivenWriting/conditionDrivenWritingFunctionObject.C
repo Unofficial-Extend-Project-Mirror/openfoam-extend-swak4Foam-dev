@@ -24,7 +24,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013-2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013-2016, 2018-2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id: conditionDrivenWritingFunctionObject.C,v 78b0d113b99b 2013-02-25 16:12:41Z bgschaid $
 \*---------------------------------------------------------------------------*/
@@ -44,6 +44,25 @@ namespace Foam
 {
     defineTypeNameAndDebug(conditionDrivenWritingFunctionObject, 0);
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+    const Enum<Foam::conditionDrivenWritingFunctionObject::writeControlModeType>
+    conditionDrivenWritingFunctionObject::writeControlModeTypeNames_
+    ({
+        {writeControlModeType::scmWriteAlways,"always"},
+        {writeControlModeType::scmWriteNTimesteps,"timesteps"},
+        {writeControlModeType::scmWriteIntervall,"intervall"},
+        {writeControlModeType::scmWriteUntilSwitch,"untilSwitch"}
+    });
+
+    const Enum<Foam::conditionDrivenWritingFunctionObject::cooldownModeType>
+    conditionDrivenWritingFunctionObject::cooldownModeTypeNames_
+    ({
+        {cooldownModeType::cdmNoCooldown,"no"},
+        {cooldownModeType::cdmNTimesteps,"timesteps"},
+        {cooldownModeType::cdmIntervall,"intervall"},
+        {cooldownModeType::cdmRetrigger,"retrigger"}
+    });
+#else
     template<>
     const char* NamedEnum<Foam::conditionDrivenWritingFunctionObject::writeControlModeType,4>::names[]=
     {
@@ -63,6 +82,7 @@ namespace Foam
         "retrigger"
     };
     const NamedEnum<conditionDrivenWritingFunctionObject::cooldownModeType,4> conditionDrivenWritingFunctionObject::cooldownModeTypeNames_;
+#endif
 
 
 
@@ -329,6 +349,7 @@ void conditionDrivenWritingFunctionObject::writeSimple()
                 << "State 'startCooldown' should not be reached here"
                     << endl
                     << exit(FatalError);
+            break;
         default:
             FatalErrorIn("conditionDrivenWritingFunctionObject::write")
                 << "Unsupported state"

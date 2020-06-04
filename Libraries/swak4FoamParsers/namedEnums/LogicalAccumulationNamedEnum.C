@@ -24,9 +24,9 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: LogicalAccumulationNamedEnum.C,v 909e3e73dc26 2018-06-04 10:14:09Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #include "LogicalAccumulationNamedEnum.H"
@@ -35,6 +35,17 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+const Enum<LogicalAccumulationNamedEnum::value>
+LogicalAccumulationNamedEnum::names
+({
+    {value::logAnd,"and"},
+    {value::logOr,"or"},
+    {value::logAll,"all"},
+    {value::logAny,"any"},
+    {value::logNone,"none"}
+});
+#else
 template<>
 const char* NamedEnum
 <
@@ -51,6 +62,7 @@ const char* NamedEnum
 
 const NamedEnum<LogicalAccumulationNamedEnum::value, 5>
     LogicalAccumulationNamedEnum::names;
+#endif
 
 
 

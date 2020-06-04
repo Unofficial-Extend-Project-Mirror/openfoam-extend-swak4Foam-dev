@@ -24,7 +24,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2013-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2013-2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -837,8 +837,8 @@ void SimpleDistribution<Type>::writeRaw(const fileName& filePrefix) const
 
         OFstream os(filePrefix + '_' + pTraits<Type>::componentNames[cmpt]);
 
-        Pair<label> limits = validLimits(cmpt);
-        Pair<label> limits2 = Distribution<Type>::validLimits(cmpt);
+        // Pair<label> limits = validLimits(cmpt);
+        // Pair<label> limits2 = Distribution<Type>::validLimits(cmpt);
 
         os  << "# key raw";
         if(minimum_.size()>cmpt && maximum_.size()>cmpt) {

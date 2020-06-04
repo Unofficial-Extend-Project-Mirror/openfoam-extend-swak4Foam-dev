@@ -24,7 +24,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2013, 2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010-2013, 2016, 2018-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -49,6 +49,9 @@ word SampledSurfaceValueExpressionDriver::driverName_="surface";
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSurfaceValueExpressionDriver, dictionary, surface);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSurfaceValueExpressionDriver, idName, surface);
 
+#ifdef FOAM_HAS_SAMPLEDSURFACES_NAMESPACE
+#define sampledIsoSurface sampledSurfaces::isoSurface
+#endif
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 

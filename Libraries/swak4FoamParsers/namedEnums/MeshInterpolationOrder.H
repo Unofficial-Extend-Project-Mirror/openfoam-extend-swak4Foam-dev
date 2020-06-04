@@ -32,9 +32,9 @@ SourceFiles
     MeshInterpolationOrder.C
 
 Contributors/Copyright:
-    2012-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2014, 2016-2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: MeshInterpolationOrder.H,v 909e3e73dc26 2018-06-04 10:14:09Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #ifndef MeshInterpolationOrder_H
@@ -44,7 +44,11 @@ Contributors/Copyright:
 
 #include "meshToMesh.H"
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+#include "Enum.H"
+#else
 #include "NamedEnum.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -66,7 +70,11 @@ public:
     typedef meshToMesh::order value;
 
     //- String representation of order enums
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+    static const Enum<value> names;
+#else
     static const NamedEnum<value, 3> names;
+#endif
 
 };
 

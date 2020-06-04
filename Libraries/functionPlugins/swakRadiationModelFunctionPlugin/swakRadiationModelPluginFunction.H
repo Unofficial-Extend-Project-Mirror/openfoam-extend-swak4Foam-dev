@@ -32,7 +32,7 @@ SourceFiles
     swakRadiationModelPluginFunction.C
 
 Contributors/Copyright:
-    2012-2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -44,7 +44,7 @@ Contributors/Copyright:
 
 #include "runTimeSelectionTables.H"
 
-#include "radiationModel.H"
+#include "swakRadiation.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -64,9 +64,9 @@ class swakRadiationModelPluginFunction
     swakRadiationModelPluginFunction(const swakRadiationModelPluginFunction &);
 
 protected:
-    static const radiation::radiationModel &radiationInternal(const fvMesh &reg);
+    static const swakRadiationModel &radiationInternal(const fvMesh &reg);
 
-    const radiation::radiationModel &radiation();
+    const swakRadiationModel &radiation();
 
 public:
     swakRadiationModelPluginFunction(

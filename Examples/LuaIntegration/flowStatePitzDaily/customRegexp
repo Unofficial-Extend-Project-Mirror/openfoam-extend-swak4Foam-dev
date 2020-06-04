@@ -1,0 +1,24 @@
+// -*- c++ -*-
+
+states {
+    theTitle "States";
+    type dynamic;
+    expr "^(.+) -> ([0-9]+)$";
+    idNr 1;
+    titles (
+        State
+    );
+    alternateAxis (
+        "State changes"
+    );
+    ylabel "Number of cells in state";
+    y2label "Number of cells that changed state";
+}
+changes {
+    expr "(.+) cells changed state";
+    titles (
+        "State changes"
+    );
+    type slave;
+    master states;
+}

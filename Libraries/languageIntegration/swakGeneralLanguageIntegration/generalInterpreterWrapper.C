@@ -24,7 +24,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
@@ -587,7 +587,7 @@ void generalInterpreterWrapper::scatterGlobals()
 
         //- do the scattering by ourself
         List<Pstream::commsStruct> comms;
-        if (Pstream::nProcs() < Pstream::nProcsSimpleSum)
+        if (int(Pstream::nProcs()) < Pstream::nProcsSimpleSum)
         {
             comms=Pstream::linearCommunication();
         }
@@ -687,7 +687,7 @@ void generalInterpreterWrapper::dictionariesToInterpreterStructs() {
             ? obr_
             : obr_.time().lookupObject<objectRegistry>(regionName);
 
-        const dictionary &source=obr.lookupObject<dictionary>(dictName);
+        const dictionary &source=obr.lookupObject<IOdictionary>(dictName);
 
         insertDictionary(
             name,

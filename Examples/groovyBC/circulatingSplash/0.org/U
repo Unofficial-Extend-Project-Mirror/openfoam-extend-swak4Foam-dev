@@ -25,7 +25,7 @@ boundaryField
         type            fixedValue;
         value           uniform (0 0 0);
     }
-    atmosphere
+    top
     {
         type            groovyBC;
         globalScopes ( inletPos );
@@ -50,6 +50,14 @@ boundaryField
         type            pressureInletOutletVelocity;
          phi             phi;
          value           uniform (0 0 0);
+    }
+    sideSpill
+    {
+        type symmetry;
+    }
+    atmosphere {
+        // $spill;
+        type slip;
     }
     sides
     {

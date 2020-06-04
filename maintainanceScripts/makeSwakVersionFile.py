@@ -95,7 +95,11 @@ for l in readme.readlines():
         verstring=grp[0]
         extension=" ".join(grp[1:])
 
-vmajor,vminor,vpatch=verstring.split(".")
+try:
+    vmajor,vminor,vpatch=verstring.split(".")
+except ValueError:
+    vmajor,vminor=verstring.split(".")
+    vpatch = 0
 
 print_("Swak version is %s.%s.%s" % (vmajor,vminor,vpatch))
 

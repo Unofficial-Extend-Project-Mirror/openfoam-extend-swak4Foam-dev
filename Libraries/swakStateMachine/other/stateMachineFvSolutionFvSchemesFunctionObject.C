@@ -24,7 +24,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2016, 2018-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -155,7 +155,6 @@ bool stateMachineFvSolutionFvSchemesFunctionObject::triggerMachine(
     word &current
 )
 {
-    bool triggered=false;
     const StateMachine &m=StateMachine::machine(machine);
 
     const word &state=m.stateName(m.currentState());

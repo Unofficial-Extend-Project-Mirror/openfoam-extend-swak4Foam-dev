@@ -25,3 +25,8 @@ globalinstall:
 	./Allwmake
 	./copySwakFilesToSite.sh
 	./removeSwakFilesFromLocal.sh
+
+scanbuild:
+	c_compiler=
+	cxx_compiler=
+	scan-build -stats  --use-cc=$(shell wmake -show-c) --use-c++=$(shell wmake -show-cxx) -o scanbuild ./Allwmake

@@ -23,7 +23,7 @@ License
     along with swak4Foam.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2015, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2015, 2018-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
@@ -169,6 +169,7 @@ Type Foam::interpolation2DTable<Type>::interpolateValue
                     << endl;
                 // fall-through to 'CLAMP'
             }
+            break;
             case interpolation2DTable::CLAMP:
             {
                 return data.first().second();
@@ -209,6 +210,7 @@ Type Foam::interpolation2DTable<Type>::interpolateValue
                     << endl;
                 // fall-through to 'CLAMP'
             }
+            break;
             case interpolation2DTable::CLAMP:
             {
                 return data.last().second();
@@ -283,25 +285,27 @@ Foam::label Foam::interpolation2DTable<Type>::Xi
                     ") const"
                 )   << "value (" << valueX << ") out of bounds"
                     << exit(FatalError);
-                break;
+
             }
+            break;
             case interpolation2DTable::WARN:
-            {
-                WarningIn
-                (
-                    "Foam::label Foam::interpolation2DTable<Type>::Xi"
-                    "("
-                        "const BinaryOp&, "
-                        "const scalar, "
-                        "const bool"
-                )   << "value (" << valueX << ") out of bounds"
-                    << endl;
-                // fall-through to 'CLAMP'
-            }
             case interpolation2DTable::CLAMP:
             {
+                if(boundsHandling_==interpolation2DTable::WARN) {
+                    WarningIn
+                        (
+                            "Foam::label Foam::interpolation2DTable<Type>::Xi"
+                            "("
+                            "const BinaryOp&, "
+                            "const scalar, "
+                            "const bool"
+                        )   << "value (" << valueX << ") out of bounds"
+                            << endl;
+                    // fall-through to 'CLAMP'
+                }
                 return limitI;
             }
+            break;
             default:
             {
                 FatalErrorIn

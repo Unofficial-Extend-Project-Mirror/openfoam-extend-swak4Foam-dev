@@ -25,7 +25,7 @@ License
 
 Contributors/Copyright:
     2008-2009, 2012 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
-    2011, 2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013, 2016-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
@@ -308,7 +308,13 @@ void Foam::trackDictionaryFunctionObject::initializeDictionaryList()
             Pout << "trackDictionaryFunctionObject::initializeDictionaryList: dictionaryName: " << dictionaryName << endl;
         }
 
-        if(Foam::fileStat(dictionaryName).isValid())
+        if(
+#ifdef FOAM_FILESTAT_HAS_NO_ISVALID_METHOD
+            Foam::fileStat(dictionaryName).valid()
+#else
+            Foam::fileStat(dictionaryName).isValid()
+#endif
+        )
         {
             dictionaries_.set
                 (

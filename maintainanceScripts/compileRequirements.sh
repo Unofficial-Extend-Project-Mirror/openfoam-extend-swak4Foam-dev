@@ -14,17 +14,21 @@ if [ -e $requirementsDir/bin/bison ];
 then
     echo "Bison already installed/compiled"
 else
-    bisonTarball=bison-3.0.4.tar.gz
+    BISONVER=3.4
+#    BISONVER=3.2
+#    BISONVER=3.3
+
+    bisonTarball=bison-$BISONVER.tar.gz
     if [ -e  $requirementsDir/sources/$bisonTarball ];
     then
-	echo "$bisonTarball already downloaded"
+        echo "$bisonTarball already downloaded"
     else
-	(cd $requirementsDir/sources; wget http://ftp.gnu.org/gnu/bison/$bisonTarball)
+        (cd $requirementsDir/sources; wget http://ftp.gnu.org/gnu/bison/$bisonTarball)
     fi
     echo "Untarring bison-sources"
     ( cd $requirementsDir/compilation; tar xzf $requirementsDir/sources/$bisonTarball )
 
-    ( cd $requirementsDir/compilation/bison-3.0.4 ; ./configure --prefix=$requirementsDir; make; make install )
+    ( cd $requirementsDir/compilation/bison-$BISONVER ; ./configure --prefix=$requirementsDir; make; make install )
 
 fi
 
@@ -41,7 +45,8 @@ if [ -e $requirementsDir/bin/lua ];
 then
     echo "Lua already installed/compiled"
 else
-    luaTarball=lua-5.3.4.tar.gz
+    LUA_VERSION=5.3.5
+    luaTarball=lua-$LUA_VERSION.tar.gz
     if [ -e  $requirementsDir/sources/$luaTarball ];
     then
 	echo "$luaTarball already downloaded"
@@ -52,7 +57,7 @@ else
     ( cd $requirementsDir/compilation; tar xzf $requirementsDir/sources/$luaTarball )
 
     (
-        cd $requirementsDir/compilation/lua-5.3.4;
+        cd $requirementsDir/compilation/lua-$LUA_VERSION;
         sed -i bak -e "s|/usr/local|$requirementsDir|" Makefile
         sed -i bak -e "s|/usr/local|$requirementsDir|" src/luaconf.h
         sed -i bak -e "s|CC= gcc -std=gnu99|CC= gcc -fPIC -std=gnu99|" src/Makefile
@@ -66,7 +71,8 @@ else
     )
     if [ -e $requirementsDir/bin/lua ];
     then
-       luarocksTarball=luarocks-2.4.1.tar.gz
+       LUAROCKS_VERSION=3.2.1
+       luarocksTarball=luarocks-$LUAROCKS_VERSION.tar.gz
        if [ -e  $requirementsDir/sources/$luarocksTarball ];
        then
 	   echo "$luarocksTarball already downloaded"
@@ -77,11 +83,12 @@ else
        ( cd $requirementsDir/compilation; tar xzf $requirementsDir/sources/$luarocksTarball )
        export PATH=$requirementsDir/bin:$PATH
        (
-           cd $requirementsDir/compilation/luarocks-2.4.1
-           ./configure --prefix=$requirementsDir
+           cd $requirementsDir/compilation/luarocks-$LUAROCKS_VERSION
+           ./configure --prefix=$requirementsDir --with-lua=$requirementsDir
            make bootstrap
-           luarocks install luaprompt
        )
+       # Move here because install in luarocks-sources doesn't install packages correctly
+       luarocks install luaprompt
     fi
     echo "If there were problems during compilation install the readline-devel package (name may be different on platforms)"
 fi

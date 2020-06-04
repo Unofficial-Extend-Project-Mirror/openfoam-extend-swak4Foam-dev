@@ -26,7 +26,7 @@ Description
 
 
 Contributors/Copyright:
-    2011-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -34,7 +34,7 @@ Contributors/Copyright:
 %skeleton "lalr1.cc"
 /* %require "2.1a" */
 %defines
-%define parser_class_name {FaFieldValueExpressionParser}
+%define api.parser.class {FaFieldValueExpressionParser}
 
 %{
 #include <areaFields.H>
@@ -87,7 +87,7 @@ Contributors/Copyright:
 };
 
 %debug
-%error-verbose
+%define parse.error verbose
 
 %union
 {

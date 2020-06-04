@@ -24,9 +24,9 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: scriptableFvSolutionFvSchemesFunctionObject.C,v 6277e2c3db14 2018-03-20 19:32:05Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #include "scriptableFvSolutionFvSchemesFunctionObject.H"
@@ -132,6 +132,9 @@ bool scriptableFvSolutionFvSchemesFunctionObject::executeCodeWriteToDict(
     dictionary &dict
 )
 {
+    Dbug << "Setting from " << fromDict << " to " << toDict
+        << " : " << dict.name() << endl;
+
     bool triggered=false;
 
     interpreter().insertDictionary(
@@ -151,10 +154,15 @@ bool scriptableFvSolutionFvSchemesFunctionObject::executeCodeWriteToDict(
         newValues
     );
 
+    Dbug << "New values " << newValues << endl;
+
     triggered=dict.merge(newValues);
     if(triggered) {
         Info << "Changed " << dict.name() << endl;
     }
+
+    Dbug << "Result " << dict << endl;
+
     return triggered;
 }
 

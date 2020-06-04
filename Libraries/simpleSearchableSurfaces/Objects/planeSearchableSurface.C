@@ -24,7 +24,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2009, 2013-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2009, 2013-2014, 2016-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -214,7 +214,7 @@ void Foam::planeSearchableSurface::getVolumeType
 ) const
 {
     volType.setSize(points.size());
-    volType = INSIDE;
+    volType = VOLTYPE_INSIDE;
 
     forAll(points, pointI)
     {
@@ -222,11 +222,11 @@ void Foam::planeSearchableSurface::getVolumeType
 
         if ( ((pt - plane_.refPoint()) & plane_.normal()) < 0 )
         {
-            volType[pointI] = INSIDE;
+            volType[pointI] = VOLTYPE_INSIDE;
         }
         else
         {
-            volType[pointI] = OUTSIDE;
+            volType[pointI] = VOLTYPE_OUTSIDE;
         }
     }
 }

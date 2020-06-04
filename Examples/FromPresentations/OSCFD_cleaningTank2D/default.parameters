@@ -1,0 +1,80 @@
+// -*- c++ -*-
+
+mesh {
+    description "Meshing parameters";
+    values {
+        dx {
+            default 0.5;
+            description "Meshing size";
+        }
+    }
+}
+
+geometry {
+    description "Geometry";
+
+    values {
+        hIn 10;
+
+        inY 5;
+        channelH 5;
+        inXLength 20;
+
+        outStart 30;
+        outSize 5;
+        afterOut 15;
+
+        outDepth 10;
+        overInlet 15;
+
+        thickness 5;
+
+        geometryScaling 0.01;
+    }
+}
+
+sensors {
+    description "Measurement";
+    values {
+        outletThreshold {
+            description "Fraction of the oult that is considered 'inside'";
+            default 0.95;
+        }
+        sensorX 45;
+        sensorY 10;
+        surfaceThreshold 0.1;
+        nrOutletLayers 2;
+    }
+}
+
+initialConditions {
+    description "Initial condition values";
+    values {
+        waterBaseHeight 15;
+        waterWaveHeight 0.5;
+        waterWaveFreq 20;
+    }
+}
+
+times {
+    description "Times in the simulation";
+    values {
+        endTime 100;
+        writeInterval 0.5;
+        startOfInjection 0.001;
+        endOfInjection 75;
+    }
+}
+
+dirtProperties {
+    description "Particle properties";
+    values {
+        initialDropVelocity 1;
+        parcelsPerSecond 200;
+        minDirtSize 5e-4;
+        maxDirtSize 1e-3;
+
+        repellDistance 2;
+        repellStrength 1e2;
+    }
+}

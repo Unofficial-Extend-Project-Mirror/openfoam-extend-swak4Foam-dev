@@ -50,7 +50,7 @@ SourceFiles
     writeFieldsOftenFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013, 2016-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -60,6 +60,12 @@ Contributors/Copyright:
 
 #include "writeFieldsGeneralFunctionObject.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#ifdef FOAM_WRITECONTROL_IN_TIME_CHANGED
+typedef Foam::Time::writeControl TimeWriteControl;
+#else
+typedef Foam::Time::writeControls TimeWriteControl;
+#endif
 
 namespace Foam
 {
@@ -86,7 +92,7 @@ protected:
     virtual bool outputTime(const bool forceWrite);
 
     //- how writting is controlled
-    Time::writeControls writeControl_;
+    TimeWriteControl writeControl_;
 
     //- how often we write
     scalar writeInterval_;

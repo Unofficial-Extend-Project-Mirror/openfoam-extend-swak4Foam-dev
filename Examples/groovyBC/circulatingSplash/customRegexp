@@ -1,6 +1,9 @@
+// -*- mode: c++ -*-
+
 GridSize
 {
-  expr "Selected %f% cells for refinement out of (%f%).";
+    //  expr "Selected (%f%) cells for refinement out of (%f%).";
+  expr ".*efined from %f% to (.+) cells";
   theTitle "Grid size";
   titles
     (
@@ -28,46 +31,87 @@ MeshExecutionTime
 }
 InletPos
 {
-	expr "Expression printInletPosition :  average=\((%f%) %f% (%f%)\)";
-	theTitle "Inlet position";
-	titles (x z);
+    expr "Expression printInletPosition :  average=\((%f%) %f% (%f%)\)";
+    theTitle "Inlet position";
+    titles (x z);
 }
 InletRadius
 {
-	expr "Expression printInletRadius :  average=(%f%)";
-	type slave;
-	master InletPos;
-	titles (radius);
+    expr "Expression printInletRadius :  average=(%f%)";
+    type slave;
+    master InletPos;
+    titles (radius);
 }
 InletVelocity
 {
-	expr "Expression printInletVelocity :  average=(%f%)";
-	theTitle "Velocity at the inlet";
-	titles ( v );
+    expr "Expression printInletVelocity :  average=(%f%)";
+    theTitle "Velocity at the inlet";
+    titles ( v );
+    progress "v_in: $0";
 }
-Area 
+ActualInletVelocity
 {
-	expr "Expression idealArea :  average=(%f%)";
-	theTitle "Area of the inlet";
-	titles ( "Ideal value");
+    theTitle "Actual inlet velocity";
+    expr "Expression printActualVelocityAbs :  weightedAverage=(.+) max=(.+)";
+    titles (
+        average
+        max
+    );
 }
-Divergence 
+ActualInletInternalVelocity
 {
-	expr "Expression divergenceArea :  average=(%f%)";
-	titles ( "Real-Ideal" );
-	type slave;
-	master Area;
+    type slave;
+    master ActualInletVelocity;
+    expr "Expression printActualVelocityInternalAbs :  weightedAverage=(.+) max=(.+)";
+    titles (
+        "internal average"
+        "internal max"
+    );
+}
+ActualInletInternalVelocityNorm
+{
+    type slave;
+    master ActualInletVelocity;
+    expr "Expression printActualVelocityInternalNorm :  min=(.+) weightedAverage=(.+) max=(.+)";
+    titles (
+        "normal max"
+        "normal average"
+        "normal max"
+    );
+}
+ActualInletInternalVelocityTang
+{
+    type slave;
+    master ActualInletVelocity;
+    expr "Expression printActualVelocityInternalTang :  weightedAverage=(.+) max=(.+)";
+    titles (
+        "tangential average"
+        "tangential max"
+    );
+}
+Area
+{
+    expr "Expression idealArea :  average=(%f%)";
+    theTitle "Area of the inlet";
+    titles ( "Ideal value");
+}
+Divergence
+{
+    expr "Expression divergenceArea :  average=(%f%)";
+    titles ( "Real-Ideal" );
+    type slave;
+    master Area;
 }
 totalFrac
 {
-	expr "Expression totalAlpha :  sum=(%f%)";
-	theTitle "Fluid volume";
-	titles ( total );
+    expr "Expression totalAlpha :  sum=(%f%)";
+    theTitle "Fluid volume";
+    titles ( total );
 }
 massInflow
 {
-	expr "Expression totalInMassflow :  average=(%f%)";
-	titles ( "inFlow - accumulated" );
-	type slave;
-	master totalFrac;
+    expr "Expression totalInMassflow :  average=(%f%)";
+    titles ( "inFlow - accumulated" );
+    type slave;
+    master totalFrac;
 }
