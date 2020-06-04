@@ -24,7 +24,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013, 2015-2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013, 2015-2016, 2018-2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id: writeFieldsOftenFunctionObject.C,v 45163b34f052 2019-07-09 10:42:58Z bgschaid $

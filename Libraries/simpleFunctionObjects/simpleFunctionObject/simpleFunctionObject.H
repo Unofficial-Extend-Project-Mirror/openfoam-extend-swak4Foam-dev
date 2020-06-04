@@ -33,7 +33,7 @@ SourceFiles
     simpleFunctionObject.C
 
 Contributors/Copyright:
-    2008-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2014, 2016-2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id: simpleFunctionObject.H,v 6277e2c3db14 2018-03-20 19:32:05Z bgschaid $
 \*---------------------------------------------------------------------------*/

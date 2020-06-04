@@ -31,7 +31,7 @@ Application
 Description
 
 Contributors/Copyright:
-    2010-2013, 2015-2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010-2013, 2015-2016, 2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2017 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id: calcNonUniformOffsetsForMapped.C,v 909e3e73dc26 2018-06-04 10:14:09Z bgschaid $
