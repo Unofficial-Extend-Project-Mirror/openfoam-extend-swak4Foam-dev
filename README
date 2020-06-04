@@ -4346,3 +4346,13 @@ S_{expl} + S_{impl} T
 # Local Variables:
 # eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
 # End:
+** Next release - version number : 20xx.yy
+*** New supported versions
+*** Incompatibilities
+*** Bug fixes
+*** Internals (for developers)
+*** Infrastructure
+*** Documentation
+*** New features
+*** Enhancements
+*** Examples

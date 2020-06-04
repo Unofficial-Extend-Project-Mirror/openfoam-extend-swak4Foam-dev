@@ -1473,7 +1473,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org2e96244) below). Don't work on the
+details see [6.2.2](#org733666e) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1529,7 +1529,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org2e96244"></a>
+<a id="org733666e"></a>
 
 ### Repository organization
 
@@ -6791,3 +6791,33 @@ expression strings
 
 This example demonstrates the runtime-control for function
 objects that exists in the ESI-fork
+
+
+## Next release - version number : 20xx.yy
+
+
+### New supported versions
+
+
+### Incompatibilities
+
+
+### Bug fixes
+
+
+### Internals (for developers)
+
+
+### Infrastructure
+
+
+### Documentation
+
+
+### New features
+
+
+### Enhancements
+
+
+### Examples
