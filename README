@@ -4267,7 +4267,9 @@ S_{expl} + S_{impl} T
 **** =ImmersedBC/pitzDaily= to demonstrate /immersed boundary conditions/ in =foam-extend=
      This demonstrates that swak-evaluations can be used for the
      immersed boundary conditions in =foam-extend=
-** Next release - version number : 0.4.3
+** 2020-06-04 - version number : 2020.06
+   Moved from /semantic version numbers/ (that didn't make sense
+   anymore) to a /date based/ version number.
 *** New supported versions
 **** OpenFOAM+ v1906
      Adaptions supplied by Mark Olesen.
@@ -4287,7 +4289,6 @@ S_{expl} + S_{impl} T
      Fix supplied by Danial Khazaei because compilation of =fe 4.1=
      broke when the =label= size was set to 64 bit. Now works with
      other distributions as well
-*** Internals (for developers)
 *** Infrastructure
 **** Support for =bison= 3.4
      The grammars have been adapted to generate C++-sources without
@@ -4326,7 +4327,10 @@ S_{expl} + S_{impl} T
      versions)
 
      The trigger is found in the =swakFunctionObjects=-library
-*** Enhancements
+**** =makeAxialMesh= added
+     This (rather old) utility has been added to swak4Foam. Main
+     reason is that this is the easiest way to maintain this utility
+     for new OpenFOAM versions
 *** Examples
 **** =groovyBC/nonBreakingDam= to demonstrate macro expansion
      This example demonstrates OpenFOAM macro-expansion inside of

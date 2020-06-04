@@ -1471,7 +1471,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orgc2893e7) below). Don't work on the
+details see [6.2.2](#org59124cf) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1527,7 +1527,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orgc2893e7"></a>
+<a id="org59124cf"></a>
 
 ### Repository organization
 
@@ -6663,7 +6663,10 @@ This demonstrates that swak-evaluations can be used for the
 immersed boundary conditions in `foam-extend`
 
 
-## Next release - version number : 0.4.3
+## 2020-06-04 - version number : 2020.06
+
+Moved from *semantic version numbers* (that didn't make sense
+anymore) to a *date based* version number.
 
 
 ### New supported versions
@@ -6704,9 +6707,6 @@ files
 Fix supplied by Danial Khazaei because compilation of `fe 4.1`
 broke when the `label` size was set to 64 bit. Now works with
 other distributions as well
-
-
-### Internals (for developers)
 
 
 ### Infrastructure
@@ -6769,7 +6769,11 @@ versions)
 The trigger is found in the `swakFunctionObjects`-library
 
 
-### Enhancements
+#### `makeAxialMesh` added
+
+This (rather old) utility has been added to swak4Foam. Main
+reason is that this is the easiest way to maintain this utility
+for new OpenFOAM versions
 
 
 ### Examples
