@@ -69,6 +69,7 @@ In alphabetical order of the surname
     -   improvements to scripts
 -   **Philippose Rajan:** -   Bugfix for segmentation faults in parallel
 -   **Matti Rauter:** -   Spell-checking the compilation scripts
+-   **Danial Khazaei:** -   Fixed problem with 64 bit labels
 
 If anyone is forgotten: let me know
 
@@ -77,7 +78,7 @@ repositories of the projects from which swak emerged) contributors
 are (ordered by the year of their first contribution. EMail is the
 latest under which this author submitted):
 
--   2006-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+-   2006-2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 -   2008 Hannes Kroeger (hannes@kroegeronline.net)
 -   2008-2009, 2012 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
 -   2010 Marianne Mataln <mmataln@ice-sf.at>
@@ -90,7 +91,8 @@ latest under which this author submitted):
 -   2014 David Huckaby <e.david.huckaby@netl.doe.gov>
 -   2015 Domink Christ <d.christ@wikki.co.uk>
 -   2015 Alexey Matveichev <alexey.matveichev@gmail.com>
--   2016-2018 Mark Olesen <Mark.Olesen@esi-group.com>
+-   2016-2019 Mark Olesen <Mark.Olesen@esi-group.com>
+-   2019 Danial Khazaei <shadowfax@shell.sf.net>
 
 
 ## Documentation
@@ -684,6 +686,21 @@ up from scratch)
 
 Utility to write fields with subfields from boundary conditions
 like `refValue` for post-processing
+
+
+### `makeAxialMesh`
+
+A utility that converts a planar (pseudo-2d) grid to an
+axial-symmetric mesh (used to be a separate project but was moved
+here for maintenance)
+
+Contributors of previous versions were
+
+-   David P. Schmidt
+-   E David Huckaby
+-   Dominik Christ (Porting to 1.5)
+
+See: <http://openfoamwiki.net/index.php/Contrib_MakeAxialMesh>
 
 
 ## Examples
@@ -1345,6 +1362,30 @@ mapped between these regions
     boundary condition
 
 
+### MakeAxialMesh
+
+Cases hee demonstrate the `makeAxialMesh`-utility
+
+
+#### axialCavity
+
+The usual `cavity` case with the axis outside the geometry
+
+-   **Solver:** `icoFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+
+
+#### axialPitzDaily
+
+The usual `pitzDaily` case with the top is an axis of rotation
+
+-   **Solver:** `simpleFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+
+Note: `checkMesh` complains **after** the `collapseEdges`-utility
+was used and the case converges badly
+
+
 ### tests
 
 Simple test cases for specific features. The names of the
@@ -1466,7 +1507,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org9b12596) below). Don't work on the
+details see [6.2.2](#orga89f146) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1522,7 +1563,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org9b12596"></a>
+<a id="orga89f146"></a>
 
 ### Repository organization
 
@@ -6658,7 +6699,10 @@ This demonstrates that swak-evaluations can be used for the
 immersed boundary conditions in `foam-extend`
 
 
-## Next release - version number : 0.4.3
+## 2020-06-04 - version number : 2020.06
+
+Moved from *semantic version numbers* (that didn't make sense
+anymore) to a *date based* version number.
 
 
 ### New supported versions
@@ -6701,17 +6745,6 @@ broke when the `label` size was set to 64 bit. Now works with
 other distributions as well
 
 
-#### `writeOldTimesOnSignal` not working for newer Foam-versions
-
-This function object did not work for newer Foam-version where
-`start()` was removed from the API of `functionObject`
-
-This has been fixed and the storing of times has been fixed
-
-
-### Internals (for developers)
-
-
 ### Infrastructure
 
 
@@ -6736,7 +6769,15 @@ like 3.7 is found. THe same is true for
 (or similar).
 
 If these variables are not set the highest possible Python is
-used (like it was before
+used (like it was before)
+
+
+#### Generate files for `clangd` if `bear` is installed
+
+If [Bear](https://github.com/rizsotto/Bear) is installed then it is used to generate the files that
+the `clang` tools use to find out how files are compiled. This
+allows using LSP-based tools during editing (the necessary
+settings for Emacs have been added)
 
 
 ### Documentation
@@ -6762,6 +6803,60 @@ v1906 (modify `swak.H` if you want to enable/test it for older
 versions)
 
 The trigger is found in the `swakFunctionObjects`-library
+
+
+#### `makeAxialMesh` added
+
+This (rather old) utility has been added to swak4Foam. Main
+reason is that this is the easiest way to maintain this utility
+for new OpenFOAM versions
+
+
+### Examples
+
+
+#### `groovyBC/nonBreakingDam` to demonstrate macro expansion
+
+This example demonstrates OpenFOAM macro-expansion inside of
+expression strings
+
+
+#### `runTimeCondition/simpleSwakCar` to demonstrate runtime-control in the ESI fork
+
+This example demonstrates the runtime-control for function
+objects that exists in the ESI-fork
+
+
+## Next release - version number : 20xx.yy
+
+
+### New supported versions
+
+
+### Incompatibilities
+
+
+### Bug fixes
+
+
+#### `writeOldTimesOnSignal` not working for newer Foam-versions
+
+This function object did not work for newer Foam-version where
+`start()` was removed from the API of `functionObject`
+
+This has been fixed and the storing of times has been fixed
+
+
+### Internals (for developers)
+
+
+### Infrastructure
+
+
+### Documentation
+
+
+### New features
 
 
 #### Library for solving physical systems in separate regions
@@ -6811,15 +6906,3 @@ instead of raising a signal does a `FatalError`
 
 
 ### Examples
-
-
-#### `groovyBC/nonBreakingDam` to demonstrate macro expansion
-
-This example demonstrates OpenFOAM macro-expansion inside of
-expression strings
-
-
-#### `runTimeCondition/simpleSwakCar` to demonstrate runtime-control in the ESI fork
-
-This example demonstrates the runtime-control for function
-objects that exists in the ESI-fork

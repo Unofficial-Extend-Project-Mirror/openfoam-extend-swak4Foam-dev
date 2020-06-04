@@ -37,9 +37,9 @@ SourceFiles
     executeIfEnvironmentVariableFunctionObject.C
 
 Contributors/Copyright:
-    2011, 2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013, 2016-2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: executeIfEnvironmentVariableFunctionObject.H,v 909e3e73dc26 2018-06-04 10:14:09Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #ifndef executeIfEnvironmentVariableFunctionObject_H
@@ -47,7 +47,11 @@ Contributors/Copyright:
 
 #include "conditionalFunctionObjectListProxy.H"
 #include "regExp.H"
+
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+#else
 #include "NamedEnum.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -84,12 +88,16 @@ public:
     enum fitVariableMode {
         fvmExists,
         fvmDoesNotExist,
-        fvmFitsRegexp
+        fvmFitsRegexp,
     };
 
 private:
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+    static const Enum<fitVariableMode> fitVariableModeNames_;
+#else
     static const NamedEnum<fitVariableMode,3> fitVariableModeNames_;
+#endif
 
     //- the mode with which the variable should be fitted
     fitVariableMode fitVariableMode_;

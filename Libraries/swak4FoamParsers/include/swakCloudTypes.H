@@ -32,7 +32,7 @@ Description
 SourceFiles
 
 Contributors/Copyright:
-    2012-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2017-2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
@@ -150,6 +150,10 @@ namespace Foam {
 
 #if defined(FOAM_VERSION4SWAK_IS_EXTEND)
 #define FOAM_IOPOSITION_IS_TEMPLATE_OF_PARTICLE
+#endif
+
+#if (OPENFOAM_COM >= 2004)
+#define FOAM_PARTICLE_STREAM_CONSTRUCTOR_WITH_NEW_FORMAT
 #endif
 
 #include "DebugOStream.H"

@@ -33,6 +33,7 @@ SourceFiles
     swakExpressionCondition.C
 
 Contributors/Copyright:
+    2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

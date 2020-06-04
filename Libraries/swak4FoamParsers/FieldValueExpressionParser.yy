@@ -26,7 +26,7 @@ Description
 
 
 Contributors/Copyright:
-    2006-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2006-2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2013 Georg Reiss <georg.reiss@ice-sf.at>
     2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
 
@@ -833,9 +833,16 @@ vexp:   vector                                    { $$ = $1; }
             delete $2;
             driver.setCalculatedPatches(*$$);
           }
-        | '(' vexp ')'		                   { $$ = $2; }
+        | '(' vexp ')' { $$ = $2; }
         | TOKEN_eigenValues '(' texp ')'       {
+#ifndef FOAM_EIGEN_VALUES_VECTOR_IS_COMPLEX
             $$ = new Foam::volVectorField(Foam::eigenValues(*$3));
+#else
+            FatalErrorInFunction
+                << "function 'eigenValues' gives a complex value in this Foam-version"
+                    << Foam::endl
+                    << exit(Foam::FatalError);
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -1684,11 +1691,18 @@ fvexp:  fvector                            { $$ = $1; }
             delete $2;
           }
         | '(' fvexp ')'		           { $$ = $2; }
-        | TOKEN_eigenValues '(' ftexp ')'       {
-            $$ = new Foam::surfaceVectorField(Foam::eigenValues(*$3));
-            delete $3;
-            driver.setCalculatedPatches(*$$);
-          }
+        | TOKEN_eigenValues '(' ftexp ')' {
+#ifndef FOAM_EIGEN_VALUES_VECTOR_IS_COMPLEX
+          $$ = new Foam::surfaceVectorField(Foam::eigenValues(*$3));
+#else
+            FatalErrorInFunction
+                << "function 'eigenValues' gives a complex value in this Foam-version"
+                    << Foam::endl
+                    << exit(Foam::FatalError);
+#endif
+          delete $3;
+          driver.setCalculatedPatches(*$$);
+        }
         | TOKEN_eigenValues '(' fyexp ')'       {
             $$ = new Foam::surfaceVectorField(Foam::eigenValues(*$3));
             delete $3;
@@ -2916,8 +2930,15 @@ texp:   tensor                  { $$ = $1; }
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
-        | TOKEN_eigenVectors '(' texp ')'       {
+          | TOKEN_eigenVectors '(' texp ')' {
+#ifndef FOAM_EIGEN_VALUES_VECTOR_IS_COMPLEX
             $$ = new Foam::volTensorField(Foam::eigenVectors(*$3));
+#else
+            FatalErrorInFunction
+                << "function 'eigenVectors' gives a complex value in this Foam-version"
+                    << Foam::endl
+                    << exit(Foam::FatalError);
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -3862,8 +3883,15 @@ ftexp:   ftensor                  { $$ = $1; }
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
-        | TOKEN_eigenVectors '(' ftexp ')'       {
+          | TOKEN_eigenVectors '(' ftexp ')' {
+#ifndef FOAM_EIGEN_VALUES_VECTOR_IS_COMPLEX
             $$ = new Foam::surfaceTensorField(Foam::eigenVectors(*$3));
+#else
+            FatalErrorInFunction
+                << "function 'eigenVectors' gives a complex value in this Foam-version"
+                    << Foam::endl
+                    << exit(Foam::FatalError);
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -5158,17 +5186,26 @@ pvexp:  pvector                            { $$ = $1; }
             delete $2;
           }
         | '(' pvexp ')'		           { $$ = $2; }
-        | TOKEN_eigenValues '(' ptexp ')'       {
-            $$ = driver.makePointField<Foam::pointVectorField>(
+        | TOKEN_eigenValues '(' ptexp ')' {
+#ifndef FOAM_EIGEN_VALUES_VECTOR_IS_COMPLEX
+          $$ = driver
+                   .makePointField<Foam::pointVectorField>(
 #ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
-                Foam::eigenValues($3->primitiveField())
+                       Foam::eigenValues($3->primitiveField())
 #else
-                Foam::eigenValues($3->internalField())
+                       Foam::eigenValues($3->internalField())
 #endif
-            ).ptr();
-            delete $3;
-            driver.setCalculatedPatches(*$$);
-          }
+                           )
+                   .ptr();
+#else
+            FatalErrorInFunction
+                << "function 'eigenValues' gives a complex value in this Foam-version"
+                    << Foam::endl
+                    << exit(Foam::FatalError);
+#endif
+          delete $3;
+          driver.setCalculatedPatches(*$$);
+        }
         | TOKEN_eigenValues '(' pyexp ')'       {
             $$ = driver.makePointField<Foam::pointVectorField>(
 #ifdef FOAM_POINTFIELD_OPERATIONS_NEED_PRIMITIVE
@@ -5521,8 +5558,10 @@ ptexp:   ptensor                  { $$ = $1; }
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
-        | TOKEN_eigenVectors '(' ptexp ')'       {
+          | TOKEN_eigenVectors '(' ptexp ')' {
+#ifndef FOAM_EIGEN_VALUES_VECTOR_IS_COMPLEX
             $$ = new Foam::pointTensorField(Foam::eigenVectors(*$3));
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }

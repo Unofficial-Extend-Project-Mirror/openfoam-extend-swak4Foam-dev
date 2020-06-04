@@ -33,18 +33,23 @@ SourceFiles
     timelineFunctionObject.C
 
 Contributors/Copyright:
-    2008-2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2013, 2016-2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2017 Mark Olesen <Mark.Olesen@esi-group.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: timelineFunctionObject.H,v 909e3e73dc26 2018-06-04 10:14:09Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #ifndef timelineFunctionObject_H
 #define timelineFunctionObject_H
 
 #include "simpleDataFunctionObject.H"
-#include "NamedEnum.H"
 #include "stringList.H"
+
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+#include "Enum.H"
+#else
+#include "NamedEnum.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -74,7 +79,7 @@ public:
     enum outputFileMode {
         ofmFoam,
         ofmRaw,
-        ofmCsv
+        ofmCsv,
     };
 
 private:
@@ -97,7 +102,11 @@ protected:
     scalar factor() const { return factor_; }
 
     //- possible output-modes
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+    static const Enum<outputFileMode> outputFileModeNames_;
+#else
     static const NamedEnum<outputFileMode,3> outputFileModeNames_;
+#endif
     outputFileMode outputFileMode_;
 
     //- the file extension that fits the file-mode

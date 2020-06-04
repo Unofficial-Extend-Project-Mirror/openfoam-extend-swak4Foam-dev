@@ -30,7 +30,7 @@ Description
 SourceFiles
 
 Contributors/Copyright:
-    2013-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2013-2014, 2016-2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -125,9 +125,17 @@ public:
             const polyMesh& mesh,
             Istream& is,
             bool readFields = true
+#ifdef FOAM_PARTICLE_STREAM_CONSTRUCTOR_WITH_NEW_FORMAT
+            , bool newFormat = true
+#endif
         )
         :
-            ReaderParticleBaseClass(mesh, is, readFields)
+            ReaderParticleBaseClass(
+                mesh, is, readFields
+#ifdef FOAM_PARTICLE_STREAM_CONSTRUCTOR_WITH_NEW_FORMAT
+                ,newFormat
+#endif
+            )
         {}
 #else
         //- Construct from components

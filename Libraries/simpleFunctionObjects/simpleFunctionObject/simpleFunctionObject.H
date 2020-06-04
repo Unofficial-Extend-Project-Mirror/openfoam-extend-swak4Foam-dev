@@ -33,9 +33,9 @@ SourceFiles
     simpleFunctionObject.C
 
 Contributors/Copyright:
-    2008-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2014, 2016-2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: simpleFunctionObject.H,v 6277e2c3db14 2018-03-20 19:32:05Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #ifndef simpleFunctionObject_H
@@ -47,9 +47,15 @@ Contributors/Copyright:
 #include "HashPtrTable.H"
 #include "boolList.H"
 #include "Field.H"
-#include "NamedEnum.H"
 
 #include "swak.H"
+
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+#include "Enum.H"
+#else
+#include "NamedEnum.H"
+#endif
+
 #include "switchableNotImplemented.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -101,7 +107,12 @@ private:
     label timeSteps_;
 
     //- possible outputControl-modes
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+    static const Enum<outputControlModeType> outputControlModeTypeNames_;
+#else
     static const NamedEnum<outputControlModeType,7> outputControlModeTypeNames_;
+#endif
+
     outputControlModeType outputControlMode_;
 
     //- how many time-steps between outputs

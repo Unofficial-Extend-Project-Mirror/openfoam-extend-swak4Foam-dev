@@ -32,9 +32,9 @@ SourceFiles
     lcsSpeciesSourcePluginFunction.C
 
 Contributors/Copyright:
-    2012-2013, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: lcsSpeciesSourcePluginFunction.H,v 909e3e73dc26 2018-06-04 10:14:09Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #ifndef lcsSpeciesSourcePluginFunction_H
@@ -43,6 +43,8 @@ Contributors/Copyright:
 #include "LagrangianCloudSourcePluginFunction.H"
 
 #include "swakCloudTypes.H"
+
+#include "swak.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -87,13 +89,19 @@ public:
 
 };
 
+#ifdef FOAM_HASH_WORD_LIST_CONTAINS_DEPRECATED
+#define foundOrContains found
+#else
+#define foundOrContains contains
+#endif
+
 #ifdef FOAM_REACTINGCLOUD_TEMPLATED
 #define getSpeciesIndex(neededType,usedType)                                \
     if(hasCloudAs<neededType>()) {                                      \
         const speciesTable &spec=                                       \
             getCloudAs<neededType,usedType>().mcCarrierThermo ().species(); \
         speciesList=spec;                                               \
-        if(spec.contains(speciesName_)) {                               \
+        if(spec.foundOrContains(speciesName_)) {                        \
             return spec[speciesName_];                                  \
         }                                                               \
     }
@@ -103,7 +111,7 @@ public:
         const speciesTable &spec=                                       \
             getCloudAs<neededType,usedType>().thermo().carrier().species(); \
         speciesList=spec;                                               \
-        if(spec.contains(speciesName_)) {                               \
+        if(spec.foundOrContains(speciesName_)) {                        \
             return spec[speciesName_];                                  \
         }                                                               \
     }

@@ -80,11 +80,12 @@ print('Starting up')
 lastResiduals={}
 allResiduals={}
 nrResiduals=10
-scaleResiduals={p=true}
+scaleResiduals={U=true}
+--- scaleResiduals={p=true}
 --- scaleResiduals={U=true,p=true}
 factor=0.75
-upFactor=1.05
-scaleThres=1.05
+upFactor=1.25
+scaleThres=1.01
 
 function average(vals)
    cnt=0
@@ -105,7 +106,7 @@ end
         schemesCode #{
 --- -*- mode: lua -*-
 newSchemes={}
-
+print("No change for schemes")
             #};
         solutionCode #{
 --- -*- mode: lua -*-

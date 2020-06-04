@@ -37,6 +37,7 @@ export SWAKUTILS=(funkySetBoundaryField \
     funkyPythonPostproc \
     funkySetLagrangianField \
     writeBoundarySubfields \
+    makeAxialMesh \
     replayTransientBC)
 
 if [ "$FOAM_DEV" != "" ]

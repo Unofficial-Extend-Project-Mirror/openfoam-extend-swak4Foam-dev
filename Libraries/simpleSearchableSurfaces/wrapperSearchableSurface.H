@@ -33,7 +33,8 @@ SourceFiles
     wrapperSearchableSurface.C
 
 Contributors/Copyright:
-    2009, 2013-2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2009, 2013-2014, 2016-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2019 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

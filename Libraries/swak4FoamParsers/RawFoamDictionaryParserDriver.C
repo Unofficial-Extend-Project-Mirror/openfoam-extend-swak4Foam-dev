@@ -29,7 +29,7 @@ Description
     Won't be able to read all possible OF-dictionaries
 
 Contributors/Copyright:
-    2017-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2017-2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -41,6 +41,15 @@ Contributors/Copyright:
 
 namespace Foam {
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+    const Enum<RawFoamDictionaryParserDriver::ErrorMode>
+    RawFoamDictionaryParserDriver::errorModeNames
+    ({
+        {ErrorMode::SilentError,"silent"},
+        {ErrorMode::FailError,"fail"},
+        {ErrorMode::WarnError,"warn"}
+    });
+#else
     template<>
     const char* NamedEnum
     <
@@ -55,6 +64,7 @@ namespace Foam {
 
     const NamedEnum<RawFoamDictionaryParserDriver::ErrorMode, 3>
         RawFoamDictionaryParserDriver::errorModeNames;
+#endif
 
     RawFoamDictionaryParserDriver::RawFoamDictionaryParserDriver(
         ErrorMode mode

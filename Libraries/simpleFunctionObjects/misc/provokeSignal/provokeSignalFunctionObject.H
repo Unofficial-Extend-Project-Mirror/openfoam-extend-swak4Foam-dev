@@ -37,9 +37,9 @@ SourceFiles
     provokeSignalFunctionObject.C
 
 Contributors/Copyright:
-    2014, 2016-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2014, 2016-2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: provokeSignalFunctionObject.H,v 909e3e73dc26 2018-06-04 10:14:09Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #ifndef provokeSignalFunctionObject_H
@@ -47,7 +47,11 @@ Contributors/Copyright:
 
 #include "simpleFunctionObject.H"
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+#include "Enum.H"
+#else
 #include "NamedEnum.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -91,7 +95,11 @@ private:
 
     bool raiseOnThisProc_;
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+    static const Enum<possibleSignals> possibleSignalsNames_;
+#else
     static const NamedEnum<possibleSignals,8> possibleSignalsNames_;
+#endif
 
 public:
 

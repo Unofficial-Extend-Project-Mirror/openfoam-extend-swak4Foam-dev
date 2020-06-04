@@ -24,10 +24,10 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013, 2015-2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013, 2015-2016, 2018-2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: writeFieldsOftenFunctionObject.C,v 45163b34f052 2019-07-09 10:42:58Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #include "writeFieldsOftenFunctionObject.H"
@@ -53,6 +53,16 @@ namespace Foam
 
     // copied from Time.C because the original is protected
     // to work the order of values in writeControls must not change
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+const Enum<TimeWriteControl> writeControlNames
+({
+    {TimeWriteControl::wcTimeStep, "timeStep"},
+    {TimeWriteControl::wcRunTime, "runTime"},
+    {TimeWriteControl::wcAdjustableRunTime, "adjustableRunTime"},
+    {TimeWriteControl::wcClockTime, "clockTime"},
+    {TimeWriteControl::wcCpuTime, "cpuTime"},
+});
+#else
 template<>
 const char* NamedEnum<TimeWriteControl, 5>::names[] =
 {
@@ -64,6 +74,7 @@ const char* NamedEnum<TimeWriteControl, 5>::names[] =
 };
 
 const NamedEnum<TimeWriteControl, 5> writeControlNames;
+#endif
 
 #ifdef FOAM_WRITECONTROL_IN_TIME_CHANGED
         #define wcTimeStep Time::writeControl::timeStep

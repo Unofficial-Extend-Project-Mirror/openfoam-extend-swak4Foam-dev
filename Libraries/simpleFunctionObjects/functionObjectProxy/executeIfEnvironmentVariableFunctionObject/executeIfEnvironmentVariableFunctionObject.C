@@ -24,10 +24,10 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013, 2015-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013, 2015-2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2018 Mark Olesen <Mark.Olesen@esi-group.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id: executeIfEnvironmentVariableFunctionObject.C,v ff2f69b41452 2018-12-23 14:35:04Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #include "executeIfEnvironmentVariableFunctionObject.H"
@@ -50,6 +50,15 @@ namespace Foam
         dictionary
     );
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+    const Enum<Foam::executeIfEnvironmentVariableFunctionObject::fitVariableMode>
+    executeIfEnvironmentVariableFunctionObject::fitVariableModeNames_
+    ({
+        {fitVariableMode::fvmExists,"exists"},
+        {fitVariableMode::fvmDoesNotExist,"doesNotExist"},
+        {fitVariableMode::fvmFitsRegexp,"fitsRegexp"}
+    });
+#else
     template<>
     const char* NamedEnum<Foam::executeIfEnvironmentVariableFunctionObject::fitVariableMode,3>::names[]=
     {
@@ -58,6 +67,7 @@ namespace Foam
         "fitsRegexp"
     };
     const NamedEnum<executeIfEnvironmentVariableFunctionObject::fitVariableMode,3> executeIfEnvironmentVariableFunctionObject::fitVariableModeNames_;
+#endif
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

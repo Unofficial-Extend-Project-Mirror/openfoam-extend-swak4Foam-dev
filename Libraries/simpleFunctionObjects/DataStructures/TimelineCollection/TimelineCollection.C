@@ -24,7 +24,7 @@ License
 
 Contributors/Copyright:
     2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
-    2017 Mark Olesen <Mark.Olesen@esi-group.com>
+    2017, 2019 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

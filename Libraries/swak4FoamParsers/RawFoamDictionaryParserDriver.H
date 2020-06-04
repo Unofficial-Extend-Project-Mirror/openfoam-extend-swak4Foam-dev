@@ -29,7 +29,7 @@ Description
     Won't be able to read all possible OF-dictionaries
 
 Contributors/Copyright:
-    2017-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2017-2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -43,7 +43,13 @@ Contributors/Copyright:
 #include "scalarList.H"
 #include "boolList.H"
 #include "stringList.H"
+
+#include "swak.H"
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+#include "Enum.H"
+#else
 #include "NamedEnum.H"
+#endif
 
 namespace parserRawDict {
     class RawFoamDictionaryParser;
@@ -59,7 +65,11 @@ namespace Foam {
             WarnError
         };
 
+#ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
+        static const Enum<ErrorMode> errorModeNames;
+#else
         static const NamedEnum<ErrorMode, 3> errorModeNames;
+#endif
 
     private:
 
