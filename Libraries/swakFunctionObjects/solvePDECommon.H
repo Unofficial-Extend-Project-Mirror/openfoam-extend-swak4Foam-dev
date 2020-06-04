@@ -33,8 +33,9 @@ SourceFiles
     solvePDECommon.C
 
 Contributors/Copyright:
-    2011, 2013-2014, 2016, 2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013-2014, 2016, 2018, 2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2013 Bruno Santos <wyldckat@gmail.com>
+    2019 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id: solvePDECommon.H,v 922e6f8c2ee0 2019-12-11 16:33:30Z bgschaid $
 \*---------------------------------------------------------------------------*/

@@ -69,6 +69,7 @@ In alphabetical order of the surname
     -   improvements to scripts
 -   **Philippose Rajan:** -   Bugfix for segmentation faults in parallel
 -   **Matti Rauter:** -   Spell-checking the compilation scripts
+-   **Danial Khazaei:** -   Fixed problem with 64 bit labels
 
 If anyone is forgotten: let me know
 
@@ -77,7 +78,7 @@ repositories of the projects from which swak emerged) contributors
 are (ordered by the year of their first contribution. EMail is the
 latest under which this author submitted):
 
--   2006-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+-   2006-2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 -   2008 Hannes Kroeger (hannes@kroegeronline.net)
 -   2008-2009, 2012 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
 -   2010 Marianne Mataln <mmataln@ice-sf.at>
@@ -90,7 +91,8 @@ latest under which this author submitted):
 -   2014 David Huckaby <e.david.huckaby@netl.doe.gov>
 -   2015 Domink Christ <d.christ@wikki.co.uk>
 -   2015 Alexey Matveichev <alexey.matveichev@gmail.com>
--   2016-2018 Mark Olesen <Mark.Olesen@esi-group.com>
+-   2016-2019 Mark Olesen <Mark.Olesen@esi-group.com>
+-   2019 Danial Khazaei <shadowfax@shell.sf.net>
 
 
 ## Documentation
@@ -1471,7 +1473,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org59124cf) below). Don't work on the
+details see [6.2.2](#org2e96244) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1527,7 +1529,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org59124cf"></a>
+<a id="org2e96244"></a>
 
 ### Repository organization
 

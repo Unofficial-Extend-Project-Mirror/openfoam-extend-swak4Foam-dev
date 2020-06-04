@@ -33,7 +33,7 @@ Description
 SourceFiles
 
 Contributors/Copyright:
-    2012-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2015-2016 Bruno Santos <wyldckat@gmail.com>
     2016-2019 Mark Olesen <Mark.Olesen@esi-group.com>
 

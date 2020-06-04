@@ -29,7 +29,7 @@ Description
     Won't be able to read all possible OF-dictionaries
 
 Contributors/Copyright:
-    2017-2018 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2017-2019 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
