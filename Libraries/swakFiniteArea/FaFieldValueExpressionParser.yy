@@ -665,7 +665,14 @@ vexp:   vector                                    { $$ = $1; }
           }
         | '(' vexp ')'		                  { $$ = $2; }
         | TOKEN_eigenValues '(' texp ')'       {
+#ifndef FOAM_EIGEN_VALUES_VECTOR_IS_COMPLEX
             $$ = new Foam::areaVectorField(Foam::eigenValues(*$3));
+#else
+            FatalErrorInFunction
+                << "function 'eigenValues' gives a complex value in this Foam-version"
+                    << Foam::endl
+                    << exit(Foam::FatalError);
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -1310,7 +1317,14 @@ fvexp:  fvector                            { $$ = $1; }
           }
         | '(' fvexp ')'		           { $$ = $2; }
         | TOKEN_eigenValues '(' ftexp ')'       {
+#ifndef FOAM_EIGEN_VALUES_VECTOR_IS_COMPLEX
             $$ = new Foam::edgeVectorField(Foam::eigenValues(*$3));
+#else
+            FatalErrorInFunction
+                << "function 'eigenValues' gives a complex value in this Foam-version"
+                    << Foam::endl
+                    << exit(Foam::FatalError);
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -2349,7 +2363,14 @@ texp:   tensor                  { $$ = $1; }
             delete $3;    driver.setCalculatedPatches(*$$);
           }
         | TOKEN_eigenVectors '(' texp ')'       {
+#ifndef FOAM_EIGEN_VALUES_VECTOR_IS_COMPLEX
             $$ = new Foam::areaTensorField(Foam::eigenVectors(*$3));
+#else
+            FatalErrorInFunction
+                << "function 'eigenVectors' gives a complex value in this Foam-version"
+                    << Foam::endl
+                    << exit(Foam::FatalError);
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -3004,7 +3025,14 @@ ftexp:   ftensor                  { $$ = $1; }
             delete $3;
           }
         | TOKEN_eigenVectors '(' ftexp ')'       {
+#ifndef FOAM_EIGEN_VALUES_VECTOR_IS_COMPLEX
             $$ = new Foam::edgeTensorField(Foam::eigenVectors(*$3));
+#else
+            FatalErrorInFunction
+                << "function 'eigenVectors' gives a complex value in this Foam-version"
+                    << Foam::endl
+                    << exit(Foam::FatalError);
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
