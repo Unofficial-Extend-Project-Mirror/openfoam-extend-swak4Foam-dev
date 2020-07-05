@@ -120,9 +120,12 @@ Foam::EliminateOutsideParticles<CloudType>::~EliminateOutsideParticles()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template<class CloudType>
-void Foam::EliminateOutsideParticles<CloudType>::preEvolve()
-{
+template <class CloudType>
+void Foam::EliminateOutsideParticles<CloudType>::preEvolve(
+#ifdef FOAM_CLOUD_FUNCTION_OBJECT_PRE_POST_EVOLVE_WITH_TD
+        const typename CloudType::parcelType::trackingData &td
+#endif
+) {
     if(
         this->owner().mesh().changing()
     ) {
@@ -156,9 +159,12 @@ void Foam::EliminateOutsideParticles<CloudType>::preEvolve()
     }
 }
 
-template<class CloudType>
-void Foam::EliminateOutsideParticles<CloudType>::postEvolve()
-{
+template <class CloudType>
+void Foam::EliminateOutsideParticles<CloudType>::postEvolve(
+#ifdef FOAM_CLOUD_FUNCTION_OBJECT_PRE_POST_EVOLVE_WITH_TD
+        const typename CloudType::parcelType::trackingData &td
+#endif
+) {
     Info << this->modelName() << ":" << this->owner().name()
         << ":" << this->modelType()
         << ": Checking post" << endl;
@@ -247,7 +253,11 @@ void Foam::EliminateOutsideParticles<CloudType>::postEvolve()
             << ")" << endl;
     }
 
-    CloudFunctionObject<CloudType>::postEvolve();
+    CloudFunctionObject<CloudType>::postEvolve(
+#ifdef FOAM_CLOUD_FUNCTION_OBJECT_PRE_POST_EVOLVE_WITH_TD
+        td
+#endif
+    );
 }
 
 template<class CloudType>

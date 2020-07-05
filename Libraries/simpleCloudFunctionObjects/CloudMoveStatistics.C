@@ -108,9 +108,12 @@ Foam::CloudMoveStatistics<CloudType>::~CloudMoveStatistics()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template<class CloudType>
-void Foam::CloudMoveStatistics<CloudType>::preEvolve()
-{
+template <class CloudType>
+void Foam::CloudMoveStatistics<CloudType>::preEvolve(
+#ifdef FOAM_CLOUD_FUNCTION_OBJECT_PRE_POST_EVOLVE_WITH_TD
+        const typename CloudType::parcelType::trackingData &td
+#endif
+) {
     Info << this->modelName() << ":" << this->owner().name()
         << ":" << this->modelType()
         << ": Clearing data" << endl;
@@ -132,9 +135,12 @@ void Foam::CloudMoveStatistics<CloudType>::preEvolve()
     patchHitCounter_.clear();
 }
 
-template<class CloudType>
-void Foam::CloudMoveStatistics<CloudType>::postEvolve()
-{
+template <class CloudType>
+void Foam::CloudMoveStatistics<CloudType>::postEvolve(
+#ifdef FOAM_CLOUD_FUNCTION_OBJECT_PRE_POST_EVOLVE_WITH_TD
+        const typename CloudType::parcelType::trackingData &td
+#endif
+) {
     label faceHitNr=faceHitCounter_.size();
     label faceHitMin=labelMax;
     label faceHitMax=labelMin;
@@ -292,7 +298,11 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
             << iter() << endl;
     }
 
-    CloudFunctionObject<CloudType>::postEvolve();
+    CloudFunctionObject<CloudType>::postEvolve(
+#ifdef FOAM_CLOUD_FUNCTION_OBJECT_PRE_POST_EVOLVE_WITH_TD
+        td
+#endif
+    );
 }
 
 template<class CloudType>
