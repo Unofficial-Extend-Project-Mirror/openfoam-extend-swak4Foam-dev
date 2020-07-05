@@ -68,6 +68,7 @@ runIt SimpleSurface/littleVolcano --run-until=0.1
 runIt solvePDE/flangeWithPDE
 runIt solvePDE/pitzDailyWithPDE
 runIt StateMachine/stateCavity
+runIt tests/AMIPipe
 runIt tests/languageIntegration/luaIntegration
 runIt tests/languageIntegration/pythonIntegration
 runIt tests/languageIntegration/python3Integration
