@@ -1473,7 +1473,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org733666e) below). Don't work on the
+details see [6.2.2](#orge4216d9) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1529,7 +1529,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org733666e"></a>
+<a id="orge4216d9"></a>
 
 ### Repository organization
 
@@ -6803,6 +6803,11 @@ objects that exists in the ESI-fork
 
 
 ### Bug fixes
+
+
+#### `funkySetLagrangianField` does not load fluid fields correctly
+
+Fields were loaded but went out of scope before being usable. Fixed
 
 
 ### Internals (for developers)
