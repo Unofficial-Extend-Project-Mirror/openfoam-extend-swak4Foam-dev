@@ -5,8 +5,11 @@ rm -rf constant/polyMesh/*.gz constant/polyMesh/sets
 blockMesh
 
 snappyHexMesh -overwrite
-rm constant/polyMesh/*Level.gz constant/level0Edge.gz
+
+rm constant/level0Edge.gz constant/polyMesh/level0Edge.gz
 rm 0/*Level.gz
+rm constant/polyMesh/*Level.gz
+
 pyFoamClearEmptyBoundaries.py .
 
 topoSet

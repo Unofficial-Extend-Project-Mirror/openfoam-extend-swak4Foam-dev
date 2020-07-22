@@ -74,6 +74,10 @@ PIMPLE {
     nNonOrthogonalCorrectors |-pimpleNonOrthCorr-|;
 }
 
+PISO {
+    $PIMPLE;
+}
+
 ".*FieldTransportPDE" {
     nCorrectors         |-transportCorr-|;
     nNonOrthogonalCorrectors |-transportNonOrthCorr-|;

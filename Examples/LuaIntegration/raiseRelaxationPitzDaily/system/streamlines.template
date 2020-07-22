@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Website:  www.openfoam.com
+    \\  /    A nd           | Web:      www.OpenFOAM.org
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 Description
@@ -10,13 +10,9 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-nLines  10;
-start   (-0.0205 0.001  0.00001);
-end     (-0.0205 0.0251 0.00001);
-fields  (p k U);
-U       U;
-
+<!--(if foamFork!="openfoamplus" or foamVersion<2006)-->
 direction       both;
+<!--(end)-->
 
 seedSampleSet
 {
@@ -26,6 +22,11 @@ seedSampleSet
     nPoints         10;
     axis            x;
 }
+
+nLines  10;
+start   (-0.0205 0.001  0.00001);
+end     (-0.0205 0.0251 0.00001);
+fields  (p k U);
 
 // Must be last entry
 #includeEtc "caseDicts/postProcessing/visualization/streamlines.cfg"

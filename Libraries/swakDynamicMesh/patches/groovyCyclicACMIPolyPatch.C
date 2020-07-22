@@ -235,8 +235,9 @@ void Foam::groovyCyclicACMIPolyPatch::resetAMI
         }
 
         // Set the updated flag
+#ifndef FOAM_ACMI_POLYPATCH_NO_SETUPDATED_METHOD
         setUpdated(true);
-
+#endif
     }
     const_cast<groovyCyclicACMIPolyPatch&>(*this).meshReady_=true;
     Dbug << "resetAMI - leaving" << endl;

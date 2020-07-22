@@ -24,6 +24,8 @@ function runIt {
     cd $topDir
 }
 
+export FOAM_ABORT=1
+
 runIt DynamicMesh/hecticInletACMI2D
 runIt DynamicMesh/rotatingTank2D  --run-until=5
 runIt DynamicMesh/switchedInletACMI2D
@@ -31,22 +33,22 @@ runIt DynamicMesh/switchedTJunction --run-until=0.5
 runIt FiniteArea/planeTransport
 runIt functionPlugins/chemPluginCounterFlowFlame2D
 runIt functionPlugins/shiftCavity
-runIt FvOptions/angleDuctWithSources
+FOAM_SIGFPE=false runIt FvOptions/angleDuctWithSources
 runIt FvOptions/heatExchangerSources
 runIt groovyBC/average-t-junction
 runIt groovyBC/circulatingSplash --run-until=0.004
 runIt groovyBC/delayed-t-junction
-runIt groovyBC/fillingTheDam
+FOAM_SIGFPE=false runIt groovyBC/fillingTheDam
 runIt groovyBC/jumpChannel
 runIt groovyBC/movingConeDistorted
-runIt groovyBC/pulsedPitzDaily --run-until=1e-4
+FOAM_SIGFPE=false runIt groovyBC/pulsedPitzDaily --run-until=1e-3
 runIt groovyBC/wobbler
 runIt ImmersedBC/pitzDailyImmersed
 runIt Lagrangian/functionObjects/angledDuctWithBalls
 runIt Lagrangian/functionObjects/hotStream
 runIt Lagrangian/functionObjects/icoFoamCavityWithParcel
 runIt Lagrangian/LanguageIntegration/angledDuctWithLuaInject
-runIt Lagrangian/LanguageIntegration/angledDuctWithPython2Inject
+FOAM_SIGFPE=false runIt Lagrangian/LanguageIntegration/angledDuctWithPython2Inject
 runIt Lagrangian/LanguageIntegration/angledDuctWithPython3Inject
 runIt Lagrangian/parser/parcelInBoxWithExpressions
 runIt Lagrangian/parser/simplifiedSiwek
@@ -57,22 +59,28 @@ runIt MakeAxialMesh/axialCavity
 runIt MakeAxialMesh/axialPitzDaily
 runIt manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched
 runIt manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched
-runIt other/angledDuctImplicit
+FOAM_SIGFPE=false runIt other/angledDuctImplicit
 runIt other/capillaryRise --run-until=0.05
 runIt other/counterFlowFlame2DInitialized
 runIt other/simpleBendedPipe
 runIt other/topoSetDamBreak
 runIt Python3Integration/flowStatePitzDaily
 runIt Python3Integration/python3ScriptedBCAngledDuct
+runIt runTimeCondition/simpleSwakCar
 runIt SimpleSurface/littleVolcano --run-until=0.1
 runIt solvePDE/flangeWithPDE
 runIt solvePDE/pitzDailyWithPDE
 runIt StateMachine/stateCavity
+FOAM_SIGFPE=false runIt tests/AMIPipe --run-until=0.02
+runIt tests/delayedMappingChannels
 runIt tests/languageIntegration/luaIntegration
-runIt tests/languageIntegration/pythonIntegration
-runIt tests/languageIntegration/python3Integration
+FOAM_SIGFPE=false runIt tests/languageIntegration/pythonIntegration
+FOAM_SIGFPE=false runIt tests/languageIntegration/python3Integration
+runIt tests/mappingChannels
+runIt tests/mappingChannelsNonUniform
 runIt tests/SearchableSurfaces/objectTests
 runIt tests/SearchableSurfaces/operationsTest
 runIt tests/SearchableSurfaces/operationsTestRotated
 runIt tests/SearchableSurfaces/scaledIglooWithFridges
+runIt tests/swakDataEntry/flowRateAngledDuct
 runIt tests/testFOExecution

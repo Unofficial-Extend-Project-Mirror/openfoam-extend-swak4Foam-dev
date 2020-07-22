@@ -112,9 +112,12 @@ Foam::EliminateCaughtParcels<CloudType>::~EliminateCaughtParcels()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template<class CloudType>
-void Foam::EliminateCaughtParcels<CloudType>::preEvolve()
-{
+template <class CloudType>
+void Foam::EliminateCaughtParcels<CloudType>::preEvolve(
+#ifdef FOAM_CLOUD_FUNCTION_OBJECT_PRE_POST_EVOLVE_WITH_TD
+        const typename CloudType::parcelType::trackingData &td
+#endif
+) {
     Info << this->modelName() << ":" << this->owner().name()
         << ":" << this->modelType()
         << ": Clearing data" << endl;
@@ -139,9 +142,12 @@ void Foam::EliminateCaughtParcels<CloudType>::preEvolve()
     }
 }
 
-template<class CloudType>
-void Foam::EliminateCaughtParcels<CloudType>::postEvolve()
-{
+template <class CloudType>
+void Foam::EliminateCaughtParcels<CloudType>::postEvolve(
+#ifdef FOAM_CLOUD_FUNCTION_OBJECT_PRE_POST_EVOLVE_WITH_TD
+        const typename CloudType::parcelType::trackingData &td
+#endif
+) {
     label nrEliminated=toEliminate_.size();
     label totalEliminated=
         nrEliminated
@@ -181,7 +187,11 @@ void Foam::EliminateCaughtParcels<CloudType>::postEvolve()
             << totalEliminated << " in total" << endl;
     }
 
-    CloudFunctionObject<CloudType>::postEvolve();
+    CloudFunctionObject<CloudType>::postEvolve(
+#ifdef FOAM_CLOUD_FUNCTION_OBJECT_PRE_POST_EVOLVE_WITH_TD
+        td
+#endif
+    );
 }
 
 

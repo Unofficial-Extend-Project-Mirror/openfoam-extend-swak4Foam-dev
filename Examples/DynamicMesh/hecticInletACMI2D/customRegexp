@@ -12,6 +12,6 @@ patchArea {
     idNr 1;
 }
 deficit {
-    theTitle "Mass flow deficit";
+    theTitle "Mass flow deficit on interface";
     expr "Expression calcMassFlowDeficit :  min=(.+)";
 }
