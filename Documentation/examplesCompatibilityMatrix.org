@@ -83,7 +83,7 @@
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
-  | tests/AMIPipe                                               |            |            |            |            |
+  | tests/AMIPipe                                               |            |            | \partial   |            |
   | tests/delayedMappingChannels                                |            | \sad       | \checkmark | \checkmark |
   | tests/languageIntegration/luaIntegration                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/pythonIntegration                 | \sad       | \checkmark | \checkmark | \checkmark |

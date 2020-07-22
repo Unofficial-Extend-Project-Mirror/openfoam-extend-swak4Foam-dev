@@ -89,9 +89,9 @@
             $nParticle;
             field U;
             expression "fluidPhase(U)";
-            interpolationSchemes
-            {
-                U         cellPointWallModified;
+            //            expression "vector(0,0,0)";
+            interpolationSchemes {
+                U cellPointWallModified;
             }
         }
         UTurb {

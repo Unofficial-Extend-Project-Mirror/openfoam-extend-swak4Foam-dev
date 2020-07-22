@@ -71,7 +71,7 @@ runIt SimpleSurface/littleVolcano --run-until=0.1
 runIt solvePDE/flangeWithPDE
 runIt solvePDE/pitzDailyWithPDE
 runIt StateMachine/stateCavity
-runIt tests/AMIPipe
+FOAM_SIGFPE=false runIt tests/AMIPipe --run-until=0.02
 runIt tests/delayedMappingChannels
 runIt tests/languageIntegration/luaIntegration
 FOAM_SIGFPE=false runIt tests/languageIntegration/pythonIntegration

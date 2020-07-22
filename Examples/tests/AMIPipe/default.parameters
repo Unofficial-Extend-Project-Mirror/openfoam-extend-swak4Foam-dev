@@ -13,6 +13,11 @@ pressureJump {
     default no;
 }
 
+rad_per_second {
+    description "How fst the inner section should rotate. Radiant per second";
+    default 5;
+}
+
 deltaT 1e-3;
 
 maxCo 0.5;

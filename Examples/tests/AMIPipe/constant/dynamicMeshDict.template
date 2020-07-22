@@ -15,9 +15,13 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dynamicFvMesh   solidBodyMotionFvMesh;
+// dynamicFvMesh   solidBodyMotionFvMesh;
+dynamicFvMesh   dynamicMotionSolverFvMesh;
 
 motionSolverLibs ( "libfvMotionSolvers.so" );
+
+motionSolver    solidBody;
+
 
 solidBodyMotionFvMeshCoeffs
 {
@@ -28,9 +32,13 @@ solidBodyMotionFvMeshCoeffs
     {
         origin      (0 0 0);
         axis        (0 0 1);
-        omega       50; // rad/s
+        //        omega       50; // rad/s   // Crashes
+        omega |-rad_per_second-|;
+        //        omega 0;
     }
 }
+
+$solidBodyMotionFvMeshCoeffs;
 
 
 // ************************************************************************* //

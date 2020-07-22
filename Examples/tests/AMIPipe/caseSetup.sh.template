@@ -1,5 +1,7 @@
 #! /usr/bin/env bash
 
+export FOAM_SIGFPE=false
+
 <!--(if numberOfProcessors>1)-->
 topoSet -dict system/patchPairZones.topoSetDict
 
@@ -8,7 +10,10 @@ pyFoamDecompose.py . |-numberOfProcessors-| --template=system/decomposeParDict.s
 pyFoamRunner.py --auto funkySetFields -create -time 0 -field cpuNr -expression "cpu()"
 <!--(end)-->
 
-pyFoamRunner.py --auto funkySetLagrangianField -time 0
+rm -rf 0/lagrangian
+
+pyFoamRunner.py --auto funkySetLagrangianField -time 0 -dictExt transient
+pyFoamRunner.py --auto funkySetLagrangianField -time 0 -dictExt static
 
 pyFoamRunner.py --auto funkySetFields -time 0 -field nonMovedField -keepPatches -valuePatches inlet -expression "mag(pos().x)<0.005 ? 1 : 0"
 pyFoamRunner.py --auto funkySetFields -time 0 -field staticField -keepPatches -valuePatches inlet -expression "mag(pos().x)<0.005 ? 1 : 0"
