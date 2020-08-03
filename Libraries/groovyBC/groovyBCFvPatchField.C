@@ -244,6 +244,15 @@ tmp<Field<Type> > groovyBCFvPatchField<Type>::patchNeighbourField() const
         tmp<Field<Type> > tpnf(new Field<Type>(this->size()));
         Field<Type>& pnf = const_cast<Field<Type>&>(tpnf()); //.ref();
 
+#ifdef FOAM_CYCLIC_FV_PATCH_NEW_TRANSFORM_IMPLEMENTATION
+        const cyclicFvPatch &cPatch=refCast<const cyclicFvPatch>(
+            this->patch()
+        );
+        forAll(pnf, facei)
+        {
+            pnf[facei] = cPatch.transform().transform(iField[nbrFaceCells[facei]]);
+        }
+#else
         bool doTransform=!(cyclicPatch.parallel() || pTraits<Type>::rank==0);
         if (doTransform)
         {
@@ -262,6 +271,7 @@ tmp<Field<Type> > groovyBCFvPatchField<Type>::patchNeighbourField() const
                 pnf[facei] = iField[nbrFaceCells[facei]];
             }
         }
+#endif
         return tpnf;
 #else
         FatalErrorInFunction

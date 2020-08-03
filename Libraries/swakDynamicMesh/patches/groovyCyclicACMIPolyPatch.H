@@ -104,15 +104,13 @@ public:
     // Constructors
 
         //- Construct from (base couped patch) components
-        groovyCyclicACMIPolyPatch
-        (
-            const word& name,
-            const label size,
-            const label start,
-            const label index,
-            const polyBoundaryMesh& bm,
-            const word& patchType,
-            const transformType transform = UNKNOWN
+    groovyCyclicACMIPolyPatch(const word &name, const label size,
+                              const label start, const label index,
+                              const polyBoundaryMesh &bm,
+                              const word &patchType
+#ifndef FOAM_CYCLIC_FV_PATCH_NEW_TRANSFORM_IMPLEMENTATION
+                              ,const transformType transform = UNKNOWN
+#endif
         );
 
         //- Construct from dictionary

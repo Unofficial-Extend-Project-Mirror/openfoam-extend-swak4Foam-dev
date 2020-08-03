@@ -261,11 +261,18 @@ Foam::groovyCyclicACMIPolyPatch::groovyCyclicACMIPolyPatch
     const label start,
     const label index,
     const polyBoundaryMesh& bm,
-    const word& patchType,
-    const transformType transform
+    const word& patchType
+#ifndef FOAM_CYCLIC_FV_PATCH_NEW_TRANSFORM_IMPLEMENTATION
+    ,const transformType transform
+#endif
 )
 :
-    cyclicACMIPolyPatch(name, size, start, index, bm, patchType, transform),
+    cyclicACMIPolyPatch(
+        name, size, start, index, bm, patchType
+#ifndef FOAM_CYCLIC_FV_PATCH_NEW_TRANSFORM_IMPLEMENTATION
+        , transform
+#endif
+    ),
     meshReady_(false),
     openField_(word::null)
 {
