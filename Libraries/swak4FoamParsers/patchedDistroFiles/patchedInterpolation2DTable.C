@@ -30,7 +30,13 @@ Contributors/Copyright:
 \*---------------------------------------------------------------------------*/
 
 #include "IFstream.H"
+
+#ifdef FOAM_OPENFOAMTABLEREADER_IS_FOAMTABLEREADER
+#include "FoamTableReader.H"
+#define openFoamTableReader TableReaders::Foam
+#else
 #include "openFoamTableReader.H"
+#endif
 
 // * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * * //
 

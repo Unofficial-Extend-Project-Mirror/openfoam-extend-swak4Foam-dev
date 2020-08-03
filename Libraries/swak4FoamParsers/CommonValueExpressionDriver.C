@@ -381,7 +381,11 @@ void CommonValueExpressionDriver::readTables(const dictionary &dict)
 
 #ifdef FOAM_HAS_INTERPOLATION2DTABLE
     if(dict.found("lookuptables2D")) {
+#ifdef FOAM_INTERPOLATION_TABLE_2D_INTERFACE_DIFFERS
+        readTables2D(dict.lookup("lookuptables2D"),lookup2D_);
+#else
         readTables(dict.lookup("lookuptables2D"),lookup2D_);
+#endif
     }
 #endif
 
@@ -914,7 +918,11 @@ Ostream &CommonValueExpressionDriver::writeCommon(Ostream &os,bool debug) const
 
 #ifdef FOAM_HAS_INTERPOLATION2DTABLE
     os.writeKeyword("lookuptables2D");
+#ifdef FOAM_INTERPOLATION_TABLE_2D_INTERFACE_DIFFERS
+    writeTables2D(os,lookup2D_);
+#else
     writeTables(os,lookup2D_);
+#endif
     os << token::END_STATEMENT << nl;
 #endif
 
@@ -1204,9 +1212,16 @@ tmp<scalarField> CommonValueExpressionDriver::getLine(
     scalar t
 )
 {
-    return tmp<scalarField>(
-        new scalarField(this->size(),lines_[name](t))
-    );
+  return tmp<scalarField>(
+      new scalarField(
+          this->size(),
+#ifdef FOAM_INTERPOLATION_TABLE_MOVE_TO_TABLE_FILE
+          lines_[name].value(t)
+#else
+          lines_[name](t)
+#endif
+      )
+  );
 }
 
 tmp<scalarField> CommonValueExpressionDriver::getLookup(
@@ -1220,7 +1235,12 @@ tmp<scalarField> CommonValueExpressionDriver::getLookup(
     const interpolationTable<scalar> &table=lookup_[name];
 
     forAll(val,i) {
-        const_cast<scalar&>(result()[i])=table(val[i]);
+      const_cast<scalar &>(result()[i]) =
+#ifdef FOAM_INTERPOLATION_TABLE_MOVE_TO_TABLE_FILE
+          table.value(val[i]);
+#else
+          table(val[i]);
+#endif
     }
 
     return tmp<scalarField>(result);
@@ -1253,7 +1273,11 @@ tmp<scalarField> CommonValueExpressionDriver::getLookup2D(
 
 scalar CommonValueExpressionDriver::getLineValue(const word &name,scalar t)
 {
-    return lines_[name](t);
+#ifdef FOAM_INTERPOLATION_TABLE_MOVE_TO_TABLE_FILE
+  return lines_[name].value(t);
+#else
+  return lines_[name](t);
+#endif
 }
 
 tmp<scalarField> CommonValueExpressionDriver::makeGaussRandomField(
@@ -1611,6 +1635,29 @@ void CommonValueExpressionDriver::addVariables(
     }
 }
 
+#ifdef FOAM_INTERPOLATION_TABLE_2D_INTERFACE_DIFFERS
+template <class Type>
+void CommonValueExpressionDriver::readTables2D(
+    Istream &is,
+    HashTable<interpolation2DTable<Type>> &tables,
+    bool clear
+) {
+  if (clear) {
+    tables.clear();
+  }
+  List<dictionary> lines(is);
+
+  forAll(lines, i) {
+    const dictionary &dict = lines[i];
+    word name(dict.lookup("name"));
+    tables.insert(
+        name,
+        interpolation2DTable<Type>(dict)
+    );
+  }
+}
+#endif
+
 template<class TableType>
 void CommonValueExpressionDriver::readTables(
     Istream &is,
@@ -1625,9 +1672,40 @@ void CommonValueExpressionDriver::readTables(
 
     forAll(lines,i) {
         const dictionary &dict=lines[i];
-        tables.insert(word(dict.lookup("name")), TableType(dict));
+        word name(dict.lookup("name"));
+        tables.insert(
+            name,
+#ifdef FOAM_INTERPOLATION_TABLE_MOVE_TO_TABLE_FILE
+            TableType(name, dict)
+#else
+            TableType(dict)
+#endif
+        );
     }
 }
+
+#ifdef FOAM_INTERPOLATION_TABLE_2D_INTERFACE_DIFFERS
+template<class Type>
+void CommonValueExpressionDriver::writeTables2D(
+    Ostream &os,
+    const HashTable<interpolation2DTable<Type> > &tables
+) const
+{
+    os << token::BEGIN_LIST << nl;
+    forAllConstIter(typename HashTable<interpolation2DTable<Type> >,tables,it) {
+        os << token::BEGIN_BLOCK << nl;
+        os.writeKeyword("name") << it.key() << token::END_STATEMENT << nl;
+        // (*it).write(os);   //
+        // Problem: slowdata/OpenFOAMInstallations/OpenFOAM-Ubuntu/OpenFOAM-8/src/OpenFOAM/lnInclude/interpolation2DTable.C:430:13: error: ‘const class Foam::autoPtr<Foam::TableReader<double> >’ has no member named ‘write’
+        // reader_.write(os);
+        WarningInFunction
+            << "Writing for interpolationTable2D not correctly implemented"
+                << endl;
+        os << token::END_BLOCK << nl;
+    }
+    os << token::END_LIST;
+}
+#endif
 
 template<class TableType>
 void CommonValueExpressionDriver::writeTables(
@@ -1638,8 +1716,12 @@ void CommonValueExpressionDriver::writeTables(
     os << token::BEGIN_LIST << nl;
     forAllConstIter(typename HashTable<TableType>,tables,it) {
         os << token::BEGIN_BLOCK << nl;
+#ifdef FOAM_INTERPOLATION_TABLE_MOVE_TO_TABLE_FILE
+        (*it).writeEntries(os);
+#else
         os.writeKeyword("name") << it.key() << token::END_STATEMENT << nl;
         (*it).write(os);
+#endif
         os << token::END_BLOCK << nl;
     }
     os << token::END_LIST;
