@@ -602,7 +602,8 @@ Contributors/Copyright:
 #define FOAM_UNIFIED_SURFACE_WRITERS
 #endif
 
-#if (OPENFOAM_COM >= 1902)
+#if (OPENFOAM_COM >= 1902) || (defined(FOAM_VERSION4SWAK_IS_ORG) &&            \
+                               FOAM_VERSION4SWAK >= VERSION_NR(8, 0, 0))
 #define FOAM_HASH_WORD_LIST_CONTAINS_DEPRECATED
 #endif
 
