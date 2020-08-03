@@ -64,16 +64,34 @@ loadCompressibleTurbulenceModelFunctionObject::loadCompressibleTurbulenceModelFu
     const dictionary& dict
 )
 :
-    modelLoadingFunctionObject<compressible::turbulenceModel>(name,t,dict)
+    modelLoadingFunctionObject<
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+          compressible::momentumTransportModel
+#else
+          compressible::turbulenceModel
+#endif
+    >(name,t,dict)
 {
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-    autoPtr<compressible::turbulenceModel> loadCompressibleTurbulenceModelFunctionObject::initModel()
+    autoPtr<
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+          compressible::momentumTransportModel
+#else
+          compressible::turbulenceModel
+#endif
+        > loadCompressibleTurbulenceModelFunctionObject::initModel()
 {
-    return compressible::turbulenceModel::New(
+    return
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+          compressible::momentumTransportModel
+#else
+          compressible::turbulenceModel
+#endif
+        ::New(
         obr().lookupObject<volScalarField>(
             word(dict_.lookup("rhoName"))
         ),

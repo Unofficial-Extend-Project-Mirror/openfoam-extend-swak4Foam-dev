@@ -40,6 +40,8 @@ Contributors/Copyright:
 #ifndef swakTransportModelsPluginFunction_H
 #define swakTransportModelsPluginFunction_H
 
+#include "swak.H"
+
 #include "FieldValuePluginFunction.H"
 
 #include "runTimeSelectionTables.H"

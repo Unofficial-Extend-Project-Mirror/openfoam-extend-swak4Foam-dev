@@ -46,7 +46,13 @@ Contributors/Copyright:
 #include "swakTurbulence.H"
 
 #ifdef FOAM_NEW_TURBULENCE_STRUCTURE
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+#include "compressibleMomentumTransportModel.H"
+#include "fluidThermoMomentumTransportModel.H"
+#include "singlePhaseTransportModel.H"
+#else
 #include "turbulentFluidThermoModel.H"
+#endif
 #else
 #include "compressible/turbulenceModel/turbulenceModel.H"
 #endif
@@ -62,7 +68,13 @@ namespace Foam
 
 class loadCompressibleTurbulenceModelFunctionObject
 :
-    public modelLoadingFunctionObject<compressible::turbulenceModel>
+    public modelLoadingFunctionObject<
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+          compressible::momentumTransportModel
+#else
+          compressible::turbulenceModel
+#endif
+    >
 {
     // Private Member Functions
 
@@ -73,7 +85,13 @@ class loadCompressibleTurbulenceModelFunctionObject
     void operator=(const loadCompressibleTurbulenceModelFunctionObject&);
 
 protected:
-    virtual autoPtr<compressible::turbulenceModel> initModel();
+    virtual autoPtr<
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+          compressible::momentumTransportModel
+#else
+          compressible::turbulenceModel
+#endif
+    > initModel();
 
 public:
 
