@@ -182,7 +182,11 @@ public:
                     index,
                     newSize,
                     newStart,
+#ifdef FOAM_NEIGHBOUR_IS_NOW_NBR_PATCHFIELD
+                    nbrPatchName(),
+#else
                     neighbPatchName(),
+#endif
                     nonOverlapPatchName(),
                     openField_
                 )

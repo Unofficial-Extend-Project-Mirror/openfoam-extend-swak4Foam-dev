@@ -37,6 +37,11 @@ Contributors/Copyright:
 #include "immersedBoundaryFvPatch.H"
 #endif
 
+#ifdef FOAM_NEIGHBOUR_IS_NOW_NBR_PATCHFIELD
+#define neighbPatch nbrPatch
+#define neighbPatchID nbrPatchID
+#endif
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
