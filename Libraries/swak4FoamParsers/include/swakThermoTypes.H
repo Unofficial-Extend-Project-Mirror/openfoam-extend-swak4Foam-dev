@@ -84,6 +84,13 @@ namespace Foam {
 #define FOAM_NO_PSICHEMISTRY_MODEL
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) &&   FOAM_VERSION4SWAK >= VERSION_NR(8, 0, 0))
+#define FOAM_PRESSURE_MOVED_TO_FLUID_THERMO
+#endif
+
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK >= VERSION_NR(8, 0, 0))
+#define FOAM_BASICTHERMO_METHOD_HE_NO_PRESSURE
+#endif
 
 #include "DebugOStream.H"
 
