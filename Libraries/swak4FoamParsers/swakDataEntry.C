@@ -36,7 +36,11 @@ Contributors/Copyright:
 namespace Foam {
 
 #ifdef FOAM_DATAENTRY_IS_NOW_FUNCTION1
+#ifdef FOAM_FUNCTION1NAMESPACE_IS_NOW_1S
+namespace Function1s {
+#else
 namespace Function1Types {
+#endif
 #endif
 
 template<class Type>

@@ -45,7 +45,13 @@ Contributors/Copyright:
 #include "swakTurbulence.H"
 
 #ifdef FOAM_NEW_TURBULENCE_STRUCTURE
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+#include "compressibleMomentumTransportModel.H"
+#include "fluidThermoMomentumTransportModel.H"
+#include "singlePhaseTransportModel.H"
+#else
 #include "turbulentFluidThermoModel.H"
+#endif
 #else
 #include "turbulenceModel.H"
 #endif
@@ -68,9 +74,23 @@ class swakCompressibleTurbulencePluginFunction
     swakCompressibleTurbulencePluginFunction(const swakCompressibleTurbulencePluginFunction &);
 
 protected:
-    static const compressible::turbulenceModel &turbInternal(const fvMesh &reg);
+  static const
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+      compressible::momentumTransportModel
+#else
+      compressible::turbulenceModel
+#endif
+      &
+      turbInternal(const fvMesh &reg);
 
-    const compressible::turbulenceModel &turb();
+  const
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+      compressible::momentumTransportModel
+#else
+      compressible::turbulenceModel
+#endif
+          &
+          turb();
 
 public:
     swakCompressibleTurbulencePluginFunction(

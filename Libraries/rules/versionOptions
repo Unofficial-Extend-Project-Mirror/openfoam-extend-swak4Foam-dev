@@ -63,6 +63,15 @@ ifdef OPENFOAM_COM
 endif
 # -----------------------------------------------------------------------------
 
+ifdef OPENFOAM_ORG
+  $(info OpenFOAM.org version $(OPENFOAM_ORG))
+  ifeq "8" "$(word 1, $(sort 8 $(OPENFOAM_ORG)))"
+    FOAM_TURBULENCE_IS_NOW_MOMENTUM_TRANSPORT=yes
+  endif
+endif
+
+# -----------------------------------------------------------------------------
+
 ifeq "dev" "$(WM_PROJECT_VERSION)"
   $(info Appears to be an OpenFOAM.org development version)
   WMAKE_NEW_CONVENTION=new
@@ -90,6 +99,11 @@ ifeq "$(FOAM_UNIFIEDTURBULENCE)" "yes"
   INCOMPRESSIBLE_TURB_ALL_LIBS=
   COMPRESSIBLE_TURB_ALL_LIBS=
   RADIATION_INC=-I$(LIB_SRC)/thermophysicalModels/radiation/lnInclude
+endif
+
+ifeq "$(FOAM_TURBULENCE_IS_NOW_MOMENTUM_TRANSPORT)" "yes"
+  INCOMPRESSIBLE_TURB_LIB=-lmomentumTransportModels -lincompressibleMomentumTransportModels
+  COMPRESSIBLE_TURB_LIB=-lmomentumTransportModels -lfluidThermoMomentumTransportModels
 endif
 
 ifdef FOAM_DEV

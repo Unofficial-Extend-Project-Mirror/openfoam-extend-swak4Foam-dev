@@ -62,16 +62,34 @@ loadIncompressibleTurbulenceModelFunctionObject::loadIncompressibleTurbulenceMod
     const dictionary& dict
 )
 :
-    modelLoadingFunctionObject<incompressible::turbulenceModel>(name,t,dict)
+    modelLoadingFunctionObject<
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+          incompressible::momentumTransportModel
+#else
+          incompressible::turbulenceModel
+#endif
+    >(name,t,dict)
 {
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-    autoPtr<incompressible::turbulenceModel> loadIncompressibleTurbulenceModelFunctionObject::initModel()
+    autoPtr<
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+          incompressible::momentumTransportModel
+#else
+          incompressible::turbulenceModel
+#endif
+        > loadIncompressibleTurbulenceModelFunctionObject::initModel()
 {
-    return incompressible::turbulenceModel::New(
+    return
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+          incompressible::momentumTransportModel
+#else
+          incompressible::turbulenceModel
+#endif
+        ::New(
         obr().lookupObject<volVectorField>(
             word(dict_.lookup("UName"))
         ),

@@ -28,6 +28,8 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "swak.H"
+
 #include "groovyTotalPressureFvPatchScalarField.H"
 #include "addToRunTimeSelectionTable.H"
 #include "fvPatchFieldMapper.H"
@@ -114,7 +116,12 @@ void Foam::groovyTotalPressureFvPatchScalarField::updateCoeffs()
 
     driver_.clearVariables();
 
-    p0()=driver_.evaluate<scalar>(this->p0Expression_);
+#ifdef FOAM_TOTAL_PRESSURE_HAS_NO_P0_METHOD
+    p0_=
+#else
+    p0()=
+#endif
+        driver_.evaluate<scalar>(this->p0Expression_);
 
     totalPressureFvPatchScalarField::updateCoeffs();
 }

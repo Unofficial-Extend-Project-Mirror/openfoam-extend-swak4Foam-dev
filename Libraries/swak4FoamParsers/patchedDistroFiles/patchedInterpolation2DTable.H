@@ -43,7 +43,12 @@ Contributors/Copyright:
 
 #include "List.H"
 #include "Tuple2.H"
+#ifdef FOAM_TABLE_READER_IS_NOW_UPPERCASE
+#include "TableReader.H"
+#define tableReader TableReader
+#else
 #include "tableReader.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

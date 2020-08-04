@@ -4348,6 +4348,9 @@ S_{expl} + S_{impl} T
 # End:
 ** Next release - version number : 20xx.yy
 *** New supported versions
+**** Support for OpenFOAM 8
+     This version compiles with the version 8 of the Foundation Fork
+     of OpenFOAM
 *** Incompatibilities
 *** Bug fixes
 **** =funkySetLagrangianField= does not load fluid fields correctly

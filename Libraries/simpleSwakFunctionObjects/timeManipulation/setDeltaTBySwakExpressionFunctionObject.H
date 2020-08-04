@@ -50,7 +50,11 @@ Contributors/Copyright:
 namespace Foam
 {
 #ifdef FOAM_DATAENTRY_IS_NOW_FUNCTION1
-    using namespace Function1Types;
+#ifdef FOAM_FUNCTION1NAMESPACE_IS_NOW_1S
+using namespace Function1s;
+#else
+using namespace Function1Types;
+#endif
 #endif
 
 /*---------------------------------------------------------------------------*\
