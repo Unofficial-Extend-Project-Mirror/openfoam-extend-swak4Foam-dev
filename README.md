@@ -1473,7 +1473,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orge4216d9) below). Don't work on the
+details see [6.2.2](#org59eaed9) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1529,7 +1529,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orge4216d9"></a>
+<a id="org59eaed9"></a>
 
 ### Repository organization
 
@@ -6797,6 +6797,12 @@ objects that exists in the ESI-fork
 
 
 ### New supported versions
+
+
+#### Support for OpenFOAM 8
+
+This version compiles with the version 8 of the Foundation Fork
+of OpenFOAM
 
 
 ### Incompatibilities
