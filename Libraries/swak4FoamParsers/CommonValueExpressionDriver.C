@@ -1984,7 +1984,7 @@ string CommonValueExpressionDriver::outputEntry()
     OStringStream o;
 
     word rType=getResultType();
-    if(rType==pTraits<scalar>::typeName) {
+    if(rType==pTiteEraits<scalar>::typeName) {
 #ifdef FOAM_WRITEENTRY_NOT_MEMBER_OF_LIST
         writeEntry(o,result_.getResult<scalar>(true)());
 #else
