@@ -38,12 +38,15 @@ baffles
             {
                 //- Master side patch
                 name            ACMI1_couple;
-                type            groovyCyclicACMI;
+                type            cyclicACMI;
                 matchTolerance  0.0001;
                 neighbourPatch  ACMI2_couple;
                 nonOverlapPatch ACMI1_blockage;
+<!--(if foamFork == "openfoam" and foamVersion >= (8, ))-->
+                transform none;
+<!--(else)-->
                 transform       noOrdering;
-                openField       valveField;
+<!--(end)-->
             }
             slave // not used since we're manipulating a boundary patch
             {
@@ -79,12 +82,15 @@ baffles
             {
                 //- Master side patch
                 name            ACMI2_couple;
-                type            groovyCyclicACMI;
+                type            cyclicACMI;
                 matchTolerance  0.0001;
                 neighbourPatch  ACMI1_couple;
                 nonOverlapPatch ACMI2_blockage;
+<!--(if foamFork == "openfoam" and foamVersion >= (8, ))-->
+                transform none;
+<!--(else)-->
                 transform       noOrdering;
-                openField       valveField;
+<!--(end)-->
             }
             slave // not used since we're manipulating a boundary patch
             {
