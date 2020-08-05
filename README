@@ -4341,16 +4341,13 @@ S_{expl} + S_{impl} T
 **** =runTimeCondition/simpleSwakCar= to demonstrate runtime-control in the ESI fork
      This example demonstrates the runtime-control for function
      objects that exists in the ESI-fork
-
-
-# Local Variables:
-# eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
-# End:
 ** Next release - version number : 20xx.yy
 *** New supported versions
 **** Support for OpenFOAM 8
      This version compiles with the version 8 of the Foundation Fork
      of OpenFOAM
+**** Support for OpenFOAM v2006
+     Compiles and tested with version v2006 of the ESI Fork
 *** Incompatibilities
 *** Bug fixes
 **** =funkySetLagrangianField= does not load fluid fields correctly
@@ -4361,3 +4358,9 @@ S_{expl} + S_{impl} T
 *** New features
 *** Enhancements
 *** Examples
+
+
+
+# Local Variables:
+# eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
+# End:
