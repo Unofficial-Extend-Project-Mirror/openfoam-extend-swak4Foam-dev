@@ -47,53 +47,64 @@ Contributors/Copyright:
 
 #ifdef FOAM_NEW_TURBULENCE_STRUCTURE
 #include "singlePhaseTransportModel.H"
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+#include "incompressibleMomentumTransportModel.H"
+#include "singlePhaseTransportModel.H"
+#include "kinematicMomentumTransportModel.H"
+#else
 #include "turbulentTransportModel.H"
+#endif
 #else
 #include "incompressible/turbulenceModel/turbulenceModel.H"
 #endif
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    // //
 
-namespace Foam
-{
+    namespace Foam {
 
 /*---------------------------------------------------------------------------*\
                            Class loadIncompressibleTurbulenceModelFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class loadIncompressibleTurbulenceModelFunctionObject
-:
-    public modelLoadingFunctionObject<incompressible::turbulenceModel>
-{
-    // Private Member Functions
+    class loadIncompressibleTurbulenceModelFunctionObject
+        : public modelLoadingFunctionObject<
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+        incompressible::momentumTransportModel
+#else
+        incompressible::turbulenceModel
+#endif
+        > {
+      // Private Member Functions
 
-    //- Disallow default bitwise copy construct
-    loadIncompressibleTurbulenceModelFunctionObject(const loadIncompressibleTurbulenceModelFunctionObject&);
+      //- Disallow default bitwise copy construct
+      loadIncompressibleTurbulenceModelFunctionObject(
+          const loadIncompressibleTurbulenceModelFunctionObject &);
 
-    //- Disallow default bitwise assignment
-    void operator=(const loadIncompressibleTurbulenceModelFunctionObject&);
+      //- Disallow default bitwise assignment
+      void operator=(const loadIncompressibleTurbulenceModelFunctionObject &);
 
-protected:
-    virtual autoPtr<incompressible::turbulenceModel> initModel();
+    protected:
+      virtual autoPtr<
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+          incompressible::momentumTransportModel
+#else
+          incompressible::turbulenceModel
+#endif
+        >
+      initModel();
 
-public:
+    public:
+      //- Runtime type information
+      TypeName("loadIncompressibleTurbulenceModelFunctionObject");
 
-    //- Runtime type information
-    TypeName("loadIncompressibleTurbulenceModelFunctionObject");
+      // Constructors
 
-
-    // Constructors
-
-    //- Construct from components
-    loadIncompressibleTurbulenceModelFunctionObject
-    (
-        const word&,
-        const Time&,
-        const dictionary&
-    );
-
-};
-
+      //- Construct from components
+      loadIncompressibleTurbulenceModelFunctionObject(const word &,
+                                                      const Time &,
+                                                      const dictionary &);
+    };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

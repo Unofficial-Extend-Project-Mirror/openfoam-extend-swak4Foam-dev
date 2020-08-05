@@ -31,7 +31,7 @@ Contributors/Copyright:
 
 #include "foamVersion4swak.H"
 
-#include "swak.H"
+#include "swakThermoTypes.H"
 
 #ifdef FOAM_PATCHFIELDTYPE_IN_GEOFIELD_IS_NOW_PATCH
 #define PatchFieldType Patch
@@ -47,7 +47,13 @@ Contributors/Copyright:
 #include "IOmanip.H"
 #include "swakTime.H"
 
+#ifdef FOAM_PRESSURE_MOVED_TO_FLUID_THERMO
+#include "fluidThermo.H"
+#define BasicThermo fluidThermo
+#else
 #include "basicThermo.H"
+#define BasicThermo basicThermo
+#endif
 
 #include "fixedEnergyFvPatchScalarField.H"
 #include "gradientEnergyFvPatchScalarField.H"
@@ -85,13 +91,15 @@ recalcThermoHeFunctionObject::recalcThermoHeFunctionObject
 
 void recalcThermoHeFunctionObject::recalc()
 {
-    basicThermo &thermo=const_cast<basicThermo&>(
-        obr_.lookupObject<basicThermo>("thermophysicalProperties")
+    BasicThermo &thermo=const_cast<BasicThermo&>(
+        obr_.lookupObject<BasicThermo>("thermophysicalProperties")
     );
     Info << "Recalculating enthalpy h" << endl;
 
     const volScalarField &T=thermo.T();
+#ifndef FOAM_BASICTHERMO_METHOD_HE_NO_PRESSURE
     const volScalarField &p=thermo.p();
+#endif
 
     volScalarField &h=thermo.he();
 
@@ -105,7 +113,9 @@ void recalcThermoHeFunctionObject::recalc()
     h.internalField()
 #endif
     = thermo.he(
+#ifndef FOAM_BASICTHERMO_METHOD_HE_NO_PRESSURE
         p.internalField(),
+#endif
         T.internalField(),
         allCells
     );
@@ -113,7 +123,9 @@ void recalcThermoHeFunctionObject::recalc()
     {
         const_cast<volScalarField::PatchFieldType&>(h.boundaryField()[patchi]) ==
             thermo.he(
+#ifndef FOAM_BASICTHERMO_METHOD_HE_NO_PRESSURE
                 p.boundaryField()[patchi],
+#endif
                 T.boundaryField()[patchi],
                 patchi
             );

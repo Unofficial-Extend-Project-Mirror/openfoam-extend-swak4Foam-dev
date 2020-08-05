@@ -61,20 +61,31 @@ swakCompressibleTurbulencePluginFunction::swakCompressibleTurbulencePluginFuncti
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-    const compressible::turbulenceModel &swakCompressibleTurbulencePluginFunction::turbInternal(
+const
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+compressible::momentumTransportModel
+#else
+compressible::turbulenceModel
+#endif
+&swakCompressibleTurbulencePluginFunction::turbInternal(
     const fvMesh &reg
 )
 {
-    static HashPtrTable<compressible::turbulenceModel> turb_;
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+    typedef compressible::momentumTransportModel compressibleTurbulenceModel;
+#else
+    typedef compressible::turbulenceModel compressibleTurbulenceModel;
+#endif
 
-    if(reg.foundObject<compressible::turbulenceModel>("turbulenceProperties")) {
+    static HashPtrTable<compressibleTurbulenceModel> turb_;
+
+    if(reg.foundObject<compressibleTurbulenceModel>("turbulenceProperties")) {
         if(debug) {
             Info << "swakCompressibleTurbulencePluginFunction::turbInternal: "
                 << "turbulence already in memory" << endl;
         }
         // Somebody else already registered this
-        return reg.lookupObject<compressible::turbulenceModel>("turbulenceProperties");
+        return reg.lookupObject<compressibleTurbulenceModel>("turbulenceProperties");
     }
     if(reg.foundObject<compressible::LESModel>("LESProperties")) {
         if(debug) {
@@ -101,7 +112,7 @@ swakCompressibleTurbulencePluginFunction::swakCompressibleTurbulencePluginFuncti
 
         turb_.set(
             reg.name(),
-            compressible::turbulenceModel::New(
+            compressibleTurbulenceModel::New(
                 // reg.lookupObject<volScalarField>("rho"),
                 thermoInternal(reg).rho(),
                 reg.lookupObject<volVectorField>("U"),
@@ -114,7 +125,13 @@ swakCompressibleTurbulencePluginFunction::swakCompressibleTurbulencePluginFuncti
     return *(turb_[reg.name()]);
 }
 
-    const compressible::turbulenceModel &swakCompressibleTurbulencePluginFunction::turb()
+const
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+compressible::momentumTransportModel
+#else
+compressible::turbulenceModel
+#endif
+&swakCompressibleTurbulencePluginFunction::turb()
 {
     return turbInternal(mesh());
 }
@@ -148,16 +165,50 @@ public:                                                            \
 defineTypeNameAndDebug(swakCompressibleTurbulencePluginFunction_ ## funcName,0);  \
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakCompressibleTurbulencePluginFunction_ ## funcName,name,rhoTurb_ ## funcName);
 
+#define movedConcreteTurbFunction(funcName,resultType)                  \
+class swakCompressibleTurbulencePluginFunction_ ## funcName        \
+: public swakCompressibleTurbulencePluginFunction                  \
+{                                                                  \
+public:                                                            \
+    TypeName("swakCompressibleTurbulencePluginFunction_" #funcName);       \
+    swakCompressibleTurbulencePluginFunction_ ## funcName (        \
+        const FieldValueExpressionDriver &parentDriver,            \
+        const word &name                                           \
+    ): swakCompressibleTurbulencePluginFunction(                   \
+        parentDriver,                                              \
+        name,                                                      \
+        #resultType                                                \
+    ) {}                                                           \
+    void doEvaluation() {                                          \
+        FatalErrorInFunction                                            \
+            << "Function " #funcName " no longer part of the turbulence model in this Foam-version" \
+                << endl                                                 \
+                << exit(FatalError);                               \
+    }                                                              \
+};                                                                 \
+defineTypeNameAndDebug(swakCompressibleTurbulencePluginFunction_ ## funcName,0);  \
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakCompressibleTurbulencePluginFunction_ ## funcName,name,rhoTurb_ ## funcName);
+
 concreteTurbFunction(mut,volScalarField);
 concreteTurbFunction(muEff,volScalarField);
-concreteTurbFunction(alphaEff,volScalarField);
 concreteTurbFunction(k,volScalarField);
 concreteTurbFunction(epsilon,volScalarField);
-concreteTurbFunction(R,volSymmTensorField);
-concreteTurbFunction(devRhoReff,volSymmTensorField);
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+movedConcreteTurbFunction(alphaEff, volScalarField);
+movedConcreteTurbFunction(R, volSymmTensorField);
+movedConcreteTurbFunction(devRhoReff, volSymmTensorField);
+#else
+concreteTurbFunction(alphaEff, volScalarField);
+concreteTurbFunction(R, volSymmTensorField);
+concreteTurbFunction(devRhoReff, volSymmTensorField);
+#endif
 
 #ifdef FOAM_HAS_FLUIDTHERMO
-concreteTurbFunction(kappaEff,volScalarField);
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+movedConcreteTurbFunction(kappaEff, volScalarField);
+#else
+concreteTurbFunction(kappaEff, volScalarField);
+#endif
 #ifndef FOAM_NEW_TURBULENCE_STRUCTURE
 concreteTurbFunction(rhoEpsilonEff,volScalarField);
 #endif

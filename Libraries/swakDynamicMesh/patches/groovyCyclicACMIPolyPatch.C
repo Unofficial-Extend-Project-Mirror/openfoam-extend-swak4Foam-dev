@@ -183,7 +183,13 @@ void Foam::groovyCyclicACMIPolyPatch::resetAMI
         if (tgtMask.size())
         {
             const cyclicACMIPolyPatch& cp =
-                refCast<const cyclicACMIPolyPatch>(this->neighbPatch());
+                refCast<const cyclicACMIPolyPatch>(
+#ifdef FOAM_NEIGHBOUR_IS_NOW_NBR_PATCHFIELD
+                    this->nbrPatch()
+#else
+                    this->neighbPatch()
+#endif
+                );
             const polyPatch& pp = cp.nonOverlapPatch();
 
             vectorField::subField Sf = cp.faceAreas();
@@ -255,11 +261,18 @@ Foam::groovyCyclicACMIPolyPatch::groovyCyclicACMIPolyPatch
     const label start,
     const label index,
     const polyBoundaryMesh& bm,
-    const word& patchType,
-    const transformType transform
+    const word& patchType
+#ifndef FOAM_CYCLIC_FV_PATCH_NEW_TRANSFORM_IMPLEMENTATION
+    ,const transformType transform
+#endif
 )
 :
-    cyclicACMIPolyPatch(name, size, start, index, bm, patchType, transform),
+    cyclicACMIPolyPatch(
+        name, size, start, index, bm, patchType
+#ifndef FOAM_CYCLIC_FV_PATCH_NEW_TRANSFORM_IMPLEMENTATION
+        , transform
+#endif
+    ),
     meshReady_(false),
     openField_(word::null)
 {

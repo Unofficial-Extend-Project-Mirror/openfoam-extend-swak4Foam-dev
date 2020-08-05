@@ -40,7 +40,15 @@ Contributors/Copyright:
 #include "solidThermo.H"
 #endif
 
-namespace Foam {
+#ifdef FOAM_PRESSURE_MOVED_TO_FLUID_THERMO
+#include "fluidThermo.H"
+#define BasicThermo fluidThermo
+#else
+#include "basicThermo.H"
+#define BasicThermo basicThermo
+#endif
+
+    namespace Foam {
 
 #ifdef FOAM_HAS_FLUIDTHERMO
 defineTemplateTypeNameAndDebug(swakThermophysicalPluginFunction<swakFluidThermoType>,0);
@@ -328,7 +336,7 @@ public:                                                            \
 defineTypeNameAndDebug(swakThermophysicalPluginFunction_ ## funcName,0);  \
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakThermophysicalPluginFunction_ ## funcName,name,thermo_ ## funcName);
 
-concreteThermoFunction(p,volScalarField,basicThermo);
+concreteThermoFunction(p,volScalarField,BasicThermo);
 concreteThermoFunction(rho,volScalarField,basicThermo);
 concreteThermoFunction(psi,volScalarField,swakFluidThermoType);
 #ifdef FOAM_HAS_FLUIDTHERMO
@@ -347,7 +355,7 @@ concreteThermoFunction(mu,volScalarField,swakFluidThermoType);
 concreteThermoFunction(alpha,volScalarField,basicThermo);
 
 #ifdef FOAM_HAS_FLUIDTHERMO
-concreteThermoFunction(gamma,volScalarField,basicThermo);
+concreteThermoFunction(gamma,volScalarField,BasicThermo);
 concreteThermoFunction(Cpv,volScalarField,basicThermo);
 concreteThermoFunction(CpByCpv,volScalarField,basicThermo);
 concreteThermoFunction(kappa,volScalarField,basicThermo);

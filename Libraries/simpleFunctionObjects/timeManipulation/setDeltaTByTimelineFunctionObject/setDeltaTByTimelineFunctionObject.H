@@ -43,7 +43,12 @@ Contributors/Copyright:
 
 #include "timeManipulationFunctionObject.H"
 
+#ifdef FOAM_INTERPOLATION_TABLE_MOVE_TO_TABLE_FILE
+#include "TableFile.H"
+#define interpolationTable Function1s::TableFile
+#else
 #include "interpolationTable.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
