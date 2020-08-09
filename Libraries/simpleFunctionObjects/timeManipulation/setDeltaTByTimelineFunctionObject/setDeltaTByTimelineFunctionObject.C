@@ -52,21 +52,25 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-setDeltaTByTimelineFunctionObject::setDeltaTByTimelineFunctionObject
-(
-    const word &name,
-    const Time& t,
-    const dictionary& dict
-)
-:
-    timeManipulationFunctionObject(name,t,dict),
-    deltaTTable_(dict_.subDict("deltaTTable"))
+    setDeltaTByTimelineFunctionObject::setDeltaTByTimelineFunctionObject(
+        const word &name, const Time &t, const dictionary &dict)
+        : timeManipulationFunctionObject(name, t, dict), deltaTTable_(
+#ifdef FOAM_INTERPOLATION_TABLE_MOVE_TO_TABLE_FILE
+            name,
+#endif
+            dict_.subDict("deltaTTable")
+    )
 {
 }
 
 scalar setDeltaTByTimelineFunctionObject::deltaT()
 {
-    return deltaTTable_(time().value());
+  return deltaTTable_
+#ifdef FOAM_INTERPOLATION_TABLE_MOVE_TO_TABLE_FILE
+      .value(time().value());
+#else
+      (time().value());
+#endif
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

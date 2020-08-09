@@ -156,6 +156,10 @@ namespace Foam {
 #define FOAM_PARTICLE_STREAM_CONSTRUCTOR_WITH_NEW_FORMAT
 #endif
 
+#if (OPENFOAM_COM >= 2004)
+#define FOAM_CLOUD_FUNCTION_OBJECT_PRE_POST_EVOLVE_WITH_TD
+#endif
+
 #include "DebugOStream.H"
 
 #endif

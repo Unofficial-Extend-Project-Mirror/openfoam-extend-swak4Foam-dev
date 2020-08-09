@@ -10,7 +10,9 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
+<!--(if foamFork!="openfoamplus" or foamVersion<2006)-->
 direction       both;
+<!--(end)-->
 
 seedSampleSet
 {

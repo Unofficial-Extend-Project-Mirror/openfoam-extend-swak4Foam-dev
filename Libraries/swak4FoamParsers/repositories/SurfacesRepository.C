@@ -30,6 +30,7 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "IOstream.H"
 #include "swak.H"
 
 #include "SurfacesRepository.H"
@@ -173,7 +174,12 @@ sampledSurface &SurfacesRepository::getSurface(
             // Just to check whether the format actually exists
             autoPtr<scalarSurfaceWriter> surfWriter
             (
-                scalarSurfaceWriter::New(format)
+                scalarSurfaceWriter::New(
+                    format
+#ifdef FOAM_SURFACE_WRITER_NEW_NEEDS_DICT
+                    ,dict
+#endif
+                )
             );
 
             if(writeSurface) {
@@ -230,7 +236,12 @@ bool SurfacesRepository::writeData(Ostream &f) const
         const sampledSurface &surf=*surfaces_[name];
 
         autoPtr<scalarSurfaceWriter> surfWriter(
-            scalarSurfaceWriter::New(format)
+            scalarSurfaceWriter::New(
+                format
+#ifdef FOAM_SURFACE_WRITER_NEW_NEEDS_DICT
+                ,IOstream::ASCII
+#endif
+            )
         );
 
 #ifdef FOAM_UNIFIED_SURFACE_WRITERS

@@ -14,7 +14,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-$$ oldFormat=(foamFork not in ["openfoam"]) or (foamFork=="openfoam" and foamVersion<(4,))
+$$ oldFormat=foamFork!="openfoamplus" and ((foamFork not in ["openfoam"]) or (foamFork=="openfoam" and foamVersion<(4,)))
 
 <!--(if oldFormat)-->
 dictionaryReplacement

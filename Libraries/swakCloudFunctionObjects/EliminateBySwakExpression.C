@@ -131,9 +131,12 @@ Foam::EliminateBySwakExpression<CloudType>::~EliminateBySwakExpression()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template<class CloudType>
-void Foam::EliminateBySwakExpression<CloudType>::preEvolve()
-{
+template <class CloudType>
+void Foam::EliminateBySwakExpression<CloudType>::preEvolve(
+#ifdef FOAM_CLOUD_FUNCTION_OBJECT_PRE_POST_EVOLVE_WITH_TD
+        const typename CloudType::parcelType::trackingData &td
+#endif
+) {
     Info << this->modelName() << ":" << this->owner().name()
         << ":" << this->modelType()
         << ": Checking pre" << endl;
@@ -157,9 +160,12 @@ void Foam::EliminateBySwakExpression<CloudType>::preEvolve()
     }
 }
 
-template<class CloudType>
-void Foam::EliminateBySwakExpression<CloudType>::postEvolve()
-{
+template <class CloudType>
+void Foam::EliminateBySwakExpression<CloudType>::postEvolve(
+#ifdef FOAM_CLOUD_FUNCTION_OBJECT_PRE_POST_EVOLVE_WITH_TD
+        const typename CloudType::parcelType::trackingData &td
+#endif
+) {
     Info << this->modelName() << ":" << this->owner().name()
         << ":" << this->modelType()
         << ": Checking post" << endl;
@@ -248,7 +254,11 @@ void Foam::EliminateBySwakExpression<CloudType>::postEvolve()
             << ")" << endl;
     }
 
-    CloudFunctionObject<CloudType>::postEvolve();
+    CloudFunctionObject<CloudType>::postEvolve(
+#ifdef FOAM_CLOUD_FUNCTION_OBJECT_PRE_POST_EVOLVE_WITH_TD
+        td
+#endif
+    );
 }
 
 template<class CloudType>

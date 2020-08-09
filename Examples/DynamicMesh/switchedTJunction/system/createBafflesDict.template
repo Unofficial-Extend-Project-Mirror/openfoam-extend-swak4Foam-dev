@@ -43,7 +43,11 @@ baffles
                 matchTolerance  0.0001;
                 neighbourPatch  ACMI_Center|-name-|_couple;
                 nonOverlapPatch ACMI_|-name-|Center_blockage;
+  <!--(if foamFork == "openfoam" and foamVersion >= (8, ))-->
+                transform none;
+  <!--(else)-->
                 transform       noOrdering;
+  <!--(end)-->
                 openField       valveField;
             }
             slave // not used since we're manipulating a boundary patch
@@ -84,7 +88,11 @@ baffles
                 matchTolerance  0.0001;
                 neighbourPatch  ACMI_|-name-|Center_couple;
                 nonOverlapPatch ACMI_Center|-name-|_blockage;
+  <!--(if foamFork == "openfoam" and foamVersion >= (8, ))-->
+                transform none;
+  <!--(else)-->
                 transform       noOrdering;
+  <!--(end)-->
                 openField       valveField;
             }
             slave // not used since we're manipulating a boundary patch

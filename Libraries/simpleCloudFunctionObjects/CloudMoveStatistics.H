@@ -140,10 +140,18 @@ public:
     // Evaluation
 
     //- Pre-evolve hook
-    virtual void preEvolve();
+    virtual void preEvolve(
+#ifdef FOAM_CLOUD_FUNCTION_OBJECT_PRE_POST_EVOLVE_WITH_TD
+        const typename CloudType::parcelType::trackingData &td
+#endif
+    );
 
     //- Post-evolve hook
-    virtual void postEvolve();
+    virtual void postEvolve(
+#ifdef FOAM_CLOUD_FUNCTION_OBJECT_PRE_POST_EVOLVE_WITH_TD
+        const typename CloudType::parcelType::trackingData &td
+#endif
+    );
 
     //- Post-move hook
     virtual void postMove

@@ -46,7 +46,13 @@ Contributors/Copyright:
 
 #ifdef FOAM_NEW_TURBULENCE_STRUCTURE
 #include "singlePhaseTransportModel.H"
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+#include "incompressibleMomentumTransportModel.H"
+#include "singlePhaseTransportModel.H"
+#include "kinematicMomentumTransportModel.H"
+#else
 #include "turbulentTransportModel.H"
+#endif
 #else
 #include "turbulenceModel.H"
 #endif
@@ -69,11 +75,23 @@ class swakIncompressibleTurbulencePluginFunction
     swakIncompressibleTurbulencePluginFunction(const swakIncompressibleTurbulencePluginFunction &);
 
 protected:
-    static const incompressible::turbulenceModel &turbInternal(const fvMesh &reg);
+    static const
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+    incompressible::momentumTransportModel
+#else
+    incompressible::turbulenceModel
+#endif
+    &turbInternal(const fvMesh &reg);
 
-    const incompressible::turbulenceModel &turb();
+    const
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+    incompressible::momentumTransportModel
+#else
+    incompressible::turbulenceModel
+#endif
+    &turb();
 
-public:
+  public:
     swakIncompressibleTurbulencePluginFunction(
         const FieldValueExpressionDriver &parentDriver,
         const word &name,

@@ -15,11 +15,6 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-transientGridCloud {
-    xScale 1;
-    yScale 0;
-    #include "transientGridCloudSkeleton"
-}
 staticGridCloud {
     xScale 0;
     yScale 1;

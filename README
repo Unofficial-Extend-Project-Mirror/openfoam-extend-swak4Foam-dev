@@ -4067,10 +4067,6 @@ S_{expl} + S_{impl} T
           a =ACMI= boundary condition where switching of faces is done
           by a swak-expression. Won't work with =Foam-extend= as this
           has no =ACMI=
-
-# Local Variables:
-# eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
-# End:
 ** 2018-12-29 - version number : 0.4.2
    The Foam-versions that this release has been tested with are
    - OpenFOAM 2.3
@@ -4363,6 +4359,11 @@ S_{expl} + S_{impl} T
      objects that exists in the ESI-fork
 ** Next release - version number : 20xx.yy
 *** New supported versions
+**** Support for OpenFOAM 8
+     This version compiles with the version 8 of the Foundation Fork
+     of OpenFOAM
+**** Support for OpenFOAM v2006
+     Compiles and tested with version v2006 of the ESI Fork
 *** Incompatibilities
 *** Bug fixes
 **** =writeOldTimesOnSignal= not working for newer Foam-versions
@@ -4370,6 +4371,8 @@ S_{expl} + S_{impl} T
      =start()= was removed from the API of =functionObject=
 
      This has been fixed and the storing of times has been fixed
+**** =funkySetLagrangianField= does not load fluid fields correctly
+     Fields were loaded but went out of scope before being usable. Fixed
 *** Internals (for developers)
 *** Infrastructure
 *** Documentation
@@ -4406,6 +4409,7 @@ S_{expl} + S_{impl} T
      The function object now has a special 'signal' =FoamFatal= that
      instead of raising a signal does a =FatalError=
 *** Examples
+
 
 
 # Local Variables:

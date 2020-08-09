@@ -45,9 +45,14 @@ Contributors/Copyright:
 #include "swak.H"
 
 #include "volFields.H"
+#ifdef FOAM_INTERPOLATION_TABLE_MOVE_TO_TABLE_FILE
+#include "TableFile.H"
+#define interpolationTable Function1s::TableFile
+#else
 #include "interpolationTable.H"
+#endif
 #ifdef FOAM_HAS_INTERPOLATION2DTABLE
-#ifdef FOAM_NEEDS_PATCHED_INTERPOLATION2DTABLE
+#if defined(FOAM_NEEDS_PATCHED_INTERPOLATION2DTABLE) && !defined(FOAM_INTERPOLATION_TABLE_2D_INTERFACE_DIFFERS)
 #include "patchedInterpolation2DTable.H"
 #else
 #include "interpolation2DTable.H"
@@ -693,6 +698,15 @@ public:
         bool clear=true
     );
 
+#ifdef FOAM_INTERPOLATION_TABLE_2D_INTERFACE_DIFFERS
+    //- read 2D interpolation tables if their interface differs from others
+    template <class Type>
+    void readTables2D(
+        Istream &is, HashTable<interpolation2DTable<Type> > &,
+        bool clear = true
+    );
+#endif
+
     //- is this mesh in the repository
     bool isForeignMesh(
         const word &name
@@ -728,6 +742,14 @@ public:
         Ostream &os,
         const HashTable<TableType> &
     ) const;
+
+#ifdef FOAM_INTERPOLATION_TABLE_2D_INTERFACE_DIFFERS
+    template <class Type>
+    void writeTables2D(
+        Ostream &os,
+        const HashTable<interpolation2DTable<Type> > &
+    ) const;
+#endif
 
     //- is this a lookup table
     inline bool isLookup(

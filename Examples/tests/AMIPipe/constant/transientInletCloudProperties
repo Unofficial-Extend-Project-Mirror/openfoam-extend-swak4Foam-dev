@@ -78,6 +78,7 @@ subModels
             SOI             0;
             parcelBasisType mass;
             patchName       inlet;
+            patch           $patchName;
             duration        1;
             concentration   constant 0.01;
             //            parcelConcentration 1e5;

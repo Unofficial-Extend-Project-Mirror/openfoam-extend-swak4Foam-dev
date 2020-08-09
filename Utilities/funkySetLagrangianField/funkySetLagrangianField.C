@@ -108,7 +108,7 @@ void doAnExpression(
             theFile.objectPath(),
 #ifdef FOAM_DEV
 		    std::ios_base::out,
-#endif		    
+#endif
             IOstream::ASCII,
             IOstream::currentVersion,
             IOstream::COMPRESSED
@@ -118,7 +118,7 @@ void doAnExpression(
 	     o,cls
 #else
 	     o
-#endif	     
+#endif
 	);
         o << nl
             << theCloud.size() << nl
@@ -478,6 +478,12 @@ int main(int argc, char *argv[])
                 word cloudName((*cloudIter).keyword());
                 Info << "\n\nCloud: " << cloudName << endl;
 
+                SLPtrList<volScalarField> scalarFieldsPre;
+                SLPtrList<volVectorField> vectorFieldsPre;
+                SLPtrList<volTensorField> tensorFieldsPre;
+                SLPtrList<volSymmTensorField> symmTensorFieldsPre;
+                SLPtrList<volSphericalTensorField> sphericalTensorFieldsPre;
+
                 if(readBool(cloudDict.lookup("createCloud"))) {
                     Info << "Creating from scratch" << endl;
                     const dictionary &spec=cloudDict.subDict("creationSpec");
@@ -504,11 +510,6 @@ int main(int argc, char *argv[])
                     }
 
                     Info << "Preloading fields" << endl;
-                    SLPtrList<volScalarField> scalarFieldsPre;
-                    SLPtrList<volVectorField> vectorFieldsPre;
-                    SLPtrList<volTensorField> tensorFieldsPre;
-                    SLPtrList<volSymmTensorField> symmTensorFieldsPre;
-                    SLPtrList<volSphericalTensorField> sphericalTensorFieldsPre;
 
                     forAll(preloadFieldNames,fieldI) {
                         word fName=preloadFieldNames[fieldI];

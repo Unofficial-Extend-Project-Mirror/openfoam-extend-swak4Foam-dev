@@ -64,6 +64,10 @@ namespace Foam {
 #include "cyclicACMIFvPatchField.H"
 #endif
 
+#ifdef FOAM_NEIGHBOUR_IS_NOW_NBR_PATCHFIELD
+#define neighbourPatchField nbrPatchField
+#endif
+
 #include <cassert>
 
 namespace Foam {

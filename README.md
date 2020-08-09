@@ -1507,7 +1507,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orga89f146) below). Don't work on the
+details see [6.2.2](#org1552ed2) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1563,7 +1563,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orga89f146"></a>
+<a id="org1552ed2"></a>
 
 ### Repository organization
 
@@ -6833,6 +6833,17 @@ objects that exists in the ESI-fork
 ### New supported versions
 
 
+#### Support for OpenFOAM 8
+
+This version compiles with the version 8 of the Foundation Fork
+of OpenFOAM
+
+
+#### Support for OpenFOAM v2006
+
+Compiles and tested with version v2006 of the ESI Fork
+
+
 ### Incompatibilities
 
 
@@ -6845,6 +6856,11 @@ This function object did not work for newer Foam-version where
 `start()` was removed from the API of `functionObject`
 
 This has been fixed and the storing of times has been fixed
+
+
+#### `funkySetLagrangianField` does not load fluid fields correctly
+
+Fields were loaded but went out of scope before being usable. Fixed
 
 
 ### Internals (for developers)
