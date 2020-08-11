@@ -111,6 +111,9 @@ bool SimpleRegionSolverFunctionObject::execute(bool forceWrite)
     }
 #endif
 
+    Info << "Solving " << this->name() << "(" << this->type() <<  ") in "
+         << this->mesh().name() << endl;
+
     solveRegion();
 
     return true;
