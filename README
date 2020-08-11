@@ -911,6 +911,13 @@ S_{expl} + S_{impl} T
      - Case setup :: =pyFoamPrepareCase=
      - Demonstrates :: demonstrates using the flow as an extnded
        boundary condition
+**** pitzDailyWithRASInlet
+     A pitzDaily using LES case with one channel bolted on the inlet
+     where compressible flow using a RAS-model. Velocity and
+     turbulence are mapped from the channel to the main geometry
+     - Solver :: =rhoPimpleFoam=
+     - Case setup :: =pyFoamPrepareCase=
+     - Demonstrates :: demonstrates using the flow as an inlet condition
 *** MakeAxialMesh
     Cases hee demonstrate the =makeAxialMesh=-utility
 **** axialCavity
@@ -4389,6 +4396,8 @@ S_{expl} + S_{impl} T
        solid (modeled on the solid regions in =chtMultiRegionFoam=)
      - =potentialFlowRegionSolver= :: Solves the potential flow in the
        region (basically port of =potentialFoam=)
+     - rhoPimpleFlowRegionSolver :: compressible flow lifted from
+       =rhoPimpleFoam= (without the dynamic mesh)
 **** A =fvOption= to set the energy according to a temperature expression
      In the =swakSourceFields=-library there is a =fvOption= named
      =swakSetTemperature= that specifies the temperature in a region

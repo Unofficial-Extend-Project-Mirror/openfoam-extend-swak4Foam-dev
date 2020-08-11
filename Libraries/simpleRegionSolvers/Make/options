@@ -9,11 +9,16 @@ EXE_INC = \
     -I$(LIB_SRC)/transportModels/compressible/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/solidThermo/lnInclude \
+    -I$(LIB_SRC)/TurbulenceModels/turbulenceModels/lnInclude \
+    -I$(LIB_SRC)/TurbulenceModels/compressible/lnInclude \
     $(TRISURFACE_INC)
 
 LIB_LIBS = \
     -L$(FOAM_USER_LIBBIN) \
     -lfiniteVolume \
+    -lcompressibleTransportModels \
+    -lcompressibleTurbulenceModels \
+    -lturbulenceModels \
     -lsampling \
     -lcompressibleTransportModels \
     -lfluidThermophysicalModels \

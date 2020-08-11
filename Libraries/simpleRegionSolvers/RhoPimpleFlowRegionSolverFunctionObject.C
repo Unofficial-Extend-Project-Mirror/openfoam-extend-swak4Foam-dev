@@ -1,0 +1,318 @@
+/*---------------------------------------------------------------------------*\
+|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
+-------------------------------------------------------------------------------
+License
+    This file is part of swak4Foam.
+
+    swak4Foam is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+    Free Software Foundation; either version 2 of the License, or (at your
+    option) any later version.
+
+    swak4Foam is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with swak4Foam; if not, write to the Free Software Foundation,
+    Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+
+Contributors/Copyright:
+    2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+
+ SWAK Revision: $Id$
+\*---------------------------------------------------------------------------*/
+
+#include "RhoPimpleFlowRegionSolverFunctionObject.H"
+#include "addToRunTimeSelectionTable.H"
+
+#include "polyMesh.H"
+#include "IOmanip.H"
+#include "swakTime.H"
+
+#ifdef FOAM_MESHOBJECT_GRAVITY
+# include "gravityMeshObject.H"
+#else
+# include "uniformDimensionedFields.H"
+#endif
+
+#include "zeroGradientFvPatchFields.H"
+#include "fvCFD.H"
+#include "localEulerDdtScheme.H"
+#include "fvcSmooth.H"
+
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+namespace Foam
+{
+
+defineTypeNameAndDebug(RhoPimpleFlowRegionSolverFunctionObject, 0);
+
+addNamedToRunTimeSelectionTable
+(
+    functionObject,
+    RhoPimpleFlowRegionSolverFunctionObject,
+    dictionary,
+    rhoPimpleFlowRegionSolver
+);
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+RhoPimpleFlowRegionSolverFunctionObject::RhoPimpleFlowRegionSolverFunctionObject
+(
+    const word& name,
+    const Time& t,
+    const dictionary& dict
+)
+:
+    SimpleRegionSolverFunctionObject(
+        name,
+        t,
+        dict
+    ),
+    LTS_ (
+        fv::localEulerDdt::enabled(this->mesh())
+    ),
+    trDeltaT(
+        LTS_
+        ?
+        new volScalarField
+        (
+            IOobject
+            (
+                fv::localEulerDdt::rDeltaTName,
+                this->mesh().time().timeName(),
+                this->mesh(),
+                IOobject::READ_IF_PRESENT,
+                IOobject::AUTO_WRITE
+            ),
+            this->mesh(),
+            dimensionedScalar("one", dimless/dimTime, 1),
+            extrapolatedCalculatedFvPatchScalarField::typeName
+        )
+        :
+        nullptr
+    ),
+    pimple_(
+        this->mesh()
+    ),
+    thermo_(
+        fluidThermo::New(this->mesh())
+    ),
+    fvOptions_(
+        this->mesh()
+    ),
+    rho_(
+        IOobject
+        (
+            "rho",
+            this->mesh().time().timeName(),
+            this->mesh(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
+        thermo().rho()
+    ),
+    U_(
+        IOobject
+        (
+            "U",
+            this->mesh().time().timeName(),
+            this->mesh(),
+            IOobject::MUST_READ,
+            IOobject::AUTO_WRITE
+        ),
+        this->mesh()
+    ),
+    phi_(
+        IOobject
+        (
+            "phi",
+            this->mesh().time().timeName(),
+            this->mesh(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
+        linearInterpolate(rho_*U_) & this->mesh().Sf()
+    ),
+    pressureControl_(
+        thermo().p(),
+        rho_,
+        pimple_.dict(),
+        false
+    ),
+    turbulence_
+    (
+        compressible::turbulenceModel::New
+        (
+            rho_,
+            U_,
+            phi_,
+            thermo()
+        )
+    ),
+    dpdt_
+    (
+        IOobject
+        (
+            "dpdt",
+            this->mesh().time().timeName(),
+            this->mesh(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        fvc::ddt(thermo().p())
+    ),
+    K_(
+        "K",
+        0.5*magSqr(U_)
+    ),
+    MRF_(
+        this->mesh()
+    ),
+    cumulativeContErrIO_(
+        IOobject
+        (
+            "cumulativeContErr",
+            this->mesh().time().timeName(),
+            "uniform",
+            this->mesh(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
+        dimensionedScalar(dimless, Zero)
+    )
+{
+    Dbug << "RhoPimpleFlowRegionSolverFunctionObject::RhoPimpleFlowRegionSolverFunctionObject" << endl;
+
+    thermo().validate(this->name(), "h", "e");
+
+    if (!thermo().dpdt())
+    {
+        dpdt_ == dimensionedScalar(dpdt_.dimensions(), Zero);
+        dpdt_.writeOpt() = IOobject::NO_WRITE;
+    }
+
+    volVectorField &U = U_;
+    volScalarField &K = K_;
+
+    if (U.nOldTimes())
+    {
+        volVectorField* Uold = &U.oldTime();
+        volScalarField* Kold = &K.oldTime();
+        *Kold == 0.5*magSqr(*Uold);
+
+        while (Uold->nOldTimes())
+        {
+            Uold = &Uold->oldTime();
+            Kold = &Kold->oldTime();
+            *Kold == 0.5*magSqr(*Uold);
+        }
+    }
+
+}
+
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+bool RhoPimpleFlowRegionSolverFunctionObject::start() {
+    return true;
+}
+#endif
+
+//- actual solving
+bool RhoPimpleFlowRegionSolverFunctionObject::solveRegion() {
+    // References so that the includes work
+    const bool &LTS = this->LTS_;
+    pimpleControl &pimple = this->pimple_;
+    fluidThermo& thermo = this->thermo();
+    volScalarField &p = thermo.p();
+    volScalarField &rho = rho_;
+    volVectorField &U = U_;
+    surfaceScalarField &phi = phi_;
+    fvMesh &mesh = this->mesh();
+    pressureControl &pressureControl = pressureControl_;
+    autoPtr<compressible::turbulenceModel> &turbulence = turbulence_;
+    const volScalarField& psi = thermo.psi();
+    const Time &runTime = mesh.time();
+    fv::options &fvOptions = fvOptions_;
+    const dimensionedScalar rhoMax("rhoMax", dimDensity, GREAT, pimple.dict());
+    const dimensionedScalar rhoMin("rhoMin", dimDensity, Zero, pimple.dict());
+    volScalarField &dpdt = dpdt_;
+    volScalarField &K = K_;
+    IOMRFZoneList &MRF = MRF_;
+    autoPtr<surfaceVectorField> &rhoUf = rhoUf_;
+    scalar& cumulativeContErr = cumulativeContErrIO_.value();
+
+    if (LTS)
+    {
+         #include "RhoPimpleFlowIncludes/setRDeltaT.H"
+    }
+    else
+    {
+    #include "compressibleCourantNo.H"
+        // #include "setDeltaT.H"
+    }
+
+    //        ++runTime;
+
+    // Info<< "Time = " << runTime.timeName() << nl << endl;
+
+    // --- Pressure-velocity PIMPLE corrector loop
+    while (pimple.loop())
+    {
+        if (pimple.firstIter())
+        {
+            // Store momentum to set rhoUf for introduced faces.
+            autoPtr<volVectorField> rhoU;
+            if (rhoUf.valid())
+            {
+                rhoU.reset(new volVectorField("rhoU", rho*U));
+            }
+        }
+
+        if (pimple.firstIter() && !pimple.SIMPLErho())
+        {
+            #include "rhoEqn.H"
+        }
+
+        #include "RhoPimpleFlowIncludes/EEqn.H"
+        #include "RhoPimpleFlowIncludes/UEqn.H"
+
+        // --- Pressure corrector loop
+        while (pimple.correct())
+        {
+            if (pimple.consistent())
+            {
+                #include "RhoPimpleFlowIncludes/pcEqn.H"
+            }
+            else
+            {
+                #include "RhoPimpleFlowIncludes/pEqn.H"
+            }
+        }
+
+        if (pimple.turbCorr())
+        {
+            turbulence->correct();
+        }
+    }
+
+    rho = thermo.rho();
+
+    return true;
+}
+
+bool RhoPimpleFlowRegionSolverFunctionObject::read(const dictionary& dict) {
+    return SimpleRegionSolverFunctionObject::read(dict);
+}
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+} // namespace Foam
+
+// ************************************************************************* //

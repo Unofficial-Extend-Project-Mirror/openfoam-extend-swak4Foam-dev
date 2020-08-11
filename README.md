@@ -1362,6 +1362,17 @@ mapped between these regions
     boundary condition
 
 
+#### pitzDailyWithRASInlet
+
+A pitzDaily using LES case with one channel bolted on the inlet
+where compressible flow using a RAS-model. Velocity and
+turbulence are mapped from the channel to the main geometry
+
+-   **Solver:** `rhoPimpleFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+-   **Demonstrates:** demonstrates using the flow as an inlet condition
+
+
 ### MakeAxialMesh
 
 Cases hee demonstrate the `makeAxialMesh`-utility
@@ -1507,7 +1518,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org1552ed2) below). Don't work on the
+details see [6.2.2](#org1e53f31) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1563,7 +1574,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org1552ed2"></a>
+<a id="org1e53f31"></a>
 
 ### Repository organization
 
@@ -6889,6 +6900,8 @@ Currently implemented function objects are
     solid (modeled on the solid regions in `chtMultiRegionFoam`)
 -   **`potentialFlowRegionSolver`:** Solves the potential flow in the
     region (basically port of `potentialFoam`)
+-   **rhoPimpleFlowRegionSolver:** compressible flow lifted from
+    `rhoPimpleFoam` (without the dynamic mesh)
 
 
 #### A `fvOption` to set the energy according to a temperature expression
