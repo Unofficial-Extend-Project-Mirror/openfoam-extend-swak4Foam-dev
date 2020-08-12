@@ -457,8 +457,12 @@ namespace Foam {
                     Pout << "Registering a copy of " << name
                         << " with mesh" << endl;
                 }
+#ifdef FOAM_REGIOOBJECT_STORE_SAME_NAME_FAILS
+                s->store(s);
+#else
                 autoPtr<T> toCache(new T(mesh,regName,s()));
                 toCache->store(toCache);
+#endif
             }
             return s;
         } else {
@@ -908,8 +912,12 @@ namespace Foam {
                 Pout << "Registering a copy of " << name
                     << " with mesh" << endl;
             }
+#ifdef FOAM_REGIOOBJECT_STORE_SAME_NAME_FAILS
+            f().store(f);
+#else
             autoPtr<T> toCache(new T(f()));
             toCache->store(toCache);
+#endif
         }
         return f;
     }

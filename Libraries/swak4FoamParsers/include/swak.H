@@ -697,6 +697,10 @@ Contributors/Copyright:
 #define FOAM_HAS_IO_STREAM_OPTION_CLASS
 #endif
 
+#if (OPENFOAM_COM >= 2004)
+#define FOAM_REGIOOBJECT_STORE_SAME_NAME_FAILS
+#endif
+
 #include "swakVersion.H"
 #include "DebugOStream.H"
 #include "BackportMacros.H"
