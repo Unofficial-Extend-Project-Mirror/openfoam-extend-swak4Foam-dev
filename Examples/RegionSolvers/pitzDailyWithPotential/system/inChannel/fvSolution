@@ -26,9 +26,19 @@ solvers
         relTol          0.01;
     }
 
+    PhiFinal
+    {
+        $Phi;
+        relTol 0;
+    }
+
     p
     {
         $Phi;
+    }
+    pFinal
+    {
+        $PhiFinal;
     }
 }
 

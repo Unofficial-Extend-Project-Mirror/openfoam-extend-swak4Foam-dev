@@ -19,10 +19,15 @@ thermoType
     type            heSolidThermo;
     mixture         pureMixture;
     transport       constIso;
-    thermo          hConst;
     equationOfState rhoConst;
     specie          specie;
-    energy          sensibleEnthalpy;
+<!--(if foamFork == "openfoam" and foamVersion >= (8, ))-->
+    thermo  eConst;
+    energy sensibleInternalEnergy;
+<!--(else)-->
+    thermo  hConst;
+    energy sensibleEnthalpy;
+<!--(end)-->
 }
 
 mixture
@@ -41,6 +46,7 @@ mixture
     {
         Hf      0;
         Cp      450;
+        Cv      $Cp;
     }
 
     equationOfState

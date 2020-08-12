@@ -10,6 +10,19 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
+<!--(if foamFork!="openfoamplus" or foamVersion<2006)-->
+direction       both;
+<!--(end)-->
+
+seedSampleSet
+{
+    type            lineUniform;
+    start           (-0.0205 0.001  0.00001);
+    end             (-0.0205 0.0251 0.00001);
+    nPoints         10;
+    axis            x;
+}
+
 nLines  10;
 start   (-0.0205 0.001  0.00001);
 end     (-0.0205 0.0251 0.00001);

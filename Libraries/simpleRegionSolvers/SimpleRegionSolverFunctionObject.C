@@ -88,8 +88,10 @@ SimpleRegionSolverFunctionObject::SimpleRegionSolverFunctionObject
 #endif
 {
     Dbug << "SimpleRegionSolverFunctionObject::SimpleRegionSolverFunctionObject" << endl;
-}
 
+    Info << nl << "Initializing " << this->name() << "(" << this->type() << ") in "
+        << this->mesh().name() << nl << endl;
+}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

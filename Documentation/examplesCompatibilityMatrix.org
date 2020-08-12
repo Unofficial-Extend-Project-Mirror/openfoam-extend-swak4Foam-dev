@@ -78,9 +78,9 @@
   | other/topoSetDamBreak                                       | \checkmark | \checkmark | \sect      | \checkmark |
   | Python3Integration/flowStatePitzDaily                       |            | \checkmark | \checkmark | \checkmark |
   | Python3Integration/python3ScriptedBCAngledDuct              |            | \checkmark | \checkmark | \checkmark |
-  | RegionSolvers/cavityWithHeater                              |            |            | \checkmark |            |
-  | RegionSolvers/pitzDailyWithPotential                        |            |            | \checkmark |            |
-  | RegionSolvers/pitzDailyWithRASInlet                         |            |            | \checkmark |            |
+  | RegionSolvers/cavityWithHeater                              | \checkmark |            | \checkmark |            |
+  | RegionSolvers/pitzDailyWithPotential                        | \checkmark |            | \checkmark |            |
+  | RegionSolvers/pitzDailyWithRASInlet                         | \checkmark |            | \checkmark |            |
   | runTimeCondition/simpleSwakCar                              | \dagger    | \dagger    | \checkmark | \dagger    |
   | SimpleSurface/littleVolcano                                 | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/flangeWithPDE                                      |            | \checkmark | \checkmark | \checkmark |

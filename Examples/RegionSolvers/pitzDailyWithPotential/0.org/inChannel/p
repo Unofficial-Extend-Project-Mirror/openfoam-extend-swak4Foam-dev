@@ -29,6 +29,8 @@ boundaryField
     {
         //        type            fixedValue;
         type            mapped;
+        setAverage 0;
+        average 0;
         value           uniform 0;
     }
 

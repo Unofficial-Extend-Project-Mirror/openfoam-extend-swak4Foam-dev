@@ -23,6 +23,8 @@ boundaryField
     inlet
     {
         type mapped;
+        setAverage 0;
+        average 300;
         //        type            fixedValue;
         value           uniform 300;
     }
