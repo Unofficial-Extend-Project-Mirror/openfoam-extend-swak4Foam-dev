@@ -93,6 +93,9 @@ runIt $switch_on_FPE other/simpleBendedPipe
 runIt $switch_on_FPE other/topoSetDamBreak
 runIt $switch_on_FPE Python3Integration/flowStatePitzDaily
 runIt $switch_on_FPE Python3Integration/python3ScriptedBCAngledDuct
+runIt $switch_on_FPE RegionSolvers/cavityWithHeater
+runIt $switch_on_FPE RegionSolvers/pitzDailyWithPotential
+runIt $switch_on_FPE RegionSolvers/pitzDailyWithRASInlet  --run-until=0.01
 runIt $switch_on_FPE runTimeCondition/simpleSwakCar
 runIt $switch_on_FPE SimpleSurface/littleVolcano --run-until=0.1
 runIt $switch_on_FPE solvePDE/flangeWithPDE

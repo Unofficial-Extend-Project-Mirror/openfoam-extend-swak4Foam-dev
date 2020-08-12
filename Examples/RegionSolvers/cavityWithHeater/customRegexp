@@ -1,4 +1,4 @@
-// -*- c++ -*
+// -*- c++ -*-
 
 heaterTemperature {
     type dynamic;
@@ -26,4 +26,10 @@ pressureCavity {
         min
         max
     );
+}
+
+changePhase {
+    type phase;
+    expr "Solving (.+)\(.+\) in .+";
+    idNr 1;
 }

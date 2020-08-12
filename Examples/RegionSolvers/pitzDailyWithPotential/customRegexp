@@ -9,3 +9,8 @@ pressureDrops {
         average
     );
 }
+changePhase {
+  type phase;
+  expr "Solving (.+)\(.+\) in .+";
+  idNr 1;
+}
