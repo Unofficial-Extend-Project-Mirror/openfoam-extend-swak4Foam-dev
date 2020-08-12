@@ -28,6 +28,7 @@ INCOMPRESSIBLE_TURB_LIB=-lincompressibleTurbulenceModel
 COMPRESSIBLE_TURB_LIB=-lcompressibleTurbulenceModel
 INCOMPRESSIBLE_TURB_ALL_LIBS=-lincompressibleLESModels -lincompressibleRASModels
 COMPRESSIBLE_TURB_ALL_LIBS=-lcompressibleLESModels -lcompressibleRASModels
+COMPRESSIBLE_TRANSPORT_MODELS=-lcompressibleTransportModels
 
 TRISURFACE_INC=-I$(LIB_SRC)/triSurface/lnInclude
 
@@ -104,6 +105,7 @@ endif
 ifeq "$(FOAM_TURBULENCE_IS_NOW_MOMENTUM_TRANSPORT)" "yes"
   INCOMPRESSIBLE_TURB_LIB=-lmomentumTransportModels -lincompressibleMomentumTransportModels
   COMPRESSIBLE_TURB_LIB=-lmomentumTransportModels -lfluidThermoMomentumTransportModels
+  COMPRESSIBLE_TRANSPORT_MODELS=-lthermophysicalTransportModels
 endif
 
 ifdef FOAM_DEV

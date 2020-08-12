@@ -15,7 +15,11 @@
             )
           : -dpdt
         )
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+      + thermophysicalTransport->divq(he)
+#else
       - fvm::laplacian(turbulence->alphaEff(), he)
+#endif
      ==
         fvOptions(rho, he)
     );

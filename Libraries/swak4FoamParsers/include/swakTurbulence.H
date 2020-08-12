@@ -46,6 +46,11 @@ Contributors/Copyright:
 #define FOAM_NEW_TURBULENCE_STRUCTURE
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK >= VERSION_NR(6, 0, 0))
+#define FOAM_TURBULENCE_HAS_DIV_DEV_TAU
+#endif
+
+
 #include "DebugOStream.H"
 
 #endif

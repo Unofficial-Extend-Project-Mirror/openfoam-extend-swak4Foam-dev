@@ -92,6 +92,10 @@ namespace Foam {
 #define FOAM_BASICTHERMO_METHOD_HE_NO_PRESSURE
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK >= VERSION_NR(8, 0, 0))
+#define FOAM_SOLIDTHERMO_PRESSURE_IN_SUBCLASS
+#endif
+
 #include "DebugOStream.H"
 
 #endif

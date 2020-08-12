@@ -47,6 +47,18 @@ Contributors/Copyright:
 #include "localEulerDdtScheme.H"
 #include "fvcSmooth.H"
 
+#include "swakTurbulence.H"
+
+#ifdef FOAM_FIRST_ITER_MOVED_FROM_PIMPLE_TO_PISO
+#ifdef FOAM_PISO_CONTROL_METHODS_NO_CAPITAL
+#define firstIter firstPisoIter
+#define nCorrPISO nCorrPiso
+#define SIMPLErho simpleRho
+#else
+#define firstIter firstPISOIter
+#endif
+#endif
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -149,7 +161,12 @@ RhoPimpleFlowRegionSolverFunctionObject::RhoPimpleFlowRegionSolverFunctionObject
     ),
     turbulence_
     (
-        compressible::turbulenceModel::New
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+      compressible::momentumTransportModel
+#else
+      compressible::turbulenceModel
+#endif
+        ::New
         (
             rho_,
             U_,
@@ -157,6 +174,14 @@ RhoPimpleFlowRegionSolverFunctionObject::RhoPimpleFlowRegionSolverFunctionObject
             thermo()
         )
     ),
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+    thermophysicalTransport_(
+        fluidThermophysicalTransportModel::New(
+            turbulence_(),
+            thermo()
+        )
+    ),
+#endif
     dpdt_
     (
         IOobject
@@ -236,12 +261,24 @@ bool RhoPimpleFlowRegionSolverFunctionObject::solveRegion() {
     surfaceScalarField &phi = phi_;
     fvMesh &mesh = this->mesh();
     pressureControl &pressureControl = pressureControl_;
-    autoPtr<compressible::turbulenceModel> &turbulence = turbulence_;
+    autoPtr<
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+      compressible::momentumTransportModel
+#else
+      compressible::turbulenceModel
+#endif
+        > &turbulence = turbulence_;
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+    autoPtr<fluidThermophysicalTransportModel>
+        &thermophysicalTransport = thermophysicalTransport_;
+#endif
     const volScalarField& psi = thermo.psi();
     const Time &runTime = mesh.time();
     fv::options &fvOptions = fvOptions_;
+#ifdef FOAM_CORRECT_RHO_USES_RHOMIN_MAX
     const dimensionedScalar rhoMax("rhoMax", dimDensity, GREAT, pimple.dict());
     const dimensionedScalar rhoMin("rhoMin", dimDensity, Zero, pimple.dict());
+#endif
     volScalarField &dpdt = dpdt_;
     volScalarField &K = K_;
     IOMRFZoneList &MRF = MRF_;
@@ -299,6 +336,9 @@ bool RhoPimpleFlowRegionSolverFunctionObject::solveRegion() {
         if (pimple.turbCorr())
         {
             turbulence->correct();
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+            thermophysicalTransport->correct();
+#endif
         }
     }
 

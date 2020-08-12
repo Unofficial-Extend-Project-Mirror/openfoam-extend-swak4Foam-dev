@@ -48,7 +48,21 @@ Contributors/Copyright:
 #include "pimpleControl.H"
 #include "surfaceMesh.H"
 #include "pressureControl.H"
+#include "swakTurbulence.H"
+
+#ifdef FOAM_NEW_TURBULENCE_STRUCTURE
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+#include "compressibleMomentumTransportModel.H"
+#include "fluidThermoMomentumTransportModel.H"
+#include "singlePhaseTransportModel.H"
+#include "fluidThermophysicalTransportModel.H"
+#else
 #include "turbulentFluidThermoModel.H"
+#endif
+#else
+#include "turbulenceModel.H"
+#endif
+
 #include "IOMRFZoneList.H"
 #include "uniformDimensionedFields.H"
 
@@ -101,7 +115,18 @@ class RhoPimpleFlowRegionSolverFunctionObject
     pressureControl pressureControl_;
 
     //- turbulence
-    autoPtr<compressible::turbulenceModel> turbulence_;
+    autoPtr<
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+        compressible::momentumTransportModel
+#else
+        compressible::turbulenceModel
+#endif
+        > turbulence_;
+
+#ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
+    //- special transport model
+    autoPtr<fluidThermophysicalTransportModel> thermophysicalTransport_;
+#endif
 
     //- pressure change
     volScalarField dpdt_;

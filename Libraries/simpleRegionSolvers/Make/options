@@ -7,6 +7,11 @@ EXE_INC = \
     -I$(LIB_SRC)/meshTools/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
     -I$(LIB_SRC)/transportModels/compressible/lnInclude \
+    -I$(LIB_SRC)/transportModels/lnInclude \
+    -I$(LIB_SRC)/MomentumTransportModels/compressible/lnInclude \
+    -I$(LIB_SRC)/MomentumTransportModels/incompressible/lnInclude \
+    -I$(LIB_SRC)/MomentumTransportModels/momentumTransportModels/lnInclude \
+    -I$(LIB_SRC)/ThermophysicalTransportModels/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/solidThermo/lnInclude \
     $(COMPRESSIBLE_TRANSPORT_INC) \
@@ -18,7 +23,7 @@ LIB_LIBS = \
     -lfiniteVolume \
     $(FLUIDTHERMO_LIB) \
     $(COMPRESSIBLE_TURB_LIB) \
-    -lcompressibleTransportModels \
+    $(COMPRESSIBLE_TRANSPORT_MODELS) \
     -lsampling \
     -lsolidThermo \
     -lswak4FoamParsers \

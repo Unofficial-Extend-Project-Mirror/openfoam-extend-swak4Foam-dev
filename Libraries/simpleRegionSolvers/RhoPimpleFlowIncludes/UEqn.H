@@ -6,7 +6,11 @@ tmp<fvVectorMatrix> tUEqn
 (
     fvm::ddt(rho, U) + fvm::div(phi, U)
   + MRF.DDt(rho, U)
+#ifdef FOAM_TURBULENCE_HAS_DIV_DEV_TAU
+  + turbulence->divDevTau(U)
+#else
   + turbulence->divDevRhoReff(U)
+#endif
  ==
     fvOptions(rho, U)
 );

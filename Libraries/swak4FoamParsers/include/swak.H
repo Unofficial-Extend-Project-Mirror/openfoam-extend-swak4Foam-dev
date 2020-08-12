@@ -676,6 +676,10 @@ Contributors/Copyright:
 #define FOAM_TOTAL_PRESSURE_HAS_NO_P0_METHOD
 #endif
 
+#if (OPENFOAM_COM >= 1807)
+#define FOAM_COORDINATE_SYSTEM_NEW_INTERFACE
+#endif
+
 #if (OPENFOAM_COM >= 1911)
 #define FOAM_FILESTAT_HAS_NO_ISVALID_METHOD
 #endif
@@ -700,6 +704,25 @@ Contributors/Copyright:
 #if (OPENFOAM_COM >= 2004)
 #define FOAM_REGIOOBJECT_STORE_SAME_NAME_FAILS
 #endif
+
+#if (OPENFOAM_COM >= 1804)
+// maybe for older versions as well. But v1806 is the oldest I checked for
+#define FOAM_CORRECT_RHO_USES_RHOMIN_MAX
+#endif
+
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK >= VERSION_NR(7, 0, 0))
+#define FOAM_PISO_CONTROL_METHODS_NO_CAPITAL
+#endif
+
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK >= VERSION_NR(6, 0, 0))
+#define FOAM_FIRST_ITER_MOVED_FROM_PIMPLE_TO_PISO
+#endif
+
+#if (OPENFOAM_COM >= 1804)
+// maybe for older versions as well. But v1806 is the oldest I checked for
+#define FOAM_RHOPIMPLEFOAM_USES_SELECT_FOR_P_SOLVER
+#endif
+
 
 #include "swakVersion.H"
 #include "DebugOStream.H"

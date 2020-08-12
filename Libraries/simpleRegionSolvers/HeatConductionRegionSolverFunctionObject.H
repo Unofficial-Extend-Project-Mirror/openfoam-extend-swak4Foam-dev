@@ -43,14 +43,23 @@ Contributors/Copyright:
 
 #include "SimpleRegionSolverFunctionObject.H"
 
+#include "swakThermoTypes.H"
+
+#ifdef FOAM_SOLIDTHERMO_PRESSURE_IN_SUBCLASS
+#include "solidPressureThermo.H"
+typedef Foam::solidPressureThermo solidThermoType;
+#else
 #include "solidThermo.H"
+typedef Foam::solidThermo solidThermoType;
+#endif
+
 #include "fvOptions.H"
 #include "coordinateSystem.H"
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    // //
 
-namespace Foam
-{
+    namespace Foam {
 
 /*---------------------------------------------------------------------------*\
                            Class HeatConductionRegionSolverFunctionObject Declaration
@@ -72,7 +81,7 @@ class HeatConductionRegionSolverFunctionObject
     volScalarField T_;
 
     //- thermo
-    autoPtr<solidThermo> thermo_;
+    autoPtr<solidThermoType> thermo_;
 
     //- the sources
     fv::options fvOptions_;
@@ -92,7 +101,7 @@ protected:
     //- actual solving
     virtual bool solveRegion();
 
-    solidThermo &thermo() {
+    solidThermoType &thermo() {
         return thermo_();
     }
 
@@ -120,7 +129,6 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

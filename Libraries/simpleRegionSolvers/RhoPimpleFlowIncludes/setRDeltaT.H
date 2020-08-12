@@ -1,5 +1,5 @@
 {
-    volScalarField& rDeltaT = trDeltaT.ref();
+    volScalarField& rDeltaT = trDeltaT();
 
     const dictionary& pimpleDict = pimple.dict();
 

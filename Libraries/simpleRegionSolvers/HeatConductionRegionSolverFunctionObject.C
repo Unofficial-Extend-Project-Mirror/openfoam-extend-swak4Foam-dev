@@ -86,7 +86,9 @@ HeatConductionRegionSolverFunctionObject::HeatConductionRegionSolverFunctionObje
         mesh()
     ),
     thermo_(
-        solidThermo::New(this->mesh())
+        dynamic_cast<solidThermoType*> (
+            solidThermo::New(this->mesh()).ptr()
+        )
     ),
     fvOptions_(
         mesh()
@@ -102,9 +104,14 @@ HeatConductionRegionSolverFunctionObject::HeatConductionRegionSolverFunctionObje
                 coordinateSystem::New
                 (
                     mesh(),
-                    thermo(),
-                    coordinateSystem::typeName_()
+                    thermo()
+#ifdef FOAM_COORDINATE_SYSTEM_NEW_INTERFACE
+                    ,coordinateSystem::typeName_()
+#endif
                 )
+#ifndef FOAM_COORDINATE_SYSTEM_NEW_INTERFACE
+                .ptr()
+#endif
             );
 
         tmp<volVectorField> tkappaByCp =
@@ -129,11 +136,18 @@ HeatConductionRegionSolverFunctionObject::HeatConductionRegionSolverFunctionObje
             );
 
         aniAlpha_().primitiveFieldRef() =
+#ifdef FOAM_COORDINATE_SYSTEM_NEW_INTERFACE
             coordinates_().transformPrincipal
             (
                 mesh().cellCentres(),
                 tkappaByCp()
             );
+#else
+            coordinates_().R().transformVector
+            (
+                tkappaByCp()
+            );
+#endif
         aniAlpha_().correctBoundaryConditions();
     }
 
@@ -194,14 +208,21 @@ bool HeatConductionRegionSolverFunctionObject::solveRegion() {
     {
         volSymmTensorField& aniAlpha = aniAlpha_();
         tmp<volVectorField> tkappaByCp = thermo().Kappa()/cp;
-        const coordinateSystem& coodSys = coordinates_();
+        const coordinateSystem& coordSys = coordinates_();
 
         aniAlpha.primitiveFieldRef() =
-            coodSys.transformPrincipal
+#ifdef FOAM_COORDINATE_SYSTEM_NEW_INTERFACE
+            coordSys.transformPrincipal
             (
                 mesh().cellCentres(),
                 tkappaByCp()
             );
+#else
+            coordSys.R().transformVector
+            (
+                tkappaByCp()
+            );
+#endif
 
         aniAlpha.correctBoundaryConditions();
 
@@ -244,7 +265,7 @@ bool HeatConductionRegionSolverFunctionObject::solveRegion() {
 
             fvOptions.constrain(TEqn);
 
-            TEqn.solve(mesh().solver(T_.name()));
+            TEqn.solve(mesh().solverDict(T_.name()));
 
             fvOptions.correct(T_);
         }

@@ -65,7 +65,11 @@ if (pimple.transonic())
         // Relax the pressure equation to ensure diagonal-dominance
         pEqn.relax();
 
+#ifdef FOAM_RHOPIMPLEFOAM_USES_SELECT_FOR_P_SOLVER
         pEqn.solve(mesh.solver(p.select(pimple.finalInnerIter())));
+#else
+        pEqn.solve();
+#endif
 
         if (pimple.finalNonOrthogonalIter())
         {
@@ -90,7 +94,11 @@ else
     {
         fvScalarMatrix pEqn(pDDtEqn - fvm::laplacian(rhorAtU, p));
 
+#ifdef FOAM_RHOPIMPLEFOAM_USES_SELECT_FOR_P_SOLVER
         pEqn.solve(mesh.solver(p.select(pimple.finalInnerIter())));
+#else
+        pEqn.solve();
+#endif
 
         if (pimple.finalNonOrthogonalIter())
         {
@@ -115,7 +123,12 @@ if (pressureControl.limit(p))
     p.correctBoundaryConditions();
 }
 
-thermo.correctRho(psi*p - psip0, rhoMin, rhoMax) ;
+thermo.correctRho(
+    psi *p - psip0
+#ifdef FOAM_CORRECT_RHO_USES_RHOMIN_MAX
+    ,rhoMin,rhoMax
+#endif
+) ;
 rho = thermo.rho();
 
 // Correct rhoUf if the mesh is moving
