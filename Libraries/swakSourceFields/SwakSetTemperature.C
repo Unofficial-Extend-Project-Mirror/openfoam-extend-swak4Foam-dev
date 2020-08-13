@@ -35,6 +35,8 @@ Contributors/Copyright:
 
 #include "FieldValueExpressionDriver.H"
 
+#include "swakThermoTypes.H"
+
 #include "basicThermo.H"
 
 namespace Foam {
@@ -99,7 +101,13 @@ void SwakSetTemperature::setValueInternal(
         values[i]=result[cellI];
     }
 
-    eqn.setValues(cellIDs, thermo.he(thermo.p(), values, cells_));
+    eqn.setValues(cellIDs, thermo.he(
+#ifndef FOAM_BASICTHERMO_METHOD_HE_NO_PRESSURE
+        thermo.p(),
+#endif
+        values,
+        cells_
+    ));
 }
 
 
