@@ -46,7 +46,7 @@ Contributors/Copyright:
 #include "fluidThermo.H"
 #ifdef FOAM_HAS_FVOPTIONS
 #ifdef FOAM_FVOPTIONS_IN_FV
-#include "fvOptionList.H"
+#include "fvOptions.H"
 #else
 #include "fvIOoptionList.H"
 #endif
