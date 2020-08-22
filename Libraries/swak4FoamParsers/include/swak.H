@@ -723,6 +723,38 @@ Contributors/Copyright:
 #define FOAM_RHOPIMPLEFOAM_USES_SELECT_FOR_P_SOLVER
 #endif
 
+// Not sure . Didn't check when between 2.3 and 5 or 1806 this changed
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK < VERSION_NR(5, 0, 0)) \
+    || (defined(OPENFOAM_COM) && OPENFOAM_COM<1806)
+#define FOAM_THEREIS_NO_PISO_CONTROL_CLASS
+#endif
+
+// Not sure . Didn't check when between 2.3 and 5 or 1806 this changed
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK < VERSION_NR(5, 0, 0)) \
+    || (defined(OPENFOAM_COM) && OPENFOAM_COM<1806)
+#define FOAM_NO_SINGLE_PARAMETER_VERSION_OF_FLUX_FUNCTION
+#endif
+
+// Not sure . Didn't check when between 2.3 and 5 or 1806 this changed
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) &&                                      \
+     FOAM_VERSION4SWAK < VERSION_NR(5, 0, 0)) ||                               \
+    (defined(OPENFOAM_COM) && OPENFOAM_COM < 1806) ||                   \
+    defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#define FOAM_HAS_NO_PRESURE_CONTROL_CLASS
+#endif
+
+// Not sure . Didn't check when between 2.3 and 5 or 1806 this changed
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK < VERSION_NR(5, 0, 0)) \
+    || (defined(OPENFOAM_COM) && OPENFOAM_COM<1806)
+#define FOAM_LOCAL_EULER_DT_HAS_SCHEME_IN_NAME
+#endif
+
+// Not sure . Didn't check when between 2.3 and 5 or 1806 this changed
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK < VERSION_NR(5, 0, 0)) \
+    || (defined(OPENFOAM_COM) && OPENFOAM_COM<1806)
+#else
+#define FOAM_PIMPLE_CONTROL_HAS_SIMPLERHO
+#endif
 
 #include "swakVersion.H"
 #include "DebugOStream.H"

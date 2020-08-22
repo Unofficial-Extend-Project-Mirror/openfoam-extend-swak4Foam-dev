@@ -21,12 +21,14 @@ internalField   uniform 300;
 
 boundaryField
 {
-    #includeEtc "caseDicts/setConstraintTypes"
+    #include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes"
 
     top
     {
         type            externalWallHeatFluxTemperature;
         kappaMethod     solidThermo;
+        kappa $kappaMethod;
+        kappaName none;
         mode            coefficient;
         h               uniform 1e3;
         Ta              $internalField;
@@ -45,6 +47,8 @@ boundaryField
         value           $internalField;
         Tnbr            T;
         kappaMethod     solidThermo;
+        kappa $kappaMethod;
+        kappaName none;
     }
     // solid_to_gas
     // {

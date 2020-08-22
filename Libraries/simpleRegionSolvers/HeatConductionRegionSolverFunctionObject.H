@@ -53,7 +53,13 @@ typedef Foam::solidPressureThermo solidThermoType;
 typedef Foam::solidThermo solidThermoType;
 #endif
 
-#include "fvOptions.H"
+#ifdef FOAM_HAS_FVOPTIONS
+#ifdef FOAM_FVOPTIONS_IN_FV
+#include "fvOptionList.H"
+#else
+#include "fvIOoptionList.H"
+#endif
+#endif
 #include "coordinateSystem.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -83,8 +89,15 @@ class HeatConductionRegionSolverFunctionObject
     //- thermo
     autoPtr<solidThermoType> thermo_;
 
+#ifdef FOAM_HAS_FVOPTIONS
     //- the sources
-    fv::options fvOptions_;
+#ifdef FOAM_FVOPTIONS_IN_FV
+    fv::options
+#else
+    fv::optionList
+#endif
+    fvOptions_;
+#endif
 
     autoPtr<coordinateSystem> coordinates_;
 
@@ -94,9 +107,7 @@ class HeatConductionRegionSolverFunctionObject
 
 protected:
 
-#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
     virtual bool start();
-#endif
 
     //- actual solving
     virtual bool solveRegion();

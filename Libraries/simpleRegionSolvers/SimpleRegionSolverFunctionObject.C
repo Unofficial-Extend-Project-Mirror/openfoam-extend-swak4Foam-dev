@@ -29,12 +29,13 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "swakTime.H"
+
 #include "SimpleRegionSolverFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
 #include "IOmanip.H"
-#include "swakTime.H"
 
 #ifdef FOAM_MESHOBJECT_GRAVITY
 # include "gravityMeshObject.H"

@@ -38,7 +38,13 @@
         surfaceScalarField phid
         (
             "phid",
-            fvc::interpolate(psi)*fvc::flux(U)
+            fvc::interpolate(psi)
+            *
+#ifdef FOAM_NO_SINGLE_PARAMETER_VERSION_OF_FLUX_FUNCTION
+            fvc::interpolate(U) & mesh.Sf()
+#else
+            fvc::flux(U)
+#endif
         );
 
         rDeltaT.ref() = max

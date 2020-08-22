@@ -43,7 +43,11 @@ Contributors/Copyright:
 
 #include "SimpleRegionSolverFunctionObject.H"
 
+#ifdef FOAM_THEREIS_NO_PISO_CONTROL_CLASS
+#include "pimpleControl.H"
+#else
 #include "pisoControl.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -72,7 +76,12 @@ protected:
     volVectorField U_;
 
     //- controls
-    pisoControl potentialFlow_;
+#ifdef FOAM_THEREIS_NO_PISO_CONTROL_CLASS
+    pimpleControl
+#else
+    pisoControl
+#endif
+    potentialFlow_;
 
     //- flows
     autoPtr<surfaceScalarField> phi_;
@@ -84,9 +93,7 @@ protected:
     autoPtr<volScalarField> Phi_;
 
 
-#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
     virtual bool start();
-#endif
 
     //- actual solving
     virtual bool solveRegion();

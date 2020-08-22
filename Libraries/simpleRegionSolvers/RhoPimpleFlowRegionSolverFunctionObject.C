@@ -29,12 +29,16 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "swak.H"
+#ifndef FOAM_LOCAL_EULER_DT_HAS_SCHEME_IN_NAME
+
+#include "swakTime.H"
+
 #include "RhoPimpleFlowRegionSolverFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
 #include "IOmanip.H"
-#include "swakTime.H"
 
 #ifdef FOAM_MESHOBJECT_GRAVITY
 # include "gravityMeshObject.H"
@@ -88,6 +92,7 @@ RhoPimpleFlowRegionSolverFunctionObject::RhoPimpleFlowRegionSolverFunctionObject
         t,
         dict
     ),
+#ifndef FOAM_LOCAL_EULER_DT_HAS_SCHEME_IN_NAME
     LTS_ (
         fv::localEulerDdt::enabled(this->mesh())
     ),
@@ -111,15 +116,18 @@ RhoPimpleFlowRegionSolverFunctionObject::RhoPimpleFlowRegionSolverFunctionObject
         :
         nullptr
     ),
+#endif
     pimple_(
         this->mesh()
     ),
     thermo_(
         fluidThermo::New(this->mesh())
     ),
+#ifdef FOAM_HAS_FVOPTIONS
     fvOptions_(
         this->mesh()
     ),
+#endif
     rho_(
         IOobject
         (
@@ -153,12 +161,14 @@ RhoPimpleFlowRegionSolverFunctionObject::RhoPimpleFlowRegionSolverFunctionObject
         ),
         linearInterpolate(rho_*U_) & this->mesh().Sf()
     ),
+#ifndef FOAM_HAS_NO_PRESURE_CONTROL_CLASS
     pressureControl_(
         thermo().p(),
         rho_,
         pimple_.dict(),
         false
     ),
+#endif
     turbulence_
     (
 #ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
@@ -211,7 +221,7 @@ RhoPimpleFlowRegionSolverFunctionObject::RhoPimpleFlowRegionSolverFunctionObject
             IOobject::READ_IF_PRESENT,
             IOobject::AUTO_WRITE
         ),
-        dimensionedScalar(dimless, Zero)
+        dimensionedScalar("zero", dimless, 0)
     )
 {
     Dbug << "RhoPimpleFlowRegionSolverFunctionObject::RhoPimpleFlowRegionSolverFunctionObject" << endl;
@@ -220,7 +230,7 @@ RhoPimpleFlowRegionSolverFunctionObject::RhoPimpleFlowRegionSolverFunctionObject
 
     if (!thermo().dpdt())
     {
-        dpdt_ == dimensionedScalar(dpdt_.dimensions(), Zero);
+        dpdt_ == dimensionedScalar("zero", dpdt_.dimensions(), 0);
         dpdt_.writeOpt() = IOobject::NO_WRITE;
     }
 
@@ -252,7 +262,9 @@ bool RhoPimpleFlowRegionSolverFunctionObject::start() {
 //- actual solving
 bool RhoPimpleFlowRegionSolverFunctionObject::solveRegion() {
     // References so that the includes work
+#ifndef FOAM_LOCAL_EULER_DT_HAS_SCHEME_IN_NAME
     const bool &LTS = this->LTS_;
+#endif
     pimpleControl &pimple = this->pimple_;
     fluidThermo& thermo = this->thermo();
     volScalarField &p = thermo.p();
@@ -260,7 +272,9 @@ bool RhoPimpleFlowRegionSolverFunctionObject::solveRegion() {
     volVectorField &U = U_;
     surfaceScalarField &phi = phi_;
     fvMesh &mesh = this->mesh();
+#ifndef FOAM_HAS_NO_PRESURE_CONTROL_CLASS
     pressureControl &pressureControl = pressureControl_;
+#endif
     autoPtr<
 #ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
       compressible::momentumTransportModel
@@ -274,7 +288,14 @@ bool RhoPimpleFlowRegionSolverFunctionObject::solveRegion() {
 #endif
     const volScalarField& psi = thermo.psi();
     const Time &runTime = mesh.time();
-    fv::options &fvOptions = fvOptions_;
+#ifdef FOAM_HAS_FVOPTIONS
+#ifdef FOAM_FVOPTIONS_IN_FV
+    fv::options
+#else
+    fv::optionList
+#endif
+        &fvOptions = fvOptions_;
+#endif
 #ifdef FOAM_CORRECT_RHO_USES_RHOMIN_MAX
     const dimensionedScalar rhoMax("rhoMax", dimDensity, GREAT, pimple.dict());
     const dimensionedScalar rhoMin("rhoMin", dimDensity, Zero, pimple.dict());
@@ -285,11 +306,13 @@ bool RhoPimpleFlowRegionSolverFunctionObject::solveRegion() {
     autoPtr<surfaceVectorField> &rhoUf = rhoUf_;
     scalar& cumulativeContErr = cumulativeContErrIO_.value();
 
+#ifndef FOAM_LOCAL_EULER_DT_HAS_SCHEME_IN_NAME
     if (LTS)
     {
          #include "RhoPimpleFlowIncludes/setRDeltaT.H"
     }
     else
+#endif
     {
     #include "compressibleCourantNo.H"
         // #include "setDeltaT.H"
@@ -312,7 +335,13 @@ bool RhoPimpleFlowRegionSolverFunctionObject::solveRegion() {
             }
         }
 
-        if (pimple.firstIter() && !pimple.SIMPLErho())
+        if (
+            pimple.firstIter()
+#ifdef FOAM_PIMPLE_CONTROL_HAS_SIMPLERHO
+            &&
+            !pimple.SIMPLErho()
+#endif
+        )
         {
             #include "rhoEqn.H"
         }
@@ -354,5 +383,7 @@ bool RhoPimpleFlowRegionSolverFunctionObject::read(const dictionary& dict) {
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 } // namespace Foam
+
+#endif
 
 // ************************************************************************* //

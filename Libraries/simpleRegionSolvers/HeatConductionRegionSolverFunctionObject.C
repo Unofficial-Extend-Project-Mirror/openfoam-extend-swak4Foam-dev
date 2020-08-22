@@ -29,12 +29,13 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "swakTime.H"
+
 #include "HeatConductionRegionSolverFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
 #include "IOmanip.H"
-#include "swakTime.H"
 
 #ifdef FOAM_MESHOBJECT_GRAVITY
 # include "gravityMeshObject.H"
@@ -89,10 +90,12 @@ HeatConductionRegionSolverFunctionObject::HeatConductionRegionSolverFunctionObje
         dynamic_cast<solidThermoType*> (
             solidThermo::New(this->mesh()).ptr()
         )
-    ),
-    fvOptions_(
+    )
+#ifdef FOAM_HAS_FVOPTIONS
+    ,fvOptions_(
         mesh()
     )
+#endif
 {
     Dbug << "HeatConductionRegionSolverFunctionObject::HeatConductionRegionSolverFunctionObject" << endl;
 
@@ -130,12 +133,20 @@ HeatConductionRegionSolverFunctionObject::HeatConductionRegionSolverFunctionObje
                         IOobject::NO_WRITE
                     ),
                     mesh(),
-                    dimensionedSymmTensor(tkappaByCp().dimensions(), Zero),
+                    dimensionedSymmTensor(
+                        "zero",
+                        tkappaByCp().dimensions(),
+                        symmTensor::zero
+                    ),
                     zeroGradientFvPatchSymmTensorField::typeName
                 )
             );
 
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
         aniAlpha_().primitiveFieldRef() =
+#else
+        aniAlpha_().internalField() =
+#endif
 #ifdef FOAM_COORDINATE_SYSTEM_NEW_INTERFACE
             coordinates_().transformPrincipal
             (
@@ -160,8 +171,15 @@ HeatConductionRegionSolverFunctionObject::HeatConductionRegionSolverFunctionObje
             IOobject::AUTO_WRITE
         );
 
-    if (betavSolidIO.typeHeaderOk<volScalarField>(true))
-    {
+    if (
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+        betavSolidIO.typeHeaderOk<volScalarField>(true)
+#else
+        betavSolidIO.headerOk()
+        &&
+        betavSolidIO.headerClassName()==volScalarField::typeName
+#endif
+    ) {
         betav_.set
             (
                 new volScalarField(betavSolidIO, mesh())
@@ -186,14 +204,11 @@ HeatConductionRegionSolverFunctionObject::HeatConductionRegionSolverFunctionObje
                 )
             );
     }
-
 }
 
-#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
 bool HeatConductionRegionSolverFunctionObject::start() {
     return true;
 }
-#endif
 
 //- actual solving
 bool HeatConductionRegionSolverFunctionObject::solveRegion() {
@@ -210,7 +225,11 @@ bool HeatConductionRegionSolverFunctionObject::solveRegion() {
         tmp<volVectorField> tkappaByCp = thermo().Kappa()/cp;
         const coordinateSystem& coordSys = coordinates_();
 
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
         aniAlpha.primitiveFieldRef() =
+#else
+        aniAlpha.internalField() =
+#endif
 #ifdef FOAM_COORDINATE_SYSTEM_NEW_INTERFACE
             coordSys.transformPrincipal
             (
@@ -234,7 +253,14 @@ bool HeatConductionRegionSolverFunctionObject::solveRegion() {
 
     const volScalarField& betav = betav_();
 
-    fv::options& fvOptions = fvOptions_;
+#ifdef FOAM_HAS_FVOPTIONS
+#ifdef FOAM_FVOPTIONS_IN_FV
+    fv::options
+#else
+    fv::optionList
+#endif
+        &fvOptions = fvOptions_;
+#endif
 
     // if (finalIter)
     // {
@@ -257,17 +283,23 @@ bool HeatConductionRegionSolverFunctionObject::solveRegion() {
                         ? fvm::laplacian(betav*thermo().alpha(), T_, "laplacian(alpha,T)")
                         : fvm::laplacian(betav*taniAlpha(), T_, "laplacian(alpha,T)")
                     )
+#ifdef FOAM_HAS_FVOPTIONS
                     ==
                     fvOptions(rho, T_)
+#endif
                 );
 
             TEqn.relax();
 
+#ifdef FOAM_HAS_FVOPTIONS
             fvOptions.constrain(TEqn);
+#endif
 
             TEqn.solve(mesh().solverDict(T_.name()));
 
+#ifdef FOAM_HAS_FVOPTIONS
             fvOptions.correct(T_);
+#endif
         }
 
         thermo().he()=thermo().he(thermo().p(),T_);

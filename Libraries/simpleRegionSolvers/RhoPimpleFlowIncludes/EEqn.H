@@ -20,17 +20,23 @@
 #else
       - fvm::laplacian(turbulence->alphaEff(), he)
 #endif
+#ifdef FOAM_HAS_FVOPTIONS
      ==
         fvOptions(rho, he)
+#endif
     );
 
     EEqn.relax();
 
+#ifdef FOAM_HAS_FVOPTIONS
     fvOptions.constrain(EEqn);
+#endif
 
     EEqn.solve();
 
+#ifdef FOAM_HAS_FVOPTIONS
     fvOptions.correct(he);
+#endif
 
     thermo.correct();
 }

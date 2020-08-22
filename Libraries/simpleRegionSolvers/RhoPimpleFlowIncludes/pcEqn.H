@@ -20,7 +20,13 @@ surfaceScalarField phiHbyA
 (
     "phiHbyA",
     (
-        fvc::interpolate(rho)*fvc::flux(HbyA)
+        fvc::interpolate(rho)
+        *
+#ifdef FOAM_NO_SINGLE_PARAMETER_VERSION_OF_FLUX_FUNCTION
+            fvc::interpolate(U) & mesh.Sf()
+#else
+        fvc::flux(HbyA)
+#endif
       + MRF.zeroFilter
         (
             fvc::interpolate(rho*rAU)*fvc::ddtCorr(rho, U, phi, rhoUf)
@@ -54,8 +60,10 @@ if (pimple.transonic())
     (
         fvc::ddt(rho) + psi*correction(fvm::ddt(p))
       + fvc::div(phiHbyA) + fvm::div(phid, p)
+#ifdef FOAM_HAS_FVOPTIONS
      ==
         fvOptions(psi, p, rho.name())
+#endif
     );
 
     while (pimple.correctNonOrthogonal())
@@ -86,8 +94,10 @@ else
     (
         fvc::ddt(rho) + psi*correction(fvm::ddt(p))
       + fvc::div(phiHbyA)
+#ifdef FOAM_HAS_FVOPTIONS
      ==
         fvOptions(psi, p, rho.name())
+#endif
     );
 
     while (pimple.correctNonOrthogonal())
@@ -115,13 +125,17 @@ p.relax();
 
 U = HbyA - rAtU*fvc::grad(p);
 U.correctBoundaryConditions();
+#ifdef FOAM_HAS_FVOPTIONS
 fvOptions.correct(U);
+#endif
 K = 0.5*magSqr(U);
 
+#ifndef FOAM_HAS_NO_PRESURE_CONTROL_CLASS
 if (pressureControl.limit(p))
 {
     p.correctBoundaryConditions();
 }
+#endif
 
 thermo.correctRho(
     psi *p - psip0

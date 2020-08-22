@@ -35,6 +35,8 @@ boundaryField
         value           $internalField;
         Tnbr            T;
         kappaMethod     fluidThermo;
+        kappa $kappaMethod;
+        kappaName none;
     }
 
     cavity_to_rightHeater {
@@ -42,6 +44,8 @@ boundaryField
         value           $internalField;
         Tnbr            T;
         kappaMethod     fluidThermo;
+        kappa $kappaMethod;
+        kappaName none;
     }
 
     cavity_to_bottomHeater {
@@ -49,6 +53,8 @@ boundaryField
         value           $internalField;
         Tnbr            T;
         kappaMethod     fluidThermo;
+        kappa $kappaMethod;
+        kappaName none;
     }
 
     frontAndBack

@@ -44,10 +44,18 @@ Contributors/Copyright:
 #include "SimpleRegionSolverFunctionObject.H"
 
 #include "fluidThermo.H"
-#include "fvOptions.H"
+#ifdef FOAM_HAS_FVOPTIONS
+#ifdef FOAM_FVOPTIONS_IN_FV
+#include "fvOptionList.H"
+#else
+#include "fvIOoptionList.H"
+#endif
+#endif
 #include "pimpleControl.H"
 #include "surfaceMesh.H"
+#ifndef FOAM_HAS_NO_PRESURE_CONTROL_CLASS
 #include "pressureControl.H"
+#endif
 #include "swakTurbulence.H"
 
 #ifdef FOAM_NEW_TURBULENCE_STRUCTURE
@@ -87,11 +95,13 @@ class RhoPimpleFlowRegionSolverFunctionObject
     //- Disallow default bitwise assignment
     void operator=(const RhoPimpleFlowRegionSolverFunctionObject&);
 
+#ifndef FOAM_LOCAL_EULER_DT_HAS_SCHEME_IN_NAME
     //- will we use LTS?
     bool LTS_;
 
     //- reverse timestep for LTS
     autoPtr<volScalarField> trDeltaT;
+#endif
 
     //- controling the PIMPLE-algorithm
     pimpleControl pimple_;
@@ -99,8 +109,15 @@ class RhoPimpleFlowRegionSolverFunctionObject
     //- thermo
     autoPtr<fluidThermo> thermo_;
 
+#ifdef FOAM_HAS_FVOPTIONS
     //- the sources
-    fv::options fvOptions_;
+#ifdef FOAM_FVOPTIONS_IN_FV
+    fv::options
+#else
+    fv::optionList
+#endif
+    fvOptions_;
+#endif
 
     //- the density
     volScalarField rho_;
@@ -111,8 +128,10 @@ class RhoPimpleFlowRegionSolverFunctionObject
     //- surface flows
     surfaceScalarField phi_;
 
+#ifndef FOAM_HAS_NO_PRESURE_CONTROL_CLASS
     //- control the pressure
     pressureControl pressureControl_;
+#endif
 
     //- turbulence
     autoPtr<

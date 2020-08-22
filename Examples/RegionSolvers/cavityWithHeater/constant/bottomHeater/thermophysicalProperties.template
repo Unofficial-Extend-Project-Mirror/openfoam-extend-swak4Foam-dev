@@ -39,6 +39,7 @@ species (
 copper {
     specie
     {
+        nMoles 1;
         molWeight 1;
     }
     equationOfState
@@ -57,6 +58,7 @@ copper {
 alumina {
     specie
     {
+        nMoles 1;
         molWeight 1;
     }
     equationOfState

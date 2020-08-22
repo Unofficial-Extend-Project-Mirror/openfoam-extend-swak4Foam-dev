@@ -29,12 +29,12 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "swakTime.H"
 #include "PotentialFlowRegionSolverFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
 #include "IOmanip.H"
-#include "swakTime.H"
 
 #ifdef FOAM_MESHOBJECT_GRAVITY
 # include "gravityMeshObject.H"
@@ -86,14 +86,16 @@ PotentialFlowRegionSolverFunctionObject::PotentialFlowRegionSolverFunctionObject
         mesh()
     ),
     potentialFlow_(
-        mesh(),
-        "potentialFlow"
+        mesh()
+#ifndef FOAM_THEREIS_NO_PISO_CONTROL_CLASS
+        ,"potentialFlow"
+#endif
     )
 {
     Dbug << "PotentialFlowRegionSolverFunctionObject::PotentialFlowRegionSolverFunctionObject" << endl;
 
     // Initialise the velocity internal field to zero
-    U_ = dimensionedVector(U_.dimensions(), Zero);
+    U_ = dimensionedVector("U", U_.dimensions(), vector::zero);
 
     U_.correctBoundaryConditions();
 
@@ -107,7 +109,11 @@ PotentialFlowRegionSolverFunctionObject::PotentialFlowRegionSolverFunctionObject
                 IOobject::NO_READ,
                 IOobject::AUTO_WRITE
             ),
+#ifdef FOAM_NO_SINGLE_PARAMETER_VERSION_OF_FLUX_FUNCTION
+            fvc::interpolate(U_) & mesh().Sf()
+#else
             fvc::flux(U_)
+#endif
         )
     );
 
@@ -137,7 +143,7 @@ PotentialFlowRegionSolverFunctionObject::PotentialFlowRegionSolverFunctionObject
                 IOobject::AUTO_WRITE
             ),
             mesh(),
-            dimensionedScalar(sqr(dimVelocity), Zero),
+            dimensionedScalar("zero", sqr(dimVelocity), 0),
             pBCTypes
         )
     );
@@ -168,7 +174,7 @@ PotentialFlowRegionSolverFunctionObject::PotentialFlowRegionSolverFunctionObject
                 IOobject::AUTO_WRITE
             ),
             mesh(),
-            dimensionedScalar(dimLength*dimVelocity, Zero),
+            dimensionedScalar("zero", dimLength*dimVelocity, 0),
             PhiBCTypes
         )
     );
@@ -182,14 +188,19 @@ PotentialFlowRegionSolverFunctionObject::PotentialFlowRegionSolverFunctionObject
         PhiRefValue
     );
 
-    mesh().setFluxRequired(Phi_().name());
+    mesh()
+#ifdef FOAM_FVSCHEMES_HAS_SETFLUXREQUIRED
+        .setFluxRequired(
+#else
+        .fluxRequired(
+#endif
+            Phi_().name()
+        );
 }
 
-#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
 bool PotentialFlowRegionSolverFunctionObject::start() {
     return true;
 }
-#endif
 
 //- actual solving
 bool PotentialFlowRegionSolverFunctionObject::solveRegion() {
@@ -199,7 +210,12 @@ bool PotentialFlowRegionSolverFunctionObject::solveRegion() {
     volScalarField &Phi=Phi_();
 
     U.correctBoundaryConditions();
-    phi=fvc::flux(U);
+    phi=
+#ifdef FOAM_NO_SINGLE_PARAMETER_VERSION_OF_FLUX_FUNCTION
+        fvc::interpolate(U_) & mesh().Sf();
+#else
+        fvc::flux(U);
+#endif
 
     label PhiRefCell = 0;
     scalar PhiRefValue = 0;
@@ -239,7 +255,16 @@ bool PotentialFlowRegionSolverFunctionObject::solveRegion() {
     U.correctBoundaryConditions();
 
     Info<< "Interpolated velocity error = "
-        << (sqrt(sum(sqr(fvc::flux(U) - phi)))/sum(mesh().magSf())).value()
+        << (sqrt(sum(
+            sqr(
+#ifdef FOAM_NO_SINGLE_PARAMETER_VERSION_OF_FLUX_FUNCTION
+                (fvc::interpolate(U_) & mesh().Sf())
+#else
+                fvc::flux(U)
+#endif
+                -
+                phi
+            )))/sum(mesh().magSf())).value()
         << endl;
 
     Info<< nl << "Calculating approximate pressure field" << endl;
