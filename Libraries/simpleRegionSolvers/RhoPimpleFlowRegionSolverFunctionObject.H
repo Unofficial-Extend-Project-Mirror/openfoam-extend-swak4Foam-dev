@@ -114,7 +114,7 @@ class RhoPimpleFlowRegionSolverFunctionObject
 #ifdef FOAM_FVOPTIONS_IN_FV
     fv::options
 #else
-    fv::optionList
+    fv::IOoptionList
 #endif
     fvOptions_;
 #endif

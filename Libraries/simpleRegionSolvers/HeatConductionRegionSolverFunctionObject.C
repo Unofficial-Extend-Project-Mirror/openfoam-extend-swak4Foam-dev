@@ -257,7 +257,7 @@ bool HeatConductionRegionSolverFunctionObject::solveRegion() {
 #ifdef FOAM_FVOPTIONS_IN_FV
     fv::options
 #else
-    fv::optionList
+    fv::IOoptionList
 #endif
         &fvOptions = fvOptions_;
 #endif

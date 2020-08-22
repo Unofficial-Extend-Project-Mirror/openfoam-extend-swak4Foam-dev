@@ -24,6 +24,13 @@ TFix {
     expressions {
         T "time()<20 ? 300-time() : 280" [0 0 0 1 0 0 0];
     }
+    scalarSwakSetValueCoeffs {
+        useMaskExpression yes;
+        maskExpression "mag(pos()-vector(0.15,0.05+0.05*sin(time()/20),0.005)) < 0.01";
+        expressions {
+            T "time()<20 ? 300-time() : 280" [0 0 0 1 0 0 0];
+        }
+    }
 }
 
 //************************************************************************* //
