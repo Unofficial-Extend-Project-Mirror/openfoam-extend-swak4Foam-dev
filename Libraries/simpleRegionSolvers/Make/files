@@ -4,4 +4,6 @@ PotentialFlowRegionSolverFunctionObject.C
 RhoPimpleFlowRegionSolverFunctionObject.C
 SolidDisplacementRegionSolverFunctionObject.C
 
+originalBoundaryConditions/tractionDisplacementFvPatchVectorField.C
+
 LIB = $(FOAM_USER_LIBBIN)/libsimpleRegionSolvers

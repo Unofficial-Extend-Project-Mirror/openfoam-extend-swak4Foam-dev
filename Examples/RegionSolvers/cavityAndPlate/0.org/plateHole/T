@@ -36,9 +36,10 @@ boundaryField
     {
         type            compressible::turbulentTemperatureCoupledBaffleMixed;
         value           $internalField;
-        sampleMode      nearestPatchFace;
-        sampleRegion    leftHeater;
-        samplePatch     leftHeater_to_cavity;
+        Tnbr T;
+        kappaMethod lookup;
+        kappaName DT;
+        kappa $kappaName;
     }
     hole
     {

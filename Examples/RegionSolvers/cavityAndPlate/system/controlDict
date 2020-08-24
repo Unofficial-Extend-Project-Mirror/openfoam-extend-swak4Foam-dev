@@ -23,7 +23,7 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         100;
+endTime         200;
 
 deltaT          0.01;
 
@@ -33,7 +33,7 @@ writeInterval   1;
 
 purgeWrite      0;
 
-writeFormat     binary;
+writeFormat     ascii;
 
 writePrecision  10;
 
@@ -63,6 +63,34 @@ functions {
     solvePlateHole {
         type solidDisplacementRegionSolver;
         meshRegion plateHole;
+    }
+    displacement {
+        type swakExpression;
+        valueType internalField;
+        region plateHole;
+        verbose true;
+        accumulations (
+            min
+            max
+        );
+        expression "D";
+    }
+    temperatureCavity {
+        type swakExpression;
+        valueType internalField;
+        verbose true;
+        accumulations (
+            min
+            weightedQuantile0.01
+            weightedAverage
+            weightedQuantile0.99
+            max
+        );
+        expression "T";
+    }
+    temperaturePlate {
+        $temperatureCavity;
+        region plateHole;
     }
 }
   // *************************************************************************
