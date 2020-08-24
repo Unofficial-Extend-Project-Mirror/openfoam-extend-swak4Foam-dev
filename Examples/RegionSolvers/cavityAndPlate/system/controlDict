@@ -57,12 +57,20 @@ libs (
     "libswakFunctionObjects.so"
     //    "libswakTopoSources.so"
     "libswakSourceFields.so"
+    "libgroovyBC.so"
 );
 
 functions {
+    loadPseudoD {
+        type readAndUpdateFields;
+        fields (
+            D
+        );
+    }
     solvePlateHole {
         type solidDisplacementRegionSolver;
         meshRegion plateHole;
+        ignore_unimplemented_SimpleRegionSolverFunctionObject::movePoints true;
     }
     displacement {
         type swakExpression;
@@ -74,6 +82,7 @@ functions {
             max
         );
         expression "D";
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     temperatureCavity {
         type swakExpression;
@@ -87,6 +96,7 @@ functions {
             max
         );
         expression "T";
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     temperaturePlate {
         $temperatureCavity;

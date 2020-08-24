@@ -51,6 +51,18 @@ solvers
         $U;
         relTol          0;
     }
+    cellDisplacementFinal
+    {
+        $p;
+        tolerance       1e-6;
+        relTol          0;
+    }
+    pcorrFinal
+    {
+        $p;
+        tolerance       0.1;
+        relTol          0;
+    }
 }
 
 PIMPLE

@@ -1340,6 +1340,17 @@ Demonstrating the function objects that emulate solvers in
 different regions
 
 
+#### cavityAndHeater
+
+A driven cavity with a solid plated attached. The solid region
+gets the temperature from the cavity and the cavity is deformed
+with the displacement from the solid
+
+-   **Solver:** `rhoPimpleFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+-   **Demonstrates:** solid region solver
+
+
 #### cavityWithHeater
 
 A driven cavity that has to solid heat conduction zones at the
@@ -1518,7 +1529,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org1e53f31) below). Don't work on the
+details see [6.2.2](#orgecda479) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1574,7 +1585,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org1e53f31"></a>
+<a id="orgecda479"></a>
 
 ### Repository organization
 
@@ -6902,6 +6913,9 @@ Currently implemented function objects are
     region (basically port of `potentialFoam`)
 -   **rhoPimpleFlowRegionSolver:** compressible flow lifted from
     `rhoPimpleFoam` (without the dynamic mesh)
+-   **solidDisplacementRegionSolver:** a solid stress solver
+    (including thermal stresses) lifted from
+    `solidDisplacementFoam`
 
 
 #### A `fvOption` to set the energy according to a temperature expression
