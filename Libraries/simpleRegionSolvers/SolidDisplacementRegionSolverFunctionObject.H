@@ -24,15 +24,16 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    HeatConductionRegionSolverFunctionObject
+    SolidDisplacementRegionSolverFunctionObject
 
 Description
-    Solve the heat conduction in a solid. Replicates the solid parts of the
-    chtMultiRegionFoam solver from v1906 but solves for the temperature instead
-    the energy to allow regions with varying coefficients
+    Solve stresses and displacement in a solid
+
+    Replicates the functionality of the solidDisplacementFoam soliver
+    in v1906
 
 SourceFiles
-    HeatConductionRegionSolverFunctionObject.C
+    SolidDisplacementRegionSolverFunctionObject.C
 
 Contributors/Copyright:
     2020 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
@@ -40,72 +41,77 @@ Contributors/Copyright:
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
-#ifndef HeatConductionRegionSolverFunctionObject_H
-#define HeatConductionRegionSolverFunctionObject_H
+#ifndef SolidDisplacementRegionSolverFunctionObject_H
+#define SolidDisplacementRegionSolverFunctionObject_H
 
 #include "SimpleRegionSolverFunctionObject.H"
 
-#include "swakThermoTypes.H"
+#include "swak.H"
 
-#ifdef FOAM_SOLIDTHERMO_PRESSURE_IN_SUBCLASS
-#include "solidPressureThermo.H"
-typedef Foam::solidPressureThermo solidThermoType;
-#else
-#include "solidThermo.H"
-typedef Foam::solidThermo solidThermoType;
-#endif
+#include "fvCFD.H"
 
-#ifdef FOAM_HAS_FVOPTIONS
-#ifdef FOAM_FVOPTIONS_IN_FV
-#include "fvOptions.H"
-#else
-#include "fvIOoptionList.H"
-#endif
-#endif
-#include "coordinateSystem.H"
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+// //
 
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    // //
-
-    namespace Foam {
+namespace Foam {
 
 /*---------------------------------------------------------------------------*\
-                           Class HeatConductionRegionSolverFunctionObject Declaration
+                           Class SolidDisplacementRegionSolverFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class HeatConductionRegionSolverFunctionObject
+class SolidDisplacementRegionSolverFunctionObject
 :
     public SimpleRegionSolverFunctionObject
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    HeatConductionRegionSolverFunctionObject(const HeatConductionRegionSolverFunctionObject&);
+    SolidDisplacementRegionSolverFunctionObject(const SolidDisplacementRegionSolverFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const HeatConductionRegionSolverFunctionObject&);
+    void operator=(const SolidDisplacementRegionSolverFunctionObject&);
 
-    //- keep our own temperature field so that the solidThermo doesn't update it
-    volScalarField T_;
+    //- dictionary with settings
+    dictionary stressControl_;
 
-    //- thermo
-    autoPtr<solidThermoType> thermo_;
+    //- mechanical properties
+    IOdictionary mechanicalProperties_;
 
-#ifdef FOAM_HAS_FVOPTIONS
-    //- the sources
-#ifdef FOAM_FVOPTIONS_IN_FV
-    fv::options
-#else
-    fv::IOoptionList
-#endif
-    fvOptions_;
-#endif
+    //- density field
+    autoPtr<volScalarField> rhoPtr_;
 
-    autoPtr<coordinateSystem> coordinates_;
+    autoPtr<volScalarField> EPtr_;
 
-    autoPtr<volScalarField> betav_;
+    autoPtr<volScalarField> ERealPtr_;
 
-    autoPtr<volSymmTensorField> aniAlpha_;
+    autoPtr<volScalarField> nuPtr_;
+
+    autoPtr<volScalarField> muPtr_;
+
+    autoPtr<volScalarField> lambdaPtr_;
+
+    autoPtr<volScalarField> threeKPtr_;
+
+    //- thermal properties
+    IOdictionary thermalProperties_;
+
+    //- should we calculate the thermal stress?
+    bool thermalStress_;
+
+    volScalarField threeKalpha_;
+
+    volScalarField DT_;
+
+    //- displacement
+    volVectorField D_;
+
+    //- pointer to the temperature field
+    autoPtr<volScalarField> Tptr_;
+
+    //- stress field
+    autoPtr<volSymmTensorField> sigmaD_;
+
+    autoPtr<volVectorField> divSigmaExp_;
 
 protected:
 
@@ -114,23 +120,19 @@ protected:
     //- actual solving
     virtual bool solveRegion();
 
-    solidThermoType &thermo() {
-        return thermo_();
-    }
-
 public:
 
     // Constructors
 
     //- Construct from components
-    HeatConductionRegionSolverFunctionObject
+    SolidDisplacementRegionSolverFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
 
-    TypeName("HeatConductionRegionSolverFunctionObject");
+    TypeName("SolidDisplacementRegionSolverFunctionObject");
 
     // Member Functions
 

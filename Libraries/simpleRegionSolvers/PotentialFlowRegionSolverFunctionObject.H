@@ -27,7 +27,7 @@ Class
     PotentialFlowRegionSolverFunctionObject
 
 Description
-    Basis for the other function objects here. Evaluates the most common options
+    Solves the potential flow equation. Replicates potentialFoam from v1906
 
 SourceFiles
     PotentialFlowRegionSolverFunctionObject.C

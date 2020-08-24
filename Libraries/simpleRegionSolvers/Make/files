@@ -2,5 +2,6 @@ SimpleRegionSolverFunctionObject.C
 HeatConductionRegionSolverFunctionObject.C
 PotentialFlowRegionSolverFunctionObject.C
 RhoPimpleFlowRegionSolverFunctionObject.C
+SolidDisplacementRegionSolverFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libsimpleRegionSolvers

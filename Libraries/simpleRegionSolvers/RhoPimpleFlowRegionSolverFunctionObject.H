@@ -27,7 +27,8 @@ Class
     RhoPimpleFlowRegionSolverFunctionObject
 
 Description
-    Basis for the other function objects here. Evaluates the most common options
+    Solve compressible flow. Replicates the rhoPimpleFoam solver in v1906
+    minus the dynmamic mesh facilities
 
 SourceFiles
     RhoPimpleFlowRegionSolverFunctionObject.C
