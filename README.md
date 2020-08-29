@@ -1340,7 +1340,7 @@ Demonstrating the function objects that emulate solvers in
 different regions
 
 
-#### cavityAndHeater
+#### cavityAndPlate
 
 A driven cavity with a solid plated attached. The solid region
 gets the temperature from the cavity and the cavity is deformed
@@ -1359,6 +1359,17 @@ sides with which it interacts
 -   **Solver:** `rhoPimpleFoam`
 -   **Case setup:** `pyFoamPrepareCase`
 -   **Demonstrates:** different heat conductions
+
+
+#### icoStructChannel
+
+Adaption of a case for the old `icoStructFoam` (an old forgotten
+demo-solver for fluid-structure interaction). This is a channel
+with one flexible wall
+
+-   **Solver:** `pimpleFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+-   **Demonstrates:** solid region solver
 
 
 #### pitzDailyWithPotential
@@ -1529,7 +1540,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orgdd3b857) below). Don't work on the
+details see [6.2.2](#org80e0964) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1585,7 +1596,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orgdd3b857"></a>
+<a id="org80e0964"></a>
 
 ### Repository organization
 

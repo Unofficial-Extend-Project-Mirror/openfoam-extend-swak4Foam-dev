@@ -897,7 +897,7 @@ S_{expl} + S_{impl} T
 *** RegionSolvers
     Demonstrating the function objects that emulate solvers in
     different regions
-**** cavityAndHeater
+**** cavityAndPlate
      A driven cavity with a solid plated attached. The solid region
      gets the temperature from the cavity and the cavity is deformed
      with the displacement from the solid
@@ -910,6 +910,13 @@ S_{expl} + S_{impl} T
      - Solver :: =rhoPimpleFoam=
      - Case setup :: =pyFoamPrepareCase=
      - Demonstrates :: different heat conductions
+**** icoStructChannel
+     Adaption of a case for the old =icoStructFoam= (an old forgotten
+     demo-solver for fluid-structure interaction). This is a channel
+     with one flexible wall
+     - Solver :: =pimpleFoam=
+     - Case setup :: =pyFoamPrepareCase=
+     - Demonstrates :: solid region solver
 **** pitzDailyWithPotential
      A pitzDaily case with two channels bolted on the inlet and outlet
      where the potential flow is calculated. Pressure and velocity are
