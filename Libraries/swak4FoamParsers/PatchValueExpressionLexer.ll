@@ -41,6 +41,7 @@ typedef parserPatch::PatchValueExpressionParser::semantic_type YYSTYPE;
 %s setname
 %s vectorcomponent
 %s tensorcomponent
+%s mappedFieldId
 %x parsedByOtherParser
 %x needsIntegerParameter
 
@@ -84,6 +85,7 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 [\n]+                yylloc->lines (yyleng); yylloc->step ();
 
 <INITIAL,setname>[-+*/%(),&^<>!?:.]               return yytext[0];
+<mappedFieldId>[(]                return yytext[0];
 
 <needsIntegerParameter>[(] return yytext[0];
 <needsIntegerParameter>[)] { BEGIN(INITIAL); return yytext[0]; }
@@ -217,6 +219,25 @@ eigenVectors           return token::TOKEN_eigenVectors;
                        yylval->integer = atoi(yytext);
                        return token::TOKEN_INT;
                      }
+
+<mappedFieldId>{id} {
+    Foam::word *ptr=new Foam::word (yytext);
+    BEGIN(INITIAL);
+
+    if(driver.isMapField<Foam::scalar>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_SID;
+    } else if(driver.isMapField<Foam::vector>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_VID;
+    } else if(driver.isMapField<Foam::tensor>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_TID;
+    } else if(driver.isMapField<Foam::symmTensor>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_YID;
+    } else if(driver.isMapField<Foam::sphericalTensor>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_HID;
+    } else {
+        driver.error (*yylloc, "field "+*ptr+" not existing or of wrong type");
+    }
+}
 
 <INITIAL>{id}                 {
     Foam::word *ptr=new Foam::word (yytext);
@@ -376,6 +397,18 @@ void PatchValueExpressionDriver::scan_end ()
     scanner_=NULL;
 //	    fclose (yyin);
     //    yy_delete_buffer(bufferPatch,scanner_);
+}
+
+void PatchValueExpressionDriver::startMappedFieldIdentifier()
+{
+    if(traceScanning()) {
+        Info << "PatchValueExpressionDriver::startMappedFieldIdentifier() "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
+
+    struct yyguts_t * yyg = static_cast<struct yyguts_t*>(scanner_);
+    BEGIN(mappedFieldId);
 }
 
 void PatchValueExpressionDriver::startEatCharacters()

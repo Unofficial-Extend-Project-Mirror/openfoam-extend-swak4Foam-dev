@@ -33,7 +33,9 @@ boundaryField
         // Field Value
         value           uniform (0 0 0);
         valueExpression "toPoint(mapped(D))";
-        //        debugCommonDriver 1;
+        // debugCommonDriver 1;
+        // traceScanning 1;
+        // traceParsing 1;
     }
 
     fixedWalls

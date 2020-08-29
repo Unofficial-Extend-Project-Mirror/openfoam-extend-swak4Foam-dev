@@ -1529,7 +1529,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orgecda479) below). Don't work on the
+details see [6.2.2](#orgf48b30c) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1585,7 +1585,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orgecda479"></a>
+<a id="orgf48b30c"></a>
 
 ### Repository organization
 
@@ -6883,6 +6883,18 @@ This has been fixed and the storing of times has been fixed
 #### `funkySetLagrangianField` does not load fluid fields correctly
 
 Fields were loaded but went out of scope before being usable. Fixed
+
+
+#### For `patch`-expressions `mapped` did not lookup on another mesh
+
+Until now `mapped(D)` for patches that mapped to another mesh
+only worked if the field `D` existed on both meshes and was of
+the same type. The reason is that the first lookup was done on
+the original mesh while the value was then fetched (correctly)
+from the other mesh. This has now been fixed by makeing sure that
+the lookup occurs on the other mesh as well
+
+The same is of course true for `mappedInternal`
 
 
 ### Internals (for developers)

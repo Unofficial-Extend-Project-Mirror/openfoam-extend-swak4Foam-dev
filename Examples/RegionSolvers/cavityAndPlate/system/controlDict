@@ -61,12 +61,12 @@ libs (
 );
 
 functions {
-    loadPseudoD {
-        type readAndUpdateFields;
-        fields (
-            D
-        );
-    }
+    // loadPseudoD {
+    //     type readAndUpdateFields;
+    //     fields (
+    //         D
+    //     );
+    // }
     solvePlateHole {
         type solidDisplacementRegionSolver;
         meshRegion plateHole;
@@ -103,5 +103,10 @@ functions {
         region plateHole;
     }
 }
+
+DebugSwitches {
+    // PatchValueExpressionDriver 1;
+}
+
   // *************************************************************************
   // //

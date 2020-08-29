@@ -576,6 +576,9 @@ tensorComponentSwitch: /* empty rule */{ driver.startTensorComponent(); }
 eatCharactersSwitch: /* empty rule */{ driver.startEatCharacters(); }
 ;
 
+mappedFieldIdSwitch: /* empty rule */{ driver.startMappedFieldIdentifier(); }
+;
+
 vexp:   vector                  { $$ = $1; }
         | vreduced              {
             $$ = driver.makeField<Foam::vector>(*$1).ptr();
@@ -746,11 +749,11 @@ vexp:   vector                  { $$ = $1; }
             $$=driver.getOldTimeField<Foam::vector>(*$3).ptr();
             delete $3;
           }
-        | TOKEN_mapped '(' TOKEN_VID ')' {
-            $$=driver.mapField<Foam::vector>(*$3).ptr(); delete $3;
+        | TOKEN_mapped mappedFieldIdSwitch '(' TOKEN_VID ')' {
+            $$=driver.mapField<Foam::vector>(*$4).ptr(); delete $4;
           }
-        | TOKEN_mappedInternal '(' TOKEN_VID ')' {
-            $$=driver.mapField<Foam::vector>(*$3,true).ptr(); delete $3;
+        | TOKEN_mappedInternal mappedFieldIdSwitch '(' TOKEN_VID ')' {
+            $$=driver.mapField<Foam::vector>(*$4,true).ptr(); delete $4;
           }
         | TOKEN_snGrad '(' TOKEN_VID ')' {
             $$=driver.getSurfaceNormalField<Foam::vector>(*$3).ptr();
@@ -1334,11 +1337,11 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1).ptr(); }
             $$=driver.getOldTimeField<Foam::scalar>(*$3).ptr();
             delete $3;
           }
-        | TOKEN_mapped '(' TOKEN_SID ')' {
-            $$=driver.mapField<Foam::scalar>(*$3).ptr(); delete $3;
+        | TOKEN_mapped mappedFieldIdSwitch '(' TOKEN_SID ')' {
+            $$=driver.mapField<Foam::scalar>(*$4).ptr(); delete $4;
           }
-        | TOKEN_mappedInternal '(' TOKEN_SID ')' {
-            $$=driver.mapField<Foam::scalar>(*$3,true).ptr(); delete $3;
+        | TOKEN_mappedInternal mappedFieldIdSwitch '(' TOKEN_SID ')' {
+            $$=driver.mapField<Foam::scalar>(*$4,true).ptr(); delete $4;
           }
 	| TOKEN_LINE		{
             $$=driver.getLine(*$1,driver.runTime().time().value()).ptr();
@@ -1551,11 +1554,11 @@ texp:   tensor                  { $$ = $1; }
             $$=driver.getOldTimeField<Foam::tensor>(*$3).ptr();
             delete $3;
           }
-        | TOKEN_mapped '(' TOKEN_TID ')' {
-            $$=driver.mapField<Foam::tensor>(*$3).ptr(); delete $3;
+        | TOKEN_mapped mappedFieldIdSwitch '(' TOKEN_TID ')' {
+            $$=driver.mapField<Foam::tensor>(*$4).ptr(); delete $4;
           }
-        | TOKEN_mappedInternal '(' TOKEN_TID ')' {
-            $$=driver.mapField<Foam::tensor>(*$3,true).ptr(); delete $3;
+        | TOKEN_mappedInternal mappedFieldIdSwitch '(' TOKEN_TID ')' {
+            $$=driver.mapField<Foam::tensor>(*$4,true).ptr(); delete $4;
           }
         | TOKEN_snGrad '(' TOKEN_TID ')' {
             $$=driver.getSurfaceNormalField<Foam::tensor>(*$3).ptr();
@@ -1726,11 +1729,11 @@ yexp:   symmTensor                  { $$ = $1; }
             $$=driver.getOldTimeField<Foam::symmTensor>(*$3).ptr();
             delete $3;
           }
-        | TOKEN_mapped '(' TOKEN_YID ')' {
-            $$=driver.mapField<Foam::symmTensor>(*$3).ptr(); delete $3;
+        | TOKEN_mapped mappedFieldIdSwitch '(' TOKEN_YID ')' {
+            $$=driver.mapField<Foam::symmTensor>(*$4).ptr(); delete $4;
           }
-        | TOKEN_mappedInternal '(' TOKEN_YID ')' {
-            $$=driver.mapField<Foam::symmTensor>(*$3,true).ptr(); delete $3;
+        | TOKEN_mappedInternal mappedFieldIdSwitch '(' TOKEN_YID ')' {
+            $$=driver.mapField<Foam::symmTensor>(*$4,true).ptr(); delete $4;
           }
         | TOKEN_snGrad '(' TOKEN_YID ')' {
             $$=driver.getSurfaceNormalField<Foam::symmTensor>(*$3).ptr();
@@ -1848,12 +1851,12 @@ hexp:   sphericalTensor                  { $$ = $1; }
             $$=driver.getOldTimeField<Foam::sphericalTensor>(*$3).ptr();
             delete $3;
           }
-        | TOKEN_mapped '(' TOKEN_HID ')' {
-            $$=driver.mapField<Foam::sphericalTensor>(*$3).ptr(); delete $3;
+        | TOKEN_mapped mappedFieldIdSwitch '(' TOKEN_HID ')' {
+            $$=driver.mapField<Foam::sphericalTensor>(*$4).ptr(); delete $4;
           }
-        | TOKEN_mappedInternal '(' TOKEN_HID ')' {
-            $$=driver.mapField<Foam::sphericalTensor>(*$3,true).ptr();
-            delete $3;
+        | TOKEN_mappedInternal mappedFieldIdSwitch '(' TOKEN_HID ')' {
+            $$=driver.mapField<Foam::sphericalTensor>(*$4,true).ptr();
+            delete $4;
           }
         | TOKEN_snGrad '(' TOKEN_HID ')' {
             $$=driver.getSurfaceNormalField<Foam::sphericalTensor>(*$3).ptr();
@@ -2183,7 +2186,7 @@ pvexp:  pvector     { $$ = $1; }
             $$=driver.getOldTimeField<Foam::vector>(*$3).ptr();
             delete $3;
 				}
-        // | TOKEN_mapped '(' TOKEN_PVID ')' {
+        // | TOKEN_mapped mappedFieldIdSwitch '(' TOKEN_PVID ')' {
         //     $$=driver.mapPointField<Foam::vector>(*$3).ptr(); delete $3;
         //   }
         | TOKEN_min '(' pvexp ',' pvexp  ')'           {
