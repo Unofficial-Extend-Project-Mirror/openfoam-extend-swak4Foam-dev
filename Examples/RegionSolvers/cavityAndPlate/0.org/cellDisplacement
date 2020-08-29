@@ -9,8 +9,8 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volVectorField;
-    object      D;
+    class        volVectorField;
+    object      cellDisplacement;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -20,42 +20,32 @@ internalField   uniform (0 0 0);
 
 boundaryField
 {
-    left
+    movingWall
     {
-        type            symmetryPlane;
-        // type fixedValue;
-        // value $internalField;
-    }
-    right
-    {
-        //        type            zeroGradient;
-        type            tractionDisplacement;
-        traction        uniform (0 0 0);
-        pressure        uniform 0;
+        type            fixedValue;
+        // Field Value
         value           uniform (0 0 0);
     }
-    down
+
+    fixedWallsBottom
     {
-        type            symmetryPlane;
-        // type fixedValue;
-        // value $internalField;
-    }
-    up
-    {
-        type            groovyTractionDisplacement;
-        traction        uniform (0 0 0);
-        pressure        uniform 0;
+        type            groovyBC;
+        // Field Value
         value           uniform (0 0 0);
-        tractionExpression "10000*min(0.1*time(),1)*mappedInternal(U)";
-        pressureExpression "min(0.1*time(),1)*(mapped(p)-1e5)";
+        valueExpression "mapped(D)";
+        // debugCommonDriver 1;
+        // traceScanning 1;
+        // traceParsing 1;
     }
-    hole
+
+    fixedWalls
     {
-        type            tractionDisplacement;
-        traction        uniform (0 0 0);
-        pressure        uniform 0;
+        // type            fixedValue;
+        type zeroGradient;
+        // Field Value
         value           uniform (0 0 0);
     }
+
     frontAndBack
     {
         type            empty;

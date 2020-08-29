@@ -19,10 +19,16 @@ dynamicFvMesh   dynamicMotionSolverFvMesh;
 
 motionSolverLibs ("libfvMotionSolvers.so");
 
-motionSolver    displacementLaplacian;
+// motionSolver    displacementLaplacian;
+// motionSolver displacementInterpolation;
+motionSolver displacementSBRStress;
 
 displacementLaplacianCoeffs {
     diffusivity inverseDistance (fixedWallsBottom);
 }
+
+diffusivity uniform;
+
+interpolationTables ();
 
 // ************************************************************************* //

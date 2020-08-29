@@ -23,8 +23,8 @@ displacement {
     expr "Expression displacement :  min=\((.+) (.+) 0\) max=\((.+) (.+) 0\)";
     titles (
         "x min"
-        "x max"
         "y min"
+        "x max"
         "y max"
     );
 }

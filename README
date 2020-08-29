@@ -4429,6 +4429,11 @@ S_{expl} + S_{impl} T
 
      An example can be found in
      =Examples/RegionSolvers/cavityWithHeater=
+**** Boundary condition =groovyTractionDisplacement= in =groovyStandardBCs=
+     This boundary condition is an extension of the
+     =tractionDisplacement= boundary condition in the
+     =solidDisplacementFoam= solver with expressions for traction and
+     displacement
 *** Enhancements
 **** =writeOldTimeStepsOnSignal= now also writes when a =FatalError= happens
      By intercepting the =ABRT= signal the function object now writes

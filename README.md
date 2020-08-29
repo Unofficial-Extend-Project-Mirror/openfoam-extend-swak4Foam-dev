@@ -1529,7 +1529,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orgf48b30c) below). Don't work on the
+details see [6.2.2](#orgdd3b857) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1585,7 +1585,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orgf48b30c"></a>
+<a id="orgdd3b857"></a>
 
 ### Repository organization
 
@@ -6943,6 +6943,14 @@ specified. **Not** the temperature
 
 An example can be found in
 `Examples/RegionSolvers/cavityWithHeater`
+
+
+#### Boundary condition `groovyTractionDisplacement` in `groovyStandardBCs`
+
+This boundary condition is an extension of the
+`tractionDisplacement` boundary condition in the
+`solidDisplacementFoam` solver with expressions for traction and
+displacement
 
 
 ### Enhancements

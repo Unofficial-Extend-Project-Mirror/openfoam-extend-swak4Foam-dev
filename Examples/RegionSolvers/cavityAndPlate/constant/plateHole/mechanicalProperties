@@ -30,7 +30,8 @@ nu
 E
 {
     type        uniform;
-    value       2e+11;
+    //    value       2e+11;
+    value 2e4;
 }
 
 planeStress     yes;
