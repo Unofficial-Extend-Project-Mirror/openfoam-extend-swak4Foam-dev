@@ -42,9 +42,10 @@ Contributors/Copyright:
 #ifndef RhoPimpleFlowRegionSolverFunctionObject_H
 #define RhoPimpleFlowRegionSolverFunctionObject_H
 
+#include "swakThermoTypes.H"
+
 #include "SimpleRegionSolverFunctionObject.H"
 
-#include "fluidThermo.H"
 #ifdef FOAM_HAS_FVOPTIONS
 #ifdef FOAM_FVOPTIONS_IN_FV
 #include "fvOptions.H"
@@ -52,6 +53,7 @@ Contributors/Copyright:
 #include "fvIOoptionList.H"
 #endif
 #endif
+
 #include "pimpleControl.H"
 #include "surfaceMesh.H"
 #ifndef FOAM_HAS_NO_PRESURE_CONTROL_CLASS
@@ -72,13 +74,20 @@ Contributors/Copyright:
 #include "turbulenceModel.H"
 #endif
 
+#ifdef FOAM_HAS_IOMRFLIST
 #include "IOMRFZoneList.H"
+#endif
+
 #include "uniformDimensionedFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+
+#ifndef FOAM_HAS_FLUIDTHERMO
+typedef Foam::basicPsiThermo fluidThermo;
+#endif
 
 /*---------------------------------------------------------------------------*\
                            Class RhoPimpleFlowRegionSolverFunctionObject Declaration
@@ -96,12 +105,14 @@ class RhoPimpleFlowRegionSolverFunctionObject
     //- Disallow default bitwise assignment
     void operator=(const RhoPimpleFlowRegionSolverFunctionObject&);
 
+#ifndef FOAM_HAS_NO_LOCAL_EULER_DDT
 #ifndef FOAM_LOCAL_EULER_DT_HAS_SCHEME_IN_NAME
     //- will we use LTS?
     bool LTS_;
 
     //- reverse timestep for LTS
     autoPtr<volScalarField> trDeltaT;
+#endif
 #endif
 
     //- controling the PIMPLE-algorithm
@@ -154,8 +165,10 @@ class RhoPimpleFlowRegionSolverFunctionObject
     //- kinetic energy
     volScalarField K_;
 
+#ifdef FOAM_HAS_IOMRFLIST
     //- rotating zones
     IOMRFZoneList MRF_;
+#endif
 
     //- dummy. Will never be set because we don't have a dynamic mesh
     autoPtr<surfaceVectorField> rhoUf_;

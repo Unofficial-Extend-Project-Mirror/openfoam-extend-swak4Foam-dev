@@ -1,4 +1,6 @@
+#ifdef FOAM_PIMPLE_CONTROL_HAS_SIMPLERHO
 if (!pimple.SIMPLErho())
+#endif
 {
     rho = thermo.rho();
 }
@@ -27,10 +29,12 @@ surfaceScalarField phiHbyA
 #else
         fvc::flux(HbyA)
 #endif
+#ifdef FOAM_HAS_IOMRFLIST
       + MRF.zeroFilter
         (
             fvc::interpolate(rho*rAU)*fvc::ddtCorr(rho, U, phi, rhoUf)
         )
+#endif
     )
 );
 

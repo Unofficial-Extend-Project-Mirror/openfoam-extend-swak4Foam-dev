@@ -44,11 +44,11 @@ tractionDisplacementFvPatchVectorField
 )
 :
     fixedGradientFvPatchVectorField(p, iF),
-    traction_(p.size(), Zero),
-    pressure_(p.size(), Zero)
+    traction_(p.size(), pTraits<vector>::zero),
+    pressure_(p.size(), pTraits<scalar>::zero)
 {
     fvPatchVectorField::operator=(patchInternalField());
-    gradient() = Zero;
+    gradient() = pTraits<vector>::zero;
 }
 
 
@@ -80,7 +80,7 @@ tractionDisplacementFvPatchVectorField
     pressure_("pressure", dict, p.size())
 {
     fvPatchVectorField::operator=(patchInternalField());
-    gradient() = Zero;
+    gradient() = pTraits<vector>::zero;
 }
 
 
@@ -166,7 +166,11 @@ void tractionDisplacementFvPatchVectorField::updateCoeffs()
     scalarField lambda(nu*E/((1.0 + nu)*(1.0 - 2.0*nu)));
     scalarField threeK(E/(1.0 - 2.0*nu));
 
-    if (mechanicalProperties.get<bool>("planeStress"))
+    if (
+        readBool(
+            mechanicalProperties.lookup("planeStress")
+        )
+    )
     {
         lambda = nu*E/((1.0 + nu)*(1.0 - nu));
         threeK = E/(1.0 - nu);
@@ -185,7 +189,11 @@ void tractionDisplacementFvPatchVectorField::updateCoeffs()
       + twoMuLambda*fvPatchField<vector>::snGrad() - (n & sigmaD)
     )/twoMuLambda;
 
-    if (thermalProperties.get<bool>("thermalStress"))
+    if (
+        readBool(
+            thermalProperties.lookup("thermalStress")
+        )
+    )
     {
         const fvPatchField<scalar>&  threeKalpha=
             patch().lookupPatchField<volScalarField, scalar>("threeKalpha");

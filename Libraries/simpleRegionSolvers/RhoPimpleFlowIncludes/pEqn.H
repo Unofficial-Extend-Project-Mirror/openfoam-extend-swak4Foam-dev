@@ -20,14 +20,17 @@ surfaceScalarField phiHbyA
 (
     "phiHbyA",
     fvc::interpolate(rho)*fvc::flux(HbyA)
+#ifdef FOAM_HAS_IOMRFLIST
   + MRF.zeroFilter(rhorAUf*fvc::ddtCorr(rho, U, phi, rhoUf))
+#endif
 );
 
 fvc::makeRelative(phiHbyA, rho, U);
+#ifdef FOAM_HAS_IOMRFLIST
 MRF.makeRelative(fvc::interpolate(rho), phiHbyA);
-
 // Update the pressure BCs to ensure flux consistency
 constrainPressure(p, rho, U, phiHbyA, rhorAUf, MRF);
+#endif
 
 if (pimple.transonic())
 {

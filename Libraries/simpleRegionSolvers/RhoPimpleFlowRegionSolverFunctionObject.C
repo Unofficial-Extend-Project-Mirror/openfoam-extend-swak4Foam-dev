@@ -30,6 +30,9 @@ Contributors/Copyright:
 \*---------------------------------------------------------------------------*/
 
 #include "swak.H"
+
+#ifdef FOAM_HAS_FLUIDTHERMO
+
 #ifndef FOAM_LOCAL_EULER_DT_HAS_SCHEME_IN_NAME
 
 #include "swakTime.H"
@@ -48,8 +51,10 @@ Contributors/Copyright:
 
 #include "zeroGradientFvPatchFields.H"
 #include "fvCFD.H"
-#include "localEulerDdtScheme.H"
+#ifndef FOAM_HAS_NO_LOCAL_EULER_DDT
 #include "fvcSmooth.H"
+#include "localEulerDdtScheme.H"
+#endif
 
 #include "swakTurbulence.H"
 
@@ -92,6 +97,7 @@ RhoPimpleFlowRegionSolverFunctionObject::RhoPimpleFlowRegionSolverFunctionObject
         t,
         dict
     ),
+#ifndef FOAM_HAS_NO_LOCAL_EULER_DDT
 #ifndef FOAM_LOCAL_EULER_DT_HAS_SCHEME_IN_NAME
     LTS_ (
         fv::localEulerDdt::enabled(this->mesh())
@@ -116,6 +122,7 @@ RhoPimpleFlowRegionSolverFunctionObject::RhoPimpleFlowRegionSolverFunctionObject
         :
         nullptr
     ),
+#endif
 #endif
     pimple_(
         this->mesh()
@@ -208,9 +215,11 @@ RhoPimpleFlowRegionSolverFunctionObject::RhoPimpleFlowRegionSolverFunctionObject
         "K",
         0.5*magSqr(U_)
     ),
+#ifdef FOAM_HAS_IOMRFLIST
     MRF_(
         this->mesh()
     ),
+#endif
     cumulativeContErrIO_(
         IOobject
         (
@@ -226,6 +235,7 @@ RhoPimpleFlowRegionSolverFunctionObject::RhoPimpleFlowRegionSolverFunctionObject
 {
     Dbug << "RhoPimpleFlowRegionSolverFunctionObject::RhoPimpleFlowRegionSolverFunctionObject" << endl;
 
+#ifdef FOAM_HAS_FLUIDTHERMO
     thermo().validate(this->name(), "h", "e");
 
     if (!thermo().dpdt())
@@ -233,6 +243,7 @@ RhoPimpleFlowRegionSolverFunctionObject::RhoPimpleFlowRegionSolverFunctionObject
         dpdt_ == dimensionedScalar("zero", dpdt_.dimensions(), 0);
         dpdt_.writeOpt() = IOobject::NO_WRITE;
     }
+#endif
 
     volVectorField &U = U_;
     volScalarField &K = K_;
@@ -262,8 +273,10 @@ bool RhoPimpleFlowRegionSolverFunctionObject::start() {
 //- actual solving
 bool RhoPimpleFlowRegionSolverFunctionObject::solveRegion() {
     // References so that the includes work
+#ifndef FOAM_HAS_NO_LOCAL_EULER_DDT
 #ifndef FOAM_LOCAL_EULER_DT_HAS_SCHEME_IN_NAME
     const bool &LTS = this->LTS_;
+#endif
 #endif
     pimpleControl &pimple = this->pimple_;
     fluidThermo& thermo = this->thermo();
@@ -302,16 +315,20 @@ bool RhoPimpleFlowRegionSolverFunctionObject::solveRegion() {
 #endif
     volScalarField &dpdt = dpdt_;
     volScalarField &K = K_;
+#ifdef FOAM_HAS_IOMRFLIST
     IOMRFZoneList &MRF = MRF_;
+#endif
     autoPtr<surfaceVectorField> &rhoUf = rhoUf_;
     scalar& cumulativeContErr = cumulativeContErrIO_.value();
 
+#ifndef FOAM_HAS_NO_LOCAL_EULER_DDT
 #ifndef FOAM_LOCAL_EULER_DT_HAS_SCHEME_IN_NAME
     if (LTS)
     {
          #include "RhoPimpleFlowIncludes/setRDeltaT.H"
     }
     else
+#endif
 #endif
     {
     #include "compressibleCourantNo.H"
@@ -383,6 +400,8 @@ bool RhoPimpleFlowRegionSolverFunctionObject::read(const dictionary& dict) {
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 } // namespace Foam
+
+#endif
 
 #endif
 

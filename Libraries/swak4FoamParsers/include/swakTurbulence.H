@@ -50,6 +50,9 @@ Contributors/Copyright:
 #define FOAM_TURBULENCE_HAS_DIV_DEV_TAU
 #endif
 
+#if defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#define FOAM_TURB_DIVDEVRHOEFF_NEEDS_NO_U
+#endif
 
 #include "DebugOStream.H"
 

@@ -28,6 +28,10 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "swak.H"
+
+#ifdef FOAM_HAS_BASICSOURCES
+
 #include "SwakSetTemperature.H"
 #include "polyMesh.H"
 #include "cellSet.H"
@@ -116,5 +120,7 @@ void SwakSetTemperature::setValueInternal(
 #endif
 
 } // end namespace
+
+#endif
 
 // ************************************************************************* //

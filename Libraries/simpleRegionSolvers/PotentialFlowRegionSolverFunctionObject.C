@@ -190,7 +190,7 @@ PotentialFlowRegionSolverFunctionObject::PotentialFlowRegionSolverFunctionObject
 
     mesh()
 #ifdef FOAM_FVSCHEMES_HAS_SETFLUXREQUIRED
-        .setFluxRequired(
+        .schemesDict().setFluxRequired(
 #else
         .fluxRequired(
 #endif

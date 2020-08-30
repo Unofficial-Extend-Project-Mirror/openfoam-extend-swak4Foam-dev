@@ -16,6 +16,6 @@ LIB_LIBS = \
     -L$(FOAM_USER_LIBBIN) \
     -lswak4FoamParsers \
     -lfiniteVolume \
-    -lfluidThermophysicalModels \
+    $(FLUIDTHERMO_LIB) \
     $(FVOPTIONS_LIB) \
     -lmeshTools

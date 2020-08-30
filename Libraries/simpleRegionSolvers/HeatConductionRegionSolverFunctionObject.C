@@ -32,6 +32,9 @@ Contributors/Copyright:
 #include "swakTime.H"
 
 #include "HeatConductionRegionSolverFunctionObject.H"
+
+#ifdef FOAM_HAS_FLUIDTHERMO
+
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
@@ -325,5 +328,7 @@ bool HeatConductionRegionSolverFunctionObject::read(const dictionary& dict) {
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 } // namespace Foam
+
+#endif
 
 // ************************************************************************* //

@@ -731,7 +731,8 @@ Contributors/Copyright:
 
 // Not sure . Didn't check when between 2.3 and 5 or 1806 this changed
 #if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK < VERSION_NR(5, 0, 0)) \
-    || (defined(OPENFOAM_COM) && OPENFOAM_COM<1806)
+    || (defined(OPENFOAM_COM) && OPENFOAM_COM<1806) \
+    || (defined(FOAM_VERSION4SWAK_IS_EXTEND))
 #define FOAM_NO_SINGLE_PARAMETER_VERSION_OF_FLUX_FUNCTION
 #endif
 
@@ -749,11 +750,20 @@ Contributors/Copyright:
 #define FOAM_LOCAL_EULER_DT_HAS_SCHEME_IN_NAME
 #endif
 
+#if defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#define FOAM_HAS_NO_LOCAL_EULER_DDT
+#endif
+
 // Not sure . Didn't check when between 2.3 and 5 or 1806 this changed
 #if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK < VERSION_NR(5, 0, 0)) \
-    || (defined(OPENFOAM_COM) && OPENFOAM_COM<1806)
+    || (defined(OPENFOAM_COM) && OPENFOAM_COM<1806) \
+    || defined(FOAM_VERSION4SWAK_IS_EXTEND)
 #else
 #define FOAM_PIMPLE_CONTROL_HAS_SIMPLERHO
+#endif
+
+#if !defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#define FOAM_FVMATRIX_HAS_REF_METHOD
 #endif
 
 #include "swakVersion.H"

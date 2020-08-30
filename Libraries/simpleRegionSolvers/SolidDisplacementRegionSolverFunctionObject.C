@@ -89,7 +89,9 @@ SolidDisplacementRegionSolverFunctionObject::
             )
         ),
         thermalStress_(
-            thermalProperties_.get<bool>("thermalStress")
+            readBool(
+                thermalProperties_.lookup("thermalStress")
+            )
         ),
         threeKalpha_
         (
@@ -144,7 +146,7 @@ SolidDisplacementRegionSolverFunctionObject::
     const Time &runTime = mesh.time();
 
     const dictionary &rhoDict(mechanicalProperties_.subDict("rho"));
-    word rhoType(rhoDict.get<word>("type"));
+    word rhoType(rhoDict.lookup("type"));
 
     IOobject rhoIO
     (
@@ -157,10 +159,9 @@ SolidDisplacementRegionSolverFunctionObject::
 
     if (rhoType == "uniform")
     {
-        scalar rhoValue(rhoDict.get<scalar>("value"));
+        scalar rhoValue(readScalar(rhoDict.lookup("value")));
 
-        rhoPtr_.reset
-        (
+        rhoPtr_.reset(
             new volScalarField
             (
                 rhoIO,
@@ -168,7 +169,7 @@ SolidDisplacementRegionSolverFunctionObject::
                 dimensionedScalar
                 (
                     "rho",
-                    dimMass/dimVolume,
+                    dimMass / dimVolume,
                     rhoValue
                 )
             )
@@ -195,7 +196,7 @@ SolidDisplacementRegionSolverFunctionObject::
     }
 
     const dictionary& EDict(mechanicalProperties_.subDict("E"));
-    word EType(EDict.get<word>("type"));
+    word EType(EDict.lookup("type"));
 
     IOobject EHeader
     (
@@ -208,7 +209,7 @@ SolidDisplacementRegionSolverFunctionObject::
 
     if (EType == "uniform")
     {
-        scalar rhoEValue(EDict.get<scalar>("value"));
+        scalar rhoEValue(readScalar(EDict.lookup("value")));
 
         EPtr_.reset
         (
@@ -219,7 +220,7 @@ SolidDisplacementRegionSolverFunctionObject::
                 dimensionedScalar
                 (
                     "Erho",
-                    dimMass/dimLength/sqr(dimTime),
+                    dimMass / dimLength / sqr(dimTime),
                     rhoEValue
                 )
             )
@@ -255,11 +256,15 @@ SolidDisplacementRegionSolverFunctionObject::
     );
 
     const dictionary& nuDict(mechanicalProperties_.subDict("nu"));
-    word nuType(nuDict.get<word>("type"));
+    word nuType(nuDict.lookup("type"));
 
     if (nuType == "uniform")
     {
-        scalar nuValue(nuDict.get<scalar>("value"));
+        scalar nuValue(
+            readScalar(
+                nuDict.lookup("value")
+            )
+        );
         nuPtr_.reset
         (
             new volScalarField
@@ -331,7 +336,11 @@ SolidDisplacementRegionSolverFunctionObject::
     );
 
     volScalarField &threeK = threeKPtr_();
-    if (mechanicalProperties_.get<bool>("planeStress"))
+    if (
+        readBool(
+            mechanicalProperties_.lookup("planeStress")
+        )
+    )
     {
         Info<< "Plane Stress\n" << endl;
 
@@ -359,10 +368,14 @@ SolidDisplacementRegionSolverFunctionObject::
             );
 
         const dictionary& CDict(thermalProperties.subDict("C"));
-        word CType(CDict.get<word>("type"));
+        word CType(CDict.lookup("type"));
         if (CType == "uniform")
         {
-            scalar CValue(CDict.get<scalar>("value"));
+            scalar CValue(
+                readScalar(
+                    CDict.lookup("value")
+                )
+            );
 
             CPtr.reset
                 (
@@ -413,10 +426,14 @@ SolidDisplacementRegionSolverFunctionObject::
             );
 
         const dictionary& kDict(thermalProperties.subDict("k"));
-        word kType(kDict.get<word>("type"));
+        word kType(kDict.lookup("type"));
         if (kType == "uniform")
         {
-            scalar rhoKValue(kDict.get<scalar>("value"));
+            scalar rhoKValue(
+                readScalar(
+                    kDict.lookup("value")
+                )
+            );
 
             rhoKPtr.reset
                 (
@@ -469,11 +486,15 @@ SolidDisplacementRegionSolverFunctionObject::
 
 
         const dictionary& alphaDict(thermalProperties.subDict("alpha"));
-        word alphaType(alphaDict.get<word>("type"));
+        word alphaType(alphaDict.lookup("type"));
 
         if (alphaType == "uniform")
         {
-            scalar alphaValue(alphaDict.get<scalar>("value"));
+            scalar alphaValue(
+                readScalar(
+                    alphaDict.lookup("value")
+                )
+            );
             alphaPtr.reset
                 (
                     new volScalarField
@@ -573,7 +594,9 @@ SolidDisplacementRegionSolverFunctionObject::
     );
     volVectorField &divSigmaExp = divSigmaExp_();
 
-    bool compactNormalStress = stressControl_.get<bool>("compactNormalStress");
+    bool compactNormalStress = readBool(
+        stressControl_.lookup("compactNormalStress")
+    );
     if (compactNormalStress)
     {
         divSigmaExp -= fvc::laplacian(2*mu + lambda, D, "laplacian(DD,D)");
@@ -583,7 +606,14 @@ SolidDisplacementRegionSolverFunctionObject::
         divSigmaExp -= fvc::div((2*mu + lambda)*fvc::grad(D), "div(sigmaD)");
     }
 
-    mesh.setFluxRequired(D.name());
+    mesh
+#ifdef FOAM_FVSCHEMES_HAS_SETFLUXREQUIRED
+        .schemesDict().setFluxRequired(
+#else
+       .fluxRequired(
+#endif
+           D.name()
+       );
 }
 
 bool SolidDisplacementRegionSolverFunctionObject::start() {
@@ -612,8 +642,12 @@ bool SolidDisplacementRegionSolverFunctionObject::solveRegion() {
     const bool &thermalStress = thermalStress_;
 
     int nCorr = stressControl.lookupOrDefault<int>("nCorrectors", 1);
-    scalar convergenceTolerance = stressControl.get<scalar>("D");
-    bool compactNormalStress = stressControl.get<bool>("compactNormalStress");
+    scalar convergenceTolerance = readScalar(
+        stressControl.lookup("D")
+    );
+    bool compactNormalStress = readBool(
+        stressControl.lookup("compactNormalStress")
+    );
 
     int iCorr = 0;
     scalar initialResidual = 0;
@@ -670,7 +704,13 @@ bool SolidDisplacementRegionSolverFunctionObject::solveRegion() {
         }
     } while (initialResidual > convergenceTolerance && ++iCorr < nCorr);
 
-    if (runTime.writeTime())
+    if (
+#if defined(FOAM_VERSION4SWAK_IS_EXTEND)
+        runTime.outputTime()
+#else
+        runTime.writeTime()
+#endif
+    )
     {
         volSymmTensorField sigma
         (

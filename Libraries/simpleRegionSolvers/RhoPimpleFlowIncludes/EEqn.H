@@ -1,11 +1,17 @@
 {
-    volScalarField& he = thermo.he();
+    volScalarField& he =
+#ifdef FOAM_HAS_FLUIDTHERMO
+        thermo.he();
+#else
+        thermo.h();
+#endif
 
     fvScalarMatrix EEqn
     (
         fvm::ddt(rho, he) + fvm::div(phi, he)
       + fvc::ddt(rho, K) + fvc::div(phi, K)
       + (
+#ifdef FOAM_HAS_FLUIDTHERMO
             he.name() == "e"
           ? fvc::div
             (
@@ -13,7 +19,9 @@
                 p,
                 "div(phiv,p)"
             )
-          : -dpdt
+          :
+#endif
+            -dpdt
         )
 #ifdef FOAM_HAS_MOMENTUM_TRANSPORT_MODELS
       + thermophysicalTransport->divq(he)

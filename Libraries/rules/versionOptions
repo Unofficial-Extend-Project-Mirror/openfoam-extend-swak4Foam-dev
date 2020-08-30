@@ -112,6 +112,8 @@ ifdef FOAM_DEV
   RADIATION_LIB=-lradiation
   RADIATION_INC=-I$(LIB_SRC)/thermophysicalModels/radiation/lnInclude
   SOLIDTHERMO_LIB=
+  COMPRESSIBLE_TRANSPORT_MODELS=
+  FLUIDTHERMO_LIB=
 else
   ifeq "2.2" "$(word 1, $(sort 2.2 $(WM_PROJECT_VERSION)))"
      FILEFORMATS_INC=-I$(LIB_SRC)/fileFormats/lnInclude

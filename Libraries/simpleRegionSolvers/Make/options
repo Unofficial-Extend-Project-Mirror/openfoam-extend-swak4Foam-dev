@@ -32,6 +32,6 @@ LIB_LIBS = \
     $(COMPRESSIBLE_TURB_LIB) \
     $(COMPRESSIBLE_TRANSPORT_MODELS) \
     -lsampling \
-    -lsolidThermo \
+    $(SOLIDTHERMO_LIB) \
     -lswak4FoamParsers \
     -lmeshTools

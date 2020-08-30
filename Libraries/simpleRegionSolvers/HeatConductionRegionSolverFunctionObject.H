@@ -47,6 +47,8 @@ Contributors/Copyright:
 
 #include "swakThermoTypes.H"
 
+#ifdef FOAM_HAS_FLUIDTHERMO
+
 #ifdef FOAM_SOLIDTHERMO_PRESSURE_IN_SUBCLASS
 #include "solidPressureThermo.H"
 typedef Foam::solidPressureThermo solidThermoType;
@@ -144,6 +146,7 @@ public:
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+#endif
 
 #endif
 
