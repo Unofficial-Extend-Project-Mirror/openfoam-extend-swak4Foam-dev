@@ -984,6 +984,13 @@ S_{expl} + S_{impl} T
 ** Development
    Programs and libraries that are only used for testing/developing
    swak
+**** thingOnAStrick
+     Adaption of a case for the old =icoStructFoam= (an old forgotten
+     demo-solver for fluid-structure interaction). It is a flexible
+     thing held fixed in a channel
+     - Solver :: =pimpleFoam=
+     - Case setup :: =pyFoamPrepareCase=
+     - Demonstrates :: solid region solver
 * Bug reporting and Development
 ** Bug reports
    The preferred place for bug reports is

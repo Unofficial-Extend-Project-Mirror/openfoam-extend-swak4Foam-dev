@@ -9,42 +9,27 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      T;
+    class       dictionary;
+    location    "constant";
+    object      dynamicMeshDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 1 0 0 0];
+// dynamicFvMesh   staticFvMesh;
+dynamicFvMesh dynamicMotionSolverFvMesh;
 
-internalField   uniform 300;
+motionSolverLibs ("libfvMotionSolvers.so");
 
-boundaryField
-{
-    bottom
-    {
-        type            zeroGradient;
-    }
+// motionSolver    displacementLaplacian;
+// motionSolver displacementInterpolation;
+motionSolver displacementSBRStress;
 
-    top
-    {
-        type            symmetryPlane;
-    }
-
-    frontAndBack
-    {
-        type            empty;
-    }
-
-    inlet
-    {
-        type            zeroGradient;
-    }
-
-    outlet
-    {
-        type            zeroGradient;
-    }
-
+displacementLaplacianCoeffs {
+    diffusivity inverseDistance (fixedWallsBottom);
 }
+
+diffusivity uniform;
+
+interpolationTables ();
 
 // ************************************************************************* //
