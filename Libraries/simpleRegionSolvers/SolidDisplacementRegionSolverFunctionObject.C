@@ -678,7 +678,13 @@ bool SolidDisplacementRegionSolverFunctionObject::solveRegion() {
                 DEqn += fvc::grad(threeKalpha*T);
             }
 
-            initialResidual = DEqn.solve().max().initialResidual();
+            initialResidual =
+#ifdef FOAM_SOLVER_PERFORMANCE_NO_MAX
+                DEqn.solve().initialResidual();
+#else
+                DEqn.solve().max().initialResidual();
+#endif
+
             if (!compactNormalStress)
             {
                 divSigmaExp = fvc::div(DEqn.flux());
@@ -705,11 +711,7 @@ bool SolidDisplacementRegionSolverFunctionObject::solveRegion() {
     } while (initialResidual > convergenceTolerance && ++iCorr < nCorr);
 
     if (
-#if defined(FOAM_VERSION4SWAK_IS_EXTEND)
         runTime.outputTime()
-#else
-        runTime.writeTime()
-#endif
     )
     {
         volSymmTensorField sigma
