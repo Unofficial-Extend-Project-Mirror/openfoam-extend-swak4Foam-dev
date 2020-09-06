@@ -31,6 +31,8 @@ License
 
 #include "groovyBCCommon.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -67,8 +69,13 @@ groovyTractionDisplacementFvPatchVectorField
 )
 :
     fixedGradientFvPatchVectorField(tdpvf, p, iF, mapper),
+#ifdef FOAM_NO_MAPPER_CONSTRUCTOR_FOR_FIELDS
+    traction_(mapper(tdpvf.traction_)),
+    pressure_(mapper(tdpvf.pressure_)),
+#else
     traction_(tdpvf.traction_, mapper),
     pressure_(tdpvf.pressure_, mapper),
+#endif
     tractionValueExpression_(tdpvf.tractionValueExpression_),
     pressureValueExpression_(tdpvf.pressureValueExpression_),
     driver_(this->patch(),tdpvf.driver_)
@@ -141,8 +148,13 @@ void groovyTractionDisplacementFvPatchVectorField::autoMap
 )
 {
     fixedGradientFvPatchVectorField::autoMap(m);
+#ifdef FOAM_AUTOMAP_NOT_MEMBER_OF_FIELD
+    m(traction_, traction_);
+    m(pressure_, pressure_);
+#else
     traction_.autoMap(m);
     pressure_.autoMap(m);
+#endif
 }
 
 
