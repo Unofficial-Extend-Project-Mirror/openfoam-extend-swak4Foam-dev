@@ -29,6 +29,8 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "volFields.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -53,17 +55,20 @@ tractionDisplacementFvPatchVectorField
 
 
 tractionDisplacementFvPatchVectorField::
-tractionDisplacementFvPatchVectorField
-(
+tractionDisplacementFvPatchVectorField(
     const tractionDisplacementFvPatchVectorField& tdpvf,
     const fvPatch& p,
     const DimensionedField<vector, volMesh>& iF,
     const fvPatchFieldMapper& mapper
 )
-:
-    fixedGradientFvPatchVectorField(tdpvf, p, iF, mapper),
+    : fixedGradientFvPatchVectorField(tdpvf, p, iF, mapper),
+#ifdef FOAM_NO_MAPPER_CONSTRUCTOR_FOR_FIELDS
+    traction_(mapper(tdpvf.traction_)),
+    pressure_(mapper(tdpvf.pressure_))
+#else
     traction_(tdpvf.traction_, mapper),
     pressure_(tdpvf.pressure_, mapper)
+#endif
 {}
 
 
@@ -117,8 +122,13 @@ void tractionDisplacementFvPatchVectorField::autoMap
 )
 {
     fixedGradientFvPatchVectorField::autoMap(m);
+#ifdef FOAM_AUTOMAP_NOT_MEMBER_OF_FIELD
+    m(traction_, traction_);
+    m(pressure_, pressure_);
+#else
     traction_.autoMap(m);
     pressure_.autoMap(m);
+#endif
 }
 
 
@@ -211,9 +221,15 @@ void tractionDisplacementFvPatchVectorField::updateCoeffs()
 void tractionDisplacementFvPatchVectorField::write(Ostream& os) const
 {
     fvPatchVectorField::write(os);
+#ifdef FOAM_WRITEENTRY_NOT_MEMBER_OF_LIST
+    writeEntry(os, "traction", traction_);
+    writeEntry(os, "pressure", pressure_);
+    writeEntry(os, "value", *this);
+#else
     traction_.writeEntry("traction", os);
     pressure_.writeEntry("pressure", os);
     writeEntry("value", os);
+#endif
 }
 
 
