@@ -1395,6 +1395,17 @@ turbulence are mapped from the channel to the main geometry
 -   **Demonstrates:** demonstrates using the flow as an inlet condition
 
 
+#### thingOnAStrick
+
+Adaption of a case for the old `icoStructFoam` (an old forgotten
+demo-solver for fluid-structure interaction). It is a flexible
+thing held fixed in a channel
+
+-   **Solver:** `pimpleFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+-   **Demonstrates:** solid region solver
+
+
 ### MakeAxialMesh
 
 Cases hee demonstrate the `makeAxialMesh`-utility
@@ -1487,17 +1498,6 @@ Programs and libraries that are only used for testing/developing
 swak
 
 
-#### thingOnAStrick
-
-Adaption of a case for the old `icoStructFoam` (an old forgotten
-demo-solver for fluid-structure interaction). It is a flexible
-thing held fixed in a channel
-
--   **Solver:** `pimpleFoam`
--   **Case setup:** `pyFoamPrepareCase`
--   **Demonstrates:** solid region solver
-
-
 # Bug reporting and Development
 
 
@@ -1551,7 +1551,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orgd7ddfeb) below). Don't work on the
+details see [6.2.2](#org36cda0a) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1607,7 +1607,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orgd7ddfeb"></a>
+<a id="org36cda0a"></a>
 
 ### Repository organization
 
