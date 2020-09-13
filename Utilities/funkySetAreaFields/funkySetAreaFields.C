@@ -50,6 +50,8 @@ Contributors/Copyright:
 
 #include "dlLibraryTable.H"
 
+#include "swak.H"
+
 template<class T,template<class> class PField,class Mesh>
 void writeVolumeField(
     const string &name,
@@ -88,7 +90,11 @@ void writeVolumeField(
 
     volSurfaceMapping mapper(mesh);
 
-    mapper.mapToVolume(theField, volField.boundaryField());
+    mapper.mapToVolume(
+        theField,
+        const_cast<typename Foam::GeometricField<T,fvPatchField,volMesh>::GeometricBoundaryField& >(volField.boundaryField())
+    );
+
     volField.write();
 }
 
@@ -178,7 +184,10 @@ void setField
     );
 
     forAll(result.boundaryField(),patchI) {
-        typename T::PatchFieldType &pf=pTemp->boundaryField()[patchI];
+        typename T::PatchFieldType &pf=
+             const_cast<typename T::PatchFieldType&>(
+                 pTemp->boundaryField()[patchI]
+             );
         const typename T::PatchFieldType &pfOrig=result.boundaryField()[patchI];
 
         if(pf.patch().coupled()) {
@@ -235,7 +244,11 @@ void doAnExpression
                 IOobject::MUST_READ,
                 IOobject::NO_WRITE
             );
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+        f.typeHeaderOk<IOobject>(false);
+#else
         f.headerOk();
+#endif
 
         oldFieldType=f.headerClassName();
 
@@ -335,6 +348,16 @@ void doAnExpression
                 << (conditionIsSurface ? "edges" : "faces")
                 << endl
                 << exit(FatalError);
+    }
+
+    if(oldFieldType=="IOobject" && !create)
+    {
+        FatalErrorIn("doAnExpression()")
+            << " The type of the " << field << " is "
+            << oldFieldType
+            << ". Seems that it doesn't exist. Use 'create'."
+            << endl
+            << exit(FatalError);
     }
 
     if(driver.typ()!=oldFieldType) {
@@ -686,10 +709,10 @@ int main(int argc, char *argv[])
 
                 Info << "\n\nPart: " << parts[partI].keyword() << endl;
 
-                word field=part["field"];
+                word field(part.lookup("field"));
 
                 exprString expression(
-                    part["expression"],
+                    part.lookup("expression"),
                     part
                 );
 
@@ -697,7 +720,7 @@ int main(int argc, char *argv[])
 
                 if (part.found("condition")) {
                     condition=exprString(
-                        part["condition"],
+                        part.lookup("condition"),
                         part
                     );
                 }
@@ -710,12 +733,12 @@ int main(int argc, char *argv[])
 
                 bool create=false;
                 if (part.found("create")) {
-                    create=readBool(part["create"]);
+                    create=readBool(part.lookup("create"));
                 }
 
                 bool keepPatches=false;
                 if (part.found("keepPatches")) {
-                    keepPatches=readBool(part["keepPatches"]);
+                    keepPatches=readBool(part.lookup("keepPatches"));
                     if(keepPatches && create) {
                         FatalErrorIn("main()")
                             << args.executable()

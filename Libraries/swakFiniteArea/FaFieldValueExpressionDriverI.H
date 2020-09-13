@@ -204,7 +204,9 @@ void FaFieldValueExpressionDriver::makePatches
     bool keepPatches,
     const wordList &fixedPatches
 ) {
-  typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField &bf=field.boundaryField();
+  typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField &bf=
+      const_cast<typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField& >(field.boundaryField());
+
   List<faPatchField<T> *>bfNew(bf.size());
 
   forAll(bf,patchI) {
@@ -252,7 +254,9 @@ void FaFieldValueExpressionDriver::makePatches
     bool keepPatches,
     const wordList &fixedPatches
 ) {
-  typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bf=field.boundaryField();
+  typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bf=
+      const_cast<typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField& >(field.boundaryField());
+
   List<faePatchField<T> *>bfNew(bf.size());
 
   forAll(bf,patchI) {
@@ -342,7 +346,9 @@ void FaFieldValueExpressionDriver::copyCalculatedPatches
     GeometricField<T,faPatchField,areaMesh> &field,
     const GeometricField<T,faPatchField,areaMesh> &orig
 ) {
-    typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField &bf=
+        const_cast<typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField& >(field.boundaryField());
+
     List<faPatchField<T> *>bfNew(bf.size());
 
     forAll(bf,patchI) {
@@ -363,7 +369,9 @@ void FaFieldValueExpressionDriver::copyCalculatedPatches
     GeometricField<T,faePatchField,edgeMesh> &field,
     const GeometricField<T,faePatchField,edgeMesh> &orig
 ) {
-    typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bf=
+        const_cast<typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField& >(field.boundaryField());
+
     const typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bfOrig=orig.boundaryField();
 
     forAll(bf,patchI) {
@@ -387,7 +395,9 @@ void FaFieldValueExpressionDriver::setValuePatches
     bool keepPatches,
     const wordList &fixedPatches
 ) {
-  typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField &bf=field.boundaryField();
+  typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField &bf=
+      const_cast<typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField& >(field.boundaryField());
+
   List<faPatchField<T> *>bfNew(bf.size());
 
   forAll(bf,patchI) {
@@ -412,7 +422,8 @@ void FaFieldValueExpressionDriver::setValuePatches
         )
     ) {
         if(typeid(field.boundaryField()[patchI])==typeid(fixedValueFaPatchField<T>)) {
-            faPatchField<T> &pf=field.boundaryField()[patchI];
+            faPatchField<T> &pf=
+                const_cast<faPatchField<T>& >(field.boundaryField()[patchI]);
 
             pf==pf.patchInternalField();
         }
@@ -427,7 +438,9 @@ void FaFieldValueExpressionDriver::setValuePatches
     bool keepPatches,
     const wordList &fixedPatches
 ) {
-  typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bf=field.boundaryField();
+  typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bf=
+      const_cast<typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField& >(field.boundaryField());
+
   List<faePatchField<T> *>bfNew(bf.size());
 
   forAll(bf,patchI) {
@@ -452,7 +465,9 @@ void FaFieldValueExpressionDriver::setValuePatches
         )
     ) {
         if(typeid(field.boundaryField()[patchI])==typeid(fixedValueFaePatchField<T>)) {
-            faePatchField<T> &pf=field.boundaryField()[patchI];
+            faePatchField<T> &pf=
+                const_cast<faePatchField<T>& >(field.boundaryField()[patchI]);
+
             //            pf==pf.patchInternalField();
             WarningIn(
                 "FaFieldValueExpressionDriver::setValuePatches"

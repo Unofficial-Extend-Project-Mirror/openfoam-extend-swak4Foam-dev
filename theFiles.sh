@@ -37,9 +37,6 @@ export SWAKUTILS=(funkySetBoundaryField \
     funkySetLagrangianField \
     writeBoundarySubfields \
     makeAxialMesh \
-    replayTransientBC)
-
-if [ "$FOAM_DEV" != "" ]
-then
-    SWAKUTILS+=(funkySetAreaFields)
-fi
+    replayTransientBC \
+    funkySetAreaFields
+    )
