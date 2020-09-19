@@ -1,0 +1,30 @@
+// -*- c++ -*-
+
+changePhase {
+    type phase;
+    expr "Solving (.+)\(.+\) in .+";
+    idNr 1;
+}
+temperaturs {
+    type dynamic;
+    theTitle "Temperatures";
+    expr "Expression temperature(.+) :  min=(.+) weightedQuantile0.01=(.+) weightedAverage=(.+) weightedQuantile0.99=(.+) max=(.+)";
+    idNr 1;
+    titles (
+        min
+        "1 %"
+        average
+        "99 %"
+        max
+    );
+}
+displacement {
+    theTitle "Displacement";
+    expr "Expression displacement :  min=\((.+) (.+) 0\) max=\((.+) (.+) 0\)";
+    titles (
+        "x min"
+        "y min"
+        "x max"
+        "y max"
+    );
+}

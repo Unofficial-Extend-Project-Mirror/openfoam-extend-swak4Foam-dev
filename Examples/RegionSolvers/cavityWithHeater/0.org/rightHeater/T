@@ -1,0 +1,62 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1906                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0/solid";
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [ 0 0 0 1 0 0 0 ];
+
+internalField   uniform 300;
+
+boundaryField
+{
+    #include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes"
+
+    top
+    {
+        type            externalWallHeatFluxTemperature;
+        kappaMethod     solidThermo;
+        kappa $kappaMethod;
+        kappaName none;
+        mode            coefficient;
+        h               uniform 1e3;
+        Ta              $internalField;
+        value           $internalField;
+    }
+    bottom
+    {
+        $top;
+    }
+    right {
+        type zeroGradient;
+    }
+    rightHeater_to_cavity {
+        type            compressible::turbulentTemperatureCoupledBaffleMixed;
+        value           $internalField;
+        Tnbr            T;
+        kappaMethod     solidThermo;
+        kappa $kappaMethod;
+        kappaName none;
+    }
+    // solid_to_gas
+    // {
+    //     type            compressible::turbulentTemperatureCoupledBaffleMixed;
+    //     value           $internalField;
+    //     Tnbr            T;
+    //     kappaMethod     solidThermo;
+    // }
+}
+
+
+// ************************************************************************* //

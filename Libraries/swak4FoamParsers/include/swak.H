@@ -621,11 +621,23 @@ Contributors/Copyright:
 #endif
 
 #if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(7,0,0))
+#define FOAM_AUTOMAP_NOT_MEMBER_OF_FIELD
+#endif
+
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(7,0,0))
+#define FOAM_NO_MAPPER_CONSTRUCTOR_FOR_FIELDS
+#endif
+
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(7,0,0))
 #define FOAM_HAS_SAMPLEDSURFACES_NAMESPACE
 #endif
 
 #if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(7,0,0))
 #define FOAM_SOLVER_PERFORMANCE_NOT_MEMBER_OF_DATA
+#endif
+
+#if (FOAM_VERSION4SWAK < VERSION_NR(4, 0, 0))
+#define FOAM_SOLVER_PERFORMANCE_NO_MAX
 #endif
 
 #if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK>=VERSION_NR(7,0,0))
@@ -676,6 +688,10 @@ Contributors/Copyright:
 #define FOAM_TOTAL_PRESSURE_HAS_NO_P0_METHOD
 #endif
 
+#if (OPENFOAM_COM >= 1807)
+#define FOAM_COORDINATE_SYSTEM_NEW_INTERFACE
+#endif
+
 #if (OPENFOAM_COM >= 1911)
 #define FOAM_FILESTAT_HAS_NO_ISVALID_METHOD
 #endif
@@ -699,6 +715,67 @@ Contributors/Copyright:
 
 #if (OPENFOAM_COM >= 2004)
 #define FOAM_REGIOOBJECT_STORE_SAME_NAME_FAILS
+#endif
+
+#if (OPENFOAM_COM >= 1804)
+// maybe for older versions as well. But v1806 is the oldest I checked for
+#define FOAM_CORRECT_RHO_USES_RHOMIN_MAX
+#endif
+
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK >= VERSION_NR(7, 0, 0))
+#define FOAM_PISO_CONTROL_METHODS_NO_CAPITAL
+#endif
+
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK >= VERSION_NR(6, 0, 0))
+#define FOAM_FIRST_ITER_MOVED_FROM_PIMPLE_TO_PISO
+#endif
+
+#if (OPENFOAM_COM >= 1804)
+// maybe for older versions as well. But v1806 is the oldest I checked for
+#define FOAM_RHOPIMPLEFOAM_USES_SELECT_FOR_P_SOLVER
+#endif
+
+// Not sure . Didn't check when between 2.3 and 5 or 1806 this changed
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK < VERSION_NR(5, 0, 0)) \
+    || (defined(OPENFOAM_COM) && OPENFOAM_COM<1806)
+#define FOAM_THEREIS_NO_PISO_CONTROL_CLASS
+#endif
+
+// Not sure . Didn't check when between 2.3 and 5 or 1806 this changed
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK < VERSION_NR(5, 0, 0)) \
+    || (defined(OPENFOAM_COM) && OPENFOAM_COM<1806) \
+    || (defined(FOAM_VERSION4SWAK_IS_EXTEND))
+#define FOAM_NO_SINGLE_PARAMETER_VERSION_OF_FLUX_FUNCTION
+#endif
+
+// Not sure . Didn't check when between 2.3 and 5 or 1806 this changed
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) &&                                      \
+     FOAM_VERSION4SWAK < VERSION_NR(5, 0, 0)) ||                               \
+    (defined(OPENFOAM_COM) && OPENFOAM_COM < 1806) ||                   \
+    defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#define FOAM_HAS_NO_PRESURE_CONTROL_CLASS
+#endif
+
+// Not sure . Didn't check when between 2.3 and 5 or 1806 this changed
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK < VERSION_NR(5, 0, 0)) \
+    || (defined(OPENFOAM_COM) && OPENFOAM_COM<1806)
+#define FOAM_LOCAL_EULER_DT_HAS_SCHEME_IN_NAME
+#endif
+
+#if defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#define FOAM_HAS_NO_LOCAL_EULER_DDT
+#endif
+
+// Not sure . Didn't check when between 2.3 and 5 or 1806 this changed
+#if (defined(FOAM_VERSION4SWAK_IS_ORG) && FOAM_VERSION4SWAK < VERSION_NR(5, 0, 0)) \
+    || (defined(OPENFOAM_COM) && OPENFOAM_COM<1806) \
+    || defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#else
+#define FOAM_PIMPLE_CONTROL_HAS_SIMPLERHO
+#endif
+
+#if !defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#define FOAM_FVMATRIX_HAS_REF_METHOD
 #endif
 
 #include "swakVersion.H"

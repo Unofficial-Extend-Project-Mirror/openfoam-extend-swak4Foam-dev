@@ -627,6 +627,68 @@ namespace Foam {
         return *table[name];
     }
 
+    template<class Type>
+    bool PatchValueExpressionDriver::isMapField(
+        const word &inName
+    ) const
+    {
+        word name(inName);
+        if(this->hasAlias(name)) {
+            if(debug) {
+              Pout << "PatchValueExpressionDriver::isMapField. Name: " << name
+                   << " is an alias for " << this->getAlias(name) << endl;
+            }
+            name=this->getAlias(name);
+        }
+
+        typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
+        typedef GeometricField<Type,fvsPatchField,surfaceMesh> localSurfaceField;
+
+        if(!isA<mappedPatchBase>(patch_.patch())) {
+            FatalErrorIn("tmp<Field<T> > PatchValueExpressionDriver::mapField")
+                << "Current patch " << patch_.name()
+                    << "is not a mapped patch"
+                    << endl
+                    << exit(FatalError);
+
+        }
+
+        const mappedPatchBase& mpp = dynamicCast<const mappedPatchBase>
+            (
+                patch_.patch()
+            );
+
+        const fvMesh& thisMesh = patch_.boundaryMesh().mesh();
+        const fvMesh& nbrMesh = refCast<const fvMesh>(mpp.sampleMesh());
+        const fvMesh& lookupMesh= mpp.sameRegion() ? thisMesh : nbrMesh;
+
+        if(debug) {
+            Info << "Patch " << patch_.name() << " mapping from mesh "
+                << thisMesh.name() << " to mesh " << lookupMesh.name() << endl;
+        }
+
+        if(lookupMesh.foundObject<localSurfaceField>(name)) {
+            if(debug) {
+                Info << name << " is a " << localSurfaceField::typeName << endl;
+            }
+            return true;
+        } else if(!lookupMesh.foundObject<localVolField>(name)) {
+            if(debug) {
+                Info << "No field " << name << " of type "
+                    << localSurfaceField::typeName << " or "
+                    << localVolField::typeName << " on mesh "
+                    << lookupMesh.name()
+                    << endl;
+            }
+            return false;
+        } else {
+            if(debug) {
+                Info << name << " is a " << localVolField::typeName << endl;
+            }
+            return true;
+        }
+    }
+
     template<class T>
     tmp<Field<T> > PatchValueExpressionDriver::mapField(
         const word &inName,

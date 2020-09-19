@@ -84,6 +84,7 @@ public:
         sigQUIT,
         sigUSR1,
         sigUSR2,
+        FoamFatal
     };
 
 private:
@@ -97,7 +98,7 @@ private:
 #ifdef FOAM_PREFERS_ENUM_TO_NAMED_ENUM
     static const Enum<possibleSignals> possibleSignalsNames_;
 #else
-    static const NamedEnum<possibleSignals,7> possibleSignalsNames_;
+    static const NamedEnum<possibleSignals,8> possibleSignalsNames_;
 #endif
 
 public:

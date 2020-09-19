@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
+|  \\    /   O peration     | Version:  v1906                                 |
 |   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -17,33 +17,30 @@ FoamFile
 
 dimensions      [0 2 -3 0 0 0 0];
 
-internalField   uniform 14.855;
+internalField   uniform 200;
 
 boundaryField
 {
-    inlet
-    {
-        type            groovyBC;
-        valueExpression "time()<13 ? 14.855 : 0";
-        value           uniform 14.855;
-    }
-    outlet
-    {
-        type            zeroGradient;
-    }
-    upperWall
-    {
-        type            epsilonWallFunction;
-        value           uniform 14.855;
-    }
-    lowerWall
-    {
-        type            epsilonWallFunction;
-        value           uniform 14.855;
-    }
     frontAndBack
     {
         type            empty;
+    }
+    wall
+    {
+        type            epsilonWallFunction;
+        value           uniform 200;
+    }
+    inlet
+    {
+        type            turbulentMixingLengthDissipationRateInlet;
+        mixingLength    0.005;
+        value           uniform 200;
+    }
+    inChannel_to_pitz
+    {
+        type            inletOutlet;
+        inletValue      uniform 200;
+        value           uniform 200;
     }
 }
 

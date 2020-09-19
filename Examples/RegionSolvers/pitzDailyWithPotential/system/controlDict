@@ -1,0 +1,116 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1906                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     simpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         2000;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   100;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression on;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+functions
+{
+    inChannel {
+        type potentialFlowRegionSolver;
+        meshRegion inChannel;
+        //      timeStart 10;
+    }
+    outChannel {
+        type potentialFlowRegionSolver;
+        meshRegion outChannel;
+        timeStart 100;
+    }
+    #includeFunc streamlines
+    pressureDrop_pitz {
+        type swakExpression;
+        valueType patch;
+        patchName outlet;
+        verbose true;
+        accumulations (
+            weightedAverage
+        );
+        variables (
+            "pIn{inlet}=sum(p*area())/sum(area());"
+        );
+        expression "pIn-p";
+    }
+    pressureDrop_inChannel {
+        $pressureDrop_pitz;
+        region inChannel;
+        patchName inChannel_to_pitz;
+    }
+    pressureDrop_inInterface {
+        $pressureDrop_pitz;
+        patchName inlet
+        variables (
+            "pIn{inChannel_to_pitz}=sum(p*area())/sum(area());"
+        );
+    }
+    pressureDrop_outInterface {
+        $pressureDrop_pitz;
+        region outChannel;
+        patchName outChannel_to_pitz;
+        variables (
+            "pIn{outlet/region0}=sum(p*area())/sum(area());"
+        );
+    }
+    pressureDrop_outChannel {
+        $pressureDrop_pitz;
+        region outChannel;
+        variables (
+            "pIn{outChannel_to_pitz}=sum(p*area())/sum(area());"
+        );
+    }
+    pressureDrop_total {
+        $pressureDrop_pitz;
+        region outChannel;
+        variables (
+            "pIn{inlet/inChannel}=sum(p*area())/sum(area());"
+        );
+    }
+}
+
+libs (
+    "libsimpleRegionSolvers.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libgroovyBC.so"
+);
+
+// ************************************************************************* //

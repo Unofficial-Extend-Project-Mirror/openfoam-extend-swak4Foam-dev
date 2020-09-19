@@ -118,6 +118,8 @@ $BEAR_COMPILE_PREFIX wmake libso simpleSearchableSurfaces
 
 $BEAR_COMPILE_PREFIX wmake libso simpleSwakFunctionObjects
 
+$BEAR_COMPILE_PREFIX wmake libso simpleRegionSolvers
+
 $BEAR_COMPILE_PREFIX wmake libso swakTopoSources
 
 $BEAR_COMPILE_PREFIX wmake libso swakDynamicMesh

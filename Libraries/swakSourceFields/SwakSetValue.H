@@ -68,7 +68,19 @@ class SwakSetValue
 
     exprString maskExpression_;
 
+protected:
+
     bool getMask(DynamicList<label> &,const word &psi);
+
+    bool useMaskExpression() const {
+        return useMaskExpression_;
+    }
+
+    virtual void setValueInternal(
+        const DynamicList<label> &cellIDs,
+        const typename SwakSetValue<T>::resultField &result,
+        fvMatrix<T>& eqn
+    );
 
 public:
 

@@ -1,0 +1,37 @@
+include $(OBJECTS_DIR)/../../../rules/versionOptions
+
+EXE_INC = \
+    $(FOAM_DEV_OPTION) \
+    -I../swak4FoamParsers/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/sampling/lnInclude \
+    -I$(LIB_SRC)/transportModels/compressible/lnInclude \
+    -I$(LIB_SRC)/transportModels/lnInclude \
+    -I$(LIB_SRC)/MomentumTransportModels/compressible/lnInclude \
+    -I$(LIB_SRC)/MomentumTransportModels/incompressible/lnInclude \
+    -I$(LIB_SRC)/MomentumTransportModels/momentumTransportModels/lnInclude \
+    -I$(LIB_SRC)/ThermophysicalTransportModels/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/solidThermo/lnInclude \
+    -I$(LIB_SRC)/turbulenceModels/ \
+    -I$(LIB_SRC)/turbulenceModels/LES/LESdeltas/lnInclude \
+    -I$(LIB_SRC)/turbulenceModels/compressible/turbulenceModel/lnInclude/ \
+    -I$(LIB_SRC)/turbulenceModels/compressible/LES/lnInclude/ \
+    -I$(LIB_SRC)/turbulenceModels/compressible/RAS/lnInclude/ \
+    $(FVOPTIONS_INC) \
+    $(COMPRESSIBLE_TRANSPORT_INC) \
+    $(COMPRESSIBLE_TURB_INC) \
+    $(TRISURFACE_INC)
+
+LIB_LIBS = \
+    -L$(FOAM_USER_LIBBIN) \
+    -lfiniteVolume \
+    $(FVOPTIONS_LIB) \
+    $(FLUIDTHERMO_LIB) \
+    $(COMPRESSIBLE_TURB_LIB) \
+    $(COMPRESSIBLE_TRANSPORT_MODELS) \
+    -lsampling \
+    $(SOLIDTHERMO_LIB) \
+    -lswak4FoamParsers \
+    -lmeshTools

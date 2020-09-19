@@ -9,43 +9,28 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    location    "0";
-    object      nut;
+    class       dictionary;
+    location    "system";
+    object      fvOptions;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 2 -1 0 0 0 0];
-
-internalField   uniform 0;
-
-boundaryField
-{
-    inlet
-    {
-        type            calculated;
-        value           uniform 0;
+TFix {
+    type scalarSwakSetValue;
+    active true;
+    selectionMode all;
+    useMaskExpression yes;
+    maskExpression "mag(pos()-vector(0.15,0.05+0.05*sin(time()/20),0.005)) < 0.01";
+    expressions {
+        T "time()<20 ? 300-time() : 280" [0 0 0 1 0 0 0];
     }
-    outlet
-    {
-        type            calculated;
-        value           uniform 0;
-    }
-    upperWall
-    {
-        type            nutkWallFunction;
-        value           uniform 0;
-    }
-    lowerWall
-    {
-        type            nutkWallFunction;
-        value           uniform 0;
-    }
-    frontAndBack
-    {
-        type            empty;
+    scalarSwakSetValueCoeffs {
+        useMaskExpression yes;
+        maskExpression "mag(pos()-vector(0.15,0.05+0.05*sin(time()/20),0.005)) < 0.01";
+        expressions {
+            T "time()<20 ? 300-time() : 280" [0 0 0 1 0 0 0];
+        }
     }
 }
 
-
-// ************************************************************************* //
+//************************************************************************* //

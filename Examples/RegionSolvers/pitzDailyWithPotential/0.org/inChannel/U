@@ -1,0 +1,54 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1906                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    inlet
+    {
+        //        type            fixedValue;
+        type            groovyBCFixedValue;
+        value           uniform (10 0 0);
+        variables (
+            "yp=pts().y;"
+            "minY=min(yp);"
+            "maxY=max(yp);"
+            "para=(maxY-pos().y)*(pos().y-minY)/pow(maxY-minY,2);"
+            "avgU=sum(mag(para)*area())/sum(area());"
+        );
+        valueExpression "-normal()*para*10/avgU";
+    }
+
+    inChannel_to_pitz
+    {
+        type            zeroGradient;
+    }
+
+    wall
+    {
+        type            noSlip;
+    }
+
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+// ************************************************************************* //

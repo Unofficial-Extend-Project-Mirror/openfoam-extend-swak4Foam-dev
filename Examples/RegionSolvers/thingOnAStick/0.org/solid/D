@@ -1,0 +1,62 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1906                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      D;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 0 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    auszen
+    {
+        type            groovyTractionDisplacement;
+        //        type            tractionDisplacement;
+        traction        uniform (0 0 0);
+        pressure        uniform 0;
+        value           uniform (0 0 0);
+        tractionExpression "0*min(10*time(),1)*mappedInternal(U)";
+        pressureExpression "lastP";
+        variables (
+            "currentP=min(10*time(),1)*mapped(p);"
+            "relax=0.1;"
+            "lastP=currentP*relax+(1-relax)*lastP;"
+        );
+        storedVariables (
+            {
+                name lastP;
+                initialValue "0";
+            }
+        );
+    }
+    mitte
+    {
+        type            symmetryPlane;
+    }
+
+    frontAndBack
+    {
+        type            empty;
+    }
+
+    innen
+    {
+        type fixedValue;
+        value           uniform (0 0 0);
+    }
+
+}
+
+// ************************************************************************* //

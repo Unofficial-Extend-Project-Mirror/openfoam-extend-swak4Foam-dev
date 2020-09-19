@@ -68,7 +68,7 @@ namespace Foam
     });
 #else
     template<>
-    const char* NamedEnum<Foam::provokeSignalFunctionObject::possibleSignals,7>::names[]=
+    const char* NamedEnum<Foam::provokeSignalFunctionObject::possibleSignals,8>::names[]=
     {
         "FPE",
         "SEGV",
@@ -76,9 +76,10 @@ namespace Foam
         "TERM",
         "QUIT",
         "USR1",
-        "USR2"
+        "USR2",
+        "FoamFatal"
     };
-    const NamedEnum<provokeSignalFunctionObject::possibleSignals,7> provokeSignalFunctionObject::possibleSignalsNames_;
+    const NamedEnum<provokeSignalFunctionObject::possibleSignals,8> provokeSignalFunctionObject::possibleSignalsNames_;
 #endif
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -165,6 +166,11 @@ void provokeSignalFunctionObject::writeSimple()
             case sigUSR2:
                 raise(SIGUSR2);
                 break;
+            case FoamFatal:
+                FatalErrorInFunction
+                    << "Completely unnecessary error"
+                        << endl
+                        << exit(FatalError);
             default:
                 FatalErrorIn("provokeSignalFunctionObject::writeSimple()")
                     << "Unimplemented signal "

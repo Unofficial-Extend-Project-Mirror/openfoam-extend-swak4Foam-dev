@@ -1,0 +1,82 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1906                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     pimpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         1;
+
+deltaT          0.00025;
+
+writeControl    runTime;
+
+writeInterval   0.1;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression on;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+adjustTimeStep  no;
+
+maxCo           0.2;
+
+libs (
+    "libsimpleRegionSolvers.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
+    //    "libswakTopoSources.so"
+    "libswakSourceFields.so"
+    "libgroovyBC.so"
+    "libgroovyStandardBCs.so"
+);
+
+functions {
+    solvePlateHole {
+        type solidDisplacementRegionSolver;
+        meshRegion solid;
+        ignore_unimplemented_SimpleRegionSolverFunctionObject::movePoints true;
+    }
+    displacement {
+        type swakExpression;
+        valueType internalField;
+        region solid;
+        verbose true;
+        accumulations (
+            min
+            max
+        );
+        expression "D";
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
+    }
+}
+
+// ************************************************************************* //

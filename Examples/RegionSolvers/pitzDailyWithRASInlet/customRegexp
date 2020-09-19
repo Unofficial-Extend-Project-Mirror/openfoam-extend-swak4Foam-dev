@@ -1,0 +1,17 @@
+// -*- c++ -*-
+
+pressureDrops {
+    theTitle "Pressure drops";
+    type dynamic;
+    idNr 1;
+    expr "Expression pressureDrop_(.+) :  weightedAverage=(.+)";
+    titles (
+        average
+    );
+}
+
+changePhase {
+    type phase;
+    expr "Solving (.+)\(.+\) in .+";
+    idNr 1;
+}

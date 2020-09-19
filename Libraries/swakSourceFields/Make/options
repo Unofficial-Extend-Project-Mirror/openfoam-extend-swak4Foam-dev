@@ -5,7 +5,9 @@ EXE_INC = \
     $(FOAM_DEV_OPTION) 	\
     -I../swak4FoamParsers/lnInclude \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
+    -I$(LIB_SRC)/transportModels/compressible/lnInclude \
     $(FVOPTIONS_INC) \
     -I$(LIB_SRC)/surfMesh/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude
@@ -14,5 +16,6 @@ LIB_LIBS = \
     -L$(FOAM_USER_LIBBIN) \
     -lswak4FoamParsers \
     -lfiniteVolume \
+    $(FLUIDTHERMO_LIB) \
     $(FVOPTIONS_LIB) \
     -lmeshTools

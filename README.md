@@ -581,6 +581,12 @@ be able to handle these libraries
 Libraries that integrate various scripting languages with swak4Foam
 
 
+### `simpleRegionSolvers`
+
+Library that has function objects that allow solving an equation
+independently in a different region
+
+
 #### `swakGeneralLanguageIntegration`
 
 This library implements a common interface for the actual
@@ -1328,6 +1334,78 @@ Simple modification of the `simpleCar`-case
 -   **Demonstrates:** the run-time trigger with expressions.
 
 
+### RegionSolvers
+
+Demonstrating the function objects that emulate solvers in
+different regions
+
+
+#### cavityAndPlate
+
+A driven cavity with a solid plated attached. The solid region
+gets the temperature from the cavity and the cavity is deformed
+with the displacement from the solid
+
+-   **Solver:** `rhoPimpleFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+-   **Demonstrates:** solid region solver
+
+
+#### cavityWithHeater
+
+A driven cavity that has to solid heat conduction zones at the
+sides with which it interacts
+
+-   **Solver:** `rhoPimpleFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+-   **Demonstrates:** different heat conductions
+
+
+#### icoStructChannel
+
+Adaption of a case for the old `icoStructFoam` (an old forgotten
+demo-solver for fluid-structure interaction). This is a channel
+with one flexible wall
+
+-   **Solver:** `pimpleFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+-   **Demonstrates:** solid region solver
+
+
+#### pitzDailyWithPotential
+
+A pitzDaily case with two channels bolted on the inlet and outlet
+where the potential flow is calculated. Pressure and velocity are
+mapped between these regions
+
+-   **Solver:** `simpleFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+-   **Demonstrates:** demonstrates using the flow as an extnded
+    boundary condition
+
+
+#### pitzDailyWithRASInlet
+
+A pitzDaily using LES case with one channel bolted on the inlet
+where compressible flow using a RAS-model. Velocity and
+turbulence are mapped from the channel to the main geometry
+
+-   **Solver:** `rhoPimpleFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+-   **Demonstrates:** demonstrates using the flow as an inlet condition
+
+
+#### thingOnAStrick
+
+Adaption of a case for the old `icoStructFoam` (an old forgotten
+demo-solver for fluid-structure interaction). It is a flexible
+thing held fixed in a channel
+
+-   **Solver:** `pimpleFoam`
+-   **Case setup:** `pyFoamPrepareCase`
+-   **Demonstrates:** solid region solver
+
+
 ### MakeAxialMesh
 
 Cases hee demonstrate the `makeAxialMesh`-utility
@@ -1473,7 +1551,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org98a2dbc) below). Don't work on the
+details see [6.2.2](#org311734d) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1529,7 +1607,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org98a2dbc"></a>
+<a id="org311734d"></a>
 
 ### Repository organization
 
@@ -6816,9 +6894,29 @@ Compiles and tested with version v2006 of the ESI Fork
 ### Bug fixes
 
 
+#### `writeOldTimesOnSignal` not working for newer Foam-versions
+
+This function object did not work for newer Foam-version where
+`start()` was removed from the API of `functionObject`
+
+This has been fixed and the storing of times has been fixed
+
+
 #### `funkySetLagrangianField` does not load fluid fields correctly
 
 Fields were loaded but went out of scope before being usable. Fixed
+
+
+#### For `patch`-expressions `mapped` did not lookup on another mesh
+
+Until now `mapped(D)` for patches that mapped to another mesh
+only worked if the field `D` existed on both meshes and was of
+the same type. The reason is that the first lookup was done on
+the original mesh while the value was then fetched (correctly)
+from the other mesh. This has now been fixed by makeing sure that
+the lookup occurs on the other mesh as well
+
+The same is of course true for `mappedInternal`
 
 
 ### Internals (for developers)
@@ -6833,7 +6931,69 @@ Fields were loaded but went out of scope before being usable. Fixed
 ### New features
 
 
+#### Library for solving physical systems in separate regions
+
+The library `simpleRegionSolvers` holds some function objects
+which solve a physical system in a separate region. This region
+can be coupled with the main region to get more realistic
+boundary conditions (for instance heat conduction in the
+boundary)
+
+Currently implemented function objects are
+
+-   **`heatConductionRegionSolver`:** Solves the heat conduction in a
+    solid (modeled on the solid regions in
+    `chtMultiRegionFoam`). Currently not available in foam-extend
+    because of differences in the thermophysical library
+-   **`potentialFlowRegionSolver`:** Solves the potential flow in the
+    region (basically port of `potentialFoam`)
+-   **rhoPimpleFlowRegionSolver:** compressible flow lifted from
+    `rhoPimpleFoam` (without the dynamic mesh). Currently not
+    available in foam-extend because of differences in the
+    thermophysical library
+-   **solidDisplacementRegionSolver:** a solid stress solver
+    (including thermal stresses) lifted from
+    `solidDisplacementFoam`
+
+Examples for this feature can be found in `Examples/RegionSolvers`
+
+
+#### A `fvOption` to set the energy according to a temperature expression
+
+In the `swakSourceFields`-library there is a `fvOption` named
+`swakSetTemperature` that specifies the temperature in a region
+which is then converted to the correct energy in the specified
+cells.
+
+Note: in the `expressions` dictionary the name of the emergy
+field that is solved for (usually `h` or `he`) has to be
+specified. **Not** the temperature
+
+An example can be found in
+`Examples/RegionSolvers/cavityWithHeater`
+
+
+#### Boundary condition `groovyTractionDisplacement` in `groovyStandardBCs`
+
+This boundary condition is an extension of the
+`tractionDisplacement` boundary condition in the
+`solidDisplacementFoam` solver with expressions for traction and
+displacement
+
+
 ### Enhancements
+
+
+#### `writeOldTimeStepsOnSignal` now also writes when a `FatalError` happens
+
+By intercepting the `ABRT` signal the function object now writes
+all stored timesteps when a `FatalError` is encountered in the code
+
+
+#### `provokeSignal` now also simulates a FatalError
+
+The function object now has a special 'signal' `FoamFatal` that
+instead of raising a signal does a `FatalError`
 
 
 ### Examples

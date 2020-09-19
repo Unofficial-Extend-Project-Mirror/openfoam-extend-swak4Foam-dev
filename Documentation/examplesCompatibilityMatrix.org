@@ -78,12 +78,19 @@
   | other/topoSetDamBreak                                       | \checkmark | \checkmark | \sect      | \checkmark |
   | Python3Integration/flowStatePitzDaily                       |            | \checkmark | \checkmark | \checkmark |
   | Python3Integration/python3ScriptedBCAngledDuct              |            | \checkmark | \checkmark | \checkmark |
+  | RegionSolvers/cavityAndPlate                                | \dagger    |            | \checkmark |            |
+  | RegionSolvers/cavityWithHeater                              | \checkmark |            | \checkmark | \checkmark |
+  | RegionSolvers/icoStructChannel                              | \checkmark |            | \checkmark |            |
+  | RegionSolvers/pitzDailyWithPotential                        | \checkmark |            | \checkmark |            |
+  | RegionSolvers/pitzDailyWithRASInlet                         | \checkmark |            | \checkmark |            |
+  | RegionSolvers/thingOnAStick                                 | \checkmark |            | \checkmark |            |
   | runTimeCondition/simpleSwakCar                              | \dagger    | \dagger    | \checkmark | \dagger    |
   | SimpleSurface/littleVolcano                                 | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/flangeWithPDE                                      |            | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/AMIPipe                                               |            |            | \partial   |            |
+  | tests/conditionalWriting/signalHandlerPitzDaily             |            |            | \checkmark |            |
   | tests/delayedMappingChannels                                | \checkmark | \sad       | \checkmark | \checkmark |
   | tests/languageIntegration/luaIntegration                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/pythonIntegration                 | \checkmark | \checkmark | \checkmark | \checkmark |

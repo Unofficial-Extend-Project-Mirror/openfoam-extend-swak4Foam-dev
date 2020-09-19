@@ -126,6 +126,9 @@ protected:
     //- set the state of the lexer to scanning tensor components
     void startTensorComponent();
 
+    //- set the state of the lexer to scanning for identifiers on a mapped patch
+    void startMappedFieldIdentifier();
+
     //- set the state to "eat characters"
     void startEatCharacters();
 
@@ -263,6 +266,10 @@ public:
     virtual bool existsPluginFunction(
         const word &name
     );
+
+    //- for a mpped patch check if there is a field on the other side
+    template<class Type>
+    bool isMapField(const word &name) const;
 
     //- for a mapped patch returns the mapped field from "the other side""
     template<class T>

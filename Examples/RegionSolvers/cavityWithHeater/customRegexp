@@ -1,0 +1,35 @@
+// -*- c++ -*-
+
+heaterTemperature {
+    type dynamic;
+    theTitle "Temperature";
+    idNr 1;
+    expr "(.+) Min/max T:(.+) (.+)";
+    titles (
+        min
+        max
+    );
+}
+temperatureCavity {
+    type slave;
+    master heaterTemperature;
+    expr "Expression cavityTemperature :  min=(.+) max=(.+)";
+    titles (
+        "min cavity"
+        "max cavity"
+    );
+}
+pressureCavity {
+    theTitle "Pressure";
+    expr "Expression cavityPressure :  min=(.+) max=(.+)";
+    titles (
+        min
+        max
+    );
+}
+
+changePhase {
+    type phase;
+    expr "Solving (.+)\(.+\) in .+";
+    idNr 1;
+}
