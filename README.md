@@ -1551,7 +1551,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org36cda0a) below). Don't work on the
+details see [6.2.2](#org311734d) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1607,7 +1607,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org36cda0a"></a>
+<a id="org311734d"></a>
 
 ### Repository organization
 
@@ -6942,14 +6942,20 @@ boundary)
 Currently implemented function objects are
 
 -   **`heatConductionRegionSolver`:** Solves the heat conduction in a
-    solid (modeled on the solid regions in `chtMultiRegionFoam`)
+    solid (modeled on the solid regions in
+    `chtMultiRegionFoam`). Currently not available in foam-extend
+    because of differences in the thermophysical library
 -   **`potentialFlowRegionSolver`:** Solves the potential flow in the
     region (basically port of `potentialFoam`)
 -   **rhoPimpleFlowRegionSolver:** compressible flow lifted from
-    `rhoPimpleFoam` (without the dynamic mesh)
+    `rhoPimpleFoam` (without the dynamic mesh). Currently not
+    available in foam-extend because of differences in the
+    thermophysical library
 -   **solidDisplacementRegionSolver:** a solid stress solver
     (including thermal stresses) lifted from
     `solidDisplacementFoam`
+
+Examples for this feature can be found in `Examples/RegionSolvers`
 
 
 #### A `fvOption` to set the energy according to a temperature expression
