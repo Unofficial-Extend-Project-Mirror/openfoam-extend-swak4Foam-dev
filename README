@@ -70,7 +70,7 @@
    - 2010 Marianne Mataln <mmataln@ice-sf.at>
    - 2010 Oliver Borm (oli.borm@web.de)
    - 2011 Alexey Petrov <alexey.petrov.nnov@gmail.com>
-   - 2011 Petr Vita <petr.vita@unileoben.ac.at>
+   - 2011,2020 Petr Vita <petr.vita@unileoben.ac.at>
    - 2012-2016 Bruno Santos <wyldckat@gmail.com>
    - 2013 Georg Reiss <georg.reiss@ice-sf.at>
    - 2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
@@ -4410,6 +4410,12 @@ S_{expl} + S_{impl} T
      the lookup occurs on the other mesh as well
 
      The same is of course true for =mappedInternal=
+**** =funkySetAreaField= not compiled
+     The utility was not considered for compilation in OF 2006 (and
+     previous versions of that distro that supported finiteArea) and
+     also needed to be adapted to compile on that version
+
+     Fix done by Petr Vita
 *** Internals (for developers)
 *** Infrastructure
 *** Documentation

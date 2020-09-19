@@ -84,7 +84,7 @@ latest under which this author submitted):
 -   2010 Marianne Mataln <mmataln@ice-sf.at>
 -   2010 Oliver Borm (oli.borm@web.de)
 -   2011 Alexey Petrov <alexey.petrov.nnov@gmail.com>
--   2011 Petr Vita <petr.vita@unileoben.ac.at>
+-   2011,2020 Petr Vita <petr.vita@unileoben.ac.at>
 -   2012-2016 Bruno Santos <wyldckat@gmail.com>
 -   2013 Georg Reiss <georg.reiss@ice-sf.at>
 -   2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
@@ -1551,7 +1551,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org311734d) below). Don't work on the
+details see [6.2.2](#orgdf2843d) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1607,7 +1607,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org311734d"></a>
+<a id="orgdf2843d"></a>
 
 ### Repository organization
 
@@ -6917,6 +6917,15 @@ from the other mesh. This has now been fixed by makeing sure that
 the lookup occurs on the other mesh as well
 
 The same is of course true for `mappedInternal`
+
+
+#### `funkySetAreaField` not compiled
+
+The utility was not considered for compilation in OF 2006 (and
+previous versions of that distro that supported finiteArea) and
+also needed to be adapted to compile on that version
+
+Fix done by Petr Vita
 
 
 ### Internals (for developers)
