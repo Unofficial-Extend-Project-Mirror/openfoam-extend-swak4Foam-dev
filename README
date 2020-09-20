@@ -910,6 +910,13 @@ S_{expl} + S_{impl} T
      - Solver :: =rhoPimpleFoam=
      - Case setup :: =pyFoamPrepareCase=
      - Demonstrates :: different heat conductions
+**** DLR_A_LTS_with_solid
+     A tutorial case with an added small solid region at the inlet
+     that conducts heat from the inlet to the regular region
+     - Solver :: reactingFoam
+     - Case setup :: =pyFoamPrepareCase=
+     - Demonstrates :: using a simple region to generate a more
+       realistic boundary condition
 **** icoStructChannel
      Adaption of a case for the old =icoStructFoam= (an old forgotten
      demo-solver for fluid-structure interaction). This is a channel

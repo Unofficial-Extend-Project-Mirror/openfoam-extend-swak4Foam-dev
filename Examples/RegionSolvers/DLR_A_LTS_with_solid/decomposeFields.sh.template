@@ -1,0 +1,5 @@
+#! /bin/bash
+
+pyFoamDecompose.py . |-numberOfProcessors-|
+
+pyFoamDecompose.py . |-numberOfProcessors-| --region=burner

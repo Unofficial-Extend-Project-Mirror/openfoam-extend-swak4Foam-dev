@@ -1,0 +1,121 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2006                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+scale   0.001;
+
+R1X 3.99619288633;
+R2X 4.49571699712;
+R3X 179.82867988473;
+R4X 189.81916210055;
+
+R1Y 0.17447754946;
+R2Y 0.19628724314;
+R3Y 7.85148972576;
+R4Y 8.28768359941;
+
+R1Ym -0.17447754946;
+R2Ym -0.19628724314;
+R3Ym -7.85148972576;
+R4Ym -8.28768359941;
+
+L  1000;
+Lm -20;
+
+vertices
+(
+    ($R1X    $R1Y     0)    // 1   - burner
+    ($R1X    $R1Ym    0)    // 4   - burner
+    ($R1X    $R1Y     $Lm)  // 7   - burner
+    ($R1X    $R1Ym    $Lm)  // 8   - burner
+
+    ($R2X    $R2Y     0)    // 9   - burner
+    ($R2X    $R2Ym    0)    // 10  - burner
+    ($R2X    $R2Y     $Lm)  // 17  - burner
+    ($R2X    $R2Ym    $Lm)  // 20  - burner
+);
+
+nFuel          4;
+nBurner        1;
+nCoflow        30;
+nExternal      2;
+nLength        90;
+nLengthReverse 4;
+
+gradingFuel          1;
+gradingCoflow        6;
+gradingLength        12.;
+gradingLengthInverse 0.5;
+
+blocks
+(
+    hex ( 6 4 0 2 7 5 1 3  ) (100 10 1) simpleGrading (1 1 1)
+);
+
+boundary
+(
+    burnerwall
+    {
+        type mappedPatch;
+        faces
+        (
+            (3 2 0 1)
+            (5 4 6 7)
+        );
+        sampleMode      nearestPatchFace;
+        sampleRegion    region0;
+        samplePatch     burnerwall;
+    }
+
+    burnertip
+    {
+        type mappedPatch;
+        faces
+        (
+            (1 0 4 5)
+        );
+        sampleMode      nearestPatchFace;
+        sampleRegion    region0;
+        samplePatch     burnertip;
+    }
+
+    front
+    {
+        type wedge;
+        faces
+        (
+            ( 2 0 4 6 )
+        );
+    }
+
+    back
+    {
+        type wedge;
+        faces
+        (
+            ( 7 5 1 3 )
+        );
+   }
+    wall
+    {
+        type patch;
+        faces
+        (
+            ( 3 2 6 7 )
+        );
+    }
+);
+
+// ************************************************************************* //

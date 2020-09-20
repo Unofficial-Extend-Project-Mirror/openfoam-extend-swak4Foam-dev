@@ -1361,6 +1361,17 @@ sides with which it interacts
 -   **Demonstrates:** different heat conductions
 
 
+#### DLR<sub>A</sub><sub>LTS</sub><sub>with</sub><sub>solid</sub>
+
+A tutorial case with an added small solid region at the inlet
+that conducts heat from the inlet to the regular region
+
+-   **Solver:** reactingFoam
+-   **Case setup:** `pyFoamPrepareCase`
+-   **Demonstrates:** using a simple region to generate a more
+    realistic boundary condition
+
+
 #### icoStructChannel
 
 Adaption of a case for the old `icoStructFoam` (an old forgotten
@@ -1551,7 +1562,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orgdf2843d) below). Don't work on the
+details see [6.2.2](#orge3217d1) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1607,7 +1618,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orgdf2843d"></a>
+<a id="orge3217d1"></a>
 
 ### Repository organization
 
