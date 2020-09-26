@@ -1361,6 +1361,17 @@ sides with which it interacts
 -   **Demonstrates:** different heat conductions
 
 
+#### DLR<sub>A</sub><sub>LTS</sub><sub>with</sub><sub>solid</sub>
+
+A tutorial case with an added small solid region at the inlet
+that conducts heat from the inlet to the regular region
+
+-   **Solver:** reactingFoam
+-   **Case setup:** `pyFoamPrepareCase`
+-   **Demonstrates:** using a simple region to generate a more
+    realistic boundary condition
+
+
 #### icoStructChannel
 
 Adaption of a case for the old `icoStructFoam` (an old forgotten

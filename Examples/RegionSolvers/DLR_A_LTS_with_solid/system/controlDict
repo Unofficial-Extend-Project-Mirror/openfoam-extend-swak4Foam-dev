@@ -1,0 +1,103 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2006                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     reactingFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         5000;
+
+deltaT          1;
+
+writeControl    runTime;
+
+writeInterval   1000;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  10;
+
+writeCompression on;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+libs (
+    "libsimpleRegionSolvers.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
+    //    "libswakTopoSources.so"
+    "libswakSourceFields.so"
+);
+
+functions {
+    solveLeftHeater {
+        type heatConductionRegionSolver;
+        meshRegion burner;
+    }
+    highTemperatureLocationMin {
+        type swakExpression;
+        valueType internalField;
+        verbose true;
+        expression "T > 300 ? pos() : vector(1e10,1e10,1e10)";
+        accumulations (
+            min
+        );
+    }
+    highTemperatureLocationMax {
+      type swakExpression;
+      valueType internalField;
+      verbose true;
+      expression "T > 300 ? pos() : vector(-1e10,-1e10,-1e10)";
+      accumulations (
+          max
+      );
+    }
+    highTemperatureCenterOfGravity {
+        type swakExpression;
+        valueType internalField;
+        verbose true;
+        variables (
+            "indicator=T>300 ? vol() : 0;"
+            "volume=max(1e-10,sum(indicator));"
+        );
+        expression "pos()*indicator/volume";
+        accumulations (
+            sum
+        );
+    }
+    highTemperatureMaxTemperature {
+      type swakExpression;
+      valueType internalField;
+      verbose true;
+      expression "maxPosition(T)";
+      accumulations (
+          average
+      );
+    }
+}
+
+// ************************************************************************* //

@@ -1,0 +1,43 @@
+// -*- c++ -*-
+
+burnerT {
+    theTitle "Burner temperature";
+    expr "burner Min/max T:(.+) (.+)";
+    titles (
+        min
+        max
+    );
+}
+
+locationFlame {
+    theTitle "Location of the flame";
+    type dynamic;
+    expr "Expression highTemperature(.+) :  .+=\((.+) .+ (.+)\)";
+    idNr 1;
+    titles (
+        x
+        z
+    );
+}
+locationFlamePara {
+    type slave;
+    master locationFlameCenterOfGravity;
+    expr "Expression highTemperatureLocationMax :  .+=\((.+) .+ (.+)\)";
+    titles (
+        "x"
+        "max"
+    );
+    xlabel "x";
+    ylabel "z";
+    xvalue "x";
+}
+locationFlameCenterOfGravity {
+    theTitle "Extent of the flame";
+    expr "Expression highTemperatureCenterOfGravity :  .+=\((.+) .+ (.+)\)";
+    idNr 1;
+    titles (
+        "x"
+        "center"
+    );
+    xvalue "x";
+}
