@@ -1551,7 +1551,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org6e21cc3) below). Don't work on the
+details see [6.2.2](#org2a2331a) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1607,7 +1607,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org6e21cc3"></a>
+<a id="org2a2331a"></a>
 
 ### Repository organization
 
@@ -1649,6 +1649,25 @@ and still under active development)
 
 In the future this repository will try to stick to the model
 described in <http://nvie.com/posts/a-successful-git-branching-model/>
+
+
+### Usage of `swak.H` to distinguish OpenFOAM-versions
+
+To enable swak4Foam on as many different OpenFOAM-versions as
+possible it has the `swak.H`-file in
+`Libraries/swak4FoamParsers/include`. It defines different
+pre-processor symbols which all start with `FOAM_`. These symbols
+are set depending on the OpenFOAM-fork and version. The version of
+OpenFOAM is detected by `Libraries/Allwmake` and written to
+`Libraries/swak4FoamParsers/foamVersion4swak.H`. If a feature has
+a different API on an OpenFOAM-version and this breaks your code
+try to find the appropriate `FOAM_`-symbol and use an `#ifdef` to
+make it compatible. Don't try to use `foamVersion4swak.H` directly
+as this would make maintaining more difficult.
+
+If there is no appropriate symbol define one yourself in
+`swak.H`. Beware: changing `swak.H` triggers an almost complete
+recompilation of swak4Foam.
 
 
 ### Scripting languages
