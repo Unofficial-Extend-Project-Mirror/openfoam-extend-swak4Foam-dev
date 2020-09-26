@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 blockMesh
 rm -rf 0

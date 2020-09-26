@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Generate release archives (tbz2) using `hg archive command'
 #

@@ -1551,7 +1551,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orgb62e573) below). Don't work on the
+details see [6.2.2](#org6e21cc3) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1607,7 +1607,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orgb62e573"></a>
+<a id="org6e21cc3"></a>
 
 ### Repository organization
 
@@ -1649,6 +1649,47 @@ and still under active development)
 
 In the future this repository will try to stick to the model
 described in <http://nvie.com/posts/a-successful-git-branching-model/>
+
+
+### Scripting languages
+
+These are suggestions for the scripting languages to be used.
+
+
+#### Shell scripts
+
+Be explicit in the first line of your script about the shell
+you're using. **Don't** use
+
+    #! /bin/sh
+
+On most Linux distros this uses `bash` but on Ubuntu it uses
+`dash` which breaks on a lot of syntax constructs that `bash`
+accepts. So use
+
+    #! /bin/bash
+
+to make sure that your shell scripts are portable
+
+
+#### Python scripts
+
+Avoid Python 2 because this is outdated. If using Python 3 try to
+avoid the lastest language features as this might break the
+scripts on machines with a conservative version policy.
+
+Be explicit about your basic about the basic python version you
+use. Instead of `python` either use `python2` or `python3` to
+make sure that scripts don't break on machines that differ
+significantly from yours. Also call `python3` through the `env`
+utility to allow the script to make use of an improved version
+that is not installed in `/usr/bin`. So instead of
+
+    #! /usr/bin/python
+
+make the first line of the script
+
+    #! /usr/bin/env python3
 
 
 # Copyright

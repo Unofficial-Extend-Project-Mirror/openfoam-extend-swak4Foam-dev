@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Note: This script is meant to be used directly from the library folder that
 # has Bison based parsers.

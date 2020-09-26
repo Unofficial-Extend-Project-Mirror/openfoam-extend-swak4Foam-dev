@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 for d in `ls | grep swak | grep FunctionPlugin`
 do

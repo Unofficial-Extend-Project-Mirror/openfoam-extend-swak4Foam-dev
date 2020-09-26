@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 pyFoamClearCase.sh .
 rm -fr 0

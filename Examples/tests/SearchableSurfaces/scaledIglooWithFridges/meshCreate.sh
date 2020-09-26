@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 rm -f constant/polyMesh/*.gz
 
