@@ -4418,6 +4418,11 @@ S_{expl} + S_{impl} T
      Fix done by Petr Vita
 *** Internals (for developers)
 *** Infrastructure
+**** Improved detection of =finiteArea=
+     A flag has been add to =swak.H= to help sources easily detect the
+     presence of the =finiteArea=-library. Also makes sure that
+     =funkySetAreaField= is not detected on Foam-forks where it is not
+     supported
 *** Documentation
 *** New features
 **** Library for solving physical systems in separate regions

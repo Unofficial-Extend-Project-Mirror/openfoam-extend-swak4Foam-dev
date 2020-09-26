@@ -29,6 +29,12 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "swak.H"
+
+#ifndef FOAM_HAS_FINITE_AREA
+#error "This OpenFOAM-fork has no finiteArea and this library won't work"
+#endif
+
 #include "FaCommonValueExpressionDriver.H"
 
 #include "Random.H"

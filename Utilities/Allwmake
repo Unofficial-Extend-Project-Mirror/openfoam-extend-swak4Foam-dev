@@ -1,0 +1,26 @@
+#! /bin/bash
+
+wmake funkySetFields
+
+wmake funkySetBoundaryField
+
+wmake replayTransientBC
+
+if [[ "$FOAM_DEV" != "" || ( ${WM_PROJECT_VERSION:0:1} == "v" && ${WM_PROJECT_VERSION:1} -gt 1707 ) ]]
+then
+    wmake funkySetAreaFields
+fi
+
+wmake funkyDoCalc
+
+wmake calcNonUniformOffsetsForMapped
+
+wmake fieldReport
+
+wmake funkyPythonPostproc
+
+wmake funkySetLagrangianField
+
+wmake funkyWarpMesh
+
+wmake makeAxialMesh

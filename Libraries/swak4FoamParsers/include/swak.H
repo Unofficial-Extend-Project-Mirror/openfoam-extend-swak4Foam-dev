@@ -778,6 +778,10 @@ Contributors/Copyright:
 #define FOAM_FVMATRIX_HAS_REF_METHOD
 #endif
 
+#if defined(FOAM_VERSION4SWAK_IS_EXTEND) || OPENFOAM_COM > 1707
+#define FOAM_HAS_FINITE_AREA
+#endif
+
 #include "swakVersion.H"
 #include "DebugOStream.H"
 #include "BackportMacros.H"

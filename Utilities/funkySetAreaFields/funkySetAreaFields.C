@@ -35,6 +35,12 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "swak.H"
+
+#ifndef FOAM_HAS_FINITE_AREA
+#error "This OpenFOAM-fork has no finiteArea and this utility won't work"
+#endif
+
 #include "fvCFD.H"
 #include "faCFD.H"
 
@@ -49,8 +55,6 @@ Contributors/Copyright:
 #include "RepositoryBase.H"
 
 #include "dlLibraryTable.H"
-
-#include "swak.H"
 
 template<class T,template<class> class PField,class Mesh>
 void writeVolumeField(

@@ -1551,7 +1551,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orgdf2843d) below). Don't work on the
+details see [6.2.2](#orgb62e573) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1607,7 +1607,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orgdf2843d"></a>
+<a id="orgb62e573"></a>
 
 ### Repository organization
 
@@ -6932,6 +6932,14 @@ Fix done by Petr Vita
 
 
 ### Infrastructure
+
+
+#### Improved detection of `finiteArea`
+
+A flag has been add to `swak.H` to help sources easily detect the
+presence of the `finiteArea`-library. Also makes sure that
+`funkySetAreaField` is not detected on Foam-forks where it is not
+supported
 
 
 ### Documentation
