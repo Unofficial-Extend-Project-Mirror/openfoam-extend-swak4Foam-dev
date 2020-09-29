@@ -1,0 +1,89 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      DU;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 0 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    plate
+    {
+        type            groovyTractionDisplacement;
+        // type solidTraction;
+        traction        uniform (0 0 0);
+        pressure        uniform 0;
+        value           uniform (0 0 0);
+        // tractionExpression "0.1*min(10*time(),1)*mappedInternal(U)";
+        // pressureExpression "min(10*time(),1)*mapped(p)";
+        tractionExpression "lastTraction";
+        pressureExpression "lastP";
+        variables (
+            "dt0=1e-3;"
+            "dtScale=deltaT()/dt0;"
+            "rFactor=max(0,min(1,(time()-0.2)/0.8));"
+            "relaxPStart=0.0;"
+            //            "relaxPStart=0.01;"
+            //            "relaxPEnd=0.02;"
+            "relaxPEnd=0.01;"
+            "relaxTracStart=0.0;"
+            //            "relaxTracStart=0.1;"
+            "relaxTracEnd=0.2;"
+            //            "relaxTracEnd=0.1;"
+            "relaxP=dtScale*(rFactor*relaxPEnd+(1-rFactor)*relaxPStart);"
+            "relaxTrac=dtScale*(rFactor*relaxTracEnd+(1-rFactor)*relaxTracStart);"
+            "rhoFluid=10;"
+            "currentP=rhoFluid*mapped(p);"
+            "lastP=currentP*relaxP+(1-relaxP)*lastP;"
+            //            "tractionFactor=20;"
+            "tractionFactor=10;"
+            //            "tractionFactor=1;"
+            "currentTraction=tractionFactor*mapped(traction);"
+            "lastTraction=currentTraction*relaxTrac+(1-relaxTrac)*lastTraction;"
+        );
+        storedVariables (
+            {
+                name lastP;
+                initialValue "0";
+            }
+            {
+                name lastTraction;
+                initialValue "vector(0,0,0)";
+            }
+        );
+
+        // nonLinear updatedLagrangian;
+        // traction uniform ( 0 0 0 );
+        // pressure uniform 0;
+        value uniform (0 0 0);
+
+    }
+
+    plateFix
+    {
+       type            fixedValue;
+       value           uniform (0 0 0);
+    }
+
+    frontAndBackPlanes
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

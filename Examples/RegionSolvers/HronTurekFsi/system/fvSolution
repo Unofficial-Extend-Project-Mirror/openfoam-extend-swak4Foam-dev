@@ -1,0 +1,102 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+
+    p
+    {
+        solver          GAMG;
+            tolerance       1e-06;
+            relTol          0.01;
+            minIter         1;
+            maxIter         1000;
+            smoother        GaussSeidel;
+            nPreSweeps      0;
+            nPostSweeps     2;
+            nFinestSweeps   2;
+            scaleCorrection true;
+            directSolveCoarsest false;
+            cacheAgglomeration true;
+            nCellsInCoarsestLevel 20;
+            agglomerator    faceAreaPair;
+            mergeLevels     1;
+    }
+    pFinal
+    {
+        $p;
+        relTol          0;
+    }
+
+    cellDisplacement
+    {
+        solver          GAMG;
+        tolerance        1e-6;
+        relTol           1e-3;
+        minIter          1;
+        maxIter          1000;
+
+        smoother         GaussSeidel;
+        nPreSweeps       0;
+        nPostSweeps      2;
+        nFinestSweeps    2;
+
+        scaleCorrection true;
+        directSolveCoarsest false;
+
+         cacheAgglomeration true;
+
+         nCellsInCoarsestLevel 20;
+         agglomerator     faceAreaPair;
+         mergeLevels      1;
+    }
+
+    U
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+
+        // solver BiCGStab;
+        // preconditioner   DILU;
+            tolerance        1e-06;
+            relTol           0.1;
+    }
+    UFinal
+    {
+        $U;
+        relTol          0;
+    }
+
+    "pcorr.*"
+    {
+        $p
+        tolerance       0.02;
+        relTol          0;
+    }
+
+}
+
+PIMPLE
+{
+    nCorrectors     2;
+    nNonOrthogonalCorrectors 1;
+    nOuterCorrectors 10;
+    ddtPhiCorr no;
+}
+
+
+// ************************************************************************* //

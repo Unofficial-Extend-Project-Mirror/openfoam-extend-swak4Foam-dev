@@ -709,6 +709,7 @@ bool SolidDisplacementRegionSolverFunctionObject::solveRegion() {
             }
         }
     } while (initialResidual > convergenceTolerance && ++iCorr < nCorr);
+    Info << iCorr << " solid iterations" << endl;
 
     if (
         runTime.outputTime()

@@ -19,25 +19,46 @@ locationFlame {
         z
     );
 }
-locationFlamePara {
-    type slave;
-    master locationFlameCenterOfGravity;
+locationFlameParaMax {
+    //   type slave;
+    //    master locationFlameCenterOfGravity;
+    theTitle "Extent of the flame";
     expr "Expression highTemperatureLocationMax :  .+=\((.+) .+ (.+)\)";
     titles (
         "x"
         "max"
     );
+    xvalue "x";
     xlabel "x";
     ylabel "z";
+}
+locationFlameParaMin {
+    type slave;
+    master locationFlameParaMax;
+    expr "Expression highTemperatureLocationMin :  .+=\((.+) .+ (.+)\)";
+    titles (
+        "x"
+        "min"
+    );
     xvalue "x";
 }
 locationFlameCenterOfGravity {
-    theTitle "Extent of the flame";
+    type slave;
+    master locationFlameParaMax;
     expr "Expression highTemperatureCenterOfGravity :  .+=\((.+) .+ (.+)\)";
-    idNr 1;
     titles (
         "x"
         "center"
+    );
+    xvalue "x";
+}
+locationFlameMaxTemperature {
+    type slave;
+    master locationFlameParaMax;
+    expr "Expression highTemperatureMaxTemperature :  .+=\((.+) .+ (.+)\)";
+    titles (
+        "x"
+        "max Temp"
     );
     xvalue "x";
 }

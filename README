@@ -917,6 +917,13 @@ S_{expl} + S_{impl} T
      - Case setup :: =pyFoamPrepareCase=
      - Demonstrates :: using a simple region to generate a more
        realistic boundary condition
+**** HronTurekFsi
+     Port of the case with the same name from =foam-extend 4.1= that
+     simulates the movement of a flexible beam in an incompressible
+     flow. Due to stability issues this does not exactly replicate that case.
+     - Solver :: =pimpleFoam=
+     - Case setup :: =pyFoamPrepareCase.py=
+     - Demonstrates :: a "standard" FSI verification case
 **** icoStructChannel
      Adaption of a case for the old =icoStructFoam= (an old forgotten
      demo-solver for fluid-structure interaction). This is a channel

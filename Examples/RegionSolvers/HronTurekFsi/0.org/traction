@@ -1,0 +1,63 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    plate
+    {
+        type            groovyBC;
+        variables (
+            "rhoFluid=10;"
+            "nuFluid=1e-3;"
+        );
+        valueExpression "-rhoFluid*nuFluid*snGrad(U)";
+        value           uniform (0 0 0);
+    }
+    outlet
+    {
+        type            zeroGradient;
+    }
+    inlet
+    {
+        type            zeroGradient;
+    }
+    cylinder
+    {
+        $plate;
+    }
+    bottom
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    top
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    frontAndBackPlanes
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

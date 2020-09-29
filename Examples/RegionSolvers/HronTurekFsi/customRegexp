@@ -1,0 +1,26 @@
+// -*- c++ -*-
+
+changePhase {
+    type phase;
+    expr "Solving (.+)\(.+\) in .+";
+    idNr 1;
+}
+displacement {
+    theTitle "Displacement";
+    expr "Expression displacement :  min=\((.+) (.+) 0\) max=\((.+) (.+) 0\)";
+    titles (
+        "x min"
+        "y min"
+        "x max"
+        "y max"
+    );
+}
+traction {
+    theTitle "Traction";
+    expr "Expression traction on plate:  min=(.+) weightedAverage=(.+) max=(.+)";
+    titles (
+        min
+        average
+        max
+    );
+}

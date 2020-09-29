@@ -1,0 +1,40 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      dynamicMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dynamicFvMesh   dynamicMotionSolverFvMesh;
+
+motionSolverLibs ("libfvMotionSolvers.so");
+
+// twoDMotion      yes;
+
+// solver          displacementLaplacian;
+motionSolver displacementSBRStress;
+//solver          laplace;
+
+diffusivity uniform;
+
+// diffusivity quadratic inverseDistance 1(plate);
+
+frozenDiffusion yes;
+
+distancePatches
+(
+    plate
+);
+
+
+// ************************************************************************* //

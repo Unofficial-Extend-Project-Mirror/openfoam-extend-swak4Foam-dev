@@ -1,0 +1,76 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    plate
+    {
+        type            movingWallVelocity;
+        value           uniform (0 0 0);
+    }
+    outlet
+    {
+        type            zeroGradient;
+    }
+    inlet
+    {
+        // type            transitionalParabolicVelocity;
+        // maxValue        1.5;
+        // n               ( 1 0 0 );
+        // y               ( 0 1 0 );
+        // transitionPeriod 0.1;
+        // boundBoxMin     ( 0 0 -0.025334 );
+        // boundBoxMax     ( 0 0.41 0.025334 );
+        type groovyBC;
+        valueExpression "-1.5*para*factor*normal()";
+        variables (
+            "yPts=pts().y;"
+            "yMax=max(yPts);"
+            "yMin=min(yPts);"
+            "para=(yMax-pos().y)*(pos().y-yMin)/(0.25*pow(yMax-yMin,2));"
+            "transition=0.1;"
+            "factor= time()>transition ? 1 : 0.5*(1-cos(pi*time()/transition));"
+        );
+        value           uniform (0 0 0);
+    }
+    cylinder
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    bottom
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    top
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    frontAndBackPlanes
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

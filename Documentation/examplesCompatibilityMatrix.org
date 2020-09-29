@@ -80,6 +80,7 @@
   | Python3Integration/python3ScriptedBCAngledDuct              |            | \checkmark | \checkmark | \checkmark |
   | RegionSolvers/cavityAndPlate                                | \dagger    |            | \checkmark |            |
   | RegionSolvers/cavityWithHeater                              | \checkmark |            | \checkmark | \checkmark |
+  | RegionSolvers/HronTurekFsi                                  |            |            | \checkmark |            |
   | RegionSolvers/icoStructChannel                              | \checkmark |            | \checkmark |            |
   | RegionSolvers/pitzDailyWithPotential                        | \checkmark |            | \checkmark |            |
   | RegionSolvers/pitzDailyWithRASInlet                         | \checkmark |            | \checkmark |            |

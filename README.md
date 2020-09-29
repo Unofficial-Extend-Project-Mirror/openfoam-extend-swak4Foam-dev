@@ -1415,6 +1415,7 @@ thing held fixed in a channel
 -   **Solver:** `pimpleFoam`
 -   **Case setup:** `pyFoamPrepareCase`
 -   **Demonstrates:** solid region solver
+-   ::
 
 
 ### MakeAxialMesh
@@ -1562,7 +1563,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#org2a2331a) below). Don't work on the
+details see [6.2.2](#orge40340d) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1618,7 +1619,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="org2a2331a"></a>
+<a id="orge40340d"></a>
 
 ### Repository organization
 
