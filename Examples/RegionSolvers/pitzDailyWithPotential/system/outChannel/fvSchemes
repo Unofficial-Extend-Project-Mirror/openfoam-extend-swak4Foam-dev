@@ -47,5 +47,8 @@ snGradSchemes
     default         corrected;
 }
 
+fluxRequired {
+    Phi;
+}
 
 // ************************************************************************* //
