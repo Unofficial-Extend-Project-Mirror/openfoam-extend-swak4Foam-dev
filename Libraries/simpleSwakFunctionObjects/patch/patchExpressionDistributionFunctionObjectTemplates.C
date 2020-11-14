@@ -62,7 +62,7 @@ void patchExpressionDistributionFunctionObject::getDistributionInternal(
         if(partial.valid()) {
             if(firstTime) {
                 firstTime=false;
-                dist=partial;
+                dist.reset(partial.ptr());
             } else {
                 SimpleDistribution<T> &d=dist();
                 d=d+partial();
