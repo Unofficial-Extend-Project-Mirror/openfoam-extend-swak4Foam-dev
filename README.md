@@ -1372,6 +1372,17 @@ that conducts heat from the inlet to the regular region
     realistic boundary condition
 
 
+#### HronTurekFsi
+
+Port of the case with the same name from `foam-extend 4.1` that
+simulates the movement of a flexible beam in an incompressible
+flow. Due to stability issues this does not exactly replicate that case.
+
+-   **Solver:** `pimpleFoam`
+-   **Case setup:** `pyFoamPrepareCase.py`
+-   **Demonstrates:** a "standard" FSI verification case
+
+
 #### icoStructChannel
 
 Adaption of a case for the old `icoStructFoam` (an old forgotten
@@ -1415,7 +1426,6 @@ thing held fixed in a channel
 -   **Solver:** `pimpleFoam`
 -   **Case setup:** `pyFoamPrepareCase`
 -   **Demonstrates:** solid region solver
--   ::
 
 
 ### MakeAxialMesh
@@ -1563,7 +1573,7 @@ and create a new branch
 where `<branchname>` is an easily identifiable name that makes the
 purpose of the branch clear (for instance
 `hotfix/WrongRandomFunction` or `feature/HyperbolicFunctions`. For
-details see [6.2.2](#orge40340d) below). Don't work on the
+details see [6.2.2](#org8781377) below). Don't work on the
 `default` branch or any other branches that are not "yours". Such
 contributions will not be merged
 
@@ -1619,7 +1629,7 @@ These topics may be "new" for the average OF-developer:
     hg diff -c 8604e865cce6
 
 
-<a id="orge40340d"></a>
+<a id="org8781377"></a>
 
 ### Repository organization
 
@@ -7012,6 +7022,13 @@ A flag has been add to `swak.H` to help sources easily detect the
 presence of the `finiteArea`-library. Also makes sure that
 `funkySetAreaField` is not detected on Foam-forks where it is not
 supported
+
+
+#### Better warning if OpenFOAM-version could not be determined by the compilation scripts
+
+If the `WM_PROJECT_VERSION` is not of the expected form then the
+compilation script will issue a warning that there might be
+problems during compilation
 
 
 ### Documentation

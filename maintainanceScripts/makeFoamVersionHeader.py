@@ -220,3 +220,15 @@ print_("OpenFOAM-version: Major {of_version_major} Minor {of_version_minor} Patc
     of_version_patch=of_version_patch,
     of_version_patch_num=of_version_patch_num),
       file=sys.stderr)
+
+if of_version_major>=2999:
+    print_("""
+WARNING
+========
+Could not correctly identify the OpenFOAM version because
+environment variable WM_PROJECT_VERSION is '{}'
+which is not of the expected form XX.YY.ZZ (or only XX)
+
+Because of this compilation of swak4Foam might fail
+""".format(environ["WM_PROJECT_VERSION"]),
+           file=sys.stderr)
