@@ -748,8 +748,7 @@ namespace Foam {
         }
 
         if(debug) {
-            Info << "autoPtr: valid()=" << f.valid()
-                << " empty()=" << f.empty() << endl;
+            Info<< "autoPtr: valid()=" << f.valid() << endl;
         }
         if(
             !f.valid()
