@@ -1214,7 +1214,7 @@ fsexp:  TOKEN_surf '(' scalar ')'           {
             sameSize($1,$3);
             $$ = new Foam::surfaceScalarField(*$1);
 #ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
-	    const_cast<Foam::DimensionedField<double, Foam::surfaceMesh>&>((*$$).internalField())
+            const_cast<Foam::DimensionedField<Foam::scalar, Foam::surfaceMesh>&>((*$$).internalField())
 #else
             (*$$).internalField()
 #endif
@@ -4488,7 +4488,7 @@ psexp:  TOKEN_point '(' scalar ')'            {
             //$$ = new Foam::pointScalarField(*$1 / *$3);
 	    $$ = new Foam::pointScalarField(*$1);
 #ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
-	    const_cast<Foam::DimensionedField<double, Foam::pointMesh>&>((*$$).internalField())
+	    const_cast<Foam::DimensionedField<Foam::scalar, Foam::pointMesh>&>((*$$).internalField())
 #else
             (*$$).internalField()
 #endif
