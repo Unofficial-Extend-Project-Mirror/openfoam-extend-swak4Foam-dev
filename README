@@ -4482,6 +4482,17 @@ S_{expl} + S_{impl} T
      If the =WM_PROJECT_VERSION= is not of the expected form then the
      compilation script will issue a warning that there might be
      problems during compilation
+**** Compile script fails if no OpenFOAM-version is activated
+     Now the script ends with a specific error message instead of
+     failing later with an error message that does not directly point
+     to this problem
+**** Avoid problems with distros that don't have a =python= utility
+     This is usually caused by some Linux distros (most prominently
+     Ubuntu 20.04) that install =python2= and/or =python3= but none of
+     those can be called as =python=.
+
+     These distros usually supply a package that links =python= to
+     either =python2= or =python3=
 *** Documentation
 *** New features
 **** Library for solving physical systems in separate regions
