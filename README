@@ -4478,6 +4478,10 @@ S_{expl} + S_{impl} T
      presence of the =finiteArea=-library. Also makes sure that
      =funkySetAreaField= is not detected on Foam-forks where it is not
      supported
+**** Compile script fails if no OpenFOAM-version is activated
+     Now the script ends with a specific error message instead of
+     failing later with an error message that does not directly point
+     to this problem
 *** Documentation
 *** New features
 **** Library for solving physical systems in separate regions

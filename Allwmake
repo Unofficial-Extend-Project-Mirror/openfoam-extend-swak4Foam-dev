@@ -1,5 +1,12 @@
 #! /bin/bash
 
+if [ -z "$WM_PROJECT_VERSION" ]; then
+    echo "Environment variable WM_PROJECT_VERSION unset"
+    echo "This means that no OpenFOAM version is actived"
+    echo "Please activate the OF for which you want to compile swak4Foam"
+    exit 42
+fi
+
 echo "Current OpenFOAM version is $WM_PROJECT_VERSION."
 if [ -e foamVersionThisIsCompiledFor ]; then
     prevVersion=$(<foamVersionThisIsCompiledFor)
