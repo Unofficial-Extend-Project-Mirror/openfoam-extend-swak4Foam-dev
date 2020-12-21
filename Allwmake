@@ -7,6 +7,15 @@ if [ -z "$WM_PROJECT_VERSION" ]; then
     exit 42
 fi
 
+PY_BINARY_PATH=$(which python)
+if [[ $? != 0 ]]; then
+    echo "Some scripts require a binary 'python' to be installed"
+    echo "It doesn't matter if this is Python 2 or 3"
+    echo "This problem is caused by Linux distros that install 'python2' and/or 'python3' but no python"
+    echo "On such distros usually a packages exists that links 'python' to one of those"
+    exit 42
+fi
+
 echo "Current OpenFOAM version is $WM_PROJECT_VERSION."
 if [ -e foamVersionThisIsCompiledFor ]; then
     prevVersion=$(<foamVersionThisIsCompiledFor)
